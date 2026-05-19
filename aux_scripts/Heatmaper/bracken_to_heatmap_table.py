@@ -1,42 +1,42 @@
 #!/usr/bin/env python3
 """
-bracken_to_heatmap_table_nopandas.py
+bracken_to_heatmap_table_nopandas_EN.py
 
-Converte tabelas Bracken/MTD/DEG para uma tabela de heatmap no formato:
+Convert Bracken/MTD/DEG tables into a heatmap-ready matrix with this format:
 
 UNIQID    NAME    sample1    sample2    sample3 ...
 
-Versao SEM pandas/numpy. Usa apenas bibliotecas padrao do Python.
+No pandas/numpy version. Uses only the Python standard library.
 
-Funciona com:
-  1) Matrizes wide Bracken/MTD:
-       primeira coluna com nome/taxon + colunas numericas de amostras
-       ex.: bracken_species_all_normalized.csv
+It works with:
+  1) Wide Bracken/MTD matrices:
+       first column with feature/taxon name + numeric sample columns
+       example: bracken_species_all_normalized.csv
 
-  2) Tabelas DEG:
-       Name + contagens raw + .norm + .normtrans + estatisticas DESeq2
-       Em --prefer auto, o script prefere colunas .normtrans para heatmap.
+  2) DEG tables:
+       Name + raw counts + .norm + .normtrans + DESeq2 statistics
+       With --prefer auto, the script prefers .normtrans columns for heatmaps.
 
-  3) Varios relatorios Bracken single-sample:
+  3) Multiple single-sample Bracken reports:
        name/taxonomy_id + new_est_reads/fraction_total_reads etc.
-       O script faz merge de uma coluna de valor por arquivo.
+       The script merges one value column from each file.
 
-Exemplos:
-  python3 bracken_to_heatmap_table_nopandas.py \
+Examples:
+  python3 bracken_to_heatmap_table_nopandas_EN.py \
     --input bracken_species_all_normalized.csv \
     --output heatmap_table.txt
 
-  python3 bracken_to_heatmap_table_nopandas.py \
+  python3 bracken_to_heatmap_table_nopandas_EN.py \
     --input bracken_species_all_DEG.csv \
     --output heatmap_table_normtrans.txt \
     --prefer normtrans
 
-  python3 bracken_to_heatmap_table_nopandas.py \
+  python3 bracken_to_heatmap_table_nopandas_EN.py \
     --input sample1.bracken sample2.bracken sample3.bracken \
     --output heatmap_from_reports.txt \
     --value-col new_est_reads
 
-  python3 bracken_to_heatmap_table_nopandas.py \
+  python3 bracken_to_heatmap_table_nopandas_EN.py \
     --input bracken_species_all_DEG.csv \
     --output top50_heatmap.txt \
     --prefer normtrans \
@@ -53,7 +53,7 @@ import os
 import re
 import sys
 from collections import Counter, OrderedDict
-from typing import Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Dict, List, Optional, Sequence, Tuple
 
 ID_CANDIDATES = [
     "UNIQID", "uniqid", "id", "ID", "feature_id", "FeatureID",
@@ -108,7 +108,7 @@ def detect_sep(path: str, user_sep: str = "auto") -> str:
     lines = sample.splitlines()
     first_line = lines[0] if lines else ""
     if not first_line:
-        die(f"Arquivo vazio: {path}")
+        die(f"Empty file: {path}")
 
     try:
         dialect = csv.Sniffer().sniff(sample, delimiters=",\t;")
@@ -139,21 +139,21 @@ def read_any_table(path: str, sep: str = "auto") -> Tuple[List[str], List[Dict[s
             try:
                 raw_header = next(reader)
             except StopIteration:
-                die(f"Arquivo vazio: {path}")
+                die(f"Empty file: {path}")
 
             header = dedupe_headers(raw_header)
             rows: List[Dict[str, str]] = []
             for line_number, fields in enumerate(reader, start=2):
                 if not fields or all(str(x).strip() == "" for x in fields):
                     continue
-                # Ajusta linhas curtas/longas sem quebrar o script.
+                # Pad short lines or trim long lines so the script does not crash.
                 if len(fields) < len(header):
                     fields = fields + [""] * (len(header) - len(fields))
                 elif len(fields) > len(header):
                     fields = fields[: len(header)]
                 rows.append({header[i]: fields[i] for i in range(len(header))})
     except Exception as e:
-        die(f"Nao consegui ler {path}: {e}")
+        die(f"Could not read {path}: {e}")
 
     return header, rows
 
@@ -165,8 +165,8 @@ def parse_float(value) -> Optional[float]:
     if s == "" or s.lower() in {"na", "nan", "none", "null", "inf", "-inf"}:
         return None
 
-    # Suporte simples para decimal com virgula: 1,23 -> 1.23.
-    # Nao altera valores com separador de milhar tipo 1,234.56.
+    # Basic support for comma decimals: 1,23 -> 1.23.
+    # Values that look like thousands separators, such as 1,234.56, are not changed.
     if re.match(r"^-?\d+,\d+(e[+-]?\d+)?$", s, flags=re.IGNORECASE):
         s = s.replace(",", ".")
 
@@ -180,7 +180,7 @@ def parse_float(value) -> Optional[float]:
 
 
 def format_number(x: float) -> str:
-    # Formato compacto, sem notacao estranha desnecessaria.
+    # Compact number format without unnecessary scientific notation weirdness.
     if x is None:
         return "0"
     if abs(x) < 1e-12:
@@ -228,14 +228,14 @@ def choose_name_id_cols(
 ) -> Tuple[Optional[str], Optional[str]]:
     if name_col:
         if name_col not in columns:
-            die(f"--name-col '{name_col}' nao existe. Colunas disponiveis: {', '.join(columns)}")
+            die(f"--name-col '{name_col}' does not exist. Available columns: {', '.join(columns)}")
         detected_name = name_col
     else:
         detected_name = find_column(columns, NAME_CANDIDATES) or find_first_non_numeric_col(columns, rows)
 
     if id_col:
         if id_col not in columns:
-            die(f"--id-col '{id_col}' nao existe. Colunas disponiveis: {', '.join(columns)}")
+            die(f"--id-col '{id_col}' does not exist. Available columns: {', '.join(columns)}")
         detected_id = id_col
     else:
         detected_id = find_column(columns, ID_CANDIDATES)
@@ -281,15 +281,15 @@ def detect_value_col(columns: Sequence[str], value_col: str = "auto") -> str:
             return value_col
         if value_col.lower() in lower_map:
             return lower_map[value_col.lower()]
-        die(f"--value-col '{value_col}' nao existe. Colunas: {', '.join(columns)}")
+        die(f"--value-col '{value_col}' does not exist. Columns: {', '.join(columns)}")
 
     for cand in BRACKEN_VALUE_CANDIDATES:
         if cand.lower() in lower_map:
             return lower_map[cand.lower()]
 
     die(
-        "Nao encontrei coluna de valor no relatorio Bracken. "
-        f"Tente --value-col. Candidatas: {', '.join(BRACKEN_VALUE_CANDIDATES)}"
+        "Could not find a value column in the Bracken report. "
+        f"Try --value-col. Candidate columns: {', '.join(BRACKEN_VALUE_CANDIDATES)}"
     )
 
 
@@ -384,7 +384,7 @@ def build_from_wide_matrix(
     detected_id, detected_name = choose_name_id_cols(columns, rows, id_col=id_col, name_col=name_col)
 
     if detected_name is None and detected_id is None:
-        warn("Nao encontrei coluna de ID/nome. Vou criar UNIQID/NAME a partir do numero da linha.")
+        warn("No ID/name column was found. UNIQID/NAME will be created from row numbers.")
 
     ignore_cols = [detected_id, detected_name]
     candidates = numeric_candidate_columns(
@@ -398,8 +398,8 @@ def build_from_wide_matrix(
 
     if not chosen:
         die(
-            "Nao encontrei colunas numericas de amostra. "
-            "Tente --sample-regex, --prefer raw/norm/normtrans ou ajuste --exclude-regex."
+            "Could not find numeric sample columns. "
+            "Try --sample-regex, --prefer raw/norm/normtrans, or adjust --exclude-regex."
         )
 
     if sample_name_mode == "condition":
@@ -444,7 +444,6 @@ def build_from_single_bracken_reports(
     value_col: str,
     fill_na: float,
 ) -> Tuple[List[str], List[List[object]]]:
-    key_to_name: Dict[Tuple[str, str], str] = OrderedDict()
     sample_names: List[str] = []
     sample_values: Dict[Tuple[str, str], Dict[str, float]] = OrderedDict()
 
@@ -452,7 +451,7 @@ def build_from_single_bracken_reports(
         columns, rows = read_any_table(path, sep)
         detected_id, detected_name = choose_name_id_cols(columns, rows, id_col=id_col, name_col=name_col)
         if detected_name is None:
-            die(f"Nao encontrei coluna de nome/taxon em {path}. Use --name-col.")
+            die(f"Could not find a name/taxon column in {path}. Use --name-col.")
 
         val_col = detect_value_col(columns, value_col)
         sample = sample_name_from_path(path)
@@ -509,7 +508,7 @@ def transform_matrix(header: List[str], rows: List[List[object]], transform: str
             else:
                 new_vals = [(v - mean) / sd for v in vals]
         else:
-            die(f"Transformacao desconhecida: {transform}")
+            die(f"Unknown transformation: {transform}")
 
         out.append(prefix + new_vals)
 
@@ -555,39 +554,39 @@ def write_table(path: str, header: List[str], rows: List[List[object]], out_sep:
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
-            "Converte tabelas Bracken/MTD/DEG para uma matriz de heatmap no formato: "
-            "UNIQID, NAME, amostras numericas. Esta versao nao precisa de pandas."
+            "Convert Bracken/MTD/DEG tables into a heatmap matrix with this format: "
+            "UNIQID, NAME, numeric sample columns. This version does not require pandas."
         ),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
     parser.add_argument("-i", "--input", nargs="+", required=True,
-                        help="Arquivo(s) de entrada. Pode ser uma matriz wide ou varios relatorios Bracken.")
-    parser.add_argument("-o", "--output", default="heatmap_table.txt", help="Arquivo de saida.")
-    parser.add_argument("--sep", default="auto", help="Separador de entrada: auto, ',', ';' ou '\\t'.")
-    parser.add_argument("--out-sep", default=r"\t", help="Separador da saida. Use '\\t' para tab.")
-    parser.add_argument("--id-col", default=None, help="Nome da coluna de ID. Se nao existir, repete NAME em UNIQID.")
-    parser.add_argument("--name-col", default=None, help="Nome da coluna de nome/taxon. Se nao existir, repete UNIQID em NAME.")
-    parser.add_argument("--value-col", default="auto", help="Para relatorios Bracken: coluna usada como valor.")
+                        help="Input file(s). Can be one wide matrix or multiple single-sample Bracken reports.")
+    parser.add_argument("-o", "--output", default="heatmap_table.txt", help="Output file.")
+    parser.add_argument("--sep", default="auto", help="Input separator: auto, ',', ';', or '\\t'.")
+    parser.add_argument("--out-sep", default=r"\t", help="Output separator. Use '\\t' for tab.")
+    parser.add_argument("--id-col", default=None, help="ID column name. If missing, NAME is copied into UNIQID.")
+    parser.add_argument("--name-col", default=None, help="Name/taxon column name. If missing, UNIQID is copied into NAME.")
+    parser.add_argument("--value-col", default="auto", help="For Bracken reports: column used as the abundance/value column.")
     parser.add_argument("--prefer", choices=["auto", "raw", "norm", "normtrans"], default="auto",
-                        help="Em tabelas DEG/wide, escolhe raw, .norm ou .normtrans. Auto prefere .normtrans.")
-    parser.add_argument("--sample-regex", default=None, help="Regex para manter apenas colunas de amostra. Ex.: 'LIVER|TEL'.")
-    parser.add_argument("--exclude-regex", default=DEFAULT_EXCLUDE_REGEX, help="Regex de colunas a excluir automaticamente.")
-    parser.add_argument("--fill-na", type=float, default=0.0, help="Valor para preencher NA ou valores nao numericos.")
+                        help="For DEG/wide tables, choose raw, .norm, or .normtrans columns. Auto prefers .normtrans.")
+    parser.add_argument("--sample-regex", default=None, help="Regex to keep only selected sample columns. Example: 'LIVER|TEL'.")
+    parser.add_argument("--exclude-regex", default=DEFAULT_EXCLUDE_REGEX, help="Regex for columns that should be excluded automatically.")
+    parser.add_argument("--fill-na", type=float, default=0.0, help="Value used to replace NA or non-numeric values.")
     parser.add_argument("--transform", choices=["none", "log2p1", "row_zscore"], default="none",
-                        help="Transformacao opcional aplicada as colunas de amostra.")
-    parser.add_argument("--min-sum", type=float, default=None, help="Remove features cuja soma nas amostras e menor que esse valor.")
-    parser.add_argument("--top", type=int, default=None, help="Mantem apenas as top N features por media absoluta.")
+                        help="Optional transformation applied to sample columns.")
+    parser.add_argument("--min-sum", type=float, default=None, help="Remove features whose sample-value sum is lower than this value.")
+    parser.add_argument("--top", type=int, default=None, help="Keep only the top N features by mean absolute value.")
     parser.add_argument("--sample-name-mode", choices=["keep", "condition"], default="keep",
-                        help="keep preserva nomes; condition renomeia LIVER para Liver e TEL para Telencephalon.")
-    parser.add_argument("--keep-suffix", action="store_true", help="Mantem sufixos .norm e .normtrans nos nomes das colunas.")
+                        help="keep preserves sample names; condition renames LIVER to Liver and TEL to Telencephalon.")
+    parser.add_argument("--keep-suffix", action="store_true", help="Keep .norm and .normtrans suffixes in sample column names.")
 
     args = parser.parse_args()
     out_sep = "\t" if args.out_sep == r"\t" else args.out_sep
 
     missing = [p for p in args.input if not os.path.exists(p)]
     if missing:
-        die("Arquivo(s) nao encontrado(s): " + ", ".join(missing))
+        die("File(s) not found: " + ", ".join(missing))
 
     if len(args.input) > 1:
         first_cols, first_rows = read_any_table(args.input[0], args.sep)
@@ -597,7 +596,7 @@ def main() -> None:
         use_bracken_merge = False
 
     if use_bracken_merge:
-        info("Modo detectado: varios relatorios Bracken single-sample; vou fazer merge por UNIQID/NAME.")
+        info("Detected mode: multiple single-sample Bracken reports; merging by UNIQID/NAME.")
         header, rows = build_from_single_bracken_reports(
             paths=args.input,
             sep=args.sep,
@@ -608,8 +607,8 @@ def main() -> None:
         )
     else:
         if len(args.input) > 1:
-            warn("Mais de um input foi fornecido, mas eles nao parecem relatorios Bracken single-sample. Vou usar apenas o primeiro.")
-        info("Modo detectado: matriz wide/DEG; vou selecionar colunas numericas de amostra.")
+            warn("More than one input was provided, but they do not look like single-sample Bracken reports. Only the first file will be used.")
+        info("Detected mode: wide/DEG matrix; selecting numeric sample columns.")
         header, rows = build_from_wide_matrix(
             path=args.input[0],
             sep=args.sep,
@@ -629,10 +628,10 @@ def main() -> None:
     write_table(args.output, header, rows, out_sep)
 
     sample_cols = header[2:]
-    info(f"Arquivo salvo: {args.output}")
-    info(f"Features/linhas: {len(rows)}")
-    info(f"Amostras/colunas numericas: {len(sample_cols)}")
-    info("Primeiras colunas de amostra: " + ", ".join(sample_cols[:8]) + (" ..." if len(sample_cols) > 8 else ""))
+    info(f"Saved file: {args.output}")
+    info(f"Features/rows: {len(rows)}")
+    info(f"Samples/numeric columns: {len(sample_cols)}")
+    info("First sample columns: " + ", ".join(sample_cols[:8]) + (" ..." if len(sample_cols) > 8 else ""))
 
 
 if __name__ == "__main__":
