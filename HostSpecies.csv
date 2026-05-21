@@ -16,6 +16,7 @@ Taxon_ID,MartDatasets,Scientific_name,OrgDb,Common_name,kegg
 9771,bmusculus_gene_ensembl,Balaenoptera musculus,,,
 158456,bsplendens_gene_ensembl,Betta splendens,,,
 43346,bbbison_gene_ensembl,Bison bison bison,,,
+6526,bggca947242115v1rs_eg_gene,Biomphalaria glabrata,org.Bglabrata.eg.db,Bloodfluke,bgla
 30521,bgrunniens_gene_ensembl,Bos grunniens,,,
 30522,bihybrid_gene_ensembl,Bos indicus x Bos taurus,,,
 72004,bmutus_gene_ensembl,Bos mutus,,,
