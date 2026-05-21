@@ -46,6 +46,8 @@ threads="$(nproc)"                     # CPU threads
 blast="hisat"                          # default host alignment method
 no_trimm=0                             # default flag
 metadata=""                            # optional metadata file
+analysis_mode="auto"                   # auto, comparison, exploratory
+NO_COMPARISON=0                        # set automatically later
 
 # Optional Kraken2 host-filtering DB override.
 # If empty, DB_host is selected automatically from --hostid.
@@ -83,6 +85,11 @@ Required:
   -h, --hostid TAXID                       Host species taxon ID used for annotation/downstream host analysis
 
 Optional:
+      --analysis-mode MODE                 Analysis mode: auto, comparison, exploratory
+                                            auto: detects whether the samplesheet has >=2 groups
+                                            comparison: requires experimental groups and runs DEG-dependent steps
+                                            exploratory: skips DEG-dependent steps and generates non-comparison outputs
+                                            Default: ${analysis_mode}
   -m, --metadata FILE                      Metadata CSV file
   -p, --pdm METHOD                         HAllA metric: spearman, pearson, mi, nmi, xicor, dcor
                                            Default: ${pdm}
@@ -174,7 +181,18 @@ while [[ $# -gt 0 ]]; do
             outputdr="${1#*=}"
             shift
             ;;
-
+        --analysis-mode)
+            analysis_mode="$2"
+            shift 2
+            ;;
+        --analysis-mode=*)
+            analysis_mode="${1#*=}"
+            shift
+            ;;
+        --no-comparison|--exploratory)
+            analysis_mode="exploratory"
+            shift
+            ;;
         -h|--hostid)
             hostid="$2"
             shift 2
@@ -183,7 +201,6 @@ while [[ $# -gt 0 ]]; do
             hostid="${1#*=}"
             shift
             ;;
-
         -m|--metadata)
             metadata="$2"
             shift 2
@@ -192,7 +209,6 @@ while [[ $# -gt 0 ]]; do
             metadata="${1#*=}"
             shift
             ;;
-
         -p|--pdm)
             pdm="$2"
             shift 2
@@ -201,7 +217,6 @@ while [[ $# -gt 0 ]]; do
             pdm="${1#*=}"
             shift
             ;;
-
         -l|--trim-length)
             length="$2"
             shift 2
@@ -210,7 +225,6 @@ while [[ $# -gt 0 ]]; do
             length="${1#*=}"
             shift
             ;;
-
         -r|--bracken-read-len)
             read_len="$2"
             shift 2
@@ -219,7 +233,6 @@ while [[ $# -gt 0 ]]; do
             read_len="${1#*=}"
             shift
             ;;
-
         --threads)
             threads="$2"
             shift 2
@@ -228,17 +241,14 @@ while [[ $# -gt 0 ]]; do
             threads="${1#*=}"
             shift
             ;;
-
         -b|--blast)
             blast="blast"
             shift
             ;;
-
         -t|--no-trim)
             no_trimm=1
             shift
             ;;
-
         --custom-raw-path)
             CUSTOM_PATH="$2"
             shift 2
@@ -247,7 +257,6 @@ while [[ $# -gt 0 ]]; do
             CUSTOM_PATH="${1#*=}"
             shift
             ;;
-
         --kraken-host-db|--host-kraken-db)
             KRAKEN_HOST_DB="$2"
             shift 2
@@ -281,7 +290,6 @@ while [[ $# -gt 0 ]]; do
             KRAKEN_MICRO_CONF="${1#*=}"
             shift
             ;;
-
         --kraken-micro-min-hit-groups)
             KRAKEN_MICRO_MIN_HIT_GROUPS="$2"
             shift 2
@@ -290,7 +298,6 @@ while [[ $# -gt 0 ]]; do
             KRAKEN_MICRO_MIN_HIT_GROUPS="${1#*=}"
             shift
             ;;
-
         --bracken-threshold)
             BRACKEN_THRESHOLD="$2"
             shift 2
@@ -299,12 +306,10 @@ while [[ $# -gt 0 ]]; do
             BRACKEN_THRESHOLD="${1#*=}"
             shift
             ;;
-
         --help)
             show_help
             exit 0
             ;;
-
         *)
             echo "${r}[ERROR] Unknown option: $1${w}" >&2
             echo
@@ -347,7 +352,9 @@ fi
 if [[ -z "${hostid:-}" ]]; then
     die "Missing required argument: -h or --hostid TAXID"
 fi
-
+if [[ "$analysis_mode" != "auto" && "$analysis_mode" != "comparison" && "$analysis_mode" != "exploratory" ]]; then
+    die "--analysis-mode must be one of: auto, comparison, exploratory. Got: $analysis_mode"
+fi
 # ------------------------------------------------------------
 # Basic value validation
 # ------------------------------------------------------------
@@ -798,6 +805,57 @@ END {
 
 echo "${g}============================================${w}"
 
+# ------------------------------------------------------------
+# Detect whether experimental comparison is possible
+# ------------------------------------------------------------
+
+GROUP_COUNT=$(awk -F',' '
+NR > 1 {
+    g=$2
+    gsub(/^[ \t\r\n]+|[ \t\r\n]+$/, "", g)
+    if (g != "") groups[g]=1
+}
+END {
+    print length(groups)
+}' "$samplesheet_file")
+
+if [[ -z "$GROUP_COUNT" ]]; then
+    GROUP_COUNT=0
+fi
+
+if [[ "$analysis_mode" == "auto" ]]; then
+    if [[ "$GROUP_COUNT" -lt 2 ]]; then
+        NO_COMPARISON=1
+        analysis_mode_resolved="exploratory"
+    else
+        NO_COMPARISON=0
+        analysis_mode_resolved="comparison"
+    fi
+elif [[ "$analysis_mode" == "exploratory" ]]; then
+    NO_COMPARISON=1
+    analysis_mode_resolved="exploratory"
+else
+    NO_COMPARISON=0
+    analysis_mode_resolved="comparison"
+
+    if [[ "$GROUP_COUNT" -lt 2 ]]; then
+        echo "${r}[ERROR] --analysis-mode comparison was requested, but samplesheet has fewer than 2 groups.${w}"
+        echo "Detected groups: $GROUP_COUNT"
+        echo "Use --analysis-mode exploratory for single-group projects."
+        exit 1
+    fi
+fi
+
+echo "${g}============================================"
+echo "Analysis mode:${w} $analysis_mode_resolved"
+echo "Groups detected in samplesheet: $GROUP_COUNT"
+
+if [[ "$NO_COMPARISON" == "1" ]]; then
+    echo "${y}[INFO] No experimental comparison will be performed.${w}"
+    echo "${y}[INFO] DEG/DESeq2-dependent steps will be skipped or treated as optional.${w}"
+fi
+
+echo "${g}============================================${w}"
 # ------------------------------------------------------------
 # Optional metadata summary
 # ------------------------------------------------------------
@@ -1805,93 +1863,573 @@ done
 echo "${g}Converted original _bracken report files (tree like) into .biom file for ANCOMBC and diversity analysis in phyloseq (R) etc. in DEG_Anno_Plot.R ${w}"
 kraken-biom * -o $outputdr/temp/bracken_species_all0.biom --fmt json
 
-echo "${g}Adjust bracken file (tree like) by normalizated reads counts; for additional visualization (.biom, .mpa, .krona) ${w}"
-conda deactivate
-conda activate R412
-Rscript $MTDIR/Normalization_afbr.R $outputdr/bracken_species_all $inputdr/samplesheet.csv $outputdr/temp/Report_non-host_bracken_species_normalized $metadata
+echo "${g}Adjust bracken file (tree like) for additional visualization (.biom, .mpa, .krona) ${w}"
 
-conda deactivate
-conda activate MTD
+if [[ "$NO_COMPARISON" == "1" ]]; then
+    echo "${y}[INFO] Exploratory mode: skipping DESeq2-based Bracken normalization.${w}"
+    echo "${y}[INFO] Using original Bracken tree-like reports for BIOM, Krona, MPA and GraPhlAn.${w}"
+else
+    conda deactivate
+    conda activate R412
+
+    norm_args=(
+        "$outputdr/bracken_species_all"
+        "$inputdr/samplesheet.csv"
+        "$outputdr/temp/Report_non-host_bracken_species_normalized"
+    )
+
+    if [[ -n "${metadata:-}" ]]; then
+        norm_args+=( "$metadata" )
+    fi
+
+    if ! Rscript "$MTDIR/Normalization_afbr.R" "${norm_args[@]}"; then
+        echo "${y}[WARNING] Normalization_afbr.R failed.${w}"
+        echo "${y}[WARNING] Continuing with original Bracken tree-like reports for visualization.${w}"
+    fi
+
+    conda deactivate
+    conda activate MTD
+fi
 
 echo "${g}MTD running  progress:"
 echo '>>>>>>>>>>          [50%]'
 
-echo "Converted adjusted _bracken report files (tree like) into .biom file for graph visualization: graphlan, MPA, krona ${w}"
-kraken-biom * -o $outputdr/bracken_species_all.biom --fmt json
-#Converted original _bracken report files (tree like) into .biom file
-#kraken-biom * -o $outputdr/temp/bracken_species_all0.biom --fmt json
-#kraken-biom *_bracken_phylum -o bracken_phylum_all.biom --fmt json
-#kraken-biom *_bracken_genus -o bracken_genus_all.biom --fmt json
+echo "Converted adjusted _bracken report files for visualization: GraPhlAn, MPA, Krona ${w}"
 
-echo "${g}Remove "sp. " in the .biom file; correct improper format before run export2graphlan.py"
-sed -i 's/sp\. //g' "$outputdr/bracken_species_all.biom"
+# ------------------------------------------------------------
+# Important:
+# At this point the script should still be inside:
+#   $outputdr/temp/Report_non-host_bracken_species_normalized
+#
+# These files are normalized Kraken/Bracken-style reports.
+# We will:
+#   1) keep BIOM generation for compatibility with the old pipeline
+#   2) generate Krona files
+#   3) generate MPA files
+#   4) combine MPA files
+#   5) use the combined MPA table as input for export2graphlan
+#
+# This avoids the fragile BIOM parser inside export2graphlan.py.
+# ------------------------------------------------------------
 
-echo "Go to temp folder${w}"
-cd ../
+cd "$outputdr/temp/Report_non-host_bracken_species_normalized" || exit 1
 
-mkdir -p ../graphlan
-cd ../graphlan
+conda deactivate
+conda activate MTD
 
-#source $condapath/etc/profile.d/conda.sh
+# ------------------------------------------------------------
+# Keep BIOM generation for compatibility with downstream outputs
+# ------------------------------------------------------------
+
+echo "${g}Creating BIOM file from normalized species reports${w}"
+
+kraken-biom * -o "$outputdr/bracken_species_all.biom" --fmt json
+
+if [[ ! -s "$outputdr/bracken_species_all.biom" ]]; then
+    echo "${r}[ERROR] Failed to create BIOM:${w}"
+    echo "  $outputdr/bracken_species_all.biom"
+    exit 1
+fi
+
+echo "${g}[OK] BIOM saved:${w}"
+echo "  $outputdr/bracken_species_all.biom"
+
+# ------------------------------------------------------------
+# Prepare output folders
+# ------------------------------------------------------------
+
+mkdir -p "$outputdr/graphlan"
+mkdir -p "$outputdr/krona"
+mkdir -p "$outputdr/temp/graphlan_mpa_input"
+
+GRAPHLAN_DIR="$outputdr/graphlan"
+GRAPHLAN_MPA_DIR="$outputdr/temp/graphlan_mpa_input"
+GRAPHLAN_COMBINED_MPA="$GRAPHLAN_DIR/Combined_for_graphlan.mpa"
+GRAPHLAN_INPUT="$GRAPHLAN_DIR/graphlan_input.clean.tsv"
+
+rm -f "$GRAPHLAN_MPA_DIR"/*.mpa.txt
+rm -f "$GRAPHLAN_COMBINED_MPA" "$GRAPHLAN_INPUT"
+
+# ------------------------------------------------------------
+# Generate Krona and MPA files from normalized reports
+# ------------------------------------------------------------
+
+echo "${g}Generating Krona and MPA files from normalized reports${w}"
+
+for i in $lsn; do
+    if [[ ! -s "$i" ]]; then
+        echo "${r}[ERROR] Missing normalized Bracken/Kraken report for sample:${w} $i"
+        echo "Expected file:"
+        echo "  $outputdr/temp/Report_non-host_bracken_species_normalized/$i"
+        exit 1
+    fi
+
+    echo "  [Krona] $i"
+    python "$MTDIR/Tools/KrakenTools/kreport2krona.py" \
+        -r "$i" \
+        -o "$outputdr/krona/${i}-bracken.krona"
+
+    echo "  [MPA] $i"
+    python "$MTDIR/Tools/KrakenTools/kreport2mpa.py" \
+        --display-header \
+        -r "$i" \
+        -o "$GRAPHLAN_MPA_DIR/${i}-bracken.mpa.txt"
+done
+
+# ------------------------------------------------------------
+# Combine MPA files
+# ------------------------------------------------------------
+
+echo "${g}Combining MPA files${w}"
+
+python "$MTDIR/Tools/KrakenTools/combine_mpa.py" \
+    -i "$GRAPHLAN_MPA_DIR"/*.mpa.txt \
+    -o "$GRAPHLAN_COMBINED_MPA"
+
+if [[ ! -s "$GRAPHLAN_COMBINED_MPA" ]]; then
+    echo "${r}[ERROR] Combined MPA file was not created:${w}"
+    echo "  $GRAPHLAN_COMBINED_MPA"
+    exit 1
+fi
+
+# Preserve old expected output location/name
+cp "$GRAPHLAN_COMBINED_MPA" "$outputdr/Combined.mpa"
+
+echo "${g}[OK] Combined MPA saved:${w}"
+echo "  $GRAPHLAN_COMBINED_MPA"
+echo "  $outputdr/Combined.mpa"
+
+# ------------------------------------------------------------
+# Clean MPA table for export2graphlan
+# ------------------------------------------------------------
+# This avoids the BIOM parser entirely.
+# It ensures:
+#   - first column is always a taxonomy string
+#   - abundance columns are numeric
+#   - existing k__/p__/c__/... prefixes are preserved
+#   - empty / NA / unknown rows are skipped
+#   - spaces and problematic characters are cleaned
+# ------------------------------------------------------------
+
+echo "${g}Preparing clean MPA/LEfSe-like table for export2graphlan${w}"
+
+python - "$GRAPHLAN_COMBINED_MPA" "$GRAPHLAN_INPUT" << 'PY'
+import sys
+import csv
+import math
+import re
+
+inp = sys.argv[1]
+out = sys.argv[2]
+
+rank_prefixes = ["k__", "p__", "c__", "o__", "f__", "g__", "s__", "t__"]
+
+def bad(x):
+    if x is None:
+        return True
+    s = str(x).strip()
+    return s == "" or s.lower() in ("nan", "na", "none", "null")
+
+def clean_name(x):
+    x = str(x).strip()
+    x = x.replace("sp. ", "sp_")
+    x = x.replace(" ", "_")
+    x = x.replace("'", "")
+    x = x.replace('"', "")
+    x = x.replace("[", "")
+    x = x.replace("]", "")
+    x = x.replace("{", "")
+    x = x.replace("}", "")
+    x = x.replace("(", "")
+    x = x.replace(")", "")
+    x = x.replace("=", "_")
+    x = x.replace(",", "_")
+    x = re.sub(r"_+", "_", x)
+    x = x.strip("|._")
+    return x
+
+def clean_taxonomy(x):
+    if bad(x):
+        return None
+
+    x = str(x).strip()
+
+    if x.lower() in ("root", "unclassified", "unknown"):
+        return None
+
+    if "|" in x:
+        parts = x.split("|")
+    elif ";" in x:
+        parts = x.split(";")
+    else:
+        parts = [x]
+
+    clean_parts = []
+
+    for idx, part in enumerate(parts):
+        part = str(part).strip()
+
+        if bad(part):
+            continue
+
+        # Preserve existing prefixes such as k__, p__, c__, o__, f__, g__, s__
+        m = re.match(r"^([a-zA-Z])__(.+)$", part)
+
+        if m:
+            rank = m.group(1).lower()
+            name = clean_name(m.group(2))
+            if name:
+                clean_parts.append(f"{rank}__{name}")
+        else:
+            name = clean_name(part)
+            if name:
+                prefix = rank_prefixes[idx] if idx < len(rank_prefixes) else "x__"
+                clean_parts.append(prefix + name)
+
+    if not clean_parts:
+        return None
+
+    return "|".join(clean_parts)
+
+def clean_number(x):
+    if bad(x):
+        return 0.0
+
+    s = str(x).strip()
+    s = s.replace("%", "")
+    s = s.replace(",", "")
+    s = s.replace('"', "")
+    s = s.replace("'", "")
+
+    try:
+        v = float(s)
+        if math.isnan(v) or math.isinf(v):
+            return 0.0
+        return v
+    except Exception:
+        return 0.0
+
+with open(inp, "r", newline="") as f:
+    reader = csv.reader(f, delimiter="\t")
+    rows = [r for r in reader if r and any(str(c).strip() for c in r)]
+
+if not rows:
+    raise SystemExit("[ERROR] Combined MPA file is empty.")
+
+header = rows[0]
+
+if len(header) < 2:
+    raise SystemExit("[ERROR] Combined MPA header has fewer than 2 columns.")
+
+first_cell = header[0].strip().lower()
+
+if first_cell.startswith("#") or "classification" in first_cell or "clade" in first_cell:
+    data_rows = rows[1:]
+    sample_names = [
+        str(x).strip() if str(x).strip() else "sample_%d" % idx
+        for idx, x in enumerate(header[1:], start=1)
+    ]
+else:
+    data_rows = rows
+    n_samples = len(rows[0]) - 1
+    sample_names = ["sample_%d" % i for i in range(1, n_samples + 1)]
+
+clean_rows = []
+fixed_short_rows = 0
+debug_seen = []
+debug_zero_sum = 0
+debug_no_tax = 0
+
+for r in data_rows:
+    if len(r) < 2:
+        continue
+
+    raw_tax = r[0]
+
+    if str(raw_tax).startswith("#"):
+        continue
+
+    tax = clean_taxonomy(raw_tax)
+
+    if tax is None:
+        debug_no_tax += 1
+        if len(debug_seen) < 10:
+            debug_seen.append(("NO_TAX", raw_tax))
+        continue
+
+    raw_vals = r[1:]
+
+    # Fix rare combine_mpa formatting issue like:
+    # 0 0 0 020
+    # where "020" should probably be "0" and "20".
+    if len(raw_vals) == len(sample_names) - 1:
+        last = str(raw_vals[-1]).strip()
+        if re.match(r"^0[0-9]+$", last):
+            raw_vals = raw_vals[:-1] + ["0", last[1:]]
+            fixed_short_rows += 1
+
+    vals = [clean_number(x) for x in raw_vals]
+
+    if len(vals) < len(sample_names):
+        vals = vals + [0.0] * (len(sample_names) - len(vals))
+    elif len(vals) > len(sample_names):
+        vals = vals[:len(sample_names)]
+
+    if sum(vals) <= 0:
+        debug_zero_sum += 1
+        if len(debug_seen) < 10:
+            debug_seen.append(("ZERO_SUM", raw_tax))
+        continue
+
+    clean_rows.append([tax] + vals)
+
+if not clean_rows:
+    print("[DEBUG] Total input rows:", len(rows))
+    print("[DEBUG] Data rows checked:", len(data_rows))
+    print("[DEBUG] Rows skipped because taxonomy could not be parsed:", debug_no_tax)
+    print("[DEBUG] Rows skipped because abundance sum was zero:", debug_zero_sum)
+    print("[DEBUG] First skipped examples:")
+    for reason, example in debug_seen:
+        print("  ", reason, repr(example))
+    raise SystemExit("[ERROR] No valid taxonomic rows remained for GraPhlAn.")
+
+with open(out, "w", newline="") as f:
+    writer = csv.writer(f, delimiter="\t")
+    writer.writerow(["ID"] + sample_names)
+    for r in clean_rows:
+        writer.writerow([r[0]] + ["%.10g" % x for x in r[1:]])
+
+print("[OK] Clean GraPhlAn input created")
+print("Input:", inp)
+print("Output:", out)
+print("Taxa rows:", len(clean_rows))
+print("Samples:", len(sample_names))
+print("Short rows fixed:", fixed_short_rows)
+print("[INFO] First cleaned rows:")
+for r in clean_rows[:5]:
+    print("  ", r[0])
+PY
+
+if [[ ! -s "$GRAPHLAN_INPUT" ]]; then
+    echo "${r}[ERROR] Clean GraPhlAn input was not created:${w}"
+    echo "  $GRAPHLAN_INPUT"
+    exit 1
+fi
+
+echo "${g}[OK] Clean GraPhlAn input:${w}"
+echo "  $GRAPHLAN_INPUT"
+echo
+echo "${g}Preview of GraPhlAn input:${w}"
+head -n 5 "$GRAPHLAN_INPUT"
+
+# ------------------------------------------------------------
+# GraPhlAn cladogram-like settings
+# ------------------------------------------------------------
+# You can override these only if GRAPHLAN_KEEP_ENV=1 is set.
+# Example:
+#   GRAPHLAN_KEEP_ENV=1 GRAPHLAN_TOP=20 bash MTD_SE.sh ...
+# ------------------------------------------------------------
+
+if [[ "${GRAPHLAN_KEEP_ENV:-0}" != "1" ]]; then
+    unset GRAPHLAN_TOP
+    unset GRAPHLAN_SIZE
+    unset GRAPHLAN_DPI
+    unset GRAPHLAN_MAX_CLADE_SIZE
+    unset GRAPHLAN_LEVELS
+    unset GRAPHLAN_EXTERNAL_LEVELS
+    unset GRAPHLAN_BACKGROUND_LEVELS
+    unset GRAPHLAN_LEAST_BIOMARKERS
+    unset GRAPHLAN_ABUNDANCE_THRESHOLD
+fi
+
+GRAPHLAN_TOP="${GRAPHLAN_TOP:-40}"
+GRAPHLAN_SIZE="${GRAPHLAN_SIZE:-10.0}"
+GRAPHLAN_DPI="${GRAPHLAN_DPI:-600}"
+GRAPHLAN_MAX_CLADE_SIZE="${GRAPHLAN_MAX_CLADE_SIZE:-300}"
+
+# Internal labels and external labels should not overlap.
+GRAPHLAN_LEVELS="${GRAPHLAN_LEVELS:-2,3,4,5,6}"
+GRAPHLAN_EXTERNAL_LEVELS="${GRAPHLAN_EXTERNAL_LEVELS:-1,2,3,4,5,6}"
+
+# This creates the shaded/background-style clades closer to your old figure.
+GRAPHLAN_BACKGROUND_LEVELS="${GRAPHLAN_BACKGROUND_LEVELS:-2,3}"
+
+# Helps export2graphlan choose broader highlighted clades from abundant taxa.
+GRAPHLAN_LEAST_BIOMARKERS="${GRAPHLAN_LEAST_BIOMARKERS:-5}"
+
+# Lower threshold helps labels appear when abundances are relative/small.
+GRAPHLAN_ABUNDANCE_THRESHOLD="${GRAPHLAN_ABUNDANCE_THRESHOLD:-0.05}"
+
+echo "${g}GraPhlAn cladogram-like settings:${w}"
+echo "  Input table:                $GRAPHLAN_INPUT"
+echo "  Top taxa:                   $GRAPHLAN_TOP"
+echo "  Figure size:                $GRAPHLAN_SIZE"
+echo "  DPI:                        $GRAPHLAN_DPI"
+echo "  Max clade size:             $GRAPHLAN_MAX_CLADE_SIZE"
+echo "  Internal annotation levels: $GRAPHLAN_LEVELS"
+echo "  External annotation levels: $GRAPHLAN_EXTERNAL_LEVELS"
+echo "  Background levels:          $GRAPHLAN_BACKGROUND_LEVELS"
+echo "  Least biomarkers:           $GRAPHLAN_LEAST_BIOMARKERS"
+echo "  Abundance threshold:        $GRAPHLAN_ABUNDANCE_THRESHOLD"
+
+# ------------------------------------------------------------
+# Run export2graphlan using MPA/LEfSe-like TSV, not BIOM
+# ------------------------------------------------------------
+
+cd "$GRAPHLAN_DIR" || exit 1
+
+rm -f annot.txt annot_original.txt corrected_annot.txt tree.txt outtree.txt
+rm -f outimg.png outimg.pdf
+rm -f outimg.cladogram_top*.png outimg.cladogram_top*.pdf
+
 conda deactivate
 conda activate py2
 
-python $MTDIR/Tools/export2graphlan/export2graphlan.py \
-    -i ../bracken_species_all.biom \
-    -a annot.txt -t tree.txt \
-    --discard_otus --most_abundant 50 \
-    --annotations 2,3,4,5,6 \
-    --external_annotations 7 \
-    --max_clade_size 300
+python "$MTDIR/Tools/export2graphlan/export2graphlan.py" \
+    -i "$GRAPHLAN_INPUT" \
+    -a annot.txt \
+    -t tree.txt \
+    --most_abundant "$GRAPHLAN_TOP" \
+    --least_biomarkers "$GRAPHLAN_LEAST_BIOMARKERS" \
+    --annotations "$GRAPHLAN_LEVELS" \
+    --external_annotations "$GRAPHLAN_EXTERNAL_LEVELS" \
+    --background_levels "$GRAPHLAN_BACKGROUND_LEVELS" \
+    --internal_levels \
+    --max_clade_size "$GRAPHLAN_MAX_CLADE_SIZE" \
+    --abundance_threshold "$GRAPHLAN_ABUNDANCE_THRESHOLD"
+
+if [[ ! -s tree.txt || ! -s annot.txt ]]; then
+    echo "${r}[ERROR] export2graphlan did not create tree.txt/annot.txt.${w}"
+    echo "Check input:"
+    echo "  $GRAPHLAN_INPUT"
+    exit 1
+fi
 
 conda deactivate
 conda activate MTD
 
-cd ../temp
+# ------------------------------------------------------------
+# Continue microbiome DEG / annotation / diversity preprocessing
+# ------------------------------------------------------------
+
+cd "$outputdr/temp" || exit 1
 
 echo "${g}DEG & Annotation & Plots & Diversity & Preprocess for Microbiome ${w}"
-conda deactivate
-conda activate R412
-Rscript $MTDIR/DEG_Anno_Plot.R $outputdr/bracken_species_all $inputdr/samplesheet.csv $hostid $MTDIR/HostSpecies.csv $metadata
-conda deactivate
-conda activate MTD
 
-cd $outputdr/temp
-mkdir -p bracken_raw_results # save the raw output from bracken (table like)
-mv ../bracken_*_all bracken_raw_results
+if [[ "$NO_COMPARISON" == "1" ]]; then
+    echo "${y}[INFO] Exploratory mode: skipping microbiome DEG/DESeq2 analysis.${w}"
+    echo "${y}[INFO] Microbiome profiling outputs were already generated: Bracken, BIOM, MPA, Krona and GraPhlAn.${w}"
+else
+    conda deactivate
+    conda activate R412
 
-cd ../graphlan
-echo "${g}Applying a fix for both tree.txt and Annot.txt${w}"
-python $MTDIR/Tools/graphlan/verify_and_correct_annotations.py tree.txt annot.txt corrected_annot.txt
+    deg_args=(
+        "$outputdr/bracken_species_all"
+        "$inputdr/samplesheet.csv"
+        "$hostid"
+        "$MTDIR/HostSpecies.csv"
+    )
+
+    if [[ -n "${metadata:-}" ]]; then
+        deg_args+=( "$metadata" )
+    fi
+
+    Rscript "$MTDIR/DEG_Anno_Plot.R" "${deg_args[@]}"
+
+    conda deactivate
+    conda activate MTD
+fi
+
+cd "$outputdr/temp" || exit 1
+
+mkdir -p bracken_raw_results
+
+# Save raw combined Bracken tables if they are still present
+mv ../bracken_*_all bracken_raw_results/ 2>/dev/null || true
+
+# ------------------------------------------------------------
+# Annotate and render GraPhlAn
+# ------------------------------------------------------------
+
+cd "$GRAPHLAN_DIR" || exit 1
+
+echo "${g}Applying a fix for both tree.txt and annot.txt${w}"
+
+python "$MTDIR/Tools/graphlan/verify_and_correct_annotations.py" \
+    tree.txt \
+    annot.txt \
+    corrected_annot.txt
+
+if [[ ! -s corrected_annot.txt ]]; then
+    echo "${r}[ERROR] corrected_annot.txt was not created.${w}"
+    exit 1
+fi
+
 mv annot.txt annot_original.txt
 mv corrected_annot.txt annot.txt
 
-python $MTDIR/Tools/graphlan/graphlan_annotate.py --annot annot.txt tree.txt outtree.txt # attach annotation to the tree
-python $MTDIR/Tools/graphlan/graphlan.py --dpi 300 --size 7.0 outtree.txt outimg.png # generate the graphlan png
-python $MTDIR/Tools/graphlan/graphlan.py outtree.txt outimg.pdf # generate the graphlan pdf
+echo "${g}Adding cladogram-like GraPhlAn style settings${w}"
 
-cd ../temp
+{
+    printf "title\tMicrobiome cladogram - top %s taxa\n" "$GRAPHLAN_TOP"
+    printf "title_font_size\t13\n"
 
-echo "${g}Visualization preprocess"
-echo "For krona${w}"
-mkdir -p ../krona
-for i in $lsn; do # store input sample name in i; eg. DJ01
-    python $MTDIR/Tools/KrakenTools/kreport2krona.py \
-        -r Report_non-host_bracken_species_normalized/${i} \
-        -o ../krona/${i}-bracken.krona
-done
+    # Figure geometry
+    printf "total_plotted_degrees\t320\n"
+    printf "start_rotation\t90\n"
 
-echo "${g}To make MPA style file${w}"
-for i in $lsn; do # store input sample name in i; eg. DJ01
-    python $MTDIR/Tools/KrakenTools/kreport2mpa.py \
-        --display-header \
-        -r Report_non-host_bracken_species_normalized/${i} \
-        -o ${i}-bracken.mpa.txt
-done
-echo "${g}Combine MPA files${w}"
-python $MTDIR/Tools/KrakenTools/combine_mpa.py \
-    -i *.mpa.txt \
-    -o ../Combined.mpa
+    # Legends
+    printf "annotation_legend_font_size\t7\n"
+    printf "class_legend_font_size\t7\n"
+
+    # Tree style
+    printf "branch_thickness\t0.75\n"
+    printf "clade_marker_size\t30\n"
+    printf "clade_marker_edge_width\t0.45\n"
+} >> annot.txt
+
+python "$MTDIR/Tools/graphlan/graphlan_annotate.py" \
+    --annot annot.txt \
+    tree.txt \
+    outtree.txt
+
+if [[ ! -s outtree.txt ]]; then
+    echo "${r}[ERROR] outtree.txt was not created.${w}"
+    exit 1
+fi
+
+python "$MTDIR/Tools/graphlan/graphlan.py" \
+    --dpi "$GRAPHLAN_DPI" \
+    --size "$GRAPHLAN_SIZE" \
+    outtree.txt \
+    "outimg.cladogram_top${GRAPHLAN_TOP}.png"
+
+python "$MTDIR/Tools/graphlan/graphlan.py" \
+    --size "$GRAPHLAN_SIZE" \
+    outtree.txt \
+    "outimg.cladogram_top${GRAPHLAN_TOP}.pdf"
+
+if [[ ! -s "outimg.cladogram_top${GRAPHLAN_TOP}.png" ]]; then
+    echo "${r}[ERROR] GraPhlAn PNG was not created.${w}"
+    exit 1
+fi
+
+if [[ ! -s "outimg.cladogram_top${GRAPHLAN_TOP}.pdf" ]]; then
+    echo "${r}[ERROR] GraPhlAn PDF was not created.${w}"
+    exit 1
+fi
+
+# Keep old output names too, so the rest of the pipeline/user habits do not break
+cp "outimg.cladogram_top${GRAPHLAN_TOP}.png" outimg.png
+cp "outimg.cladogram_top${GRAPHLAN_TOP}.pdf" outimg.pdf
+
+echo "${g}[OK] Cladogram-like GraPhlAn outputs:${w}"
+echo "  $outputdr/graphlan/outimg.cladogram_top${GRAPHLAN_TOP}.png"
+echo "  $outputdr/graphlan/outimg.cladogram_top${GRAPHLAN_TOP}.pdf"
+echo "  $outputdr/graphlan/outimg.png"
+echo "  $outputdr/graphlan/outimg.pdf"
+
+cd "$outputdr/temp" || exit 1
 
 echo "${g}MTD running  progress:"
 echo '>>>>>>>>>>>         [55%]'
@@ -1969,9 +2507,20 @@ echo "${g}DEG & Annotation & Plots & Diversity & Preprocess${w}"
 cd $outputdr/hmn_genefamily_abundance_files
 conda deactivate
 conda activate R412
-Rscript $MTDIR/DEG_Anno_Plot.R $outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_kegg_translated.tsv $inputdr/samplesheet.csv
-Rscript $MTDIR/DEG_Anno_Plot.R $outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_go_translated.tsv $inputdr/samplesheet.csv
-conda deactivate && conda activate MTD
+if [[ "$NO_COMPARISON" == "1" ]]; then
+    echo "${y}[INFO] Exploratory mode: skipping HUMAnN DEG analysis.${w}"
+else
+    Rscript "$MTDIR/DEG_Anno_Plot.R" \
+        "$outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_kegg_translated.tsv" \
+        "$inputdr/samplesheet.csv"
+
+    Rscript "$MTDIR/DEG_Anno_Plot.R" \
+        "$outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_go_translated.tsv" \
+        "$inputdr/samplesheet.csv"
+fi
+
+conda deactivate
+conda activate MTD
 
 #humann_barplot
 # humann_barplot --input $outputdr/hmn_pathway_abundance_files/humann_pathabundance_cpm_stratified.tsv \
@@ -2263,14 +2812,47 @@ fi
 
 #### END CALL: host gene annotation cache update ####
 
-Rscript "$MTDIR/DEG_Anno_Plot.R" \
-    "$outputdr/host_counts.txt" \
-    "$inputdr/samplesheet.csv" \
-    "$hostid" \
-    "$MTDIR/HostSpecies.csv" \
-    $metadata
+if [[ "$NO_COMPARISON" == "1" ]]; then
+    echo "${y}[INFO] Exploratory mode: skipping host DEG analysis.${w}"
+    echo "${y}[INFO] Host count matrix was still generated by featureCounts:${w}"
+    echo "  $outputdr/host_counts.txt"
 
-require_file "$outputdr/Host_DEG/host_counts_TPM.csv" "Host TPM matrix generated by DEG_Anno_Plot.R"
+    mkdir -p "$outputdr/Host_DEG"
+
+    cp "$outputdr/host_counts.txt" "$outputdr/Host_DEG/host_counts_featureCounts_matrix.txt"
+
+else
+    host_deg_args=(
+        "$outputdr/host_counts.txt"
+        "$inputdr/samplesheet.csv"
+        "$hostid"
+        "$MTDIR/HostSpecies.csv"
+    )
+
+    if [[ -n "${metadata:-}" ]]; then
+        host_deg_args+=( "$metadata" )
+    fi
+
+    Rscript "$MTDIR/DEG_Anno_Plot.R" "${host_deg_args[@]}"
+
+    require_file "$outputdr/Host_DEG/host_counts_TPM.csv" "Host TPM matrix generated by DEG_Anno_Plot.R"
+fi
+
+if [[ "$NO_COMPARISON" == "1" ]]; then
+    echo "${y}[INFO] Exploratory mode: skipping ssGSEA and HAllA association stages.${w}"
+    echo "${y}[INFO] Reason: no experimental comparison groups were detected.${w}"
+    echo "${y}[INFO] The pipeline will finish after generating profiling outputs.${w}"
+
+    conda deactivate
+    conda activate MTD
+
+    echo "${g}"
+    echo 'MTD running  progress:'
+    echo '>>>>>>>>>>>>>>>>>>>>[100%]'
+    echo "MTD exploratory run is finished"
+    echo -e "${w}"
+    exit 0
+fi
 
 echo "${g}MTD running  progress:"
 echo '>>>>>>>>>>>>>>>     [75%]'
