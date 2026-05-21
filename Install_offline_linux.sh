@@ -92,13 +92,13 @@ sudo_with_pass "sudo apt-get update"
 sudo_with_pass "sudo apt-get install libgeos-dev -y"
 sudo_with_pass "sudo apt install libharfbuzz-dev libfribidi-dev libfreetype6-dev -y"
 sudo_with_pass "sudo apt install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev -y"
-sudo_with_pass "sudo apt install libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev pigz -y"
+sudo_with_pass "sudo apt install libharfbuzz-dev rsync libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev pigz -y"
 conda deactivate
 echo 'installing conda environments...'
 conda env create -f Installation/MTD.yml
-conda env update -n MTD -f $dir/update_fix/MTD_R_additions.yml
+conda env update -n MTD -f $dir/Installation/MTD_R_additions.yml
 conda run -n MTD bash $dir/update_fix/Install.R.packages.MTD.sh
-
+bash $dir/update_fix/check_R_pkg.MTD.sh
 
 #$dir/update_fix/Install.R.packages.MTD.sh
 
@@ -125,7 +125,7 @@ conda activate halla0820 # install dependencies of halla
 conda install -n halla0820 -y -c conda-forge pkg-config
 conda install -n halla0820 -y -c conda-forge ca-certificates openssl libcurl curl
 conda install -n halla0820 -y -c conda-forge libuv
-R -e "install.packages('https://cran.r-project.org/src/contrib/00Archive/lattice/lattice_0.22-7.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
+R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/lattice/lattice_0.22-7.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
 R -e "install.packages('$dir/update_fix/pvr_pkg/Matrix_1.6-5.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
 R -e "install.packages('$dir/update_fix/pvr_pkg/mnormt_2.1.0.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
 R -e "install.packages('$dir/update_fix/pvr_pkg/nlme_3.1-167.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
