@@ -58,13 +58,13 @@ done
 
 TOTAL=${#ALL_REMOTE[@]}
 NEEDED=${#MISSING[@]}
-LOCAL_NOW=$(find "$LOCAL_DIR" -maxdepth 1 -type f | wc -l)
+ALREADY_LOCAL=$((TOTAL - NEEDED))
 
-echo -e "\n────────  SUMMARY  ────────
-Total on remote  : $TOTAL
-Already local    : $LOCAL_NOW
-To be downloaded : $NEEDED
-───────────────────────────"
+echo -e "\n────────  SUMMARY  ────────"
+echo "Total on remote  : $TOTAL"
+echo "Already local    : $ALREADY_LOCAL"
+echo "To be downloaded : $NEEDED"
+echo -e "───────────────────────────"
 
 ###############################################################################
 # FUNCTIONS
@@ -72,19 +72,23 @@ To be downloaded : $NEEDED
 draw_bar() {
   local done=$1
   local need=$2
+  local current_file="${3:-}"
   local width=40
   local pct=0
   local fill=0
+  local empty=0
 
   if [[ "$need" -gt 0 ]]; then
     pct=$((100 * done / need))
     fill=$((pct * width / 100))
   fi
 
-  printf "\rProgress: [%s%s] %d/%d (%d%%)" \
-    "$(printf '=%.0s' $(seq 1 "$fill"))" \
-    "$(printf ' %.0s' $(seq 1 $((width - fill))))" \
-    "$done" "$need" "$pct"
+  empty=$((width - fill))
+
+  printf "\r\033[KProgress: [%s%s] %d/%d (%d%%)  %s" \
+    "$(printf '=%.0s' $(seq 1 "$fill" 2>/dev/null || true))" \
+    "$(printf ' %.0s' $(seq 1 "$empty" 2>/dev/null || true))" \
+    "$done" "$need" "$pct" "$current_file"
 }
 
 download_and_verify() {
@@ -94,11 +98,11 @@ download_and_verify() {
   local url="$BASE_URL/$REMOTE_DIR/$file"
 
   for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
-    echo "[$attempt/$MAX_ATTEMPTS] Downloading $file..."
 
     rm -f "$LOCAL_DIR/$file"
 
     aria2c \
+      --disable-ipv6=true \
       --continue=false \
       --auto-file-renaming=false \
       --allow-overwrite=true \
@@ -109,17 +113,19 @@ download_and_verify() {
       > /dev/null 2>&1 || true
 
     if [[ ! -s "$LOCAL_DIR/$file" ]]; then
-      echo "  ❌ File missing or empty after download"
+      echo
+      echo "  ❌ Attempt [$attempt/$MAX_ATTEMPTS] failed: file missing or empty after download: $file"
       rm -f "$LOCAL_DIR/$file"
       continue
     fi
 
     if gzip -t "$LOCAL_DIR/$file" 2>/dev/null; then
-      echo "  ✅ Integrity OK"
       ok=1
       break
     else
-      echo "  ❌ Corrupted or partial file — removing and retrying..."
+      echo
+      echo "  ❌ Attempt [$attempt/$MAX_ATTEMPTS] failed: corrupted or partial file: $file"
+      echo "     Removing and retrying..."
       rm -f "$LOCAL_DIR/$file"
     fi
   done
@@ -138,21 +144,23 @@ download_and_verify() {
 > "$FAILED_DL"
 
 if [[ "$NEEDED" -eq 0 ]]; then
-  echo "🎉 Nothing new to download."
+  echo "Nothing new to download."
 else
   DL_DONE=0
+
   for file in "${MISSING[@]}"; do
     download_and_verify "$file" || true
-    ((DL_DONE++))
-    draw_bar "$DL_DONE" "$NEEDED"
+    ((++DL_DONE))
+    draw_bar "$DL_DONE" "$NEEDED" "$file"
   done
+
   echo
 fi
 
 ###############################################################################
 # FINAL EXTRA INTEGRITY CHECK
 ###############################################################################
-echo -e "\n🔎 Verifying integrity of all local .gz files..."
+echo -e "\nVerifying integrity of all local .gz files..."
 
 > "$CORRUPTED_LIST"
 
@@ -169,6 +177,7 @@ CORRUPTED_COUNT=$(wc -l < "$CORRUPTED_LIST")
 if [[ "$CORRUPTED_COUNT" -gt 0 ]]; then
   echo "⚠️ Found $CORRUPTED_COUNT corrupted files after final verification."
   echo "Removing corrupted files..."
+
   while read -r file; do
     [[ -n "$file" ]] || continue
     rm -f "$LOCAL_DIR/$file"
@@ -187,7 +196,7 @@ if [[ -s "$FAILED_DL" ]]; then
   echo -e "\n⚠️ Some files failed after $MAX_ATTEMPTS attempt(s):"
   sort -u "$FAILED_DL"
 else
-  echo -e "\n🎉 All downloads completed successfully!"
+  echo -e "\n✅ All downloads completed successfully!"
 fi
 
 ###############################################################################

@@ -347,7 +347,8 @@ else
     echo "Error: Could not extract the package name from the R script output."
     exit 1
 fi
-R --no-restore -e 'packageVersion("org.Mlucifugus.eg.db")'
+R -e "packageVersion('$PKG_NAME')"
+
 conda deactivate
 ################################################################################################
 

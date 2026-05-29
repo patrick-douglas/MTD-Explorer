@@ -212,10 +212,9 @@ $dir/kraken2-build-download-taxonomy --download-taxonomy --threads $threads --db
 # Use local files for archaea
 echo "Downloading RefSeq Archaea library with Kraken2—please wait..."
 #kraken2-build --use-ftp --download-library archaea --threads $threads --db $DBNAME $kmer $min_l $min_s
-cp -f $dir/manifest.archea.sh $offline_files_folder/Kraken2DB_micro/library/archaea
-sed -i "s|^offline_files_folder=.*|offline_files_folder=$offline_files_folder|" $offline_files_folder/Kraken2DB_micro/library/archaea/manifest.archea.sh
-$offline_files_folder/Kraken2DB_micro/library/archaea/manifest.archea.sh
-
+cp -f $dir/manifest.archea.sh $offline_files_folder/Kraken2DB_micro/library/manifest.archea.sh
+sed -i "s|^offline_files_folder=.*|offline_files_folder=$offline_files_folder|" $offline_files_folder/Kraken2DB_micro/library/manifest.archea.sh
+$offline_files_folder/Kraken2DB_micro/library/manifest.archea.sh
 
 cp -f $dir/Installation/rsync_from_ncbi_archaea.pl $condapath/envs/MTD/libexec/rsync_from_ncbi.pl
 
@@ -264,8 +263,10 @@ kraken2-build --use-ftp --download-library UniVec_Core --threads "$threads" --db
 
 echo "Adding custom viral sequences (viruses4kraken.fa) to Kraken2 database..."
 kraken2-build --add-to-library viruses4kraken.fa --threads $threads --db $DBNAME $kmer $min_l $min_s
+
 echo "Building final Kraken2 database—this may take a while..."
 kraken2-build --build --threads $threads --db $DBNAME $kmer $min_l $min_s
+
 echo "${g}"
 echo 'MTD installation progress:'
 echo '>>>>>>              [30%]'

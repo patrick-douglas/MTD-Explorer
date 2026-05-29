@@ -135,7 +135,18 @@ ${BOLD}Optional:${RESET}
                               Requires internet and the datasets command.
                               Important: Kraken2 still needs the taxid inside
                               local taxonomy/nodes.dmp.
+  --micro-db                  Mark this DB as a microbiome/target DB for MTD.
+                              This automatically enables Bracken database build.
 
+  --build-bracken             Build Bracken k-mer distribution file after
+                              Kraken2 DB build.
+
+  --bracken-read-len INT      Read length for Bracken build.
+                              This creates databaseINTmers.kmer_distrib.
+                              Default: 75
+
+  --bracken-kmer-len INT      Kraken2 k-mer length used by Bracken.
+                              Default: 35
   -h, --help                  Show this help message.
 
 ${BOLD}Example with offline taxonomy:${RESET}
@@ -155,7 +166,15 @@ ${BOLD}Example downloading taxonomy with FTP:${RESET}
   $0 \\
     --genome_info genomes.txt \\
     --outdir /home/me/MTD
-
+${BOLD}Example building a Trematoda DB for MTD micro/target step:${RESET}
+  $0 \\
+    --genome_info trematoda_genome_info.tsv \\
+    --outdir /home/me/MTD \\
+    --db_name kraken2DB_Trematoda \\
+    --kraken_offline /home/me/MTD/kraken2DB_micro \\
+    --threads 20 \\
+    --micro-db \\
+    --bracken-read-len 75
 EOF
 }
 
@@ -184,6 +203,13 @@ MIN_LEN=0
 FORCE=0
 NO_BUILD=0
 NCBI_FALLBACK=0
+
+# Optional Bracken build.
+# Useful when this Kraken2 DB will be used as DB_micro / target DB in MTD.
+BUILD_BRACKEN=0
+DB_ROLE="custom"
+BRACKEN_READ_LEN=75
+BRACKEN_KMER_LEN=35
 
 # ============================================================
 # Parse arguments
@@ -225,6 +251,31 @@ while [[ $# -gt 0 ]]; do
             ;;
         --ncbi_fallback)
             NCBI_FALLBACK=1
+            shift
+            ;;
+        --micro-db|--micro_db|--db-role-micro)
+            DB_ROLE="micro"
+            BUILD_BRACKEN=1
+            shift
+            ;;
+        --build-bracken|--build_bracken)
+            BUILD_BRACKEN=1
+            shift
+            ;;
+        --bracken-read-len|--bracken-read-length)
+            BRACKEN_READ_LEN="$2"
+            shift 2
+            ;;
+        --bracken-read-len=*|--bracken-read-length=*)
+            BRACKEN_READ_LEN="${1#*=}"
+            shift
+            ;;
+        --bracken-kmer-len|--bracken-kmer-length)
+            BRACKEN_KMER_LEN="$2"
+            shift 2
+            ;;
+        --bracken-kmer-len=*|--bracken-kmer-length=*)
+            BRACKEN_KMER_LEN="${1#*=}"
             shift
             ;;
         -h|--help)
@@ -280,7 +331,25 @@ if ! [[ "$MIN_LEN" =~ ^[0-9]+$ ]]; then
     err "--min_len must be an integer. Got: $MIN_LEN"
     exit 1
 fi
+if ! [[ "$BRACKEN_READ_LEN" =~ ^[0-9]+$ ]] || [[ "$BRACKEN_READ_LEN" -lt 1 ]]; then
+    err "--bracken-read-len must be a positive integer. Got: $BRACKEN_READ_LEN"
+    exit 1
+fi
 
+if ! [[ "$BRACKEN_KMER_LEN" =~ ^[0-9]+$ ]] || [[ "$BRACKEN_KMER_LEN" -lt 1 ]]; then
+    err "--bracken-kmer-len must be a positive integer. Got: $BRACKEN_KMER_LEN"
+    exit 1
+fi
+
+if [[ "$BUILD_BRACKEN" -eq 1 ]]; then
+    if ! command -v bracken-build >/dev/null 2>&1; then
+        err "bracken-build not found in PATH."
+        echo "Activate your MTD/Kraken2/Bracken environment first."
+        echo "Example:"
+        echo "  conda activate MTD"
+        exit 1
+    fi
+fi
 mkdir -p "$OUTDIR"
 
 # ============================================================
@@ -335,6 +404,10 @@ echo "${BOLD}Taxids:${RESET}           ${GREEN}${BOLD}${taxid_list}${RESET}"
 echo "${BOLD}Min length:${RESET}       $MIN_LEN"
 echo "${BOLD}Offline taxonomy:${RESET} ${KRAKEN_OFFLINE:-none}"
 echo "${BOLD}NCBI fallback:${RESET}    $NCBI_FALLBACK"
+echo "${BOLD}DB role:${RESET}          $DB_ROLE"
+echo "${BOLD}Build Bracken:${RESET}    $BUILD_BRACKEN"
+echo "${BOLD}Bracken read length:${RESET} $BRACKEN_READ_LEN"
+echo "${BOLD}Bracken k-mer length:${RESET} $BRACKEN_KMER_LEN"
 echo "${GREEN}${BOLD}============================================================${RESET}"
 echo
 
@@ -695,6 +768,46 @@ kraken2-build \
 ok "Kraken2 DB built successfully: $DB_DIR"
 
 # ============================================================
+# Optional Bracken build
+# ============================================================
+
+if [[ "$BUILD_BRACKEN" -eq 1 ]]; then
+    step "[STEP] Building Bracken database"
+
+    BRACKEN_DIST="$DB_DIR/database${BRACKEN_READ_LEN}mers.kmer_distrib"
+
+    echo "${BOLD}Bracken DB:${RESET} $DB_DIR"
+    echo "${BOLD}Bracken read length:${RESET} $BRACKEN_READ_LEN"
+    echo "${BOLD}Bracken k-mer length:${RESET} $BRACKEN_KMER_LEN"
+    echo "${BOLD}Expected distribution file:${RESET} $BRACKEN_DIST"
+
+    if [[ -s "$BRACKEN_DIST" ]]; then
+        ok "Bracken distribution file already exists: $BRACKEN_DIST"
+    else
+        bracken-build \
+            -d "$DB_DIR" \
+            -t "$THREADS" \
+            -k "$BRACKEN_KMER_LEN" \
+            -l "$BRACKEN_READ_LEN" \
+            > "$LOG_DIR/bracken-build_L${BRACKEN_READ_LEN}_K${BRACKEN_KMER_LEN}.log" 2>&1
+
+        if [[ ! -s "$BRACKEN_DIST" ]]; then
+            err "Bracken build finished, but expected distribution file was not created."
+            echo "Expected:"
+            echo "  $BRACKEN_DIST"
+            echo
+            echo "Check log:"
+            echo "  $LOG_DIR/bracken-build_L${BRACKEN_READ_LEN}_K${BRACKEN_KMER_LEN}.log"
+            exit 1
+        fi
+
+        ok "Bracken distribution file created: $BRACKEN_DIST"
+    fi
+else
+    info "Bracken build not requested. Use --micro-db or --build-bracken to enable it."
+fi
+
+# ============================================================
 # Inspect database
 # ============================================================
 
@@ -745,5 +858,19 @@ echo "${BOLD}Logs:${RESET}"
 echo "$LOG_DIR"
 echo
 echo "${BOLD}Use in your MTD script as:${RESET}"
-echo "DB_host=\"$DB_DIR\""
+
+if [[ "$DB_ROLE" == "micro" ]]; then
+    echo "DB_micro=\"$DB_DIR\""
+    echo
+    echo "${BOLD}Or with the new MTD_SE option:${RESET}"
+    echo "  --kraken-micro-db \"$DB_DIR\""
+else
+    echo "DB_host=\"$DB_DIR\""
+fi
+
+if [[ "$BUILD_BRACKEN" -eq 1 ]]; then
+    echo
+    echo "${BOLD}Bracken distribution file:${RESET}"
+    echo "$DB_DIR/database${BRACKEN_READ_LEN}mers.kmer_distrib"
+fi
 echo "${GREEN}${BOLD}============================================================${RESET}"
