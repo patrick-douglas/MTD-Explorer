@@ -48,11 +48,36 @@ no_trimm=0                             # default flag
 metadata=""                            # optional metadata file
 analysis_mode="auto"                   # auto, comparison, exploratory
 NO_COMPARISON=0                        # set automatically later
+SSGSEA_GMT="default"                  # default, auto, or path to custom GMT
+SSGSEA_GMT_MODE="default_MSigDB_c2"
+SSGSEA_PROTEIN_FASTA=""
+SSGSEA_ANNOTATION_GFF=""
+
+# Exploratory-only taxonomic figures
+# 1 = run taxonomic heatmap and stacked bar in exploratory mode
+# 0 = skip
+RUN_EXPLORATORY_TAXONOMIC_FIGURES="${RUN_EXPLORATORY_TAXONOMIC_FIGURES:-1}"
+
+# Run exploratory/descriptive taxonomic figures even in comparison mode
+# 1 = run also in comparison mode
+# 0 = run only in exploratory/no-comparison mode
+RUN_EXPLORATORY_FIGURES_IN_COMPARISON="${RUN_EXPLORATORY_FIGURES_IN_COMPARISON:-1}"
+
+# Exploratory-only host expression QC
+# 1 = run PCA, top variable genes heatmap, sample correlation and detected genes plot
+# 0 = skip
+RUN_EXPLORATORY_HOST_EXPRESSION_QC="${RUN_EXPLORATORY_HOST_EXPRESSION_QC:-1}"
+
 
 # Optional Kraken2 host-filtering DB override.
 # If empty, DB_host is selected automatically from --hostid.
 # If provided through --kraken-host-db, only Kraken2 host filtering uses this custom DB.
 KRAKEN_HOST_DB=""
+
+# Optional Kraken2 microbiome/target DB override.
+# If empty, DB_micro uses the default MTD kraken2DB_micro.
+# If provided through --kraken-micro-db, Kraken2/Bracken non-host classification uses this custom DB.
+KRAKEN_MICRO_DB=""
 
 # Kraken2 defaults for host filtering
 # Rationale:
@@ -90,6 +115,9 @@ Optional:
                                             comparison: requires experimental groups and runs DEG-dependent steps
                                             exploratory: skips DEG-dependent steps and generates non-comparison outputs
                                             Default: ${analysis_mode}
+
+      --exploratory, --no-comparison        Alias for --analysis-mode exploratory outputs
+                                            Default: ${analysis_mode}
   -m, --metadata FILE                      Metadata CSV file
   -p, --pdm METHOD                         HAllA metric: spearman, pearson, mi, nmi, xicor, dcor
                                            Default: ${pdm}
@@ -99,11 +127,23 @@ Optional:
                                            Default: ${read_len}
       --threads INT                        Number of CPU threads
                                            Default: nproc = ${threads}
+      --ssgsea-gmt default|custom_eggnog|FILE    ssGSEA GMT mode or custom GMT file.
+                                          default: use default MSigDB/human GMT.
+                                          custom_eggnog: build custom eggNOG/GO GMT from user-provided
+                                          protein FASTA and GFF/GTF annotation.
+                                          FILE: use an existing GMT file.
+
+      --ssgsea-protein-fasta FILE          Required when --ssgsea-gmt custom_eggnog.
+                                           Protein FASTA/proteome matching the host reference.
+
+      --ssgsea-annotation-gff FILE         Required when --ssgsea-gmt custom_eggnog.
+                                           GFF3/GTF annotation matching the host reference.
 
 Host processing:
   -b, --blast                              Use Magic-BLAST instead of HISAT2
   -t, --no-trim                            Skip fastp trimming
-      --custom-raw-path DIR                Folder used when choice="skip"
+      --custom-raw-path DIR                Folder containing already compressed FASTQ files.
+                                           Forces --no-trim mode automatically.
                                            Default: ${CUSTOM_PATH}
 
 Kraken2 host filtering:
@@ -118,6 +158,11 @@ Kraken2 host filtering:
                                            Default: ${KRAKEN_HOST_MIN_HIT_GROUPS}
 
 Kraken2 microbiome classification:
+      --kraken-micro-db DIR                Optional custom Kraken2 microbiome/target database.
+                                           If not provided, DB_micro uses:
+                                           \$MTDIR/kraken2DB_micro
+                                           Use this for targeted databases such as Trematoda.
+
       --kraken-micro-confidence FLOAT      Kraken2 --confidence for microbiome step
                                            Default: ${KRAKEN_MICRO_CONF}
       --kraken-micro-min-hit-groups INT    Kraken2 --minimum-hit-groups for microbiome step
@@ -147,11 +192,23 @@ Examples:
       --blast \\
       --no-trim \\
       --kraken-host-db /home/me/MTD/kraken2DB_Carollia_Myotis/ \\
+      --kraken-micro-db /home/me/MTD/Kraken2DB_trematoda/ \\
       --kraken-host-confidence 0.05 \\
       --kraken-host-min-hit-groups 3 \\
       --kraken-micro-confidence 0.10 \\
       --kraken-micro-min-hit-groups 3 \\
       --bracken-threshold 10
+
+  Custom eggNOG/GO ssGSEA GMT from protein FASTA and GFF/GTF:
+    bash $(basename "$0") \\
+      --input samplesheet.csv \\
+      --output MTD_results_custom_ssGSEA \\
+      --hostid 6526 \\
+      --blast \\
+      --no-trim \\
+      --ssgsea-gmt custom_eggnog \\
+      --ssgsea-protein-fasta /path/to/proteins.pep.all.fa.gz \\
+      --ssgsea-annotation-gff /path/to/annotation.gff3.gz
 EOF
 }
 
@@ -241,6 +298,30 @@ while [[ $# -gt 0 ]]; do
             threads="${1#*=}"
             shift
             ;;
+        --ssgsea-gmt)
+            SSGSEA_GMT="$2"
+            shift 2
+            ;;
+        --ssgsea-gmt=*)
+            SSGSEA_GMT="${1#*=}"
+            shift
+            ;;
+        --ssgsea-protein-fasta)
+            SSGSEA_PROTEIN_FASTA="$2"
+            shift 2
+            ;;
+        --ssgsea-protein-fasta=*)
+            SSGSEA_PROTEIN_FASTA="${1#*=}"
+            shift
+            ;;
+        --ssgsea-annotation-gff)
+            SSGSEA_ANNOTATION_GFF="$2"
+            shift 2
+            ;;
+        --ssgsea-annotation-gff=*)
+            SSGSEA_ANNOTATION_GFF="${1#*=}"
+            shift
+            ;;
         -b|--blast)
             blast="blast"
             shift
@@ -263,6 +344,14 @@ while [[ $# -gt 0 ]]; do
             ;;
         --kraken-host-db=*|--host-kraken-db=*)
             KRAKEN_HOST_DB="${1#*=}"
+            shift
+            ;;
+        --kraken-micro-db|--micro-kraken-db)
+            KRAKEN_MICRO_DB="$2"
+            shift 2
+            ;;
+        --kraken-micro-db=*|--micro-kraken-db=*)
+            KRAKEN_MICRO_DB="${1#*=}"
             shift
             ;;
         --kraken-host-confidence|--kraken-host-conf)
@@ -400,6 +489,29 @@ if [[ "$pdm" != "spearman" && "$pdm" != "pearson" && "$pdm" != "mi" && "$pdm" !=
 fi
 
 # ------------------------------------------------------------
+# ssGSEA custom GMT early validation
+# ------------------------------------------------------------
+
+if [[ "$SSGSEA_GMT" == "auto" || "$SSGSEA_GMT" == "custom_eggnog" ]]; then
+    if [[ -z "${SSGSEA_PROTEIN_FASTA:-}" ]]; then
+        die "--ssgsea-gmt $SSGSEA_GMT requires --ssgsea-protein-fasta FILE"
+    fi
+
+    if [[ -z "${SSGSEA_ANNOTATION_GFF:-}" ]]; then
+        die "--ssgsea-gmt $SSGSEA_GMT requires --ssgsea-annotation-gff FILE"
+    fi
+
+    require_file "$SSGSEA_PROTEIN_FASTA" "ssGSEA protein FASTA"
+    require_file "$SSGSEA_ANNOTATION_GFF" "ssGSEA GFF/GTF annotation"
+fi
+
+if [[ "$SSGSEA_GMT" != "default" &&
+      "$SSGSEA_GMT" != "auto" &&
+      "$SSGSEA_GMT" != "custom_eggnog" ]]; then
+    require_file "$SSGSEA_GMT" "Custom ssGSEA GMT"
+fi
+
+# ------------------------------------------------------------
 # Output directory behavior
 # ------------------------------------------------------------
 
@@ -422,6 +534,32 @@ fi
 
 MTDIR=$(dirname "$(readlink -f "$0")")
 echo "MTD directory is $MTDIR"
+
+# ------------------------------------------------------------
+# Custom R library for MTD-generated OrgDb packages
+# Example: custom org.Bglabrata.eg.db with BGLAX IDs
+# ------------------------------------------------------------
+
+mkdir -p "$MTDIR/custom_R_libs"
+export R_LIBS_USER="$MTDIR/custom_R_libs:${R_LIBS_USER:-}"
+
+echo "${g}[INFO] R custom library:${w}"
+echo "  $R_LIBS_USER"
+
+# ------------------------------------------------------------
+# ssGSEA GMT default path
+# Actual GMT selection happens later, after host.gct is generated.
+# ------------------------------------------------------------
+
+SSGSEA_DEFAULT_GMT="$MTDIR/Tools/ssGSEA2.0/db/msigdb/c2.all.v7.5.1.symbols.gmt"
+
+if [[ "$SSGSEA_GMT" == "default" ]]; then
+    SSGSEA_GMT_MODE="default_MSigDB_c2_symbols"
+elif [[ "$SSGSEA_GMT" == "auto" || "$SSGSEA_GMT" == "custom_eggnog" ]]; then
+    SSGSEA_GMT_MODE="custom_eggNOG_GO_from_user_files_pending"
+else
+    SSGSEA_GMT_MODE="custom_path_pending"
+fi
 
 condapath=$(head -n 1 "$MTDIR/condaPath")
 
@@ -499,7 +637,15 @@ else
     KRAKEN_HOST_DB_MODE="auto_from_--hostid"
 fi
 
-DB_micro="$MTDIR/kraken2DB_micro"
+DB_micro_default="$MTDIR/kraken2DB_micro"
+
+if [[ -n "${KRAKEN_MICRO_DB:-}" ]]; then
+    DB_micro="$KRAKEN_MICRO_DB"
+    KRAKEN_MICRO_DB_MODE="custom_path_from_--kraken-micro-db"
+else
+    DB_micro="$DB_micro_default"
+    KRAKEN_MICRO_DB_MODE="default_MTD_kraken2DB_micro"
+fi
 
 # ------------------------------------------------------------
 # Scientific name from HostSpecies.csv
@@ -531,6 +677,7 @@ echo "  host annotation taxid:          $hostid_display"
 echo "  host Kraken2 DB:                $DB_host"
 echo "  host Kraken2 DB mode:           $KRAKEN_HOST_DB_MODE"
 echo "  microbiome Kraken2 DB:          $DB_micro"
+echo "  microbiome Kraken2 DB mode:     $KRAKEN_MICRO_DB_MODE"
 echo "  metadata:                       ${metadata:-none}"
 echo "  HAllA metric:                   $pdm"
 echo "  trim length:                    $length"
@@ -544,8 +691,15 @@ echo "  Kraken host min hit groups:     $KRAKEN_HOST_MIN_HIT_GROUPS"
 echo "  Kraken micro confidence:        $KRAKEN_MICRO_CONF"
 echo "  Kraken micro min hit groups:    $KRAKEN_MICRO_MIN_HIT_GROUPS"
 echo "  Bracken threshold:              $BRACKEN_THRESHOLD"
+echo "  ssGSEA GMT:                     $SSGSEA_GMT"
+echo "  ssGSEA GMT mode:                $SSGSEA_GMT_MODE"
 
 echo "${g}Kraken2 microbiome parameters:${w}"
+if [[ "$KRAKEN_MICRO_DB_MODE" == "custom_path_from_--kraken-micro-db" ]]; then
+    echo "  --kraken-micro-db $DB_micro"
+else
+    echo "  --kraken-micro-db not provided; using default MTD DB_micro"
+fi
 echo "  --kraken-micro-confidence $KRAKEN_MICRO_CONF"
 echo "  --kraken-micro-min-hit-groups $KRAKEN_MICRO_MIN_HIT_GROUPS"
 
@@ -562,6 +716,7 @@ echo "${g}============================================"
 echo "Selected host annotation species:${w} ${ital}${species_name}${noital}${g}"
 echo "Annotation Taxon ID:${w} $hostid ${g}"
 echo "Host Kraken2 filtering DB:${w} $DB_host ${g}"
+echo "Microbiome/target Kraken2 DB:${w} $DB_micro ${g}"
 echo "${g}============================================${w}"
 
 # ------------------------------------------------------------
@@ -638,6 +793,8 @@ write_methods_log() {
 
         # Microbiome classification
         csv_row "Microbiome classification" "Kraken2" "microbiome_kraken_db" "$DB_micro" "Kraken2 database used for microbiome classification"
+        csv_row "Microbiome classification" "Kraken2" "microbiome_kraken_db_mode" "$KRAKEN_MICRO_DB_MODE" "Whether DB_micro came from default MTD DB or --kraken-micro-db"
+        csv_row "Microbiome classification" "Kraken2" "microbiome_kraken_db_default" "$DB_micro_default" "Default MTD microbiome Kraken2 DB before optional override"
         csv_row "Microbiome classification" "Kraken2" "confidence" "$KRAKEN_MICRO_CONF" "Kraken2 --confidence used for microbiome classification"
         csv_row "Microbiome classification" "Kraken2" "minimum_hit_groups" "$KRAKEN_MICRO_MIN_HIT_GROUPS" "Kraken2 --minimum-hit-groups used for microbiome classification"
         csv_row "Microbiome classification" "Kraken2" "raw_report_pattern" "Report_non-host.raw_SAMPLE.txt" "Raw microbiome Kraken2 report before optional contaminant removal"
@@ -668,7 +825,10 @@ write_methods_log() {
         csv_row "Host downstream analysis" "HISAT2" "hisat2_database" "$DB_hisat2" "HISAT2 database selected from --hostid"
         csv_row "Host downstream analysis" "featureCounts" "gtf_file" "$gtf" "GTF annotation selected from --hostid"
         csv_row "Host downstream analysis" "featureCounts" "output" "$outputdr/host_counts.txt" "Host count matrix output"
-
+        csv_row "Host downstream analysis" "ssGSEA" "gmt_file" "$SSGSEA_GMT" "GMT gene set database used by ssGSEA"
+        csv_row "Host downstream analysis" "ssGSEA" "gmt_mode" "$SSGSEA_GMT_MODE" "Whether ssGSEA used default MSigDB or a custom GMT"
+        csv_row "Host downstream analysis" "ssGSEA" "protein_fasta" "${SSGSEA_PROTEIN_FASTA:-none}" "Protein FASTA used to build custom ssGSEA GMT"
+        csv_row "Host downstream analysis" "ssGSEA" "annotation_gff" "${SSGSEA_ANNOTATION_GFF:-none}" "GFF/GTF annotation used to build custom ssGSEA GMT"
         # HUMAnN
         csv_row "Functional profiling" "HUMAnN" "input_pattern" "SAMPLE_non-host.fq" "Final non-host reads used as HUMAnN input"
         csv_row "Functional profiling" "HUMAnN" "threads" "$threads" "Threads used by HUMAnN"
@@ -720,6 +880,709 @@ write_methods_log() {
 write_methods_log
 
 # ------------------------------------------------------------
+# Exploratory-only taxonomic figures
+# ------------------------------------------------------------
+# Runs only when NO_COMPARISON=1.
+# Uses raw combined Bracken species table:
+#   $outputdr/temp/bracken_raw_results/bracken_species_all
+# ------------------------------------------------------------
+
+run_exploratory_taxonomic_figures() {
+    if [[ "${NO_COMPARISON:-0}" != "1" && "${RUN_EXPLORATORY_FIGURES_IN_COMPARISON:-1}" != "1" ]]; then
+        echo "${y}[INFO] Comparison mode detected and RUN_EXPLORATORY_FIGURES_IN_COMPARISON=0. Skipping exploratory taxonomic figures.${w}"
+        return 0
+    fi
+
+    if [[ "${RUN_EXPLORATORY_TAXONOMIC_FIGURES:-1}" != "1" ]]; then
+        echo "${y}[INFO] RUN_EXPLORATORY_TAXONOMIC_FIGURES=0. Skipping exploratory taxonomic figures.${w}"
+        return 0
+    fi
+
+    echo "============================================================"
+    echo "${g}[EXPLORATORY FIGURES]${w}"
+    echo "============================================================"
+
+    local fig_script_dir="$MTDIR/aux_scripts/exploratory"
+
+    local pheatmap_script="$fig_script_dir/MTD.taxonomic_pheatmap.R"
+    local stacked_script="$fig_script_dir/MTD.taxonomic_stacked_bar.R"
+    local prevalence_script="$fig_script_dir/MTD_exploratory_prevalence_abundance.R"
+    local detected_microbiome_script="$fig_script_dir/MTD_exploratory_detected_microbiome_rank.R"
+    local core_script="$fig_script_dir/MTD_exploratory_core_microbiome.R"
+    local alpha_script="$fig_script_dir/MTD_exploratory_alpha_diversity.R"
+    local beta_script="$fig_script_dir/MTD_exploratory_beta_diversity.R"
+    local read_qc_script="$fig_script_dir/MTD_exploratory_read_composition_qc.R"
+    local matrix_qc_script="$fig_script_dir/MTD_exploratory_matrix_qc.R"
+
+    # Default rank is genus, but you can override it:
+    # EXPLORATORY_TAX_RANK=species bash MTD_SE.sh ...
+    local tax_rank="${EXPLORATORY_TAX_RANK:-species}"
+
+    local tax_input="$outputdr/temp/bracken_raw_results/bracken_${tax_rank}_all"
+
+    # Fallback in case the raw Bracken table has not been moved yet
+    if [[ ! -s "$tax_input" && -s "$outputdr/bracken_${tax_rank}_all" ]]; then
+        tax_input="$outputdr/bracken_${tax_rank}_all"
+    fi
+
+    if [[ ! -s "$tax_input" ]]; then
+        echo "${y}[WARNING] Taxonomic figure input not found. Skipping figures.${w}"
+        echo "Expected:"
+        echo "  $outputdr/temp/bracken_raw_results/bracken_${tax_rank}_all"
+        echo "Fallback checked:"
+        echo "  $outputdr/bracken_${tax_rank}_all"
+        return 0
+    fi
+
+    if [[ ! -s "$samplesheet_file" ]]; then
+        echo "${y}[WARNING] Samplesheet not found. Skipping taxonomic figures.${w}"
+        echo "Expected:"
+        echo "  $samplesheet_file"
+        return 0
+    fi
+
+    # New exploratory output structure
+    local exploratory_dir="$outputdr/exploratory"
+    local taxonomy_dir="$exploratory_dir/taxonomy"
+
+    local heatmap_base="$taxonomy_dir/heatmap"
+    local stacked_base="$taxonomy_dir/stacked_bar"
+    local prevalence_base="$taxonomy_dir/prevalence_abundance"
+    local detected_microbiome_base="$taxonomy_dir/detected_microbiome"
+    local core_base="$taxonomy_dir/core_microbiome"
+    local alpha_base="$taxonomy_dir/alpha_diversity"
+    local beta_base="$taxonomy_dir/beta_diversity"
+    local microbiome_matrix_qc_base="$taxonomy_dir/microbiome_abundance_qc"
+
+    local pipeline_qc_dir="$exploratory_dir/pipeline_qc"
+    local read_qc_base="$pipeline_qc_dir/read_composition"
+
+    local log_dir="$taxonomy_dir/logs"
+
+mkdir -p "$heatmap_base" "$stacked_base" "$prevalence_base" "$detected_microbiome_base" "$core_base" "$alpha_base" "$beta_base" "$microbiome_matrix_qc_base" "$pipeline_qc_dir" "$read_qc_base" "$log_dir"
+
+    echo "[INFO] Taxonomic input:"
+    echo "  $tax_input"
+    echo "[INFO] Samplesheet:"
+    echo "  $samplesheet_file"
+    echo "[INFO] Taxonomic rank:"
+    echo "  $tax_rank"
+    echo "[INFO] Output directory:"
+    echo "  $taxonomy_dir"
+    echo "[INFO] Figure scripts:"
+    echo "  Heatmap:     $pheatmap_script"
+    echo "  Stacked bar: $stacked_script"
+    echo "  Prevalence:  $prevalence_script"
+    echo "  Detected microbiome ranking: $detected_microbiome_script"
+    echo "  Core microbiome: $core_script"
+    echo "  Alpha diversity: $alpha_script"
+    echo "  Beta diversity:  $beta_script"
+    echo "  Matrix QC:       $matrix_qc_script"
+    echo "  Read composition QC: $read_qc_script"
+    conda deactivate
+    conda activate R412
+
+    # ------------------------------------------------------------
+    # 1) Taxonomic heatmap
+    # ------------------------------------------------------------
+
+    if [[ -s "$pheatmap_script" ]]; then
+        for tax_mode in absolute relative; do
+
+            local heatmap_out="$heatmap_base/${tax_rank}_${tax_mode}"
+            local heatmap_log="$log_dir/MTD.taxonomic_pheatmap.${tax_rank}.${tax_mode}.log"
+            local heatmap_title=""
+
+            if [[ "$tax_mode" == "absolute" ]]; then
+                heatmap_title="Absolute abundance heatmap with hierarchical clustering"
+            else
+                heatmap_title="Relative abundance heatmap with hierarchical clustering"
+            fi
+
+            mkdir -p "$heatmap_out"
+
+            echo "------------------------------------------------------------"
+            echo "[RUN] Taxonomic heatmap"
+            echo "Rank: $tax_rank"
+            echo "Mode: $tax_mode"
+            echo "Output: $heatmap_out"
+            echo "------------------------------------------------------------"
+
+            if ! Rscript "$pheatmap_script" \
+                --input "$tax_input" \
+                --samplesheet "$samplesheet_file" \
+                --rank "$tax_rank" \
+                --top 100 \
+                --mode "$tax_mode" \
+                --transform log10 \
+                --cluster_samples yes \
+                --cluster_taxa yes \
+                --cluster_distance correlation \
+                --cluster_method complete \
+                --title "$heatmap_title" \
+                --width 8 \
+                --height 9 \
+                --fontsize_row 8 \
+                --fontsize_col 10 \
+                --output_dir "$heatmap_out" \
+                > "$heatmap_log" 2>&1
+            then
+                echo "${y}[WARNING] Taxonomic heatmap failed for mode: $tax_mode. Continuing pipeline.${w}"
+                echo "Log:"
+                echo "  $heatmap_log"
+                tail -n 40 "$heatmap_log" || true
+            else
+                echo "${g}[OK] Taxonomic heatmap generated:${w}"
+                echo "  $heatmap_out"
+            fi
+        done
+    else
+        echo "${y}[WARNING] Heatmap script not found. Skipping heatmap.${w}"
+        echo "Expected:"
+        echo "  $pheatmap_script"
+    fi
+
+    # ------------------------------------------------------------
+    # 2) Taxonomic stacked bar
+    # ------------------------------------------------------------
+
+    if [[ -s "$stacked_script" ]]; then
+        for tax_mode in absolute relative; do
+
+            local stacked_out="$stacked_base/${tax_rank}_${tax_mode}"
+            local stacked_log="$log_dir/MTD.taxonomic_stacked_bar.${tax_rank}.${tax_mode}.log"
+            local stacked_title=""
+
+            if [[ "$tax_mode" == "absolute" ]]; then
+                stacked_title="Genus-level taxonomic profile - absolute abundance"
+            else
+                stacked_title="Genus-level taxonomic profile - relative abundance"
+            fi
+
+            # If you switch rank to species/phylum/etc, make title follow the rank
+            stacked_title="${tax_rank^}-level taxonomic profile - ${tax_mode} abundance"
+
+            mkdir -p "$stacked_out"
+
+            echo "------------------------------------------------------------"
+            echo "[RUN] Taxonomic stacked bar"
+            echo "Rank: $tax_rank"
+            echo "Mode: $tax_mode"
+            echo "Output: $stacked_out"
+            echo "------------------------------------------------------------"
+
+            if ! Rscript "$stacked_script" \
+                --input "$tax_input" \
+                --samplesheet "$samplesheet_file" \
+                --rank "$tax_rank" \
+                --top 50 \
+                --mode "$tax_mode" \
+                --taxon_format scientific \
+                --title "$stacked_title" \
+                --width auto \
+                --height auto \
+                --bar_width 0.40 \
+                --legend_position bottom \
+                --legend_ncol auto \
+                --legend_max_rows 8 \
+                --legend_text_size 10 \
+                --legend_title_size 11 \
+                --legend_key_size 0.36 \
+                --x_text_size 11 \
+                --y_text_size 11 \
+                --axis_title_size 12 \
+                --plot_title_size 14 \
+                --output_dir "$stacked_out" \
+                > "$stacked_log" 2>&1
+            then
+                echo "${y}[WARNING] Taxonomic stacked bar failed for mode: $tax_mode. Continuing pipeline.${w}"
+                echo "Log:"
+                echo "  $stacked_log"
+                tail -n 40 "$stacked_log" || true
+            else
+                echo "${g}[OK] Taxonomic stacked bar generated:${w}"
+                echo "  $stacked_out"
+            fi
+        done
+    else
+        echo "${y}[WARNING] Stacked bar script not found. Skipping stacked bar.${w}"
+        echo "Expected:"
+        echo "  $stacked_script"
+    fi
+
+    # ------------------------------------------------------------
+    # 3) Prevalence vs abundance
+    # ------------------------------------------------------------
+
+    if [[ -s "$prevalence_script" ]]; then
+        for tax_mode in absolute relative; do
+
+            local prevalence_out="$prevalence_base/${tax_rank}_${tax_mode}"
+            local prevalence_log="$log_dir/MTD.prevalence_abundance.${tax_rank}.${tax_mode}.log"
+
+            mkdir -p "$prevalence_out"
+
+            echo "------------------------------------------------------------"
+            echo "[RUN] Prevalence vs abundance"
+            echo "Rank: $tax_rank"
+            echo "Mode: $tax_mode"
+            echo "Output: $prevalence_out"
+            echo "------------------------------------------------------------"
+
+            if ! Rscript "$prevalence_script" \
+                --input "$tax_input" \
+                --output "$prevalence_out" \
+                --rank "$tax_rank" \
+                --mode "$tax_mode" \
+                --top_labels 20 \
+                > "$prevalence_log" 2>&1
+            then
+                echo "${y}[WARNING] Prevalence vs abundance failed for mode: $tax_mode. Continuing pipeline.${w}"
+                echo "Log:"
+                echo "  $prevalence_log"
+                tail -n 40 "$prevalence_log" || true
+            else
+                echo "${g}[OK] Prevalence vs abundance generated:${w}"
+                echo "  $prevalence_out"
+            fi
+        done
+    else
+        echo "${y}[WARNING] Prevalence script not found. Skipping prevalence vs abundance.${w}"
+        echo "Expected:"
+        echo "  $prevalence_script"
+    fi
+    # ------------------------------------------------------------
+    # 3B) Detected microbiome ranked tables
+    # ------------------------------------------------------------
+
+    if [[ -s "$detected_microbiome_script" ]]; then
+
+        local detected_mode="relative"
+        local detected_in="$prevalence_base/${tax_rank}_${detected_mode}/prevalence_vs_abundance_${tax_rank}_${detected_mode}.tsv"
+        local detected_out="$detected_microbiome_base/${tax_rank}_${detected_mode}"
+        local detected_log="$log_dir/MTD.detected_microbiome_ranked.${tax_rank}.${detected_mode}.log"
+
+        mkdir -p "$detected_out"
+
+        echo "------------------------------------------------------------"
+        echo "[RUN] Detected microbiome ranked tables"
+        echo "Rank: $tax_rank"
+        echo "Mode: $detected_mode"
+        echo "Input: $detected_in"
+        echo "Output: $detected_out"
+        echo "------------------------------------------------------------"
+
+        if [[ ! -s "$detected_in" ]]; then
+            echo "${y}[WARNING] Prevalence relative table not found. Skipping detected microbiome ranking.${w}"
+            echo "Expected:"
+            echo "  $detected_in"
+        elif ! Rscript "$detected_microbiome_script" \
+            --input "$detected_in" \
+            --output "$detected_out" \
+            --rank "$tax_rank" \
+            --w_prevalence 0.45 \
+            --w_mean 0.30 \
+            --w_max 0.15 \
+            --w_total 0.10 \
+            --core_threshold 75 \
+            --plot_top 20 \
+            > "$detected_log" 2>&1
+        then
+            echo "${y}[WARNING] Detected microbiome ranking failed. Continuing pipeline.${w}"
+            echo "Log:"
+            echo "  $detected_log"
+            tail -n 40 "$detected_log" || true
+        else
+            echo "${g}[OK] Detected microbiome ranked tables generated:${w}"
+            echo "  $detected_out"
+        fi
+
+    else
+        echo "${y}[WARNING] Detected microbiome ranking script not found. Skipping ranking tables.${w}"
+        echo "Expected:"
+        echo "  $detected_microbiome_script"
+    fi
+    # ------------------------------------------------------------
+    # 4) Core microbiome
+    # ------------------------------------------------------------
+
+    if [[ -s "$core_script" ]]; then
+        for tax_mode in absolute relative; do
+
+            local core_out="$core_base/${tax_rank}_${tax_mode}"
+            local core_log="$log_dir/MTD.core_microbiome.${tax_rank}.${tax_mode}.log"
+
+            mkdir -p "$core_out"
+
+            echo "------------------------------------------------------------"
+            echo "[RUN] Core microbiome"
+            echo "Rank: $tax_rank"
+            echo "Mode: $tax_mode"
+            echo "Output: $core_out"
+            echo "------------------------------------------------------------"
+
+            if ! Rscript "$core_script" \
+                --input "$tax_input" \
+                --output "$core_out" \
+                --rank "$tax_rank" \
+                --mode "$tax_mode" \
+                --thresholds 25,50,75,90,100 \
+                --core_threshold 75 \
+                > "$core_log" 2>&1
+            then
+                echo "${y}[WARNING] Core microbiome failed for mode: $tax_mode. Continuing pipeline.${w}"
+                echo "Log:"
+                echo "  $core_log"
+                tail -n 40 "$core_log" || true
+            else
+                echo "${g}[OK] Core microbiome generated:${w}"
+                echo "  $core_out"
+            fi
+        done
+    else
+        echo "${y}[WARNING] Core microbiome script not found. Skipping core microbiome.${w}"
+        echo "Expected:"
+        echo "  $core_script"
+    fi
+
+    # ------------------------------------------------------------
+    # 5) Alpha diversity
+    # ------------------------------------------------------------
+
+    if [[ -s "$alpha_script" ]]; then
+
+        local alpha_mode="relative"
+        local alpha_out="$alpha_base/${tax_rank}_${alpha_mode}"
+        local alpha_log="$log_dir/MTD.alpha_diversity.${tax_rank}.${alpha_mode}.log"
+
+        mkdir -p "$alpha_out"
+
+        echo "------------------------------------------------------------"
+        echo "[RUN] Alpha diversity"
+        echo "Rank: $tax_rank"
+        echo "Mode: $alpha_mode"
+        echo "Output: $alpha_out"
+        echo "------------------------------------------------------------"
+
+        if ! Rscript "$alpha_script" \
+            --input "$tax_input" \
+            --samplesheet "$samplesheet_file" \
+            --output "$alpha_out" \
+            --rank "$tax_rank" \
+            --mode "$alpha_mode" \
+            > "$alpha_log" 2>&1
+        then
+            echo "${y}[WARNING] Alpha diversity failed. Continuing pipeline.${w}"
+            echo "Log:"
+            echo "  $alpha_log"
+            tail -n 40 "$alpha_log" || true
+        else
+            echo "${g}[OK] Alpha diversity generated:${w}"
+            echo "  $alpha_out"
+        fi
+
+    else
+        echo "${y}[WARNING] Alpha diversity script not found. Skipping alpha diversity.${w}"
+        echo "Expected:"
+        echo "  $alpha_script"
+    fi
+
+    # ------------------------------------------------------------
+    # 6) Beta diversity / ordination
+    # ------------------------------------------------------------
+
+    if [[ -s "$beta_script" ]]; then
+
+        local beta_mode="relative"
+        local beta_out="$beta_base/${tax_rank}_${beta_mode}"
+        local beta_log="$log_dir/MTD.beta_diversity.${tax_rank}.${beta_mode}.log"
+
+        mkdir -p "$beta_out"
+
+        echo "------------------------------------------------------------"
+        echo "[RUN] Beta diversity / ordination"
+        echo "Rank: $tax_rank"
+        echo "Mode: $beta_mode"
+        echo "Output: $beta_out"
+        echo "------------------------------------------------------------"
+
+        if ! Rscript "$beta_script" \
+            --input "$tax_input" \
+            --samplesheet "$samplesheet_file" \
+            --output "$beta_out" \
+            --rank "$tax_rank" \
+            --mode "$beta_mode" \
+            --distance bray \
+            --transform none \
+            --label_samples yes \
+            --ellipse no \
+            > "$beta_log" 2>&1
+        then
+            echo "${y}[WARNING] Beta diversity failed. Continuing pipeline.${w}"
+            echo "Log:"
+            echo "  $beta_log"
+            tail -n 40 "$beta_log" || true
+        else
+            echo "${g}[OK] Beta diversity generated:${w}"
+            echo "  $beta_out"
+        fi
+
+    else
+        echo "${y}[WARNING] Beta diversity script not found. Skipping beta diversity.${w}"
+        echo "Expected:"
+        echo "  $beta_script"
+    fi
+
+    # ------------------------------------------------------------
+    # 7) Pipeline QC: read composition
+    # ------------------------------------------------------------
+
+    if [[ -s "$read_qc_script" ]]; then
+
+        local read_qc_input="$outputdr/kraken/kraken_global_read_composition_final.tsv"
+        local read_qc_out="$read_qc_base/final"
+        local read_qc_log="$log_dir/MTD.read_composition_qc.final.log"
+
+        mkdir -p "$read_qc_out"
+
+        echo "------------------------------------------------------------"
+        echo "[RUN] Pipeline QC: read composition"
+        echo "Input:  $read_qc_input"
+        echo "Output: $read_qc_out"
+        echo "------------------------------------------------------------"
+
+        if [[ ! -s "$read_qc_input" ]]; then
+            echo "${y}[WARNING] Read composition table not found. Skipping read composition QC.${w}"
+            echo "Expected:"
+            echo "  $read_qc_input"
+        elif ! Rscript "$read_qc_script" \
+            --input "$read_qc_input" \
+            --output "$read_qc_out" \
+            --label final \
+            --outlier_method mad \
+            --outlier_cutoff 3.5 \
+            > "$read_qc_log" 2>&1
+        then
+            echo "${y}[WARNING] Read composition QC failed. Continuing pipeline.${w}"
+            echo "Log:"
+            echo "  $read_qc_log"
+            tail -n 40 "$read_qc_log" || true
+        else
+            echo "${g}[OK] Read composition QC generated:${w}"
+            echo "  $read_qc_out"
+        fi
+
+    else
+        echo "${y}[WARNING] Read composition QC script not found. Skipping pipeline QC.${w}"
+        echo "Expected:"
+        echo "  $read_qc_script"
+    fi
+
+    # ------------------------------------------------------------
+    # 7) Microbiome abundance matrix QC
+    # ------------------------------------------------------------
+
+    if [[ -s "$matrix_qc_script" ]]; then
+
+        local microbiome_qc_mode="relative"
+        local microbiome_qc_out="$microbiome_matrix_qc_base/${tax_rank}_${microbiome_qc_mode}"
+        local microbiome_qc_log="$log_dir/MTD.microbiome_matrix_qc.${tax_rank}.${microbiome_qc_mode}.log"
+
+        mkdir -p "$microbiome_qc_out"
+
+        echo "------------------------------------------------------------"
+        echo "[RUN] Microbiome abundance matrix QC"
+        echo "Rank: $tax_rank"
+        echo "Mode: $microbiome_qc_mode"
+        echo "Output: $microbiome_qc_out"
+        echo "------------------------------------------------------------"
+
+        if ! Rscript "$matrix_qc_script" \
+            --input "$tax_input" \
+            --samplesheet "$samplesheet_file" \
+            --output "$microbiome_qc_out" \
+            --label "microbiome_${tax_rank}" \
+            --matrix_type bracken \
+            --normalization relative \
+            --top_variable 50 \
+            --pca_top_features 5000 \
+            > "$microbiome_qc_log" 2>&1
+        then
+            echo "${y}[WARNING] Microbiome abundance matrix QC failed. Continuing pipeline.${w}"
+            echo "Log:"
+            echo "  $microbiome_qc_log"
+            tail -n 40 "$microbiome_qc_log" || true
+        else
+            echo "${g}[OK] Microbiome abundance matrix QC generated:${w}"
+            echo "  $microbiome_qc_out"
+        fi
+
+    else
+        echo "${y}[WARNING] Matrix QC script not found. Skipping microbiome abundance QC.${w}"
+        echo "Expected:"
+        echo "  $matrix_qc_script"
+    fi
+
+    conda deactivate
+    conda activate MTD
+
+    echo "============================================================"
+    echo "${g}[OK] Exploratory taxonomic figure step finished${w}"
+    echo "Main output:"
+    echo "  $taxonomy_dir"
+    echo "============================================================"
+}
+
+# ------------------------------------------------------------
+# Exploratory-only host expression matrix QC
+# ------------------------------------------------------------
+# Runs only when NO_COMPARISON=1.
+#
+# This is NOT differential expression analysis.
+# It generates non-comparison host expression QC:
+#   - PCA of host expression
+#   - top variable genes heatmap
+#   - sample correlation heatmap
+#   - detected genes per sample
+#
+# Input:
+#   $outputdr/Host_DEG/host_counts_featureCounts_matrix.txt
+#
+# Script:
+#   $MTDIR/aux_scripts/exploratory/MTD_exploratory_matrix_qc.R
+# ------------------------------------------------------------
+
+run_exploratory_host_expression_qc() {
+    if [[ "${NO_COMPARISON:-0}" != "1" ]]; then
+        echo "${y}[INFO] Comparison mode detected. Skipping exploratory host expression QC.${w}"
+        return 0
+    fi
+
+    if [[ "${RUN_EXPLORATORY_HOST_EXPRESSION_QC:-1}" != "1" ]]; then
+        echo "${y}[INFO] RUN_EXPLORATORY_HOST_EXPRESSION_QC=0. Skipping exploratory host expression QC.${w}"
+        return 0
+    fi
+
+    local host_matrix_qc_script="$MTDIR/aux_scripts/exploratory/MTD_exploratory_matrix_qc.R"
+    local host_matrix_qc_input="$outputdr/Host_DEG/host_counts_featureCounts_matrix.txt"
+    local host_matrix_qc_out="$outputdr/exploratory/host_expression/matrix_qc"
+    local host_matrix_qc_log_dir="$outputdr/exploratory/host_expression/logs"
+    local host_matrix_qc_log="$host_matrix_qc_log_dir/MTD.host_expression_matrix_qc.log"
+    local host_counts_summary="$outputdr/host_counts.txt.summary"
+
+    mkdir -p "$host_matrix_qc_out" "$host_matrix_qc_log_dir"
+
+    echo "============================================================"
+    echo "${g}[EXPLORATORY HOST EXPRESSION QC]${w}"
+    echo "============================================================"
+    echo "Input matrix:"
+    echo "  $host_matrix_qc_input"
+    echo "featureCounts summary:"
+    echo "  $host_counts_summary"
+    echo "Output:"
+    echo "  $host_matrix_qc_out"
+    echo "Script:"
+    echo "  $host_matrix_qc_script"
+    echo "============================================================"
+
+    if [[ ! -s "$host_matrix_qc_script" ]]; then
+        echo "${y}[WARNING] Host matrix QC script not found. Skipping host expression QC.${w}"
+        echo "Expected:"
+        echo "  $host_matrix_qc_script"
+        return 0
+    fi
+
+    if [[ ! -s "$host_matrix_qc_input" ]]; then
+        echo "${y}[WARNING] Host count matrix not found. Skipping host expression QC.${w}"
+        echo "Expected:"
+        echo "  $host_matrix_qc_input"
+        return 0
+    fi
+
+    # ------------------------------------------------------------
+    # Check whether featureCounts assigned reads to host features
+    # ------------------------------------------------------------
+
+    if [[ -s "$host_counts_summary" ]]; then
+        local assigned_total
+
+        assigned_total=$(awk -F'\t' '
+            $1 == "Assigned" {
+                total = 0
+                for (i = 2; i <= NF; i++) {
+                    if ($i ~ /^[0-9]+$/) {
+                        total += $i
+                    }
+                }
+                print total
+                found = 1
+            }
+            END {
+                if (found != 1) print "NA"
+            }
+        ' "$host_counts_summary")
+
+        echo "[INFO] Total Assigned reads by featureCounts: ${assigned_total}"
+
+        if [[ "$assigned_total" == "0" ]]; then
+            echo "${y}[WARNING] featureCounts assigned zero reads to host genes.${w}"
+            echo "${y}[WARNING] Skipping host expression matrix QC because PCA/heatmap require non-zero gene counts.${w}"
+            echo "${y}[WARNING] Likely causes:${w}"
+            echo "  1. FASTA/index contig names do not match GTF contig names"
+            echo "  2. Host alignment produced very few usable alignments"
+            echo "  3. featureCounts parameters do not match the annotation"
+            echo
+            echo "[INFO] The pipeline will continue normally."
+            return 0
+        fi
+    else
+        echo "${y}[WARNING] featureCounts summary not found. Running host QC anyway.${w}"
+        echo "Expected:"
+        echo "  $host_counts_summary"
+    fi
+
+    # ------------------------------------------------------------
+    # Run host expression QC
+    # ------------------------------------------------------------
+
+    conda deactivate
+    conda activate R412
+
+    if ! Rscript "$host_matrix_qc_script" \
+        --input "$host_matrix_qc_input" \
+        --samplesheet "$samplesheet_file" \
+        --output "$host_matrix_qc_out" \
+        --label host_expression \
+        --matrix_type featurecounts \
+        --normalization logcpm \
+        --top_variable 50 \
+        --pca_top_features 5000 \
+        > "$host_matrix_qc_log" 2>&1
+    then
+        echo "${y}[WARNING] Host expression matrix QC failed. Continuing pipeline.${w}"
+        echo "Log:"
+        echo "  $host_matrix_qc_log"
+        tail -n 40 "$host_matrix_qc_log" || true
+    else
+        echo "${g}[OK] Host expression matrix QC generated:${w}"
+        echo "  $host_matrix_qc_out"
+        echo
+        echo "[INFO] Expected outputs include:"
+        echo "  host_expression_pca.png"
+        echo "  host_expression_top_variable_heatmap.png"
+        echo "  host_expression_sample_correlation_heatmap.png"
+        echo "  host_expression_detected_features_per_sample.png"
+    fi
+
+    conda deactivate
+    conda activate MTD
+
+    echo "============================================================"
+    echo "${g}[OK] Exploratory host expression QC step finished${w}"
+    echo "============================================================"
+}
+
+# ------------------------------------------------------------
 # for SRR input samples in the samplesheet.csv; download SRR samples
 # ------------------------------------------------------------
 
@@ -739,51 +1602,87 @@ if [[ -n "$(cut -f 1 -d ',' "$samplesheet_file" | grep '^SRR' || true)" ]]; then
 fi
 
 cd "$outputdr/temp" || die "Could not enter temp directory: $outputdr/temp"
+find_fastq_for_sample() {
+    local sample="$1"
+    local search_dir="$2"
+    local compressed_only="${3:-0}"
+
+    if [[ "$compressed_only" == "1" ]]; then
+        find "$search_dir" -maxdepth 1 -type f \( \
+            -name "Trimmed_${sample}.fq.gz" -o \
+            -name "Trimmed_${sample}.fastq.gz" -o \
+            -name "${sample}.fq.gz" -o \
+            -name "${sample}.fastq.gz" -o \
+            -name "${sample}_R1*.fq.gz" -o \
+            -name "${sample}_R1*.fastq.gz" -o \
+            -name "${sample}_1*.fq.gz" -o \
+            -name "${sample}_1*.fastq.gz" -o \
+            -name "${sample}*.fq.gz" -o \
+            -name "${sample}*.fastq.gz" \
+        \) | sort | head -n 1
+    else
+        find "$search_dir" -maxdepth 1 -type f \( \
+            -name "Trimmed_${sample}.fq.gz" -o \
+            -name "Trimmed_${sample}.fastq.gz" -o \
+            -name "Trimmed_${sample}.fq" -o \
+            -name "Trimmed_${sample}.fastq" -o \
+            -name "${sample}.fq.gz" -o \
+            -name "${sample}.fastq.gz" -o \
+            -name "${sample}.fq" -o \
+            -name "${sample}.fastq" -o \
+            -name "${sample}_R1*.fq.gz" -o \
+            -name "${sample}_R1*.fastq.gz" -o \
+            -name "${sample}_R1*.fq" -o \
+            -name "${sample}_R1*.fastq" -o \
+            -name "${sample}_1*.fq.gz" -o \
+            -name "${sample}_1*.fastq.gz" -o \
+            -name "${sample}_1*.fq" -o \
+            -name "${sample}_1*.fastq" -o \
+            -name "${sample}*.fq.gz" -o \
+            -name "${sample}*.fastq.gz" -o \
+            -name "${sample}*.fq" -o \
+            -name "${sample}*.fastq" \
+        \) | sort | head -n 1
+    fi
+}
 
 # ------------------------------------------------------------
-# Extract sample names from input FASTQ files
-# Supports .fq.gz, .fastq.gz, .fq, .fastq
+# Extract sample names from samplesheet.csv
 # ------------------------------------------------------------
 
-files=$(find "$inputdr" -type f \( -name "*.fq.gz" -o -name "*.fastq.gz" -o -name "*.fq" -o -name "*.fastq" \))
+lsn=$(awk -F',' '
+NR > 1 {
+    s=$1
+    gsub(/^[ \t\r\n]+|[ \t\r\n]+$/, "", s)
+    if (s != "") print s
+}
+' "$samplesheet_file" | sort -u | tr "\n" " " | sed 's/[[:space:]]*$//')
 
-lsn=""
+if [[ -z "$lsn" ]]; then
+    die "No sample names were found in samplesheet: $samplesheet_file"
+fi
 
-for fqfile in $files; do
-    fn=$(basename "$fqfile")
+echo "[INFO] Samples detected from samplesheet:"
+echo "  $lsn"
 
-    base="$fn"
-    base="${base%.gz}"
-    base="${base%.fastq}"
-    base="${base%.fq}"
+# Optional FASTQ sanity check only when not using custom cache
+if [[ -z "${CUSTOM_PATH:-}" ]]; then
+    missing_fastq=0
 
-    # Remove common single/paired-end suffixes if present
-    sn=$(echo "$base" | sed -E 's/_R?1(_001)?$//; s/_1$//')
+    for i in $lsn; do
+        fq=$(find_fastq_for_sample "$i" "$inputdr" 0 || true)
 
-    lsn="$lsn $sn"
-done
+        if [[ -z "$fq" ]]; then
+            echo "${r}[ERROR] Could not find FASTQ file for sample listed in samplesheet:${w} $i"
+            echo "Search directory:"
+            echo "  $inputdr"
+            missing_fastq=1
+        fi
+    done
 
-# Remove duplicates and normalize spaces
-lsn=$(echo "$lsn" | tr " " "\n" | awk 'NF' | sort -u | tr "\n" " " | sed 's/[[:space:]]*$//')
-
-# ------------------------------------------------------------
-# Check if input files match samplesheet.csv
-# ------------------------------------------------------------
-
-fastq_files=$(echo "$lsn" | tr " " "\n" | sort | tr "\n" " ")
-SamplesInSheet=$(cut -f 1 -d ',' "$samplesheet_file" | tail -n +2 | sort | tr "\n" " ")
-
-if [[ "$fastq_files" != "$SamplesInSheet" ]]; then
-    echo "${r}[ERROR] The sample FASTQ files in the input folder do not match your samplesheet.csv.${w}"
-    echo
-    echo "Samples detected from FASTQ files:"
-    echo "$fastq_files"
-    echo
-    echo "Samples listed in samplesheet.csv:"
-    echo "$SamplesInSheet"
-    echo
-    echo "Please ensure no unrelated FASTQ files are under the input folder/subfolders."
-    exit 1
+    if [[ "$missing_fastq" == "1" ]]; then
+        exit 1
+    fi
 fi
 
 # ------------------------------------------------------------
@@ -916,51 +1815,6 @@ echo "Raw reads preparation${w}"
 #        -> copy already compressed FASTQ files from DIR
 #        -> no fastp, no pigz compression
 # ------------------------------------------------------------
-
-find_fastq_for_sample() {
-    local sample="$1"
-    local search_dir="$2"
-    local compressed_only="${3:-0}"
-
-    if [[ "$compressed_only" == "1" ]]; then
-        find "$search_dir" -maxdepth 1 -type f \( \
-            -name "Trimmed_${sample}.fq.gz" -o \
-            -name "Trimmed_${sample}.fastq.gz" -o \
-            -name "${sample}.fq.gz" -o \
-            -name "${sample}.fastq.gz" -o \
-            -name "${sample}_R1*.fq.gz" -o \
-            -name "${sample}_R1*.fastq.gz" -o \
-            -name "${sample}_1*.fq.gz" -o \
-            -name "${sample}_1*.fastq.gz" -o \
-            -name "${sample}*.fq.gz" -o \
-            -name "${sample}*.fastq.gz" \
-        \) | sort | head -n 1
-    else
-        find "$search_dir" -maxdepth 1 -type f \( \
-            -name "Trimmed_${sample}.fq.gz" -o \
-            -name "Trimmed_${sample}.fastq.gz" -o \
-            -name "Trimmed_${sample}.fq" -o \
-            -name "Trimmed_${sample}.fastq" -o \
-            -name "${sample}.fq.gz" -o \
-            -name "${sample}.fastq.gz" -o \
-            -name "${sample}.fq" -o \
-            -name "${sample}.fastq" -o \
-            -name "${sample}_R1*.fq.gz" -o \
-            -name "${sample}_R1*.fastq.gz" -o \
-            -name "${sample}_R1*.fq" -o \
-            -name "${sample}_R1*.fastq" -o \
-            -name "${sample}_1*.fq.gz" -o \
-            -name "${sample}_1*.fastq.gz" -o \
-            -name "${sample}_1*.fq" -o \
-            -name "${sample}_1*.fastq" -o \
-            -name "${sample}*.fq.gz" -o \
-            -name "${sample}*.fastq.gz" -o \
-            -name "${sample}*.fq" -o \
-            -name "${sample}*.fastq" \
-        \) | sort | head -n 1
-    fi
-}
-
 total_cores=$(nproc)
 
 if [[ "$total_cores" -le 4 ]]; then
@@ -1087,19 +1941,29 @@ else
 
         out_fq="$outputdr/temp/Trimmed_${i}.fq.gz"
 
-        echo "============================================================"
-        echo "[FASTP] Sample: $i"
-        echo "Input:  $fq"
-        echo "Output: $out_fq"
-        echo "Threads: $fastp_threads"
-        echo "Minimum length: $length"
-        echo "============================================================"
+echo "============================================================"
+echo "[FASTP] Sample: $i"
+echo "Input:  $fq"
+echo "Output: $out_fq"
+echo "Threads: $fastp_threads"
+echo "Minimum length: $length"
+echo "============================================================"
 
-        fastp --trim_poly_x \
-              --length_required "$length" \
-              --thread "$fastp_threads" \
-              -i "$fq" \
-              -o "$out_fq"
+mkdir -p "$outputdr/fastp"
+
+fastp_report_base="$(basename "$out_fq")"
+fastp_report_base="${fastp_report_base%.fastq.gz}"
+fastp_report_base="${fastp_report_base%.fq.gz}"
+fastp_report_base="${fastp_report_base%.fastq}"
+fastp_report_base="${fastp_report_base%.fq}"
+
+fastp --trim_poly_x \
+      --length_required "$length" \
+      --thread "$fastp_threads" \
+      -i "$fq" \
+      -o "$out_fq" \
+      --html "$outputdr/fastp/${fastp_report_base}.fastp.html" \
+      --json "$outputdr/fastp/${fastp_report_base}.fastp.json"
 
         if [[ ! -s "$out_fq" ]]; then
             echo "${r}[ERROR] fastp failed to create:${w} $out_fq"
@@ -1874,7 +2738,7 @@ else
 
     norm_args=(
         "$outputdr/bracken_species_all"
-        "$inputdr/samplesheet.csv"
+        "$samplesheet_file"
         "$outputdr/temp/Report_non-host_bracken_species_normalized"
     )
 
@@ -1951,10 +2815,22 @@ rm -f "$GRAPHLAN_MPA_DIR"/*.mpa.txt
 rm -f "$GRAPHLAN_COMBINED_MPA" "$GRAPHLAN_INPUT"
 
 # ------------------------------------------------------------
-# Generate Krona and MPA files from normalized reports
+# Generate Krona, Krona HTML, and MPA files from normalized reports
 # ------------------------------------------------------------
 
-echo "${g}Generating Krona and MPA files from normalized reports${w}"
+echo "${g}Generating Krona, Krona HTML, and MPA files from normalized reports${w}"
+
+mkdir -p "$outputdr/krona"
+mkdir -p "$GRAPHLAN_MPA_DIR"
+
+if ! command -v ktImportText >/dev/null 2>&1; then
+    echo "${r}[ERROR] ktImportText was not found in PATH.${w}"
+    echo "Please install/activate KronaTools first, for example:"
+    echo "  conda install -c bioconda krona"
+    exit 1
+fi
+
+krona_all_inputs=()
 
 for i in $lsn; do
     if [[ ! -s "$i" ]]; then
@@ -1964,18 +2840,63 @@ for i in $lsn; do
         exit 1
     fi
 
-    echo "  [Krona] $i"
+    sample=$(basename "$i")
+
+    krona_file="$outputdr/krona/${sample}-bracken.krona"
+    krona_html="$outputdr/krona/${sample}-bracken.html"
+    mpa_file="$GRAPHLAN_MPA_DIR/${sample}-bracken.mpa.txt"
+
+    echo "  [Krona] $sample"
     python "$MTDIR/Tools/KrakenTools/kreport2krona.py" \
         -r "$i" \
-        -o "$outputdr/krona/${i}-bracken.krona"
+        -o "$krona_file"
 
-    echo "  [MPA] $i"
+    if [[ ! -s "$krona_file" ]]; then
+        echo "${r}[ERROR] Krona file was not generated or is empty:${w} $krona_file"
+        exit 1
+    fi
+
+    echo "  [Krona HTML] $sample"
+    ktImportText "$krona_file" \
+        -o "$krona_html"
+
+    if [[ ! -s "$krona_html" ]]; then
+        echo "${r}[ERROR] Krona HTML was not generated or is empty:${w} $krona_html"
+        exit 1
+    fi
+
+    krona_all_inputs+=("$krona_file")
+
+    echo "  [MPA] $sample"
     python "$MTDIR/Tools/KrakenTools/kreport2mpa.py" \
         --display-header \
         -r "$i" \
-        -o "$GRAPHLAN_MPA_DIR/${i}-bracken.mpa.txt"
+        -o "$mpa_file"
 done
 
+# ------------------------------------------------------------
+# Generate combined Krona HTML for all detected taxa across animals
+# ------------------------------------------------------------
+
+if [[ ${#krona_all_inputs[@]} -gt 0 ]]; then
+    all_krona="$outputdr/krona/all_animals-bracken.krona"
+    all_html="$outputdr/krona/all_animals-bracken.html"
+
+    echo "${g}Generating combined Krona file for all animals${w}"
+    cat "${krona_all_inputs[@]}" > "$all_krona"
+
+    echo "${g}Generating combined Krona HTML for all animals${w}"
+    ktImportText "$all_krona" \
+        -o "$all_html"
+
+    if [[ ! -s "$all_html" ]]; then
+        echo "${r}[ERROR] Combined Krona HTML was not generated or is empty:${w} $all_html"
+        exit 1
+    fi
+
+    echo "${g}Combined Krona HTML generated:${w}"
+    echo "  $all_html"
+fi
 # ------------------------------------------------------------
 # Combine MPA files
 # ------------------------------------------------------------
@@ -2194,7 +3115,7 @@ if not clean_rows:
     raise SystemExit("[ERROR] No valid taxonomic rows remained for GraPhlAn.")
 
 with open(out, "w", newline="") as f:
-    writer = csv.writer(f, delimiter="\t")
+    writer = csv.writer(f, delimiter="\t", lineterminator="\n")
     writer.writerow(["ID"] + sample_names)
     for r in clean_rows:
         writer.writerow([r[0]] + ["%.10g" % x for x in r[1:]])
@@ -2218,6 +3139,9 @@ fi
 
 echo "${g}[OK] Clean GraPhlAn input:${w}"
 echo "  $GRAPHLAN_INPUT"
+
+# Remove possible Windows-style carriage returns from the clean GraPhlAn input
+sed -i 's/\r$//' "$GRAPHLAN_INPUT"
 echo
 echo "${g}Preview of GraPhlAn input:${w}"
 head -n 5 "$GRAPHLAN_INPUT"
@@ -2242,23 +3166,31 @@ if [[ "${GRAPHLAN_KEEP_ENV:-0}" != "1" ]]; then
     unset GRAPHLAN_ABUNDANCE_THRESHOLD
 fi
 
-GRAPHLAN_TOP="${GRAPHLAN_TOP:-40}"
-GRAPHLAN_SIZE="${GRAPHLAN_SIZE:-10.0}"
+GRAPHLAN_TOP="${GRAPHLAN_TOP:-80}"
+GRAPHLAN_SIZE="${GRAPHLAN_SIZE:-13.0}"
 GRAPHLAN_DPI="${GRAPHLAN_DPI:-600}"
 GRAPHLAN_MAX_CLADE_SIZE="${GRAPHLAN_MAX_CLADE_SIZE:-300}"
 
-# Internal labels and external labels should not overlap.
-GRAPHLAN_LEVELS="${GRAPHLAN_LEVELS:-2,3,4,5,6}"
-GRAPHLAN_EXTERNAL_LEVELS="${GRAPHLAN_EXTERNAL_LEVELS:-1,2,3,4,5,6}"
+# Taxonomic levels:
+# 1 = kingdom
+# 2 = phylum
+# 3 = class
+# 4 = order
+# 5 = family
+# 6 = genus
+# 7 = species
+GRAPHLAN_LEVELS="${GRAPHLAN_LEVELS:-2,3,4,5,6,7}"
 
-# This creates the shaded/background-style clades closer to your old figure.
+# For species-level exploration, put the external labels mainly at species level.
+GRAPHLAN_EXTERNAL_LEVELS="${GRAPHLAN_EXTERNAL_LEVELS:-7}"
+
+# Keep broad background clades at phylum/class level.
 GRAPHLAN_BACKGROUND_LEVELS="${GRAPHLAN_BACKGROUND_LEVELS:-2,3}"
 
-# Helps export2graphlan choose broader highlighted clades from abundant taxa.
 GRAPHLAN_LEAST_BIOMARKERS="${GRAPHLAN_LEAST_BIOMARKERS:-5}"
 
-# Lower threshold helps labels appear when abundances are relative/small.
-GRAPHLAN_ABUNDANCE_THRESHOLD="${GRAPHLAN_ABUNDANCE_THRESHOLD:-0.05}"
+# Lower threshold helps species-level labels appear.
+GRAPHLAN_ABUNDANCE_THRESHOLD="${GRAPHLAN_ABUNDANCE_THRESHOLD:-0.001}"
 
 echo "${g}GraPhlAn cladogram-like settings:${w}"
 echo "  Input table:                $GRAPHLAN_INPUT"
@@ -2325,7 +3257,7 @@ else
 
     deg_args=(
         "$outputdr/bracken_species_all"
-        "$inputdr/samplesheet.csv"
+        "$samplesheet_file"
         "$hostid"
         "$MTDIR/HostSpecies.csv"
     )
@@ -2346,6 +3278,17 @@ mkdir -p bracken_raw_results
 
 # Save raw combined Bracken tables if they are still present
 mv ../bracken_*_all bracken_raw_results/ 2>/dev/null || true
+
+# ------------------------------------------------------------
+# Exploratory-only taxonomic figures
+# ------------------------------------------------------------
+# This uses:
+#   $outputdr/temp/bracken_raw_results/bracken_species_all
+#
+# It runs only when NO_COMPARISON=1.
+# ------------------------------------------------------------
+
+run_exploratory_taxonomic_figures
 
 # ------------------------------------------------------------
 # Annotate and render GraPhlAn
@@ -2402,26 +3345,26 @@ python "$MTDIR/Tools/graphlan/graphlan.py" \
     --dpi "$GRAPHLAN_DPI" \
     --size "$GRAPHLAN_SIZE" \
     outtree.txt \
-    "outimg.cladogram_top${GRAPHLAN_TOP}.png"
+    "outimg.cladogram_species_top${GRAPHLAN_TOP}.png"
 
 python "$MTDIR/Tools/graphlan/graphlan.py" \
     --size "$GRAPHLAN_SIZE" \
     outtree.txt \
-    "outimg.cladogram_top${GRAPHLAN_TOP}.pdf"
+    "outimg.cladogram_species_top${GRAPHLAN_TOP}.pdf"
 
-if [[ ! -s "outimg.cladogram_top${GRAPHLAN_TOP}.png" ]]; then
+if [[ ! -s "outimg.cladogram_species_top${GRAPHLAN_TOP}.png" ]]; then
     echo "${r}[ERROR] GraPhlAn PNG was not created.${w}"
     exit 1
 fi
 
-if [[ ! -s "outimg.cladogram_top${GRAPHLAN_TOP}.pdf" ]]; then
+if [[ ! -s "outimg.cladogram_species_top${GRAPHLAN_TOP}.pdf" ]]; then
     echo "${r}[ERROR] GraPhlAn PDF was not created.${w}"
     exit 1
 fi
 
 # Keep old output names too, so the rest of the pipeline/user habits do not break
-cp "outimg.cladogram_top${GRAPHLAN_TOP}.png" outimg.png
-cp "outimg.cladogram_top${GRAPHLAN_TOP}.pdf" outimg.pdf
+cp "outimg.cladogram_species_top${GRAPHLAN_TOP}.png" outimg.png
+cp "outimg.cladogram_species_top${GRAPHLAN_TOP}.pdf" outimg.pdf
 
 echo "${g}[OK] Cladogram-like GraPhlAn outputs:${w}"
 echo "  $outputdr/graphlan/outimg.cladogram_top${GRAPHLAN_TOP}.png"
@@ -2512,11 +3455,11 @@ if [[ "$NO_COMPARISON" == "1" ]]; then
 else
     Rscript "$MTDIR/DEG_Anno_Plot.R" \
         "$outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_kegg_translated.tsv" \
-        "$inputdr/samplesheet.csv"
+        "$samplesheet_file"
 
     Rscript "$MTDIR/DEG_Anno_Plot.R" \
         "$outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_go_translated.tsv" \
-        "$inputdr/samplesheet.csv"
+        "$samplesheet_file"
 fi
 
 conda deactivate
@@ -2582,9 +3525,6 @@ echo "${g}DEG & Annotation & Plots & preprocess for host${w}"
 conda deactivate
 conda activate R412
 cd $outputdr
-echo "${r}"
-echo "before DEG_Anno_Plot.R "
-#read -p "PRESS ENTER"
 echo "${w}"
 echo $MTDIR
 echo $outputdr
@@ -2821,10 +3761,12 @@ if [[ "$NO_COMPARISON" == "1" ]]; then
 
     cp "$outputdr/host_counts.txt" "$outputdr/Host_DEG/host_counts_featureCounts_matrix.txt"
 
+    run_exploratory_host_expression_qc
+
 else
     host_deg_args=(
         "$outputdr/host_counts.txt"
-        "$inputdr/samplesheet.csv"
+        "$samplesheet_file"
         "$hostid"
         "$MTDIR/HostSpecies.csv"
     )
@@ -2833,7 +3775,104 @@ else
         host_deg_args+=( "$metadata" )
     fi
 
+
     Rscript "$MTDIR/DEG_Anno_Plot.R" "${host_deg_args[@]}"
+
+    # ------------------------------------------------------------
+    # Extra DEG volcano plots with EnhancedVolcano
+    # Runs EV.volcano.R in a selected conda environment.
+    # Default: base, because EnhancedVolcano is already installed there.
+    # Outputs are written inside each comparison folder.
+    # ------------------------------------------------------------
+
+    EV_VOLCANO_SCRIPT="$MTDIR/aux_scripts/EV/EV.volcano.R"
+    EV_VOLCANO_LABEL_TOP="${EV_VOLCANO_LABEL_TOP:-25}"
+    EV_VOLCANO_ENV="${EV_VOLCANO_ENV:-base}"
+
+    run_ev_volcano_for_deg_folder() {
+        local deg_label="$1"
+        local deg_dir_main="$2"
+        local csv_pattern="$3"
+
+        if [[ ! -s "$EV_VOLCANO_SCRIPT" ]]; then
+            echo "${y}[WARNING] EV volcano script not found. Skipping ${deg_label} EV volcano plots.${w}"
+            echo "Expected:"
+            echo "  $EV_VOLCANO_SCRIPT"
+            return 0
+        fi
+
+        echo "${g}Generating extra EV volcano plots for ${deg_label}${w}"
+        echo "[EV VOLCANO] Conda environment:"
+        echo "  $EV_VOLCANO_ENV"
+
+        shopt -s nullglob
+        local de_csv_files=( "$deg_dir_main"/*/$csv_pattern )
+        shopt -u nullglob
+
+        if [[ "${#de_csv_files[@]}" -eq 0 ]]; then
+            echo "${y}[WARNING] No ${deg_label} DEG comparison CSV files found for EV volcano plots.${w}"
+            echo "Expected pattern:"
+            echo "  $deg_dir_main/*/$csv_pattern"
+            return 0
+        fi
+
+        for de_csv in "${de_csv_files[@]}"; do
+            local de_dir
+            local de_file
+            local volcano_log
+
+            de_dir="$(dirname "$de_csv")"
+            de_file="$(basename "$de_csv")"
+            volcano_log="$de_dir/${de_file%.csv}.EV.volcano.log"
+
+            echo "------------------------------------------------------------"
+            echo "[EV VOLCANO] Dataset:"
+            echo "  $deg_label"
+            echo "[EV VOLCANO] Input:"
+            echo "  $de_csv"
+            echo "[EV VOLCANO] Output directory:"
+            echo "  $de_dir"
+            echo "[EV VOLCANO] label_top:"
+            echo "  $EV_VOLCANO_LABEL_TOP"
+            echo "[EV VOLCANO] conda env:"
+            echo "  $EV_VOLCANO_ENV"
+            echo "------------------------------------------------------------"
+
+            if ! (
+                conda activate "$EV_VOLCANO_ENV" || exit 1
+
+                echo "[INFO] Rscript used for EV volcano:"
+                which Rscript
+                Rscript -e 'cat("[INFO] EnhancedVolcano available: ", requireNamespace("EnhancedVolcano", quietly=TRUE), "\n")'
+
+                cd "$de_dir" || exit 1
+
+                Rscript "$EV_VOLCANO_SCRIPT" \
+                    --de_results "$de_file" \
+                    --label_top "$EV_VOLCANO_LABEL_TOP"
+            ) > "$volcano_log" 2>&1
+            then
+                echo "${y}[WARNING] EV volcano failed for:${w}"
+                echo "  $de_csv"
+                echo "Log:"
+                echo "  $volcano_log"
+                tail -n 40 "$volcano_log" || true
+            else
+                echo "${g}[OK] EV volcano generated in:${w}"
+                echo "  $de_dir"
+            fi
+        done
+    }
+
+    run_ev_volcano_for_deg_folder \
+        "host DEG" \
+        "$outputdr/Host_DEG" \
+        "host_counts_*.csv"
+
+    run_ev_volcano_for_deg_folder \
+        "non-host DEG" \
+        "$outputdr/Nonhost_DEG" \
+        "bracken_species_all_*.csv"
 
     require_file "$outputdr/Host_DEG/host_counts_TPM.csv" "Host TPM matrix generated by DEG_Anno_Plot.R"
 fi
@@ -2863,14 +3902,120 @@ require_file "$outputdr/Host_DEG/host_counts_TPM.csv" "Host TPM matrix"
 
 run_cmd Rscript "$MTDIR/gct_making.R" \
     "$outputdr/Host_DEG/host_counts_TPM.csv" \
-    "$inputdr/samplesheet.csv"
+    "$samplesheet_file"
 
 require_file "$outputdr/ssGSEA/host.gct" "ssGSEA input GCT"
+
+echo "${g}[INFO] ssGSEA GMT file:${w}"
+echo "  $SSGSEA_GMT"
+echo "${g}[INFO] ssGSEA GMT mode:${w}"
+echo "  $SSGSEA_GMT_MODE"
+write_methods_log
+
+# ------------------------------------------------------------
+# Select or build ssGSEA GMT
+# ------------------------------------------------------------
+
+SSGSEA_DEFAULT_GMT="$MTDIR/Tools/ssGSEA2.0/db/msigdb/c2.all.v7.5.1.symbols.gmt"
+
+if [[ "$SSGSEA_GMT" == "auto" || "$SSGSEA_GMT" == "custom_eggnog" ]]; then
+    echo "${g}[INFO] Building custom ssGSEA GMT from user-provided protein FASTA and annotation.${w}"
+    echo "[INFO] This mode does not download NCBI datasets by taxid."
+    echo "[INFO] TaxID: $hostid"
+    echo "[INFO] host.gct: $outputdr/ssGSEA/host.gct"
+
+    if [[ -z "${SSGSEA_PROTEIN_FASTA:-}" ]]; then
+        die "--ssgsea-gmt auto requires --ssgsea-protein-fasta FILE"
+    fi
+
+    if [[ -z "${SSGSEA_ANNOTATION_GFF:-}" ]]; then
+        die "--ssgsea-gmt auto requires --ssgsea-annotation-gff FILE"
+    fi
+
+    require_file "$SSGSEA_PROTEIN_FASTA" "ssGSEA protein FASTA"
+    require_file "$SSGSEA_ANNOTATION_GFF" "ssGSEA GFF/GTF annotation"
+
+    CUSTOM_GMT_DIR="$outputdr/ssGSEA/custom_gmt_user_files"
+    mkdir -p "$CUSTOM_GMT_DIR"
+
+    MTD_BIN="$condapath/envs/MTD/bin"
+
+    if [[ ! -d "$MTD_BIN" ]]; then
+        die "MTD conda env bin folder not found: $MTD_BIN"
+    fi
+
+    AUTO_GMT_ORIGINAL_PATH="$PATH"
+    AUTO_GMT_PATH="$PATH:$MTD_BIN"
+
+    echo "${g}[INFO] Custom GMT tool resolution:${w}"
+
+    missing_auto_gmt_tools=0
+
+    for tool in Rscript python3 emapper.py diamond; do
+        tool_path=$(PATH="$AUTO_GMT_PATH" command -v "$tool" 2>/dev/null || true)
+
+        if [[ -z "$tool_path" ]]; then
+            echo "${r}[ERROR] Required tool not found for custom ssGSEA GMT:${w} $tool"
+            missing_auto_gmt_tools=1
+        else
+            echo "${g}[OK]${w} $tool -> $tool_path"
+        fi
+    done
+
+    if [[ "$missing_auto_gmt_tools" == "1" ]]; then
+        echo
+        echo "${y}[INFO] Install missing tools inside the MTD environment:${w}"
+        echo "  conda activate MTD"
+        echo "  conda install -c conda-forge -c bioconda eggnog-mapper diamond -y"
+        exit 1
+    fi
+
+    export PATH="$AUTO_GMT_PATH"
+
+    conda deactivate
+    conda activate MTD
+
+    run_cmd bash "$MTDIR/aux_scripts/ssGSEA/make_custom_ssgsea_gmt_from_taxid_auto.sh" \
+        --taxid "$hostid" \
+        --host-gct "$outputdr/ssGSEA/host.gct" \
+        --outdir "$CUSTOM_GMT_DIR" \
+        --threads "$threads" \
+        --eggnog-db "$MTDIR/eggnog_db" \
+        --protein-fasta "$SSGSEA_PROTEIN_FASTA" \
+        --annotation-gff "$SSGSEA_ANNOTATION_GFF" \
+        --force
+
+    SSGSEA_GMT="$CUSTOM_GMT_DIR/custom_taxid_${hostid}_eggNOG_GO.gmt"
+    SSGSEA_GMT_MODE="custom_eggNOG_GO_from_user_files"
+
+    require_file "$SSGSEA_GMT" "Custom ssGSEA GMT"
+
+    export PATH="$AUTO_GMT_ORIGINAL_PATH"
+
+    conda deactivate
+    conda activate R412
+
+elif [[ "$SSGSEA_GMT" == "default" ]]; then
+    SSGSEA_GMT="$SSGSEA_DEFAULT_GMT"
+    SSGSEA_GMT_MODE="default_MSigDB_c2_symbols"
+    require_file "$SSGSEA_GMT" "Default ssGSEA GMT"
+
+else
+    SSGSEA_GMT_MODE="custom_path"
+    require_file "$SSGSEA_GMT" "Custom ssGSEA GMT"
+fi
+
+echo "${g}[INFO] ssGSEA GMT file:${w}"
+echo "  $SSGSEA_GMT"
+echo "${g}[INFO] ssGSEA GMT mode:${w}"
+echo "  $SSGSEA_GMT_MODE"
+
+write_methods_log
 
 run_cmd Rscript "$MTDIR/Tools/ssGSEA2.0/ssgsea-cli.R" \
     -i "$outputdr/ssGSEA/host.gct" \
     -o "$outputdr/ssGSEA/ssgsea-results" \
-    -d "$MTDIR/Tools/ssGSEA2.0/db/msigdb/c2.all.v7.5.1.symbols.gmt" \
+    -d "$SSGSEA_GMT" \
     -y "$MTDIR/Tools/ssGSEA2.0/config.yaml" \
     -u "$threads"
 
@@ -2878,13 +4023,166 @@ require_file "$outputdr/ssGSEA/ssgsea-results-scores.gct" "ssGSEA scores"
 
 run_cmd Rscript "$MTDIR/for_halla.R" \
     "$outputdr/ssGSEA/ssgsea-results-scores.gct" \
-    "$inputdr/samplesheet.csv" \
+    "$samplesheet_file" \
     $metadata
 
 require_file "$outputdr/halla/Microbiomes.txt" "HAllA microbiome input"
 require_file "$outputdr/halla/Host_gene.txt" "HAllA host gene input"
 require_file "$outputdr/halla/Host_score.txt" "HAllA host pathway input"
 
+# ------------------------------------------------------------
+# ssGSEA visualization
+# ------------------------------------------------------------
+
+RUN_SSGSEA_PLOTS="${RUN_SSGSEA_PLOTS:-1}"
+
+# Optional GO-name corrected ssGSEA plots
+# 1 = generate an additional set of plots using readable GO names
+# 0 = keep only the original GO-ID plots
+RUN_SSGSEA_GO_NAME_PLOTS="${RUN_SSGSEA_GO_NAME_PLOTS:-1}"
+
+# Optional online QuickGO fallback for GO IDs not found in local GO.db
+# 1 = use QuickGO when internet is available
+# 0 = offline mode only; GO.db + built-in/manual corrections
+RUN_SSGSEA_QUICKGO="${RUN_SSGSEA_QUICKGO:-1}"
+
+# Optional QuickGO secondary-ID/replacement search
+# 1 = try to resolve old/secondary GO IDs after direct lookup fails
+# 0 = skip this slower fallback
+RUN_SSGSEA_QUICKGO_SEARCH="${RUN_SSGSEA_QUICKGO_SEARCH:-1}"
+
+if [[ "$RUN_SSGSEA_PLOTS" == "1" ]]; then
+    echo "${g}Generating ssGSEA plots${w}"
+
+    SSGSEA_PLOT_SCRIPT="$MTDIR/aux_scripts/ssGSEA/plot_ssgsea_results.R"
+    SSGSEA_GO_RESOLVER_SCRIPT="$MTDIR/aux_scripts/ssGSEA/resolve_ssgsea_go_terms.py"
+    SSGSEA_MANUAL_GO_MAP="$MTDIR/aux_scripts/ssGSEA/go_replacement_manual_map.tsv"
+
+    require_file "$SSGSEA_PLOT_SCRIPT" "ssGSEA plotting script"
+
+    # ------------------------------------------------------------
+    # 1) Original ssGSEA plots using original feature names / GO IDs
+    # ------------------------------------------------------------
+
+    run_cmd Rscript "$SSGSEA_PLOT_SCRIPT" \
+        --scores "$outputdr/ssGSEA/ssgsea-results-scores.gct" \
+        --samplesheet "$samplesheet_file" \
+        --outdir "$outputdr/ssGSEA/plots" \
+        --top-var 50 \
+        --top-diff 20 \
+        --pca-top-var 500
+
+    require_file "$outputdr/ssGSEA/plots/ssGSEA_top_variable_heatmap.png" "ssGSEA top variable heatmap"
+    require_file "$outputdr/ssGSEA/plots/ssGSEA_PCA_samples.png" "ssGSEA PCA plot"
+    require_file "$outputdr/ssGSEA/plots/ssGSEA_differential_scores.tsv" "ssGSEA differential score table"
+
+    echo "${g}[OK] ssGSEA plots saved to:${w}"
+    echo "  $outputdr/ssGSEA/plots"
+
+    # ------------------------------------------------------------
+    # 2) Optional corrected GO-name ssGSEA plots
+    # ------------------------------------------------------------
+
+    if [[ "$RUN_SSGSEA_GO_NAME_PLOTS" == "1" ]]; then
+        echo "${g}Generating corrected GO-name ssGSEA plots${w}"
+
+        require_file "$SSGSEA_GO_RESOLVER_SCRIPT" "ssGSEA GO term resolver script"
+
+        SSGSEA_GO_RESOLUTION_DIR="$outputdr/ssGSEA/go_term_resolution"
+        SSGSEA_GO_NAME_DIR="$outputdr/ssGSEA/plots_GO_names"
+        SSGSEA_GO_NAME_GCT="$outputdr/ssGSEA/ssgsea-results-scores_GO_names_corrected.gct"
+        SSGSEA_GO_NAME_MAP="$SSGSEA_GO_RESOLUTION_DIR/ssGSEA_GO_ID_to_name_map.tsv"
+        SSGSEA_QUICKGO_CACHE="$SSGSEA_GO_RESOLUTION_DIR/quickgo_cache.tsv"
+
+        mkdir -p "$SSGSEA_GO_RESOLUTION_DIR" "$SSGSEA_GO_NAME_DIR"
+
+        if [[ "$RUN_SSGSEA_QUICKGO" == "1" ]]; then
+            SSGSEA_QUICKGO_ARG="yes"
+        else
+            SSGSEA_QUICKGO_ARG="no"
+        fi
+
+        if [[ "$RUN_SSGSEA_QUICKGO_SEARCH" == "1" ]]; then
+            SSGSEA_QUICKGO_SEARCH_ARG="yes"
+        else
+            SSGSEA_QUICKGO_SEARCH_ARG="no"
+        fi
+
+        echo "[INFO] ssGSEA GO-name resolver settings:"
+        echo "  Resolver script:        $SSGSEA_GO_RESOLVER_SCRIPT"
+        echo "  Input GCT:              $outputdr/ssGSEA/ssgsea-results-scores.gct"
+        echo "  Corrected GCT:          $SSGSEA_GO_NAME_GCT"
+        echo "  GO map:                 $SSGSEA_GO_NAME_MAP"
+        echo "  QuickGO enabled:        $SSGSEA_QUICKGO_ARG"
+        echo "  QuickGO search enabled: $SSGSEA_QUICKGO_SEARCH_ARG"
+        echo "  QuickGO cache:          $SSGSEA_QUICKGO_CACHE"
+
+        if [[ -s "$SSGSEA_MANUAL_GO_MAP" ]]; then
+            echo "  Manual GO map:          $SSGSEA_MANUAL_GO_MAP"
+
+            run_cmd python3 "$SSGSEA_GO_RESOLVER_SCRIPT" \
+                --scores "$outputdr/ssGSEA/ssgsea-results-scores.gct" \
+                --out-gct "$SSGSEA_GO_NAME_GCT" \
+                --out-map "$SSGSEA_GO_NAME_MAP" \
+                --manual-map "$SSGSEA_MANUAL_GO_MAP" \
+                --quickgo "$SSGSEA_QUICKGO_ARG" \
+                --quickgo-search "$SSGSEA_QUICKGO_SEARCH_ARG" \
+                --quickgo-cache "$SSGSEA_QUICKGO_CACHE"
+        else
+            echo "  Manual GO map:          not found; using built-in resolver fallbacks only"
+
+            run_cmd python3 "$SSGSEA_GO_RESOLVER_SCRIPT" \
+                --scores "$outputdr/ssGSEA/ssgsea-results-scores.gct" \
+                --out-gct "$SSGSEA_GO_NAME_GCT" \
+                --out-map "$SSGSEA_GO_NAME_MAP" \
+                --quickgo "$SSGSEA_QUICKGO_ARG" \
+                --quickgo-search "$SSGSEA_QUICKGO_SEARCH_ARG" \
+                --quickgo-cache "$SSGSEA_QUICKGO_CACHE"
+        fi
+
+        require_file "$SSGSEA_GO_NAME_GCT" "Corrected GO-name ssGSEA GCT"
+        require_file "$SSGSEA_GO_NAME_MAP" "ssGSEA GO ID to name resolution map"
+
+        run_cmd Rscript "$SSGSEA_PLOT_SCRIPT" \
+            --scores "$SSGSEA_GO_NAME_GCT" \
+            --samplesheet "$samplesheet_file" \
+            --outdir "$SSGSEA_GO_NAME_DIR" \
+            --top-var 50 \
+            --top-diff 20 \
+            --pca-top-var 500
+
+        require_file "$SSGSEA_GO_NAME_DIR/ssGSEA_top_variable_heatmap.png" "Corrected GO-name ssGSEA top variable heatmap"
+        require_file "$SSGSEA_GO_NAME_DIR/ssGSEA_PCA_samples.png" "Corrected GO-name ssGSEA PCA plot"
+        require_file "$SSGSEA_GO_NAME_DIR/ssGSEA_differential_scores.tsv" "Corrected GO-name ssGSEA differential score table"
+
+        echo "${g}[OK] Corrected GO-name ssGSEA plots saved to:${w}"
+        echo "  $SSGSEA_GO_NAME_DIR"
+        echo "${g}[OK] GO ID resolution map saved to:${w}"
+        echo "  $SSGSEA_GO_NAME_MAP"
+
+        echo "[INFO] GO resolution summary:"
+        awk -F'\t' '
+        NR > 1 {
+            total++
+            source[$5]++
+        }
+        END {
+            print "  Total rows: " total
+            for (s in source) {
+                print "  " s ": " source[s]
+            }
+            if (total > 0) {
+                unresolved = source["unresolved"] + 0
+                printf "  Resolved percent: %.2f%%\n", ((total - unresolved) / total) * 100
+            }
+        }' "$SSGSEA_GO_NAME_MAP" || true
+    else
+        echo "${y}[INFO] RUN_SSGSEA_GO_NAME_PLOTS=0; skipping corrected GO-name ssGSEA plots.${w}"
+    fi
+
+else
+    echo "${y}[INFO] RUN_SSGSEA_PLOTS=0; skipping ssGSEA plots.${w}"
+fi
 echo "${g}MTD running  progress:"
 echo '>>>>>>>>>>>>>>>>    [80%]'
 echo "MTD DEG analyses are done. Starting microbiome x host association analyses..."
