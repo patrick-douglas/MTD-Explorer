@@ -48,11 +48,20 @@ no_trimm=0                             # default flag
 metadata=""                            # optional metadata file
 analysis_mode="auto"                   # auto, comparison, exploratory
 NO_COMPARISON=0                        # set automatically later
+SSGSEA_GMT="default"                  # default, auto, or path to custom GMT
+SSGSEA_GMT_MODE="default_MSigDB_c2"
+SSGSEA_PROTEIN_FASTA=""
+SSGSEA_ANNOTATION_GFF=""
 
 # Exploratory-only taxonomic figures
 # 1 = run taxonomic heatmap and stacked bar in exploratory mode
 # 0 = skip
 RUN_EXPLORATORY_TAXONOMIC_FIGURES="${RUN_EXPLORATORY_TAXONOMIC_FIGURES:-1}"
+
+# Run exploratory/descriptive taxonomic figures even in comparison mode
+# 1 = run also in comparison mode
+# 0 = run only in exploratory/no-comparison mode
+RUN_EXPLORATORY_FIGURES_IN_COMPARISON="${RUN_EXPLORATORY_FIGURES_IN_COMPARISON:-1}"
 
 # Exploratory-only host expression QC
 # 1 = run PCA, top variable genes heatmap, sample correlation and detected genes plot
@@ -106,6 +115,9 @@ Optional:
                                             comparison: requires experimental groups and runs DEG-dependent steps
                                             exploratory: skips DEG-dependent steps and generates non-comparison outputs
                                             Default: ${analysis_mode}
+
+      --exploratory, --no-comparison        Alias for --analysis-mode exploratory outputs
+                                            Default: ${analysis_mode}
   -m, --metadata FILE                      Metadata CSV file
   -p, --pdm METHOD                         HAllA metric: spearman, pearson, mi, nmi, xicor, dcor
                                            Default: ${pdm}
@@ -115,11 +127,23 @@ Optional:
                                            Default: ${read_len}
       --threads INT                        Number of CPU threads
                                            Default: nproc = ${threads}
+      --ssgsea-gmt default|custom_eggnog|FILE    ssGSEA GMT mode or custom GMT file.
+                                          default: use default MSigDB/human GMT.
+                                          custom_eggnog: build custom eggNOG/GO GMT from user-provided
+                                          protein FASTA and GFF/GTF annotation.
+                                          FILE: use an existing GMT file.
+
+      --ssgsea-protein-fasta FILE          Required when --ssgsea-gmt custom_eggnog.
+                                           Protein FASTA/proteome matching the host reference.
+
+      --ssgsea-annotation-gff FILE         Required when --ssgsea-gmt custom_eggnog.
+                                           GFF3/GTF annotation matching the host reference.
 
 Host processing:
   -b, --blast                              Use Magic-BLAST instead of HISAT2
   -t, --no-trim                            Skip fastp trimming
-      --custom-raw-path DIR                Folder used when choice="skip"
+      --custom-raw-path DIR                Folder containing already compressed FASTQ files.
+                                           Forces --no-trim mode automatically.
                                            Default: ${CUSTOM_PATH}
 
 Kraken2 host filtering:
@@ -168,12 +192,23 @@ Examples:
       --blast \\
       --no-trim \\
       --kraken-host-db /home/me/MTD/kraken2DB_Carollia_Myotis/ \\
-      --kraken-micro-db /home/me/MTD/Kraken2DB_trematoda/ \
+      --kraken-micro-db /home/me/MTD/Kraken2DB_trematoda/ \\
       --kraken-host-confidence 0.05 \\
       --kraken-host-min-hit-groups 3 \\
       --kraken-micro-confidence 0.10 \\
       --kraken-micro-min-hit-groups 3 \\
       --bracken-threshold 10
+
+  Custom eggNOG/GO ssGSEA GMT from protein FASTA and GFF/GTF:
+    bash $(basename "$0") \\
+      --input samplesheet.csv \\
+      --output MTD_results_custom_ssGSEA \\
+      --hostid 6526 \\
+      --blast \\
+      --no-trim \\
+      --ssgsea-gmt custom_eggnog \\
+      --ssgsea-protein-fasta /path/to/proteins.pep.all.fa.gz \\
+      --ssgsea-annotation-gff /path/to/annotation.gff3.gz
 EOF
 }
 
@@ -261,6 +296,30 @@ while [[ $# -gt 0 ]]; do
             ;;
         --threads=*)
             threads="${1#*=}"
+            shift
+            ;;
+        --ssgsea-gmt)
+            SSGSEA_GMT="$2"
+            shift 2
+            ;;
+        --ssgsea-gmt=*)
+            SSGSEA_GMT="${1#*=}"
+            shift
+            ;;
+        --ssgsea-protein-fasta)
+            SSGSEA_PROTEIN_FASTA="$2"
+            shift 2
+            ;;
+        --ssgsea-protein-fasta=*)
+            SSGSEA_PROTEIN_FASTA="${1#*=}"
+            shift
+            ;;
+        --ssgsea-annotation-gff)
+            SSGSEA_ANNOTATION_GFF="$2"
+            shift 2
+            ;;
+        --ssgsea-annotation-gff=*)
+            SSGSEA_ANNOTATION_GFF="${1#*=}"
             shift
             ;;
         -b|--blast)
@@ -430,6 +489,29 @@ if [[ "$pdm" != "spearman" && "$pdm" != "pearson" && "$pdm" != "mi" && "$pdm" !=
 fi
 
 # ------------------------------------------------------------
+# ssGSEA custom GMT early validation
+# ------------------------------------------------------------
+
+if [[ "$SSGSEA_GMT" == "auto" || "$SSGSEA_GMT" == "custom_eggnog" ]]; then
+    if [[ -z "${SSGSEA_PROTEIN_FASTA:-}" ]]; then
+        die "--ssgsea-gmt $SSGSEA_GMT requires --ssgsea-protein-fasta FILE"
+    fi
+
+    if [[ -z "${SSGSEA_ANNOTATION_GFF:-}" ]]; then
+        die "--ssgsea-gmt $SSGSEA_GMT requires --ssgsea-annotation-gff FILE"
+    fi
+
+    require_file "$SSGSEA_PROTEIN_FASTA" "ssGSEA protein FASTA"
+    require_file "$SSGSEA_ANNOTATION_GFF" "ssGSEA GFF/GTF annotation"
+fi
+
+if [[ "$SSGSEA_GMT" != "default" &&
+      "$SSGSEA_GMT" != "auto" &&
+      "$SSGSEA_GMT" != "custom_eggnog" ]]; then
+    require_file "$SSGSEA_GMT" "Custom ssGSEA GMT"
+fi
+
+# ------------------------------------------------------------
 # Output directory behavior
 # ------------------------------------------------------------
 
@@ -452,6 +534,32 @@ fi
 
 MTDIR=$(dirname "$(readlink -f "$0")")
 echo "MTD directory is $MTDIR"
+
+# ------------------------------------------------------------
+# Custom R library for MTD-generated OrgDb packages
+# Example: custom org.Bglabrata.eg.db with BGLAX IDs
+# ------------------------------------------------------------
+
+mkdir -p "$MTDIR/custom_R_libs"
+export R_LIBS_USER="$MTDIR/custom_R_libs:${R_LIBS_USER:-}"
+
+echo "${g}[INFO] R custom library:${w}"
+echo "  $R_LIBS_USER"
+
+# ------------------------------------------------------------
+# ssGSEA GMT default path
+# Actual GMT selection happens later, after host.gct is generated.
+# ------------------------------------------------------------
+
+SSGSEA_DEFAULT_GMT="$MTDIR/Tools/ssGSEA2.0/db/msigdb/c2.all.v7.5.1.symbols.gmt"
+
+if [[ "$SSGSEA_GMT" == "default" ]]; then
+    SSGSEA_GMT_MODE="default_MSigDB_c2_symbols"
+elif [[ "$SSGSEA_GMT" == "auto" || "$SSGSEA_GMT" == "custom_eggnog" ]]; then
+    SSGSEA_GMT_MODE="custom_eggNOG_GO_from_user_files_pending"
+else
+    SSGSEA_GMT_MODE="custom_path_pending"
+fi
 
 condapath=$(head -n 1 "$MTDIR/condaPath")
 
@@ -583,6 +691,8 @@ echo "  Kraken host min hit groups:     $KRAKEN_HOST_MIN_HIT_GROUPS"
 echo "  Kraken micro confidence:        $KRAKEN_MICRO_CONF"
 echo "  Kraken micro min hit groups:    $KRAKEN_MICRO_MIN_HIT_GROUPS"
 echo "  Bracken threshold:              $BRACKEN_THRESHOLD"
+echo "  ssGSEA GMT:                     $SSGSEA_GMT"
+echo "  ssGSEA GMT mode:                $SSGSEA_GMT_MODE"
 
 echo "${g}Kraken2 microbiome parameters:${w}"
 if [[ "$KRAKEN_MICRO_DB_MODE" == "custom_path_from_--kraken-micro-db" ]]; then
@@ -715,7 +825,10 @@ write_methods_log() {
         csv_row "Host downstream analysis" "HISAT2" "hisat2_database" "$DB_hisat2" "HISAT2 database selected from --hostid"
         csv_row "Host downstream analysis" "featureCounts" "gtf_file" "$gtf" "GTF annotation selected from --hostid"
         csv_row "Host downstream analysis" "featureCounts" "output" "$outputdr/host_counts.txt" "Host count matrix output"
-
+        csv_row "Host downstream analysis" "ssGSEA" "gmt_file" "$SSGSEA_GMT" "GMT gene set database used by ssGSEA"
+        csv_row "Host downstream analysis" "ssGSEA" "gmt_mode" "$SSGSEA_GMT_MODE" "Whether ssGSEA used default MSigDB or a custom GMT"
+        csv_row "Host downstream analysis" "ssGSEA" "protein_fasta" "${SSGSEA_PROTEIN_FASTA:-none}" "Protein FASTA used to build custom ssGSEA GMT"
+        csv_row "Host downstream analysis" "ssGSEA" "annotation_gff" "${SSGSEA_ANNOTATION_GFF:-none}" "GFF/GTF annotation used to build custom ssGSEA GMT"
         # HUMAnN
         csv_row "Functional profiling" "HUMAnN" "input_pattern" "SAMPLE_non-host.fq" "Final non-host reads used as HUMAnN input"
         csv_row "Functional profiling" "HUMAnN" "threads" "$threads" "Threads used by HUMAnN"
@@ -775,8 +888,8 @@ write_methods_log
 # ------------------------------------------------------------
 
 run_exploratory_taxonomic_figures() {
-    if [[ "${NO_COMPARISON:-0}" != "1" ]]; then
-        echo "${y}[INFO] Comparison mode detected. Skipping exploratory taxonomic figures.${w}"
+    if [[ "${NO_COMPARISON:-0}" != "1" && "${RUN_EXPLORATORY_FIGURES_IN_COMPARISON:-1}" != "1" ]]; then
+        echo "${y}[INFO] Comparison mode detected and RUN_EXPLORATORY_FIGURES_IN_COMPARISON=0. Skipping exploratory taxonomic figures.${w}"
         return 0
     fi
 
@@ -1489,51 +1602,87 @@ if [[ -n "$(cut -f 1 -d ',' "$samplesheet_file" | grep '^SRR' || true)" ]]; then
 fi
 
 cd "$outputdr/temp" || die "Could not enter temp directory: $outputdr/temp"
+find_fastq_for_sample() {
+    local sample="$1"
+    local search_dir="$2"
+    local compressed_only="${3:-0}"
+
+    if [[ "$compressed_only" == "1" ]]; then
+        find "$search_dir" -maxdepth 1 -type f \( \
+            -name "Trimmed_${sample}.fq.gz" -o \
+            -name "Trimmed_${sample}.fastq.gz" -o \
+            -name "${sample}.fq.gz" -o \
+            -name "${sample}.fastq.gz" -o \
+            -name "${sample}_R1*.fq.gz" -o \
+            -name "${sample}_R1*.fastq.gz" -o \
+            -name "${sample}_1*.fq.gz" -o \
+            -name "${sample}_1*.fastq.gz" -o \
+            -name "${sample}*.fq.gz" -o \
+            -name "${sample}*.fastq.gz" \
+        \) | sort | head -n 1
+    else
+        find "$search_dir" -maxdepth 1 -type f \( \
+            -name "Trimmed_${sample}.fq.gz" -o \
+            -name "Trimmed_${sample}.fastq.gz" -o \
+            -name "Trimmed_${sample}.fq" -o \
+            -name "Trimmed_${sample}.fastq" -o \
+            -name "${sample}.fq.gz" -o \
+            -name "${sample}.fastq.gz" -o \
+            -name "${sample}.fq" -o \
+            -name "${sample}.fastq" -o \
+            -name "${sample}_R1*.fq.gz" -o \
+            -name "${sample}_R1*.fastq.gz" -o \
+            -name "${sample}_R1*.fq" -o \
+            -name "${sample}_R1*.fastq" -o \
+            -name "${sample}_1*.fq.gz" -o \
+            -name "${sample}_1*.fastq.gz" -o \
+            -name "${sample}_1*.fq" -o \
+            -name "${sample}_1*.fastq" -o \
+            -name "${sample}*.fq.gz" -o \
+            -name "${sample}*.fastq.gz" -o \
+            -name "${sample}*.fq" -o \
+            -name "${sample}*.fastq" \
+        \) | sort | head -n 1
+    fi
+}
 
 # ------------------------------------------------------------
-# Extract sample names from input FASTQ files
-# Supports .fq.gz, .fastq.gz, .fq, .fastq
+# Extract sample names from samplesheet.csv
 # ------------------------------------------------------------
 
-files=$(find "$inputdr" -type f \( -name "*.fq.gz" -o -name "*.fastq.gz" -o -name "*.fq" -o -name "*.fastq" \))
+lsn=$(awk -F',' '
+NR > 1 {
+    s=$1
+    gsub(/^[ \t\r\n]+|[ \t\r\n]+$/, "", s)
+    if (s != "") print s
+}
+' "$samplesheet_file" | sort -u | tr "\n" " " | sed 's/[[:space:]]*$//')
 
-lsn=""
+if [[ -z "$lsn" ]]; then
+    die "No sample names were found in samplesheet: $samplesheet_file"
+fi
 
-for fqfile in $files; do
-    fn=$(basename "$fqfile")
+echo "[INFO] Samples detected from samplesheet:"
+echo "  $lsn"
 
-    base="$fn"
-    base="${base%.gz}"
-    base="${base%.fastq}"
-    base="${base%.fq}"
+# Optional FASTQ sanity check only when not using custom cache
+if [[ -z "${CUSTOM_PATH:-}" ]]; then
+    missing_fastq=0
 
-    # Remove common single/paired-end suffixes if present
-    sn=$(echo "$base" | sed -E 's/_R?1(_001)?$//; s/_1$//')
+    for i in $lsn; do
+        fq=$(find_fastq_for_sample "$i" "$inputdr" 0 || true)
 
-    lsn="$lsn $sn"
-done
+        if [[ -z "$fq" ]]; then
+            echo "${r}[ERROR] Could not find FASTQ file for sample listed in samplesheet:${w} $i"
+            echo "Search directory:"
+            echo "  $inputdr"
+            missing_fastq=1
+        fi
+    done
 
-# Remove duplicates and normalize spaces
-lsn=$(echo "$lsn" | tr " " "\n" | awk 'NF' | sort -u | tr "\n" " " | sed 's/[[:space:]]*$//')
-
-# ------------------------------------------------------------
-# Check if input files match samplesheet.csv
-# ------------------------------------------------------------
-
-fastq_files=$(echo "$lsn" | tr " " "\n" | sort | tr "\n" " ")
-SamplesInSheet=$(cut -f 1 -d ',' "$samplesheet_file" | tail -n +2 | sort | tr "\n" " ")
-
-if [[ "$fastq_files" != "$SamplesInSheet" ]]; then
-    echo "${r}[ERROR] The sample FASTQ files in the input folder do not match your samplesheet.csv.${w}"
-    echo
-    echo "Samples detected from FASTQ files:"
-    echo "$fastq_files"
-    echo
-    echo "Samples listed in samplesheet.csv:"
-    echo "$SamplesInSheet"
-    echo
-    echo "Please ensure no unrelated FASTQ files are under the input folder/subfolders."
-    exit 1
+    if [[ "$missing_fastq" == "1" ]]; then
+        exit 1
+    fi
 fi
 
 # ------------------------------------------------------------
@@ -1666,51 +1815,6 @@ echo "Raw reads preparation${w}"
 #        -> copy already compressed FASTQ files from DIR
 #        -> no fastp, no pigz compression
 # ------------------------------------------------------------
-
-find_fastq_for_sample() {
-    local sample="$1"
-    local search_dir="$2"
-    local compressed_only="${3:-0}"
-
-    if [[ "$compressed_only" == "1" ]]; then
-        find "$search_dir" -maxdepth 1 -type f \( \
-            -name "Trimmed_${sample}.fq.gz" -o \
-            -name "Trimmed_${sample}.fastq.gz" -o \
-            -name "${sample}.fq.gz" -o \
-            -name "${sample}.fastq.gz" -o \
-            -name "${sample}_R1*.fq.gz" -o \
-            -name "${sample}_R1*.fastq.gz" -o \
-            -name "${sample}_1*.fq.gz" -o \
-            -name "${sample}_1*.fastq.gz" -o \
-            -name "${sample}*.fq.gz" -o \
-            -name "${sample}*.fastq.gz" \
-        \) | sort | head -n 1
-    else
-        find "$search_dir" -maxdepth 1 -type f \( \
-            -name "Trimmed_${sample}.fq.gz" -o \
-            -name "Trimmed_${sample}.fastq.gz" -o \
-            -name "Trimmed_${sample}.fq" -o \
-            -name "Trimmed_${sample}.fastq" -o \
-            -name "${sample}.fq.gz" -o \
-            -name "${sample}.fastq.gz" -o \
-            -name "${sample}.fq" -o \
-            -name "${sample}.fastq" -o \
-            -name "${sample}_R1*.fq.gz" -o \
-            -name "${sample}_R1*.fastq.gz" -o \
-            -name "${sample}_R1*.fq" -o \
-            -name "${sample}_R1*.fastq" -o \
-            -name "${sample}_1*.fq.gz" -o \
-            -name "${sample}_1*.fastq.gz" -o \
-            -name "${sample}_1*.fq" -o \
-            -name "${sample}_1*.fastq" -o \
-            -name "${sample}*.fq.gz" -o \
-            -name "${sample}*.fastq.gz" -o \
-            -name "${sample}*.fq" -o \
-            -name "${sample}*.fastq" \
-        \) | sort | head -n 1
-    fi
-}
-
 total_cores=$(nproc)
 
 if [[ "$total_cores" -le 4 ]]; then
@@ -1837,19 +1941,29 @@ else
 
         out_fq="$outputdr/temp/Trimmed_${i}.fq.gz"
 
-        echo "============================================================"
-        echo "[FASTP] Sample: $i"
-        echo "Input:  $fq"
-        echo "Output: $out_fq"
-        echo "Threads: $fastp_threads"
-        echo "Minimum length: $length"
-        echo "============================================================"
+echo "============================================================"
+echo "[FASTP] Sample: $i"
+echo "Input:  $fq"
+echo "Output: $out_fq"
+echo "Threads: $fastp_threads"
+echo "Minimum length: $length"
+echo "============================================================"
 
-        fastp --trim_poly_x \
-              --length_required "$length" \
-              --thread "$fastp_threads" \
-              -i "$fq" \
-              -o "$out_fq"
+mkdir -p "$outputdr/fastp"
+
+fastp_report_base="$(basename "$out_fq")"
+fastp_report_base="${fastp_report_base%.fastq.gz}"
+fastp_report_base="${fastp_report_base%.fq.gz}"
+fastp_report_base="${fastp_report_base%.fastq}"
+fastp_report_base="${fastp_report_base%.fq}"
+
+fastp --trim_poly_x \
+      --length_required "$length" \
+      --thread "$fastp_threads" \
+      -i "$fq" \
+      -o "$out_fq" \
+      --html "$outputdr/fastp/${fastp_report_base}.fastp.html" \
+      --json "$outputdr/fastp/${fastp_report_base}.fastp.json"
 
         if [[ ! -s "$out_fq" ]]; then
             echo "${r}[ERROR] fastp failed to create:${w} $out_fq"
@@ -2624,7 +2738,7 @@ else
 
     norm_args=(
         "$outputdr/bracken_species_all"
-        "$inputdr/samplesheet.csv"
+        "$samplesheet_file"
         "$outputdr/temp/Report_non-host_bracken_species_normalized"
     )
 
@@ -2701,10 +2815,22 @@ rm -f "$GRAPHLAN_MPA_DIR"/*.mpa.txt
 rm -f "$GRAPHLAN_COMBINED_MPA" "$GRAPHLAN_INPUT"
 
 # ------------------------------------------------------------
-# Generate Krona and MPA files from normalized reports
+# Generate Krona, Krona HTML, and MPA files from normalized reports
 # ------------------------------------------------------------
 
-echo "${g}Generating Krona and MPA files from normalized reports${w}"
+echo "${g}Generating Krona, Krona HTML, and MPA files from normalized reports${w}"
+
+mkdir -p "$outputdr/krona"
+mkdir -p "$GRAPHLAN_MPA_DIR"
+
+if ! command -v ktImportText >/dev/null 2>&1; then
+    echo "${r}[ERROR] ktImportText was not found in PATH.${w}"
+    echo "Please install/activate KronaTools first, for example:"
+    echo "  conda install -c bioconda krona"
+    exit 1
+fi
+
+krona_all_inputs=()
 
 for i in $lsn; do
     if [[ ! -s "$i" ]]; then
@@ -2714,18 +2840,63 @@ for i in $lsn; do
         exit 1
     fi
 
-    echo "  [Krona] $i"
+    sample=$(basename "$i")
+
+    krona_file="$outputdr/krona/${sample}-bracken.krona"
+    krona_html="$outputdr/krona/${sample}-bracken.html"
+    mpa_file="$GRAPHLAN_MPA_DIR/${sample}-bracken.mpa.txt"
+
+    echo "  [Krona] $sample"
     python "$MTDIR/Tools/KrakenTools/kreport2krona.py" \
         -r "$i" \
-        -o "$outputdr/krona/${i}-bracken.krona"
+        -o "$krona_file"
 
-    echo "  [MPA] $i"
+    if [[ ! -s "$krona_file" ]]; then
+        echo "${r}[ERROR] Krona file was not generated or is empty:${w} $krona_file"
+        exit 1
+    fi
+
+    echo "  [Krona HTML] $sample"
+    ktImportText "$krona_file" \
+        -o "$krona_html"
+
+    if [[ ! -s "$krona_html" ]]; then
+        echo "${r}[ERROR] Krona HTML was not generated or is empty:${w} $krona_html"
+        exit 1
+    fi
+
+    krona_all_inputs+=("$krona_file")
+
+    echo "  [MPA] $sample"
     python "$MTDIR/Tools/KrakenTools/kreport2mpa.py" \
         --display-header \
         -r "$i" \
-        -o "$GRAPHLAN_MPA_DIR/${i}-bracken.mpa.txt"
+        -o "$mpa_file"
 done
 
+# ------------------------------------------------------------
+# Generate combined Krona HTML for all detected taxa across animals
+# ------------------------------------------------------------
+
+if [[ ${#krona_all_inputs[@]} -gt 0 ]]; then
+    all_krona="$outputdr/krona/all_animals-bracken.krona"
+    all_html="$outputdr/krona/all_animals-bracken.html"
+
+    echo "${g}Generating combined Krona file for all animals${w}"
+    cat "${krona_all_inputs[@]}" > "$all_krona"
+
+    echo "${g}Generating combined Krona HTML for all animals${w}"
+    ktImportText "$all_krona" \
+        -o "$all_html"
+
+    if [[ ! -s "$all_html" ]]; then
+        echo "${r}[ERROR] Combined Krona HTML was not generated or is empty:${w} $all_html"
+        exit 1
+    fi
+
+    echo "${g}Combined Krona HTML generated:${w}"
+    echo "  $all_html"
+fi
 # ------------------------------------------------------------
 # Combine MPA files
 # ------------------------------------------------------------
@@ -2944,7 +3115,7 @@ if not clean_rows:
     raise SystemExit("[ERROR] No valid taxonomic rows remained for GraPhlAn.")
 
 with open(out, "w", newline="") as f:
-    writer = csv.writer(f, delimiter="\t")
+    writer = csv.writer(f, delimiter="\t", lineterminator="\n")
     writer.writerow(["ID"] + sample_names)
     for r in clean_rows:
         writer.writerow([r[0]] + ["%.10g" % x for x in r[1:]])
@@ -2968,6 +3139,9 @@ fi
 
 echo "${g}[OK] Clean GraPhlAn input:${w}"
 echo "  $GRAPHLAN_INPUT"
+
+# Remove possible Windows-style carriage returns from the clean GraPhlAn input
+sed -i 's/\r$//' "$GRAPHLAN_INPUT"
 echo
 echo "${g}Preview of GraPhlAn input:${w}"
 head -n 5 "$GRAPHLAN_INPUT"
@@ -2992,23 +3166,31 @@ if [[ "${GRAPHLAN_KEEP_ENV:-0}" != "1" ]]; then
     unset GRAPHLAN_ABUNDANCE_THRESHOLD
 fi
 
-GRAPHLAN_TOP="${GRAPHLAN_TOP:-40}"
-GRAPHLAN_SIZE="${GRAPHLAN_SIZE:-10.0}"
+GRAPHLAN_TOP="${GRAPHLAN_TOP:-80}"
+GRAPHLAN_SIZE="${GRAPHLAN_SIZE:-13.0}"
 GRAPHLAN_DPI="${GRAPHLAN_DPI:-600}"
 GRAPHLAN_MAX_CLADE_SIZE="${GRAPHLAN_MAX_CLADE_SIZE:-300}"
 
-# Internal labels and external labels should not overlap.
-GRAPHLAN_LEVELS="${GRAPHLAN_LEVELS:-2,3,4,5,6}"
-GRAPHLAN_EXTERNAL_LEVELS="${GRAPHLAN_EXTERNAL_LEVELS:-1,2,3,4,5,6}"
+# Taxonomic levels:
+# 1 = kingdom
+# 2 = phylum
+# 3 = class
+# 4 = order
+# 5 = family
+# 6 = genus
+# 7 = species
+GRAPHLAN_LEVELS="${GRAPHLAN_LEVELS:-2,3,4,5,6,7}"
 
-# This creates the shaded/background-style clades closer to your old figure.
+# For species-level exploration, put the external labels mainly at species level.
+GRAPHLAN_EXTERNAL_LEVELS="${GRAPHLAN_EXTERNAL_LEVELS:-7}"
+
+# Keep broad background clades at phylum/class level.
 GRAPHLAN_BACKGROUND_LEVELS="${GRAPHLAN_BACKGROUND_LEVELS:-2,3}"
 
-# Helps export2graphlan choose broader highlighted clades from abundant taxa.
 GRAPHLAN_LEAST_BIOMARKERS="${GRAPHLAN_LEAST_BIOMARKERS:-5}"
 
-# Lower threshold helps labels appear when abundances are relative/small.
-GRAPHLAN_ABUNDANCE_THRESHOLD="${GRAPHLAN_ABUNDANCE_THRESHOLD:-0.05}"
+# Lower threshold helps species-level labels appear.
+GRAPHLAN_ABUNDANCE_THRESHOLD="${GRAPHLAN_ABUNDANCE_THRESHOLD:-0.001}"
 
 echo "${g}GraPhlAn cladogram-like settings:${w}"
 echo "  Input table:                $GRAPHLAN_INPUT"
@@ -3075,7 +3257,7 @@ else
 
     deg_args=(
         "$outputdr/bracken_species_all"
-        "$inputdr/samplesheet.csv"
+        "$samplesheet_file"
         "$hostid"
         "$MTDIR/HostSpecies.csv"
     )
@@ -3163,26 +3345,26 @@ python "$MTDIR/Tools/graphlan/graphlan.py" \
     --dpi "$GRAPHLAN_DPI" \
     --size "$GRAPHLAN_SIZE" \
     outtree.txt \
-    "outimg.cladogram_top${GRAPHLAN_TOP}.png"
+    "outimg.cladogram_species_top${GRAPHLAN_TOP}.png"
 
 python "$MTDIR/Tools/graphlan/graphlan.py" \
     --size "$GRAPHLAN_SIZE" \
     outtree.txt \
-    "outimg.cladogram_top${GRAPHLAN_TOP}.pdf"
+    "outimg.cladogram_species_top${GRAPHLAN_TOP}.pdf"
 
-if [[ ! -s "outimg.cladogram_top${GRAPHLAN_TOP}.png" ]]; then
+if [[ ! -s "outimg.cladogram_species_top${GRAPHLAN_TOP}.png" ]]; then
     echo "${r}[ERROR] GraPhlAn PNG was not created.${w}"
     exit 1
 fi
 
-if [[ ! -s "outimg.cladogram_top${GRAPHLAN_TOP}.pdf" ]]; then
+if [[ ! -s "outimg.cladogram_species_top${GRAPHLAN_TOP}.pdf" ]]; then
     echo "${r}[ERROR] GraPhlAn PDF was not created.${w}"
     exit 1
 fi
 
 # Keep old output names too, so the rest of the pipeline/user habits do not break
-cp "outimg.cladogram_top${GRAPHLAN_TOP}.png" outimg.png
-cp "outimg.cladogram_top${GRAPHLAN_TOP}.pdf" outimg.pdf
+cp "outimg.cladogram_species_top${GRAPHLAN_TOP}.png" outimg.png
+cp "outimg.cladogram_species_top${GRAPHLAN_TOP}.pdf" outimg.pdf
 
 echo "${g}[OK] Cladogram-like GraPhlAn outputs:${w}"
 echo "  $outputdr/graphlan/outimg.cladogram_top${GRAPHLAN_TOP}.png"
@@ -3273,11 +3455,11 @@ if [[ "$NO_COMPARISON" == "1" ]]; then
 else
     Rscript "$MTDIR/DEG_Anno_Plot.R" \
         "$outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_kegg_translated.tsv" \
-        "$inputdr/samplesheet.csv"
+        "$samplesheet_file"
 
     Rscript "$MTDIR/DEG_Anno_Plot.R" \
         "$outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_go_translated.tsv" \
-        "$inputdr/samplesheet.csv"
+        "$samplesheet_file"
 fi
 
 conda deactivate
@@ -3343,9 +3525,6 @@ echo "${g}DEG & Annotation & Plots & preprocess for host${w}"
 conda deactivate
 conda activate R412
 cd $outputdr
-echo "${r}"
-echo "before DEG_Anno_Plot.R "
-#read -p "PRESS ENTER"
 echo "${w}"
 echo $MTDIR
 echo $outputdr
@@ -3587,7 +3766,7 @@ if [[ "$NO_COMPARISON" == "1" ]]; then
 else
     host_deg_args=(
         "$outputdr/host_counts.txt"
-        "$inputdr/samplesheet.csv"
+        "$samplesheet_file"
         "$hostid"
         "$MTDIR/HostSpecies.csv"
     )
@@ -3596,7 +3775,104 @@ else
         host_deg_args+=( "$metadata" )
     fi
 
+
     Rscript "$MTDIR/DEG_Anno_Plot.R" "${host_deg_args[@]}"
+
+    # ------------------------------------------------------------
+    # Extra DEG volcano plots with EnhancedVolcano
+    # Runs EV.volcano.R in a selected conda environment.
+    # Default: base, because EnhancedVolcano is already installed there.
+    # Outputs are written inside each comparison folder.
+    # ------------------------------------------------------------
+
+    EV_VOLCANO_SCRIPT="$MTDIR/aux_scripts/EV/EV.volcano.R"
+    EV_VOLCANO_LABEL_TOP="${EV_VOLCANO_LABEL_TOP:-25}"
+    EV_VOLCANO_ENV="${EV_VOLCANO_ENV:-base}"
+
+    run_ev_volcano_for_deg_folder() {
+        local deg_label="$1"
+        local deg_dir_main="$2"
+        local csv_pattern="$3"
+
+        if [[ ! -s "$EV_VOLCANO_SCRIPT" ]]; then
+            echo "${y}[WARNING] EV volcano script not found. Skipping ${deg_label} EV volcano plots.${w}"
+            echo "Expected:"
+            echo "  $EV_VOLCANO_SCRIPT"
+            return 0
+        fi
+
+        echo "${g}Generating extra EV volcano plots for ${deg_label}${w}"
+        echo "[EV VOLCANO] Conda environment:"
+        echo "  $EV_VOLCANO_ENV"
+
+        shopt -s nullglob
+        local de_csv_files=( "$deg_dir_main"/*/$csv_pattern )
+        shopt -u nullglob
+
+        if [[ "${#de_csv_files[@]}" -eq 0 ]]; then
+            echo "${y}[WARNING] No ${deg_label} DEG comparison CSV files found for EV volcano plots.${w}"
+            echo "Expected pattern:"
+            echo "  $deg_dir_main/*/$csv_pattern"
+            return 0
+        fi
+
+        for de_csv in "${de_csv_files[@]}"; do
+            local de_dir
+            local de_file
+            local volcano_log
+
+            de_dir="$(dirname "$de_csv")"
+            de_file="$(basename "$de_csv")"
+            volcano_log="$de_dir/${de_file%.csv}.EV.volcano.log"
+
+            echo "------------------------------------------------------------"
+            echo "[EV VOLCANO] Dataset:"
+            echo "  $deg_label"
+            echo "[EV VOLCANO] Input:"
+            echo "  $de_csv"
+            echo "[EV VOLCANO] Output directory:"
+            echo "  $de_dir"
+            echo "[EV VOLCANO] label_top:"
+            echo "  $EV_VOLCANO_LABEL_TOP"
+            echo "[EV VOLCANO] conda env:"
+            echo "  $EV_VOLCANO_ENV"
+            echo "------------------------------------------------------------"
+
+            if ! (
+                conda activate "$EV_VOLCANO_ENV" || exit 1
+
+                echo "[INFO] Rscript used for EV volcano:"
+                which Rscript
+                Rscript -e 'cat("[INFO] EnhancedVolcano available: ", requireNamespace("EnhancedVolcano", quietly=TRUE), "\n")'
+
+                cd "$de_dir" || exit 1
+
+                Rscript "$EV_VOLCANO_SCRIPT" \
+                    --de_results "$de_file" \
+                    --label_top "$EV_VOLCANO_LABEL_TOP"
+            ) > "$volcano_log" 2>&1
+            then
+                echo "${y}[WARNING] EV volcano failed for:${w}"
+                echo "  $de_csv"
+                echo "Log:"
+                echo "  $volcano_log"
+                tail -n 40 "$volcano_log" || true
+            else
+                echo "${g}[OK] EV volcano generated in:${w}"
+                echo "  $de_dir"
+            fi
+        done
+    }
+
+    run_ev_volcano_for_deg_folder \
+        "host DEG" \
+        "$outputdr/Host_DEG" \
+        "host_counts_*.csv"
+
+    run_ev_volcano_for_deg_folder \
+        "non-host DEG" \
+        "$outputdr/Nonhost_DEG" \
+        "bracken_species_all_*.csv"
 
     require_file "$outputdr/Host_DEG/host_counts_TPM.csv" "Host TPM matrix generated by DEG_Anno_Plot.R"
 fi
@@ -3626,14 +3902,120 @@ require_file "$outputdr/Host_DEG/host_counts_TPM.csv" "Host TPM matrix"
 
 run_cmd Rscript "$MTDIR/gct_making.R" \
     "$outputdr/Host_DEG/host_counts_TPM.csv" \
-    "$inputdr/samplesheet.csv"
+    "$samplesheet_file"
 
 require_file "$outputdr/ssGSEA/host.gct" "ssGSEA input GCT"
+
+echo "${g}[INFO] ssGSEA GMT file:${w}"
+echo "  $SSGSEA_GMT"
+echo "${g}[INFO] ssGSEA GMT mode:${w}"
+echo "  $SSGSEA_GMT_MODE"
+write_methods_log
+
+# ------------------------------------------------------------
+# Select or build ssGSEA GMT
+# ------------------------------------------------------------
+
+SSGSEA_DEFAULT_GMT="$MTDIR/Tools/ssGSEA2.0/db/msigdb/c2.all.v7.5.1.symbols.gmt"
+
+if [[ "$SSGSEA_GMT" == "auto" || "$SSGSEA_GMT" == "custom_eggnog" ]]; then
+    echo "${g}[INFO] Building custom ssGSEA GMT from user-provided protein FASTA and annotation.${w}"
+    echo "[INFO] This mode does not download NCBI datasets by taxid."
+    echo "[INFO] TaxID: $hostid"
+    echo "[INFO] host.gct: $outputdr/ssGSEA/host.gct"
+
+    if [[ -z "${SSGSEA_PROTEIN_FASTA:-}" ]]; then
+        die "--ssgsea-gmt auto requires --ssgsea-protein-fasta FILE"
+    fi
+
+    if [[ -z "${SSGSEA_ANNOTATION_GFF:-}" ]]; then
+        die "--ssgsea-gmt auto requires --ssgsea-annotation-gff FILE"
+    fi
+
+    require_file "$SSGSEA_PROTEIN_FASTA" "ssGSEA protein FASTA"
+    require_file "$SSGSEA_ANNOTATION_GFF" "ssGSEA GFF/GTF annotation"
+
+    CUSTOM_GMT_DIR="$outputdr/ssGSEA/custom_gmt_user_files"
+    mkdir -p "$CUSTOM_GMT_DIR"
+
+    MTD_BIN="$condapath/envs/MTD/bin"
+
+    if [[ ! -d "$MTD_BIN" ]]; then
+        die "MTD conda env bin folder not found: $MTD_BIN"
+    fi
+
+    AUTO_GMT_ORIGINAL_PATH="$PATH"
+    AUTO_GMT_PATH="$PATH:$MTD_BIN"
+
+    echo "${g}[INFO] Custom GMT tool resolution:${w}"
+
+    missing_auto_gmt_tools=0
+
+    for tool in Rscript python3 emapper.py diamond; do
+        tool_path=$(PATH="$AUTO_GMT_PATH" command -v "$tool" 2>/dev/null || true)
+
+        if [[ -z "$tool_path" ]]; then
+            echo "${r}[ERROR] Required tool not found for custom ssGSEA GMT:${w} $tool"
+            missing_auto_gmt_tools=1
+        else
+            echo "${g}[OK]${w} $tool -> $tool_path"
+        fi
+    done
+
+    if [[ "$missing_auto_gmt_tools" == "1" ]]; then
+        echo
+        echo "${y}[INFO] Install missing tools inside the MTD environment:${w}"
+        echo "  conda activate MTD"
+        echo "  conda install -c conda-forge -c bioconda eggnog-mapper diamond -y"
+        exit 1
+    fi
+
+    export PATH="$AUTO_GMT_PATH"
+
+    conda deactivate
+    conda activate MTD
+
+    run_cmd bash "$MTDIR/aux_scripts/ssGSEA/make_custom_ssgsea_gmt_from_taxid_auto.sh" \
+        --taxid "$hostid" \
+        --host-gct "$outputdr/ssGSEA/host.gct" \
+        --outdir "$CUSTOM_GMT_DIR" \
+        --threads "$threads" \
+        --eggnog-db "$MTDIR/eggnog_db" \
+        --protein-fasta "$SSGSEA_PROTEIN_FASTA" \
+        --annotation-gff "$SSGSEA_ANNOTATION_GFF" \
+        --force
+
+    SSGSEA_GMT="$CUSTOM_GMT_DIR/custom_taxid_${hostid}_eggNOG_GO.gmt"
+    SSGSEA_GMT_MODE="custom_eggNOG_GO_from_user_files"
+
+    require_file "$SSGSEA_GMT" "Custom ssGSEA GMT"
+
+    export PATH="$AUTO_GMT_ORIGINAL_PATH"
+
+    conda deactivate
+    conda activate R412
+
+elif [[ "$SSGSEA_GMT" == "default" ]]; then
+    SSGSEA_GMT="$SSGSEA_DEFAULT_GMT"
+    SSGSEA_GMT_MODE="default_MSigDB_c2_symbols"
+    require_file "$SSGSEA_GMT" "Default ssGSEA GMT"
+
+else
+    SSGSEA_GMT_MODE="custom_path"
+    require_file "$SSGSEA_GMT" "Custom ssGSEA GMT"
+fi
+
+echo "${g}[INFO] ssGSEA GMT file:${w}"
+echo "  $SSGSEA_GMT"
+echo "${g}[INFO] ssGSEA GMT mode:${w}"
+echo "  $SSGSEA_GMT_MODE"
+
+write_methods_log
 
 run_cmd Rscript "$MTDIR/Tools/ssGSEA2.0/ssgsea-cli.R" \
     -i "$outputdr/ssGSEA/host.gct" \
     -o "$outputdr/ssGSEA/ssgsea-results" \
-    -d "$MTDIR/Tools/ssGSEA2.0/db/msigdb/c2.all.v7.5.1.symbols.gmt" \
+    -d "$SSGSEA_GMT" \
     -y "$MTDIR/Tools/ssGSEA2.0/config.yaml" \
     -u "$threads"
 
@@ -3641,13 +4023,166 @@ require_file "$outputdr/ssGSEA/ssgsea-results-scores.gct" "ssGSEA scores"
 
 run_cmd Rscript "$MTDIR/for_halla.R" \
     "$outputdr/ssGSEA/ssgsea-results-scores.gct" \
-    "$inputdr/samplesheet.csv" \
+    "$samplesheet_file" \
     $metadata
 
 require_file "$outputdr/halla/Microbiomes.txt" "HAllA microbiome input"
 require_file "$outputdr/halla/Host_gene.txt" "HAllA host gene input"
 require_file "$outputdr/halla/Host_score.txt" "HAllA host pathway input"
 
+# ------------------------------------------------------------
+# ssGSEA visualization
+# ------------------------------------------------------------
+
+RUN_SSGSEA_PLOTS="${RUN_SSGSEA_PLOTS:-1}"
+
+# Optional GO-name corrected ssGSEA plots
+# 1 = generate an additional set of plots using readable GO names
+# 0 = keep only the original GO-ID plots
+RUN_SSGSEA_GO_NAME_PLOTS="${RUN_SSGSEA_GO_NAME_PLOTS:-1}"
+
+# Optional online QuickGO fallback for GO IDs not found in local GO.db
+# 1 = use QuickGO when internet is available
+# 0 = offline mode only; GO.db + built-in/manual corrections
+RUN_SSGSEA_QUICKGO="${RUN_SSGSEA_QUICKGO:-1}"
+
+# Optional QuickGO secondary-ID/replacement search
+# 1 = try to resolve old/secondary GO IDs after direct lookup fails
+# 0 = skip this slower fallback
+RUN_SSGSEA_QUICKGO_SEARCH="${RUN_SSGSEA_QUICKGO_SEARCH:-1}"
+
+if [[ "$RUN_SSGSEA_PLOTS" == "1" ]]; then
+    echo "${g}Generating ssGSEA plots${w}"
+
+    SSGSEA_PLOT_SCRIPT="$MTDIR/aux_scripts/ssGSEA/plot_ssgsea_results.R"
+    SSGSEA_GO_RESOLVER_SCRIPT="$MTDIR/aux_scripts/ssGSEA/resolve_ssgsea_go_terms.py"
+    SSGSEA_MANUAL_GO_MAP="$MTDIR/aux_scripts/ssGSEA/go_replacement_manual_map.tsv"
+
+    require_file "$SSGSEA_PLOT_SCRIPT" "ssGSEA plotting script"
+
+    # ------------------------------------------------------------
+    # 1) Original ssGSEA plots using original feature names / GO IDs
+    # ------------------------------------------------------------
+
+    run_cmd Rscript "$SSGSEA_PLOT_SCRIPT" \
+        --scores "$outputdr/ssGSEA/ssgsea-results-scores.gct" \
+        --samplesheet "$samplesheet_file" \
+        --outdir "$outputdr/ssGSEA/plots" \
+        --top-var 50 \
+        --top-diff 20 \
+        --pca-top-var 500
+
+    require_file "$outputdr/ssGSEA/plots/ssGSEA_top_variable_heatmap.png" "ssGSEA top variable heatmap"
+    require_file "$outputdr/ssGSEA/plots/ssGSEA_PCA_samples.png" "ssGSEA PCA plot"
+    require_file "$outputdr/ssGSEA/plots/ssGSEA_differential_scores.tsv" "ssGSEA differential score table"
+
+    echo "${g}[OK] ssGSEA plots saved to:${w}"
+    echo "  $outputdr/ssGSEA/plots"
+
+    # ------------------------------------------------------------
+    # 2) Optional corrected GO-name ssGSEA plots
+    # ------------------------------------------------------------
+
+    if [[ "$RUN_SSGSEA_GO_NAME_PLOTS" == "1" ]]; then
+        echo "${g}Generating corrected GO-name ssGSEA plots${w}"
+
+        require_file "$SSGSEA_GO_RESOLVER_SCRIPT" "ssGSEA GO term resolver script"
+
+        SSGSEA_GO_RESOLUTION_DIR="$outputdr/ssGSEA/go_term_resolution"
+        SSGSEA_GO_NAME_DIR="$outputdr/ssGSEA/plots_GO_names"
+        SSGSEA_GO_NAME_GCT="$outputdr/ssGSEA/ssgsea-results-scores_GO_names_corrected.gct"
+        SSGSEA_GO_NAME_MAP="$SSGSEA_GO_RESOLUTION_DIR/ssGSEA_GO_ID_to_name_map.tsv"
+        SSGSEA_QUICKGO_CACHE="$SSGSEA_GO_RESOLUTION_DIR/quickgo_cache.tsv"
+
+        mkdir -p "$SSGSEA_GO_RESOLUTION_DIR" "$SSGSEA_GO_NAME_DIR"
+
+        if [[ "$RUN_SSGSEA_QUICKGO" == "1" ]]; then
+            SSGSEA_QUICKGO_ARG="yes"
+        else
+            SSGSEA_QUICKGO_ARG="no"
+        fi
+
+        if [[ "$RUN_SSGSEA_QUICKGO_SEARCH" == "1" ]]; then
+            SSGSEA_QUICKGO_SEARCH_ARG="yes"
+        else
+            SSGSEA_QUICKGO_SEARCH_ARG="no"
+        fi
+
+        echo "[INFO] ssGSEA GO-name resolver settings:"
+        echo "  Resolver script:        $SSGSEA_GO_RESOLVER_SCRIPT"
+        echo "  Input GCT:              $outputdr/ssGSEA/ssgsea-results-scores.gct"
+        echo "  Corrected GCT:          $SSGSEA_GO_NAME_GCT"
+        echo "  GO map:                 $SSGSEA_GO_NAME_MAP"
+        echo "  QuickGO enabled:        $SSGSEA_QUICKGO_ARG"
+        echo "  QuickGO search enabled: $SSGSEA_QUICKGO_SEARCH_ARG"
+        echo "  QuickGO cache:          $SSGSEA_QUICKGO_CACHE"
+
+        if [[ -s "$SSGSEA_MANUAL_GO_MAP" ]]; then
+            echo "  Manual GO map:          $SSGSEA_MANUAL_GO_MAP"
+
+            run_cmd python3 "$SSGSEA_GO_RESOLVER_SCRIPT" \
+                --scores "$outputdr/ssGSEA/ssgsea-results-scores.gct" \
+                --out-gct "$SSGSEA_GO_NAME_GCT" \
+                --out-map "$SSGSEA_GO_NAME_MAP" \
+                --manual-map "$SSGSEA_MANUAL_GO_MAP" \
+                --quickgo "$SSGSEA_QUICKGO_ARG" \
+                --quickgo-search "$SSGSEA_QUICKGO_SEARCH_ARG" \
+                --quickgo-cache "$SSGSEA_QUICKGO_CACHE"
+        else
+            echo "  Manual GO map:          not found; using built-in resolver fallbacks only"
+
+            run_cmd python3 "$SSGSEA_GO_RESOLVER_SCRIPT" \
+                --scores "$outputdr/ssGSEA/ssgsea-results-scores.gct" \
+                --out-gct "$SSGSEA_GO_NAME_GCT" \
+                --out-map "$SSGSEA_GO_NAME_MAP" \
+                --quickgo "$SSGSEA_QUICKGO_ARG" \
+                --quickgo-search "$SSGSEA_QUICKGO_SEARCH_ARG" \
+                --quickgo-cache "$SSGSEA_QUICKGO_CACHE"
+        fi
+
+        require_file "$SSGSEA_GO_NAME_GCT" "Corrected GO-name ssGSEA GCT"
+        require_file "$SSGSEA_GO_NAME_MAP" "ssGSEA GO ID to name resolution map"
+
+        run_cmd Rscript "$SSGSEA_PLOT_SCRIPT" \
+            --scores "$SSGSEA_GO_NAME_GCT" \
+            --samplesheet "$samplesheet_file" \
+            --outdir "$SSGSEA_GO_NAME_DIR" \
+            --top-var 50 \
+            --top-diff 20 \
+            --pca-top-var 500
+
+        require_file "$SSGSEA_GO_NAME_DIR/ssGSEA_top_variable_heatmap.png" "Corrected GO-name ssGSEA top variable heatmap"
+        require_file "$SSGSEA_GO_NAME_DIR/ssGSEA_PCA_samples.png" "Corrected GO-name ssGSEA PCA plot"
+        require_file "$SSGSEA_GO_NAME_DIR/ssGSEA_differential_scores.tsv" "Corrected GO-name ssGSEA differential score table"
+
+        echo "${g}[OK] Corrected GO-name ssGSEA plots saved to:${w}"
+        echo "  $SSGSEA_GO_NAME_DIR"
+        echo "${g}[OK] GO ID resolution map saved to:${w}"
+        echo "  $SSGSEA_GO_NAME_MAP"
+
+        echo "[INFO] GO resolution summary:"
+        awk -F'\t' '
+        NR > 1 {
+            total++
+            source[$5]++
+        }
+        END {
+            print "  Total rows: " total
+            for (s in source) {
+                print "  " s ": " source[s]
+            }
+            if (total > 0) {
+                unresolved = source["unresolved"] + 0
+                printf "  Resolved percent: %.2f%%\n", ((total - unresolved) / total) * 100
+            }
+        }' "$SSGSEA_GO_NAME_MAP" || true
+    else
+        echo "${y}[INFO] RUN_SSGSEA_GO_NAME_PLOTS=0; skipping corrected GO-name ssGSEA plots.${w}"
+    fi
+
+else
+    echo "${y}[INFO] RUN_SSGSEA_PLOTS=0; skipping ssGSEA plots.${w}"
+fi
 echo "${g}MTD running  progress:"
 echo '>>>>>>>>>>>>>>>>    [80%]'
 echo "MTD DEG analyses are done. Starting microbiome x host association analyses..."

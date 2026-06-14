@@ -113,6 +113,9 @@ conda activate halla0820
 conda deactivate
 conda env create -f Installation/R412.yml
 sed -i '/^# *rpy2/s/^# *//' $dir/Installation/pip.requirements
+chmod +x $dir/aux_scripts/ssGSEA/resolve_ssgsea_go_terms.py
+python3 -m py_compile $dir/aux_scripts/ssGSEA/resolve_ssgsea_go_terms.py
+
 echo "${g}MTD installation progress:"
 echo ">>                  [10%]${w}"
 
@@ -162,6 +165,8 @@ conda deactivate
 #conda install -n MTD -y -c bioconda metaphlan=4.0.6=pyhca03a8a_0 #Instalar no env MTD
 conda activate MTD
 conda install -n MTD -y -c conda-forge pkg-config
+conda install -n MTD -y -c conda-forge ncbi-datasets-cli
+conda install -n MTD -y -c conda-forge -c bioconda eggnog-mapper diamond
 
 #Check if the file exists and have the same size before download
 #wget -T 300 -t 5 -N --no-if-modified-since https://master.dl.sourceforge.net/project/mtd/MTD/virushostdb.genomic.fna.gz

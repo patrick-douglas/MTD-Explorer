@@ -22,6 +22,7 @@ Taxon_ID,MartDatasets,Scientific_name,OrgDb,Common_name,kegg
 72004,bmutus_gene_ensembl,Bos mutus,,,
 9913,btaurus_gene_ensembl,Bos taurus,org.Bt.eg.db,Bovine,bta
 6239,celegans_gene_ensembl,Caenorhabditis elegans,org.Ce.eg.db,Worm,cel
+198806,cpugnax_gene_ensembl,Calidris pugnax,org.Cpugnax.eg.db,Ruff,narq
 9483,cjacchus_gene_ensembl,Callithrix jacchus,,,
 7868,cmilii_gene_ensembl,Callorhinchus milii,,,
 9838,cdromedarius_gene_ensembl,Camelus dromedarius,,,
@@ -111,7 +112,7 @@ Taxon_ID,MartDatasets,Scientific_name,OrgDb,Common_name,kegg
 10103,mspicilegus_gene_ensembl,Mus spicilegus,,,
 10096,mspretus_gene_ensembl,Mus spretus,,,
 9669,mpfuro_gene_ensembl,Mustela putorius furo,,,
-59463,mlucifugus_gene_ensembl,Myotis lucifugus,org.Mlucifugus.eg.db,Myotis,mlf
+59463,mlucifugus_gene_ensembl,Myotis lucifugus,org.Mlucifugus.eg.db,LittleBrownBat,mlf
 586833,mmurdjan_gene_ensembl,Myripristis murdjan,,,
 35670,nnaja_gene_ensembl,Naja naja,,,
 1026970,ngalili_gene_ensembl,Nannospalax galili,,,

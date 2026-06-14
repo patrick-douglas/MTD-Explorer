@@ -287,6 +287,63 @@ safe_name <- function(x) {
   x
 }
 
+clean_bracken_sample_names <- function(x) {
+  x <- as.character(x)
+
+  # Remove Bracken combined-table suffixes
+  x <- gsub("_(num|frac)$", "", x, perl = TRUE)
+
+  # Remove common Bracken filename-like patterns
+  x <- gsub("^Report_", "", x, perl = TRUE)
+  x <- gsub("\\.(species|genus|phylum)\\.bracken$", "", x, perl = TRUE)
+
+  # If R changed numeric-starting names to X123, remove the X
+  x <- gsub("^X(?=[0-9])", "", x, perl = TRUE)
+
+  x
+}
+
+
+select_one_bracken_column_per_sample <- function(cols) {
+  cols <- as.character(cols)
+
+  # Not a Bracken combined _num/_frac table: keep original behavior.
+  if (!any(grepl("_(num|frac)$", cols, perl = TRUE))) {
+    names(cols) <- cols
+    return(cols)
+  }
+
+  cat("[INFO] Bracken-style _num/_frac columns detected.\n")
+
+  base_names <- gsub("_(num|frac)$", "", cols, perl = TRUE)
+  selected <- character(0)
+
+  for (b in unique(base_names)) {
+    candidates <- cols[base_names == b]
+
+    num_col <- candidates[grepl("_num$", candidates, perl = TRUE)]
+    frac_col <- candidates[grepl("_frac$", candidates, perl = TRUE)]
+
+    if (length(num_col) > 0) {
+      selected <- c(selected, num_col[1])
+    } else if (length(frac_col) > 0) {
+      selected <- c(selected, frac_col[1])
+    } else {
+      selected <- c(selected, candidates[1])
+    }
+  }
+
+  names(selected) <- clean_bracken_sample_names(selected)
+
+  cat("[INFO] Keeping one abundance column per biological sample.\n")
+  cat("[INFO] Preference: _num columns. If _num is absent, _frac is used.\n")
+  cat("[INFO] Raw selected columns:\n")
+  cat(paste0("       ", paste(unname(selected), collapse = ", "), "\n"))
+  cat("[INFO] Clean sample names:\n")
+  cat(paste0("       ", paste(names(selected), collapse = ", "), "\n"))
+
+  selected
+}
 
 # -----------------------------
 # Read input
@@ -445,27 +502,34 @@ if (long_format_detected) {
     sapply(df[, possible_sample_cols, drop = FALSE], is_numeric_like)
   ]
 
-  if (length(numeric_sample_cols) == 0) {
+   if (length(numeric_sample_cols) == 0) {
     stop("[ERROR] Could not detect numeric sample columns.")
   }
 
-  sample_cols <- numeric_sample_cols
+  if (length(numeric_sample_cols) == 1) {
+    sample_cols <- numeric_sample_cols
+    names(sample_cols) <- clean_bracken_sample_names(sample_cols)
+  } else {
+    sample_cols <- select_one_bracken_column_per_sample(numeric_sample_cols)
+  }
 
   cat("[INFO] Sample/abundance columns detected:", length(sample_cols), "\n")
-  cat(paste0("       ", paste(sample_cols, collapse = ", "), "\n"))
+  cat("[INFO] Raw abundance columns used:\n")
+  cat(paste0("       ", paste(unname(sample_cols), collapse = ", "), "\n"))
+  cat("[INFO] Biological sample names used:\n")
+  cat(paste0("       ", paste(names(sample_cols), collapse = ", "), "\n"))
 
   taxa <- make_unique_taxa(df[[taxon_col]])
 
   abundance_matrix <- as.matrix(
     data.frame(
-      lapply(df[, sample_cols, drop = FALSE], to_numeric_safe),
+      lapply(df[, unname(sample_cols), drop = FALSE], to_numeric_safe),
       check.names = FALSE
     )
   )
 
   rownames(abundance_matrix) <- taxa
-  colnames(abundance_matrix) <- sample_cols
-}
+  colnames(abundance_matrix) <- names(sample_cols)
 
 abundance_matrix[is.na(abundance_matrix)] <- 0
 abundance_matrix[abundance_matrix < 0] <- 0
@@ -702,3 +766,4 @@ cat("Presence threshold  :", presence_threshold, "\n")
 cat("Main core threshold :", core_threshold, "%\n")
 cat("Core taxa at main threshold:", nrow(main_core), "\n")
 cat("============================================================\n")
+}
