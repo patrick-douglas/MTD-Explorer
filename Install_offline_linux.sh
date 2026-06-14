@@ -94,6 +94,7 @@ sudo_with_pass "sudo apt install libharfbuzz-dev libfribidi-dev libfreetype6-dev
 sudo_with_pass "sudo apt install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev -y"
 sudo_with_pass "sudo apt install libharfbuzz-dev rsync libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev pigz -y"
 conda deactivate
+conda env create -f Installation/MTD_fastp.yml
 echo 'installing conda environments...'
 conda env create -f Installation/MTD.yml
 conda env update -n MTD -f $dir/Installation/MTD_R_additions.yml

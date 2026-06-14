@@ -1945,10 +1945,11 @@ echo "============================================================"
 echo "[FASTP] Sample: $i"
 echo "Input:  $fq"
 echo "Output: $out_fq"
-echo "Threads: $fastp_threads"
+echo "Threads: $threads"
 echo "Minimum length: $length"
 echo "============================================================"
-
+conda deactivate 
+conda activate MTD_fastp
 mkdir -p "$outputdr/fastp"
 
 fastp_report_base="$(basename "$out_fq")"
@@ -1957,13 +1958,33 @@ fastp_report_base="${fastp_report_base%.fq.gz}"
 fastp_report_base="${fastp_report_base%.fastq}"
 fastp_report_base="${fastp_report_base%.fq}"
 
+# Teste mais parecido com trimming terminal Q5 by MacManes 2024 
 fastp --trim_poly_x \
+      --qualified_quality_phred 15 \
+      --unqualified_percent_limit 40 \
+      --n_base_limit 5 \
+      --cut_front \
+      --cut_front_window_size 1 \
+      --cut_front_mean_quality 5 \
+      --cut_tail \
+      --cut_tail_window_size 1 \
+      --cut_tail_mean_quality 5 \
       --length_required "$length" \
-      --thread "$fastp_threads" \
+      --thread "$threads" \
       -i "$fq" \
       -o "$out_fq" \
       --html "$outputdr/fastp/${fastp_report_base}.fastp.html" \
       --json "$outputdr/fastp/${fastp_report_base}.fastp.json"
+
+################# FASTP defaults #################
+#fastp --trim_poly_x \
+#      --length_required "$length" \
+#      --thread "$fastp_threads" \
+#      -i "$fq" \
+#      -o "$out_fq" \
+#      --html "$outputdr/fastp/${fastp_report_base}.fastp.html" \
+#      --json "$outputdr/fastp/${fastp_report_base}.fastp.json"
+################# FASTP defaults #################
 
         if [[ ! -s "$out_fq" ]]; then
             echo "${r}[ERROR] fastp failed to create:${w} $out_fq"
@@ -1972,7 +1993,8 @@ fastp --trim_poly_x \
     done
 fi
 #$MTDIR/MTD_scripts/data_trimming.sh 
-
+conda deactivate
+conda activate MTD
 echo "${g}MTD running  progress:"
 echo '>>>>                [20%]'
 echo "Reads classification by kraken2; 1st step for host ${w}"

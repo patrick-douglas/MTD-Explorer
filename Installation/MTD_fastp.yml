@@ -1,0 +1,7 @@
+name: MTD_fastp
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - fastp=1.3.3
+  - libdeflate=1.25
