@@ -63,6 +63,24 @@ Optional:
   --rank STRING
       Taxonomic rank label. Default: taxa
 
+  --abundance_input FILE
+      Original combined Bracken abundance table.
+      Example: bracken_species_all
+
+  --samplesheet FILE
+      Sample metadata table used to associate samples with
+      groups, tissues or experimental conditions.
+
+  --mode relative|absolute
+      Abundance representation in the per-sample outputs.
+      relative = percentage within each sample.
+      absolute = estimated read counts.
+      Default: relative
+
+  --presence_threshold NUMERIC
+      Minimum abundance required to consider a taxon present.
+      Default: 0
+
   --w_prevalence NUMERIC
       Weight for prevalence score. Default: 0.45
 
@@ -113,6 +131,18 @@ input_file <- get_arg("--input")
 output_dir <- get_arg("--output")
 rank_label <- get_arg("--rank", "taxa")
 
+# Optional original abundance table and sample metadata
+abundance_input <- get_arg("--abundance_input", NULL)
+samplesheet_file <- get_arg("--samplesheet", NULL)
+
+# Abundance mode used in the per-sample output
+mode <- get_arg("--mode", "relative")
+
+# Minimum abundance required to consider a taxon present
+presence_threshold <- as.numeric(
+  get_arg("--presence_threshold", "0")
+)
+
 w_prevalence <- as.numeric(get_arg("--w_prevalence", "0.45"))
 w_mean <- as.numeric(get_arg("--w_mean", "0.30"))
 w_max <- as.numeric(get_arg("--w_max", "0.15"))
@@ -127,6 +157,32 @@ save_pdf <- !has_flag("--no_pdf")
 if (is.null(input_file)) stop("[ERROR] Missing --input")
 if (is.null(output_dir)) stop("[ERROR] Missing --output")
 if (!file.exists(input_file)) stop(paste0("[ERROR] Input not found: ", input_file))
+
+if (!is.null(abundance_input) && !file.exists(abundance_input)) {
+  stop(
+    paste0(
+      "[ERROR] Abundance input not found: ",
+      abundance_input
+    )
+  )
+}
+
+if (!is.null(samplesheet_file) && !file.exists(samplesheet_file)) {
+  stop(
+    paste0(
+      "[ERROR] Samplesheet not found: ",
+      samplesheet_file
+    )
+  )
+}
+
+if (!mode %in% c("relative", "absolute")) {
+  stop("[ERROR] --mode must be either 'relative' or 'absolute'")
+}
+
+if (!is.finite(presence_threshold) || presence_threshold < 0) {
+  stop("[ERROR] --presence_threshold must be a numeric value >= 0")
+}
 
 weight_sum <- w_prevalence + w_mean + w_max + w_total
 
@@ -162,6 +218,18 @@ cat("MTD exploratory: detected microbiome ranked tables\n")
 cat("Input :", input_file, "\n")
 cat("Output:", output_dir, "\n")
 cat("Rank  :", rank_label, "\n")
+cat(
+  "Abundance input:",
+  ifelse(is.null(abundance_input), "not provided", abundance_input),
+  "\n"
+)
+cat(
+  "Samplesheet:",
+  ifelse(is.null(samplesheet_file), "not provided", samplesheet_file),
+  "\n"
+)
+cat("Per-sample abundance mode:", mode, "\n")
+cat("Presence threshold:", presence_threshold, "\n")
 cat("Weights:\n")
 cat("  prevalence :", w_prevalence, "\n")
 cat("  mean       :", w_mean, "\n")
@@ -201,6 +269,501 @@ if (length(missing) > 0) {
 
 to_num <- function(x) {
   suppressWarnings(as.numeric(as.character(x)))
+}
+
+# ------------------------------------------------------------
+# Functions for per-sample abundance outputs
+# ------------------------------------------------------------
+
+detect_separator <- function(file) {
+  first_line <- readLines(
+    file,
+    n = 1,
+    warn = FALSE
+  )
+
+  n_tab <- lengths(
+    regmatches(
+      first_line,
+      gregexpr("\t", first_line)
+    )
+  )
+
+  n_comma <- lengths(
+    regmatches(
+      first_line,
+      gregexpr(",", first_line)
+    )
+  )
+
+  n_semicolon <- lengths(
+    regmatches(
+      first_line,
+      gregexpr(";", first_line)
+    )
+  )
+
+  if (
+    n_tab >= n_comma &&
+    n_tab >= n_semicolon &&
+    n_tab > 0
+  ) {
+    return("\t")
+  }
+
+  if (n_semicolon > n_comma) {
+    return(";")
+  }
+
+  return(",")
+}
+
+
+clean_input_column_names <- function(x) {
+  x <- as.character(x)
+  x <- gsub("\\s+", "_", x)
+  x <- gsub("\\.+", "_", x)
+  x
+}
+
+
+clean_sample_names <- function(x) {
+  x <- as.character(x)
+
+  # Remove Bracken abundance suffixes
+  x <- gsub(
+    "_(num|frac)$",
+    "",
+    x,
+    perl = TRUE
+  )
+
+  # Remove report prefix
+  x <- gsub(
+    "^Report_",
+    "",
+    x,
+    perl = TRUE
+  )
+
+  # Remove rank and Bracken suffix
+  x <- gsub(
+    "_(species|genus|family|order|class|phylum)_bracken$",
+    "",
+    x,
+    perl = TRUE
+  )
+
+  # Remove possible dot-style Bracken suffix
+  x <- gsub(
+    "\\.(species|genus|family|order|class|phylum)\\.bracken$",
+    "",
+    x,
+    perl = TRUE
+  )
+
+  # Remove common FASTQ/file extensions
+  x <- gsub(
+    "\\.(fastq|fq)(\\.gz)?$",
+    "",
+    x,
+    ignore.case = TRUE,
+    perl = TRUE
+  )
+
+  # Remove R-added X before names starting with a number
+  x <- gsub(
+    "^X(?=[0-9])",
+    "",
+    x,
+    perl = TRUE
+  )
+
+  x
+}
+
+
+find_first_column <- function(candidates, available_columns) {
+  candidate_lower <- tolower(candidates)
+  available_lower <- tolower(available_columns)
+
+  hit <- match(
+    candidate_lower,
+    available_lower
+  )
+
+  hit <- hit[!is.na(hit)]
+
+  if (length(hit) == 0) {
+    return(NULL)
+  }
+
+  available_columns[hit[1]]
+}
+
+
+find_taxon_column <- function(columns) {
+  candidates <- c(
+    "taxon",
+    "taxa",
+    "name",
+    "scientific_name",
+    "species",
+    "genus",
+    "family",
+    "feature",
+    "id"
+  )
+
+  detected <- find_first_column(
+    candidates,
+    columns
+  )
+
+  if (is.null(detected)) {
+    detected <- columns[1]
+  }
+
+  detected
+}
+
+
+read_abundance_matrix <- function(
+  abundance_file,
+  abundance_mode = "relative"
+) {
+  separator <- detect_separator(
+    abundance_file
+  )
+
+  abundance_df <- read.table(
+    abundance_file,
+    header = TRUE,
+    sep = separator,
+    quote = "\"",
+    comment.char = "",
+    check.names = FALSE,
+    stringsAsFactors = FALSE
+  )
+
+  colnames(abundance_df) <- clean_input_column_names(
+    colnames(abundance_df)
+  )
+
+  taxon_column <- find_taxon_column(
+    colnames(abundance_df)
+  )
+
+  cat("[INFO] Abundance taxon column:", taxon_column, "\n")
+
+  num_columns <- grep(
+    "_num$",
+    colnames(abundance_df),
+    value = TRUE,
+    perl = TRUE
+  )
+
+  frac_columns <- grep(
+    "_frac$",
+    colnames(abundance_df),
+    value = TRUE,
+    perl = TRUE
+  )
+
+  # Prefer _num columns because they contain estimated read counts.
+  # Relative abundance is calculated below from those counts.
+  if (length(num_columns) > 0) {
+    selected_columns <- num_columns
+    detected_type <- "Bracken _num columns"
+  } else if (length(frac_columns) > 0) {
+    selected_columns <- frac_columns
+    detected_type <- "Bracken _frac columns"
+  } else {
+    excluded_columns <- c(
+      taxon_column,
+      "taxonomy_id",
+      "taxid",
+      "tax_id",
+      "taxonomy_lvl",
+      "rank",
+      "level",
+      "kraken_assigned_reads",
+      "added_reads",
+      "new_est_reads",
+      "fraction_total_reads"
+    )
+
+    candidate_columns <- setdiff(
+      colnames(abundance_df),
+      excluded_columns
+    )
+
+    numeric_like <- vapply(
+      abundance_df[
+        ,
+        candidate_columns,
+        drop = FALSE
+      ],
+      function(z) {
+        numeric_z <- suppressWarnings(
+          as.numeric(
+            as.character(z)
+          )
+        )
+
+        mean(!is.na(numeric_z)) >= 0.8
+      },
+      logical(1)
+    )
+
+    selected_columns <- candidate_columns[
+      numeric_like
+    ]
+
+    detected_type <- "generic numeric columns"
+  }
+
+  if (length(selected_columns) == 0) {
+    stop(
+      paste0(
+        "[ERROR] No abundance columns detected in: ",
+        abundance_file
+      )
+    )
+  }
+
+  sample_names <- clean_sample_names(
+    selected_columns
+  )
+
+  if (anyDuplicated(sample_names)) {
+    stop(
+      paste0(
+        "[ERROR] Duplicate biological sample names after cleaning: ",
+        paste(
+          unique(
+            sample_names[
+              duplicated(sample_names)
+            ]
+          ),
+          collapse = ", "
+        )
+      )
+    )
+  }
+
+  abundance_matrix <- as.matrix(
+    data.frame(
+      lapply(
+        abundance_df[
+          ,
+          selected_columns,
+          drop = FALSE
+        ],
+        to_num
+      ),
+      check.names = FALSE
+    )
+  )
+
+  abundance_matrix[
+    is.na(abundance_matrix)
+  ] <- 0
+
+  abundance_matrix[
+    abundance_matrix < 0
+  ] <- 0
+
+  taxa <- as.character(
+    abundance_df[[taxon_column]]
+  )
+
+  taxa[
+    is.na(taxa) |
+    taxa == ""
+  ] <- "Unclassified_or_empty_name"
+
+  rownames(abundance_matrix) <- taxa
+  colnames(abundance_matrix) <- sample_names
+
+  # Aggregate duplicate taxon names if they exist.
+  if (anyDuplicated(rownames(abundance_matrix))) {
+    abundance_matrix <- rowsum(
+      abundance_matrix,
+      group = rownames(abundance_matrix),
+      reorder = FALSE
+    )
+  }
+
+  abundance_matrix <- abundance_matrix[
+    rowSums(abundance_matrix) > 0,
+    ,
+    drop = FALSE
+  ]
+
+  if (abundance_mode == "relative") {
+    column_totals <- colSums(
+      abundance_matrix,
+      na.rm = TRUE
+    )
+
+    column_totals[
+      column_totals == 0
+    ] <- NA
+
+    abundance_matrix <- sweep(
+      abundance_matrix,
+      2,
+      column_totals,
+      "/"
+    ) * 100
+
+    abundance_matrix[
+      is.na(abundance_matrix)
+    ] <- 0
+  }
+
+  cat("[INFO] Abundance input type:", detected_type, "\n")
+  cat("[INFO] Biological samples:", ncol(abundance_matrix), "\n")
+  cat(
+    "[INFO] Sample names:",
+    paste(
+      colnames(abundance_matrix),
+      collapse = ", "
+    ),
+    "\n"
+  )
+
+  abundance_matrix
+}
+
+
+read_sample_groups <- function(
+  samplesheet,
+  matrix_sample_names
+) {
+  output <- data.frame(
+    sample = matrix_sample_names,
+    group = "group_not_available",
+    stringsAsFactors = FALSE
+  )
+
+  if (is.null(samplesheet)) {
+    cat("[WARNING] No samplesheet provided. Group classification skipped.\n")
+    return(output)
+  }
+
+  separator <- detect_separator(
+    samplesheet
+  )
+
+  sample_df <- read.table(
+    samplesheet,
+    header = TRUE,
+    sep = separator,
+    quote = "\"",
+    comment.char = "",
+    check.names = FALSE,
+    stringsAsFactors = FALSE
+  )
+
+  if (ncol(sample_df) == 0) {
+    cat("[WARNING] Samplesheet contains no columns.\n")
+    return(output)
+  }
+
+  sample_column <- find_first_column(
+    c(
+      "sample",
+      "sample_id",
+      "sampleid",
+      "sample_name",
+      "samplename",
+      "library",
+      "library_id",
+      "name"
+    ),
+    colnames(sample_df)
+  )
+
+  group_column <- find_first_column(
+    c(
+      "group",
+      "condition",
+      "tissue",
+      "organ",
+      "treatment",
+      "experimental_group",
+      "sample_group"
+    ),
+    colnames(sample_df)
+  )
+
+  # Fallback: first column = sample, second column = group
+  if (is.null(sample_column)) {
+    sample_column <- colnames(sample_df)[1]
+  }
+
+  if (
+    is.null(group_column) &&
+    ncol(sample_df) >= 2
+  ) {
+    group_column <- colnames(sample_df)[2]
+  }
+
+  if (is.null(group_column)) {
+    cat(
+      "[WARNING] Group column could not be detected in samplesheet.\n"
+    )
+    return(output)
+  }
+
+  sample_ids <- clean_sample_names(
+    sample_df[[sample_column]]
+  )
+
+  sample_groups <- as.character(
+    sample_df[[group_column]]
+  )
+
+  group_map <- setNames(
+    sample_groups,
+    sample_ids
+  )
+
+  matched_groups <- unname(
+    group_map[output$sample]
+  )
+
+  valid_match <- !is.na(matched_groups) &
+    matched_groups != ""
+
+  output$group[valid_match] <- matched_groups[
+    valid_match
+  ]
+
+  cat("[INFO] Samplesheet sample column:", sample_column, "\n")
+  cat("[INFO] Samplesheet group column:", group_column, "\n")
+  cat(
+    "[INFO] Samples matched to groups:",
+    sum(valid_match),
+    "of",
+    nrow(output),
+    "\n"
+  )
+
+  if (any(!valid_match)) {
+    cat(
+      "[WARNING] Samples without group match:",
+      paste(
+        output$sample[!valid_match],
+        collapse = ", "
+      ),
+      "\n"
+    )
+  }
+
+  output
 }
 
 num_cols <- c(
@@ -447,6 +1010,336 @@ write_table(
 )
 
 # ------------------------------------------------------------
+# Per-sample abundance and group distribution
+# ------------------------------------------------------------
+
+if (!is.null(abundance_input)) {
+
+  cat("============================================================\n")
+  cat("[INFO] Generating per-sample abundance outputs\n")
+  cat("Abundance input:", abundance_input, "\n")
+  cat("Abundance mode :", mode, "\n")
+  cat("Presence threshold:", presence_threshold, "\n")
+  cat("============================================================\n")
+
+  sample_matrix <- read_abundance_matrix(
+    abundance_file = abundance_input,
+    abundance_mode = mode
+  )
+
+  sample_groups <- read_sample_groups(
+    samplesheet = samplesheet_file,
+    matrix_sample_names = colnames(sample_matrix)
+  )
+
+  # Keep taxa contained in the main ranked table.
+  ranked_taxa <- ranked_importance$taxon
+
+  taxa_found <- ranked_taxa[
+    ranked_taxa %in% rownames(sample_matrix)
+  ]
+
+  taxa_not_found <- setdiff(
+    ranked_taxa,
+    rownames(sample_matrix)
+  )
+
+  cat(
+    "[INFO] Ranked taxa matched to abundance matrix:",
+    length(taxa_found),
+    "of",
+    length(ranked_taxa),
+    "\n"
+  )
+
+  if (length(taxa_not_found) > 0) {
+    cat(
+      "[WARNING] Ranked taxa not matched:",
+      length(taxa_not_found),
+      "\n"
+    )
+  }
+
+  sample_matrix_ranked <- sample_matrix[
+    taxa_found,
+    ,
+    drop = FALSE
+  ]
+
+  # ----------------------------------------------------------
+  # Wide per-sample abundance table
+  # ----------------------------------------------------------
+
+  wide_abundance <- data.frame(
+    taxon = rownames(sample_matrix_ranked),
+    sample_matrix_ranked,
+    check.names = FALSE,
+    stringsAsFactors = FALSE
+  )
+
+  wide_file <- paste0(
+    "detected_microbiome_",
+    rank_label,
+    "_sample_abundance_wide.tsv"
+  )
+
+  write_table(
+    wide_abundance,
+    wide_file
+  )
+
+  # ----------------------------------------------------------
+  # Long per-sample abundance table
+  # ----------------------------------------------------------
+
+  long_abundance <- data.frame(
+    taxon = rep(
+      rownames(sample_matrix_ranked),
+      times = ncol(sample_matrix_ranked)
+    ),
+    sample = rep(
+      colnames(sample_matrix_ranked),
+      each = nrow(sample_matrix_ranked)
+    ),
+    abundance = as.vector(sample_matrix_ranked),
+    stringsAsFactors = FALSE
+  )
+
+  group_map <- setNames(
+    sample_groups$group,
+    sample_groups$sample
+  )
+
+  long_abundance$group <- unname(
+    group_map[long_abundance$sample]
+  )
+
+  long_abundance$group[
+    is.na(long_abundance$group) |
+    long_abundance$group == ""
+  ] <- "group_not_available"
+
+  long_abundance$present <- (
+    long_abundance$abundance >
+    presence_threshold
+  )
+
+  long_abundance <- long_abundance[
+    ,
+    c(
+      "taxon",
+      "sample",
+      "group",
+      "abundance",
+      "present"
+    )
+  ]
+
+  long_file <- paste0(
+    "detected_microbiome_",
+    rank_label,
+    "_sample_abundance_long.tsv"
+  )
+
+  write_table(
+    long_abundance,
+    long_file
+  )
+
+  # ----------------------------------------------------------
+  # Presence/absence matrix
+  # ----------------------------------------------------------
+
+  presence_matrix <- (
+    sample_matrix_ranked >
+    presence_threshold
+  ) * 1
+
+  presence_wide <- data.frame(
+    taxon = rownames(presence_matrix),
+    presence_matrix,
+    check.names = FALSE,
+    stringsAsFactors = FALSE
+  )
+
+  presence_file <- paste0(
+    "detected_microbiome_",
+    rank_label,
+    "_presence_absence.tsv"
+  )
+
+  write_table(
+    presence_wide,
+    presence_file
+  )
+
+  # ----------------------------------------------------------
+  # Detection summary by samples and groups
+  # ----------------------------------------------------------
+
+  detection_summary <- lapply(
+    rownames(sample_matrix_ranked),
+    function(current_taxon) {
+
+      taxon_values <- sample_matrix_ranked[
+        current_taxon,
+        ,
+        drop = TRUE
+      ]
+
+      detected_samples <- names(taxon_values)[
+        taxon_values > presence_threshold
+      ]
+
+      detected_groups <- unique(
+        unname(
+          group_map[detected_samples]
+        )
+      )
+
+      detected_groups <- detected_groups[
+        !is.na(detected_groups) &
+        detected_groups != "" &
+        detected_groups != "group_not_available"
+      ]
+
+      samples_text <- if (
+        length(detected_samples) == 0
+      ) {
+        "not_detected"
+      } else {
+        paste(
+          detected_samples,
+          collapse = ";"
+        )
+      }
+
+      groups_text <- if (
+        length(detected_groups) == 0
+      ) {
+        "group_not_available"
+      } else {
+        paste(
+          detected_groups,
+          collapse = ";"
+        )
+      }
+
+      distribution_scope <- if (
+        length(detected_samples) == 0
+      ) {
+        "not_detected"
+      } else if (
+        length(detected_groups) == 0
+      ) {
+        "group_not_available"
+      } else if (
+        length(detected_groups) == 1
+      ) {
+        paste0(
+          detected_groups[1],
+          "_only"
+        )
+      } else {
+        "shared_between_groups"
+      }
+
+      data.frame(
+        taxon = current_taxon,
+        samples_present = samples_text,
+        groups_present = groups_text,
+        n_samples_present = length(detected_samples),
+        n_groups_present = length(detected_groups),
+        distribution_scope = distribution_scope,
+        stringsAsFactors = FALSE
+      )
+    }
+  )
+
+  detection_summary <- do.call(
+    rbind,
+    detection_summary
+  )
+
+  # ----------------------------------------------------------
+  # Merge ranking, detection summary and sample abundances
+  # ----------------------------------------------------------
+
+  ranked_with_samples <- merge(
+    ranked_importance,
+    detection_summary,
+    by = "taxon",
+    all.x = TRUE,
+    sort = FALSE
+  )
+
+  ranked_with_samples <- merge(
+    ranked_with_samples,
+    wide_abundance,
+    by = "taxon",
+    all.x = TRUE,
+    sort = FALSE
+  )
+
+  # Restore the original importance ranking order.
+  ranked_with_samples <- ranked_with_samples[
+    match(
+      ranked_importance$taxon,
+      ranked_with_samples$taxon
+    ),
+    ,
+    drop = FALSE
+  ]
+
+  ranked_with_samples_file <- paste0(
+    "detected_microbiome_",
+    rank_label,
+    "_ranked_with_samples.tsv"
+  )
+
+  write_table(
+    ranked_with_samples,
+    ranked_with_samples_file
+  )
+
+  cat("[OK] Ranked table with sample abundances:\n")
+  cat(
+    file.path(
+      output_dir,
+      ranked_with_samples_file
+    ),
+    "\n"
+  )
+
+  cat("[OK] Wide sample abundance table:\n")
+  cat(
+    file.path(
+      output_dir,
+      wide_file
+    ),
+    "\n"
+  )
+
+  cat("[OK] Long sample abundance table:\n")
+  cat(
+    file.path(
+      output_dir,
+      long_file
+    ),
+    "\n"
+  )
+
+  cat("[OK] Presence/absence matrix:\n")
+  cat(
+    file.path(
+      output_dir,
+      presence_file
+    ),
+    "\n"
+  )
+}
+
+# ------------------------------------------------------------
 # README / methods note
 # ------------------------------------------------------------
 
@@ -486,6 +1379,12 @@ cat(
   "- detected_microbiome_", rank_label, "_ranked_by_total_abundance.tsv\n",
   "- detected_microbiome_", rank_label, "_core_prevalence_", core_threshold, ".tsv\n",
   "- detected_microbiome_", rank_label, "_strict_core_prevalence_100.tsv\n",
+  "- detected_microbiome_", rank_label, "_core_prevalence_", core_threshold, ".tsv\n",
+  "- detected_microbiome_", rank_label, "_strict_core_prevalence_100.tsv\n",
+  "- detected_microbiome_", rank_label, "_ranked_with_samples.tsv\n",
+  "- detected_microbiome_", rank_label, "_sample_abundance_wide.tsv\n",
+  "- detected_microbiome_", rank_label, "_sample_abundance_long.tsv\n",
+  "- detected_microbiome_", rank_label, "_presence_absence.tsv\n",
   sep = "",
   file = readme_file
 )

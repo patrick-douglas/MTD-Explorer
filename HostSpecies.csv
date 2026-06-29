@@ -107,7 +107,7 @@ Taxon_ID,MartDatasets,Scientific_name,OrgDb,Common_name,kegg
 40151,mmonoceros_gene_ensembl,Monodon monoceros,,,
 68415,mmoschiferus_gene_ensembl,Moschus moschiferus,,,
 10089,mcaroli_gene_ensembl,Mus caroli,,,
-10090,mmusculus_gene_ensembl,Mus musculus,org.Mm.eg.db,Mouse,mmu
+10090,mmusculus_gene_ensembl,Mus musculus,org.Mmusculus.eg.db,Mouse,mmu
 10093,mpahari_gene_ensembl,Mus pahari,,,
 10103,mspicilegus_gene_ensembl,Mus spicilegus,,,
 10096,mspretus_gene_ensembl,Mus spretus,,,

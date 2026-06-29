@@ -1,547 +1,1023 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Defining colors
-w=$(tput sgr0) 
-r=$(tput setaf 1)
-g=$(tput setaf 2) 
-y=$(tput setaf 3) 
-p=$(tput setaf 5) 
-echo "${w}"
-# Setting default values
-kmer="" # --kmer-len in kraken2-build
-min_l="" # --minimizer-len in kraken2-build
-min_s="" # --minimizer-spaces in kraken2-build
-read_len=75 # the read length in bracken-build
-threads=`nproc`
-#threads=$(($(nproc) - 2))
-condapath=~/miniconda3
+# ==============================================================================
+# MTD installer
+# ==============================================================================
+# This version reorganizes the original installer into functions while preserving
+# the execution order and the local Kraken2 helper-script workflow.
+#
+# Deliberately not using `set -e` here. The original installer continues after
+# some non-critical commands fail, and enabling it would change existing behavior.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Defaults and global paths
+# ------------------------------------------------------------------------------
+
+kmer=""                     # Kraken2 --kmer-len, used only with --build
+min_l=""                    # Kraken2 --minimizer-len, used only with --build
+min_s=""                    # Kraken2 --minimizer-spaces, used only with --build
+read_len=75                 # Bracken read length
+threads="$(nproc)"
+condapath="${HOME}/miniconda3"
 offline_files_folder=""
 sudo_password=""
 
-# Função auxiliar para rodar comandos com sudo usando expect
-sudo_with_pass() {
-    local cmd=$1
-    expect <<EOF
-        set timeout -1
-        spawn bash -c "$cmd"
-        expect {
-            "*password*" {
-                send "$sudo_password\r"
-                exp_continue
-            }
-            eof
-        }
-EOF
+dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+
+KRAKEN_ENV_LIBEXEC=""
+KRAKEN_PKG_LIBEXEC=""
+kraken_build_opts=()
+
+# ------------------------------------------------------------------------------
+# Terminal formatting and messages
+# ------------------------------------------------------------------------------
+
+init_colors() {
+    if command -v tput >/dev/null 2>&1 && [[ -t 1 ]]; then
+        w="$(tput sgr0)"
+        r="$(tput setaf 1)"
+        g="$(tput setaf 2)"
+        y="$(tput setaf 3)"
+        p="$(tput setaf 5)"
+    else
+        w=""
+        r=""
+        g=""
+        y=""
+        p=""
+    fi
 }
 
-#sudo_with_pass "sudo chown -R me:me /usr/local/lib/R/library"
-# Function to display usage message
+print_rule() {
+    printf '%s\n' "============================================================"
+}
+
+log_info() {
+    printf '%s[INFO]%s %s\n' "$g" "$w" "$*"
+}
+
+log_ok() {
+    printf '%s[OK]%s %s\n' "$g" "$w" "$*"
+}
+
+log_warning() {
+    printf '%s[WARNING]%s %s\n' "$y" "$w" "$*" >&2
+}
+
+log_error() {
+    printf '%s[ERROR]%s %s\n' "$r" "$w" "$*" >&2
+}
+
+show_progress() {
+    local bar="$1"
+    local percent="$2"
+    local message="$3"
+
+    echo "${g}"
+    echo "MTD installation progress:"
+    printf '%-20s[%s]\n' "$bar" "$percent"
+    echo "$message"
+    echo "${w}"
+}
+
+on_interrupt() {
+    echo
+    log_error "Installation stopped by user."
+    exit 130
+}
+
+trap on_interrupt INT TERM
+
+# ------------------------------------------------------------------------------
+# Command-line arguments and validation
+# ------------------------------------------------------------------------------
+
 usage() {
-    echo "Usage: $0 -p <condapath> -o <offline_files_folder> [-k <kmer>] [-m <minimizer_length>] [-s <minimizer_spaces>] [-r <read_length>] [-w <sudo_password>]"
-    exit 1
+    cat <<USAGE
+Usage:
+  $0 -p <condapath> -o <offline_files_folder> [options]
+
+Required:
+  -p PATH   Conda installation path
+  -o PATH   Folder containing the offline installation files
+
+Optional:
+  -k INT    Kraken2 k-mer length used during --build
+  -m INT    Kraken2 minimizer length used during --build
+  -s INT    Kraken2 minimizer spaces used during --build
+  -r INT    Bracken read length (default: 75)
+  -w TEXT   Sudo password used by the existing expect helper
+  -h        Show this help message
+USAGE
 }
 
-# Checking if the required parameters are provided
-if [ $# -lt 4 ]; then
-    usage
-fi
+parse_arguments() {
+    if [[ $# -eq 1 && "$1" == "-h" ]]; then
+        usage
+        exit 0
+    fi
 
-# Processing arguments
-while getopts ":p:o:k:m:s:r:w:" option; do
-    case "${option}" in
-        p)
-            condapath=${OPTARG}
-            ;;
-        o)
-            offline_files_folder=${OPTARG}
-            ;;
-        k)
-            kmer=${OPTARG}
-            ;;
-        m)
-            min_l=${OPTARG}
-            ;;
-        s)
-            min_s=${OPTARG}
-            ;;
-        r)
-            read_len=${OPTARG}
-            ;;
-        w)
-            sudo_password=${OPTARG}
-            ;;
-        *)
-            usage
-            ;;
-    esac
-done
+    if [[ $# -lt 4 ]]; then
+        usage
+        exit 1
+    fi
 
-# Verifying if the required parameters are provided
-if [ -z "$condapath" ] || [ -z "$offline_files_folder" ]; then
-    usage
-fi
+    while getopts ":p:o:k:m:s:r:w:h" option; do
+        case "$option" in
+            p) condapath="$OPTARG" ;;
+            o) offline_files_folder="$OPTARG" ;;
+            k) kmer="$OPTARG" ;;
+            m) min_l="$OPTARG" ;;
+            s) min_s="$OPTARG" ;;
+            r) read_len="$OPTARG" ;;
+            w) sudo_password="$OPTARG" ;;
+            h)
+                usage
+                exit 0
+                ;;
+            :)
+                log_error "Option -$OPTARG requires a value."
+                usage
+                exit 1
+                ;;
+            \?)
+                log_error "Unknown option: -$OPTARG"
+                usage
+                exit 1
+                ;;
+        esac
+    done
+}
 
-# get MTD folder place; same as Install.sh script file path (in the MTD folder)
-dir=$(dirname $(readlink -f $0))
-cd $dir # MTD folder place
-touch condaPath
-echo "$condapath" > $dir/condaPath
+validate_arguments() {
+    if [[ -z "$condapath" || -z "$offline_files_folder" ]]; then
+        usage
+        exit 1
+    fi
 
-source $condapath/etc/profile.d/conda.sh
-sudo_with_pass "sudo apt-get update"
-sudo_with_pass "sudo apt-get install libgeos-dev -y"
-sudo_with_pass "sudo apt install libharfbuzz-dev libfribidi-dev libfreetype6-dev -y"
-sudo_with_pass "sudo apt install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev -y"
-sudo_with_pass "sudo apt install libharfbuzz-dev rsync libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev pigz -y"
-conda deactivate
-conda env create -f Installation/MTD_fastp.yml
-echo 'installing conda environments...'
-conda env create -f Installation/MTD.yml
-conda env update -n MTD -f $dir/Installation/MTD_R_additions.yml
-conda run -n MTD bash $dir/update_fix/Install.R.packages.MTD.sh
-bash $dir/update_fix/check_R_pkg.MTD.sh
+    condapath="$(readlink -f "$condapath")"
+    offline_files_folder="$(readlink -f "$offline_files_folder")"
 
-#$dir/update_fix/Install.R.packages.MTD.sh
+    if [[ ! -f "$condapath/etc/profile.d/conda.sh" ]]; then
+        log_error "Conda initialization script not found:"
+        log_error "  $condapath/etc/profile.d/conda.sh"
+        exit 1
+    fi
 
-sed -i 's/^rpy2[>=<]/# &/' $dir/Installation/pip.requirements
-conda env create -f Installation/py2.yml
-conda env create -f Installation/halla0820.yml
-conda activate halla0820
-#pip install --upgrade setuptools pip
-#pip install -r Installation/pip.requirements
-#pip install jenkspy matplotlib numpy pandas PyYAML scipy seaborn
-#pip install --no-deps halla==0.8.20
-conda deactivate
-conda env create -f Installation/R412.yml
-sed -i '/^# *rpy2/s/^# *//' $dir/Installation/pip.requirements
-chmod +x $dir/aux_scripts/ssGSEA/resolve_ssgsea_go_terms.py
-python3 -m py_compile $dir/aux_scripts/ssGSEA/resolve_ssgsea_go_terms.py
+    if [[ ! -d "$offline_files_folder" ]]; then
+        log_error "Offline installation folder not found:"
+        log_error "  $offline_files_folder"
+        exit 1
+    fi
 
-echo "${g}MTD installation progress:"
-echo ">>                  [10%]${w}"
+    if ! [[ "$threads" =~ ^[1-9][0-9]*$ ]]; then
+        log_error "Invalid CPU thread count: $threads"
+        exit 1
+    fi
 
-# conda activate py2 # install dependencies of py2 in case pip does work in conda yml
-# pip install backports-functools-lru-cache==1.6.1 biom-format==2.0.1 cycler==0.10.0 h5py==2.10.0 hclust2==1.0.0 kiwisolver==1.1.0 matplotlib==2.2.5 numpy==1.16.6 pandas==0.24.2 pyparsing==2.4.7 pyqi==0.3.2 python-dateutil==2.8.1 pytz==2021.1 scipy==1.2.3 six==1.15.0 subprocess32==3.5.4
-# conda deactivate
+    if ! [[ "$read_len" =~ ^[1-9][0-9]*$ ]]; then
+        log_error "Invalid Bracken read length: $read_len"
+        exit 1
+    fi
+}
 
-conda activate halla0820 # install dependencies of halla
-#halla0820
-conda install -n halla0820 -y -c conda-forge pkg-config
-conda install -n halla0820 -y -c conda-forge ca-certificates openssl libcurl curl
-conda install -n halla0820 -y -c conda-forge libuv
-R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/lattice/lattice_0.22-7.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
-R -e "install.packages('$dir/update_fix/pvr_pkg/Matrix_1.6-5.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
-R -e "install.packages('$dir/update_fix/pvr_pkg/mnormt_2.1.0.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
-R -e "install.packages('$dir/update_fix/pvr_pkg/nlme_3.1-167.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
-R -e "install.packages('$dir/update_fix/pvr_pkg/GPArotation_2024.3-1.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
-R -e "install.packages('$dir/update_fix/pvr_pkg/psych_2.5.3.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
-R -e "install.packages('$dir/update_fix/pvr_pkg/foreign_0.8-89.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
-R -e "install.packages('$dir/update_fix/pvr_pkg/R.methodsS3_1.8.2.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
-R -e "install.packages('$dir/update_fix/pvr_pkg/R.oo_1.27.0.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
-R -e "install.packages('$dir/update_fix/pvr_pkg/rtf_0.4-14.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
-R -e "install.packages('$dir/update_fix/pvr_pkg/psychTools_2.4.3.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
-R -e "install.packages('https://cran.r-project.org/src/contrib/XICOR_0.4.1.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
-R -e "install.packages('https://cran.r-project.org/src/contrib/mclust_6.1.2.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
-R -e 'install.packages("BiocManager", repos = "https://cloud.r-project.org")'
-R -e "install.packages('~/MTD/update_fix/pvr_pkg/MASS_7.3-60.tar.gz', repos=NULL, type='source')"
-R -e "install.packages('$dir/update_fix/pvr_pkg/preprocessCore_1.72.0.tar.gz', repos=NULL, type='source')"
-R -e 'install.packages("remotes", repos="https://cloud.r-project.org")'
-R -e 'remotes::install_url("https://cran.r-project.org/src/contrib/EnvStats_3.1.0.tar.gz", dependencies=TRUE)'
-R -e 'remotes::install_version("Hmisc", version = "4.8-0", repos = "https://cloud.r-project.org")'
-R -e "install.packages('https://cran.r-project.org/src/contrib/eva_0.2.6.tar.gz', repos=NULL, type='source')"
+configure_paths_and_options() {
+    KRAKEN_ENV_LIBEXEC="$condapath/envs/MTD/libexec"
+    KRAKEN_PKG_LIBEXEC="$condapath/pkgs/kraken2-2.1.2-pl5262h7d875b9_0/libexec"
 
-conda run -n halla0820 $dir/update_fix/check_R_pkg.halla0820.sh
-conda deactivate
-echo "${g}"
-echo 'conda environments installed'
-echo 'MTD installation progress:'
-echo '>>>                 [15%]'
-echo 'downloading virome database...'
-echo "${w}"
-conda activate MTD
-sudo_with_pass "sudo apt-get update"
-sudo_with_pass "sudo apt-get install rsync -y"
-conda deactivate
-##conda install -y python=3.10 
-#conda install -n MTD -y -c bioconda metaphlan=4.0.6=pyhca03a8a_0 #Instalar no env MTD
-conda activate MTD
-conda install -n MTD -y -c conda-forge pkg-config
-conda install -n MTD -y -c conda-forge ncbi-datasets-cli
-conda install -n MTD -y -c conda-forge -c bioconda eggnog-mapper diamond
+    kraken_build_opts=()
 
-#Check if the file exists and have the same size before download
-#wget -T 300 -t 5 -N --no-if-modified-since https://master.dl.sourceforge.net/project/mtd/MTD/virushostdb.genomic.fna.gz
-cp -f $offline_files_folder/Ref_genomes/MTD_virus/virushostdb.genomic.fna.gz .
-#wget -c https://www.genome.jp/ftp/db/virushostdb/virushostdb.genomic.fna.gz
+    if [[ -n "$kmer" ]]; then
+        kraken_build_opts+=(--kmer-len "$kmer")
+    fi
+    if [[ -n "$min_l" ]]; then
+        kraken_build_opts+=(--minimizer-len "$min_l")
+    fi
+    if [[ -n "$min_s" ]]; then
+        kraken_build_opts+=(--minimizer-spaces "$min_s")
+    fi
+}
 
-unpigz -f virushostdb.genomic.fna.gz
-cat Installation/M33262_SIVMM239.fa virushostdb.genomic.fna > viruses4kraken.fa
+# ------------------------------------------------------------------------------
+# General helpers
+# ------------------------------------------------------------------------------
 
-echo "${g}"
-echo "Adding additional viruses from NCBI Ref-Seq Viral to viruses4kraken.fa..."
-echo "${w}"
-cp $dir/manifest.virus.sh $offline_files_folder/Kraken2DB_micro/library/manifest.virus.sh
-sed -i "s|^offline_files_folder=.*|offline_files_folder=$offline_files_folder|" $offline_files_folder/Kraken2DB_micro/library/manifest.virus.sh
-$offline_files_folder/Kraken2DB_micro/library/manifest.virus.sh
-sed -i -E 's/^>([^ ]+) (.+)/>\1 [\1] \2./' $offline_files_folder/Kraken2DB_micro/library/viral/all_viral_genomes.fna
-#cat $offline_files_folder/Kraken2DB_micro/library/viral/all_viral_genomes.fna >> $dir/viruses4kraken.fa
-# debug rsync error of kraken2-build
-cp -f $dir/Installation/rsync_from_ncbi.pl $condapath/pkgs/kraken2-2.1.2-pl5262h7d875b9_0/libexec/rsync_from_ncbi.pl
-cp -f $dir/Installation/rsync_from_ncbi.pl $condapath/envs/MTD/libexec/rsync_from_ncbi.pl
-cp -f $dir/Installation/download_genomic_library.sh $condapath/pkgs/kraken2-2.1.2-pl5262h7d875b9_0/libexec/download_genomic_library.sh
-cp -f $dir/Installation/download_genomic_library.sh $condapath/envs/MTD/libexec/download_genomic_library.sh
-echo "${g}"
-echo 'MTD installation progress:'
-echo '>>>>                [20%]'
-echo 'Preparing microbiome (virus, bacteria, archaea, protozoa, fungi, plasmid, UniVec_Core) database...'git 
-echo "${w}"
-# Kraken2 database building - Microbiome
-#update for bacterial genomes
-cp $dir/manifest.bacteria.sh $offline_files_folder/Kraken2DB_micro/library/manifest.bacteria.sh
-sed -i "s|^offline_files_folder=.*|offline_files_folder=$offline_files_folder|" $offline_files_folder/Kraken2DB_micro/library/manifest.bacteria.sh
-$offline_files_folder/Kraken2DB_micro/library/manifest.bacteria.sh
+sudo_with_pass() {
+    local cmd="$1"
 
-#Fix manifest.sh 
-cp $dir/manifest.sh $offline_files_folder/Kraken2DB_micro/library/manifest.sh
+    if command -v expect >/dev/null 2>&1; then
+        expect <<EXPECT_EOF
+            set timeout -1
+            spawn bash -c "$cmd"
+            expect {
+                "*password*" {
+                    send "$sudo_password\r"
+                    exp_continue
+                }
+                eof
+            }
+EXPECT_EOF
+    elif [[ -n "$sudo_password" ]]; then
+        log_warning "expect is unavailable; using sudo -S fallback."
+        printf '%s\n' "$sudo_password" | sudo -S bash -c "${cmd#sudo }"
+    else
+        log_warning "expect is unavailable and no sudo password was supplied."
+        bash -c "$cmd"
+    fi
+}
 
-# Substitui o path da pasta offline de instalacao no manifest.sh
-sed -i "s|^offline_files_folder=.*|offline_files_folder=$offline_files_folder|" $offline_files_folder/Kraken2DB_micro/library/manifest.sh
+safe_conda_deactivate() {
+    conda deactivate >/dev/null 2>&1 || true
+}
 
-DBNAME=kraken2DB_micro
-echo "Downloading NCBI taxonomy database with Kraken2—please wait..."
-# opção 1: tentar sem rsync
-#kraken2-build --download-taxonomy --use-ftp --threads $threads --db "$DBNAME" $kmer $min_l $min_s
-#kraken2-build --download-taxonomy --threads $threads --db $DBNAME $kmer $min_l $min_s
-#Use a new script modified to optimze the download 
-$dir/kraken2-build-download-taxonomy --download-taxonomy --threads $threads --db "$DBNAME" $kmer $min_l $min_s
+copy_required_file() {
+    local source_file="$1"
+    local destination="$2"
 
-# Use local files for archaea
-echo "Downloading RefSeq Archaea library with Kraken2—please wait..."
-#kraken2-build --use-ftp --download-library archaea --threads $threads --db $DBNAME $kmer $min_l $min_s
-cp -f $dir/manifest.archea.sh $offline_files_folder/Kraken2DB_micro/library/manifest.archea.sh
-sed -i "s|^offline_files_folder=.*|offline_files_folder=$offline_files_folder|" $offline_files_folder/Kraken2DB_micro/library/manifest.archea.sh
-$offline_files_folder/Kraken2DB_micro/library/manifest.archea.sh
+    if [[ ! -f "$source_file" ]]; then
+        log_error "Required file not found: $source_file"
+        exit 1
+    fi
 
-cp -f $dir/Installation/rsync_from_ncbi_archaea.pl $condapath/envs/MTD/libexec/rsync_from_ncbi.pl
+    if ! cp -f "$source_file" "$destination"; then
+        log_error "Could not copy required file:"
+        log_error "  Source:      $source_file"
+        log_error "  Destination: $destination"
+        exit 1
+    fi
+}
 
-sed -i "13s|^.*|my \$local_download_dir = \"$offline_files_folder/Kraken2DB_micro/library/archaea/all/\";|" $condapath/envs/MTD/libexec/rsync_from_ncbi.pl
+run_required_script() {
+    local script="$1"
+    shift
 
-cp -f $offline_files_folder/Kraken2DB_micro/library/archaea/assembly_summary_archaea.txt $offline_files_folder/Kraken2DB_micro/library/archaea/assembly_summary.txt
+    if [[ ! -f "$script" ]]; then
+        log_error "Required script not found: $script"
+        exit 1
+    fi
 
-chmod +x $condapath/envs/MTD/libexec/rsync_from_ncbi.pl
+    chmod +x "$script"
+    if ! "$script" "$@"; then
+        log_error "Required script failed: $script"
+        exit 1
+    fi
+}
 
-echo "Adding local archaeal sequences to Kraken2 database..."
-kraken2-build --use-ftp --download-library archaea --threads $threads --db $DBNAME $kmer $min_l $min_s
+retry_until_success() {
+    local description="$1"
+    shift
 
-# Restore original Kraken2 rsync script
-cp -f $dir/Installation/rsync_from_ncbi.pl $condapath/envs/MTD/libexec/rsync_from_ncbi.pl
+    local attempt=1
+    local retry_delay="${RETRY_INITIAL_DELAY:-20}"
+    local max_retry_delay="${RETRY_MAX_DELAY:-300}"
+    local exit_status=0
 
-#Use local files for bacteria
-cp -f $dir/Installation/rsync_from_ncbi_bacteria.pl $condapath/envs/MTD/libexec/rsync_from_ncbi.pl
-sed -i "21s|^.*|my \$local_download_dir = \"$offline_files_folder/Kraken2DB_micro/library/bacteria/all/\";|" $condapath/envs/MTD/libexec/rsync_from_ncbi.pl
-cp -f $offline_files_folder/Kraken2DB_micro/library/bacteria/assembly_summary_bacteria.txt $offline_files_folder/Kraken2DB_micro/library/bacteria/assembly_summary.txt
-chmod +x $condapath/envs/MTD/libexec/rsync_from_ncbi.pl
-echo "Adding local bacterial sequences to Kraken2 database..."
-kraken2-build --use-ftp --download-library bacteria --threads $threads --db $DBNAME $kmer $min_l $min_s
-cp -f $dir/Installation/rsync_from_ncbi.pl $condapath/envs/MTD/libexec/rsync_from_ncbi.pl
-echo "Downloading RefSeq Protozoa library with Kraken2—please wait..."
-kraken2-build --use-ftp --download-library protozoa --threads $threads --db $DBNAME $kmer $min_l $min_s
-echo "Downloading RefSeq Fungi library with Kraken2—please wait..."
-kraken2-build --use-ftp --download-library fungi --threads $threads --db $DBNAME $kmer $min_l $min_s
+    while true; do
+        print_rule
+        echo "[RETRY] $description"
+        echo "[RETRY] Attempt: $attempt"
+        printf '[RETRY] Command:'
+        printf ' %q' "$@"
+        printf '\n'
+        print_rule
 
-#Use local files for plasmid
+        if "$@"; then
+            print_rule
+            log_ok "$description"
+            print_rule
+            return 0
+        else
+            exit_status=$?
+        fi
 
-#FIRST UPDATE PLASMID FILES
-cp $dir/manifest.plasmid.sh $offline_files_folder/Kraken2DB_micro/library/manifest.plasmid.sh 
-sed -i "s|^LOCAL_DIR=.*|LOCAL_DIR=$offline_files_folder/Kraken2DB_micro/library/plasmid/|" $offline_files_folder/Kraken2DB_micro/library/manifest.plasmid.sh 
-$offline_files_folder/Kraken2DB_micro/library/manifest.plasmid.sh
+        print_rule
+        log_warning "Command failed: $description"
+        log_warning "Exit status: $exit_status"
+        log_warning "Retrying in $retry_delay seconds. Press Ctrl+C to stop."
+        print_rule
 
-sed -i "67s|^.*|    local_download_dir=\"$offline_files_folder/Kraken2DB_micro/library/plasmid/\"|" $dir/Installation/download_genomic_library_plasmid.sh
-cp -f $dir/Installation/download_genomic_library_plasmid.sh $condapath/pkgs/kraken2-2.1.2-pl5262h7d875b9_0/libexec/download_genomic_library.sh    
-cp -f $dir/Installation/download_genomic_library_plasmid.sh $condapath/envs/MTD/libexec/download_genomic_library.sh
-echo "Adding local plasmid sequences to Kraken2 database..."
-kraken2-build --download-library plasmid --threads $threads --db $DBNAME $kmer $min_l $min_s
-cp -f $dir/Installation/download_genomic_library.sh $condapath/pkgs/kraken2-2.1.2-pl5262h7d875b9_0/libexec/download_genomic_library.sh
-cp -f $dir/Installation/download_genomic_library.sh $condapath/envs/MTD/libexec/download_genomic_library.sh
+        sleep "$retry_delay"
+        attempt=$((attempt + 1))
 
-echo "Downloading UniVec_Core library with Kraken2—please wait..."
-kraken2-build --use-ftp --download-library UniVec_Core --threads "$threads" --db "$DBNAME" $kmer $min_l $min_s
+        if (( retry_delay < max_retry_delay )); then
+            retry_delay=$((retry_delay * 2))
+            if (( retry_delay > max_retry_delay )); then
+                retry_delay=$max_retry_delay
+            fi
+        fi
+    done
+}
 
-echo "Adding custom viral sequences (viruses4kraken.fa) to Kraken2 database..."
-kraken2-build --add-to-library viruses4kraken.fa --threads $threads --db $DBNAME $kmer $min_l $min_s
+# ------------------------------------------------------------------------------
+# Kraken2 helpers
+# ------------------------------------------------------------------------------
 
-echo "Building final Kraken2 database—this may take a while..."
-kraken2-build --build --threads $threads --db $DBNAME $kmer $min_l $min_s
+download_kraken2_library_until_success() {
+    local database="$1"
+    local library="$2"
+    shift 2
 
-echo "${g}"
-echo 'MTD installation progress:'
-echo '>>>>>>              [30%]'
-echo 'Preparing host (human) database...'
-echo "${w}"
-# Kraken2 database building - Human
-DBNAME=kraken2DB_human
-kraken2-build --use-ftp --download-taxonomy --threads $threads --db $DBNAME $kmer $min_l $min_s
-kraken2-build --use-ftp --download-library human --threads "$threads" --db "$DBNAME" $kmer $min_l $min_s
-kraken2-build --build --threads $threads --db $DBNAME $kmer $min_l $min_s
+    retry_until_success \
+        "Kraken2 library '$library' for database '$database'" \
+        kraken2-build \
+        "$@" \
+        --download-library "$library" \
+        --threads "$threads" \
+        --db "$database"
+}
 
-echo "${g}"
-echo 'MTD installation progress:'
-echo '>>>>>>>             [35%]'
-echo 'Preparing host (mouse) database...'
-echo "${w}"
-# Kraken2 database building - Mouse
-DBNAME=kraken2DB_mice
-mkdir -p $DBNAME
-cd $DBNAME
-#wget -T 300 -t 5 -N --no-if-modified-since https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/635/GCF_000001635.27_GRCm39/GCF_000001635.27_GRCm39_genomic.fna.gz
-#cp /media/me/4TB_BACKUP_LBN/Compressed/MTD/GCF_000001635.27_GRCm39_genomic.fna.gz .
-cp $offline_files_folder/GCF_000001635.27_GRCm39_genomic.fna.gz .
+download_kraken2_taxonomy_until_success() {
+    local database="$1"
+    local downloader="$2"
+    shift 2
 
-unpigz GCF_000001635.27_GRCm39_genomic.fna.gz
-mv GCF_000001635.27_GRCm39_genomic.fna GCF_000001635.27_GRCm39_genomic.fa
-cd ..
-kraken2-build --use-ftp --download-taxonomy --threads $threads --db $DBNAME $kmer $min_l $min_s
-kraken2-build --add-to-library $DBNAME/GCF_000001635.27_GRCm39_genomic.fa --threads $threads --db $DBNAME $kmer $min_l $min_s
-kraken2-build --build --threads $threads --db $DBNAME $kmer $min_l $min_s
+    retry_until_success \
+        "NCBI taxonomy for Kraken2 database '$database'" \
+        "$downloader" \
+        --download-taxonomy \
+        "$@" \
+        --threads "$threads" \
+        --db "$database"
+}
 
-echo "${g}"
-echo 'MTD installation progress:'
-echo '>>>>>>>>            [40%]'
-echo 'Preparing host (rhesus monkey) database...'
-echo "${w}"
-# Kraken2 database building - Rhesus macaque
-DBNAME=kraken2DB_rhesus
-mkdir -p $DBNAME
-cd $DBNAME
-#wget -T 300 -t 5 -N --no-if-modified-since https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/003/339/765/GCF_003339765.1_Mmul_10/GCF_003339765.1_Mmul_10_genomic.fna.gz
-#cp /media/me/4TB_BACKUP_LBN/Compressed/MTD/GCF_003339765.1_Mmul_10_genomic.fna.gz .
-cp $offline_files_folder/GCF_003339765.1_Mmul_10_genomic.fna.gz .
-unpigz GCF_003339765.1_Mmul_10_genomic.fna.gz
-mv GCF_003339765.1_Mmul_10_genomic.fna GCF_003339765.1_Mmul_10_genomic.fa
-cd ..
-kraken2-build --use-ftp --download-taxonomy --threads $threads --db $DBNAME $kmer $min_l $min_s
-kraken2-build --add-to-library $DBNAME/GCF_003339765.1_Mmul_10_genomic.fa --threads $threads --db $DBNAME $kmer $min_l $min_s
-kraken2-build --build --threads $threads --db $DBNAME $kmer $min_l $min_s
+build_kraken2_database() {
+    local database="$1"
 
-echo "${g}"
-echo 'MTD installation progress:'
-echo '>>>>>>>>>           [45%]'
-echo 'Bracken database building...'
-echo "${w}"
-# Bracken database building
-if [[ $kmer == "" ]]; then
-    bracken-build -d $dir/kraken2DB_micro -t $threads -l $read_len
-else
-    bracken-build -d $dir/kraken2DB_micro -t $threads -l $read_len -k $kmer
-fi
+    kraken2-build \
+        --build \
+        --threads "$threads" \
+        --db "$database" \
+        "${kraken_build_opts[@]}"
+}
 
-echo "${g}"
-echo 'MTD installation progress:'
-echo '>>>>>>>>>>>         [55%]'
-echo 'installing HUMAnN3 databases...'
-echo "${w}"
-# install HUMAnN3 databases
-mkdir -p $dir/HUMAnN/ref_database/
-cd $dir/HUMAnN/ref_database/
-#Link 403 forbidden
-#wget -c http://huttenhower.sph.harvard.edu/humann2_data/chocophlan/full_chocophlan.v296_201901.tar.gz
-#Link working but slow
-#wget -T 300 -t 5 -N --no-if-modified-since http://cmprod1.cibio.unitn.it/databases/HUMAnN/full_chocophlan.v296_201901.tar.gz
-#Temporary cp solution
-#cp /media/me/4TB_BACKUP_LBN/Compressed/MTD/full_chocophlan.v296_201901.tar.gz .
-#cp /media/me/4TB_BACKUP_LBN/Compressed/MTD/HUMAnN_updated/full_chocophlan.v201901_v31.tar.gz .
-cp $offline_files_folder/HUMAnN/full_chocophlan.v201901_v31.tar.gz .
-#Link 403 forbidden
-#wget -c http://huttenhower.sph.harvard.edu/humann2_data/uniprot/uniref_annotated/uniref90_annotated_v201901.tar.gz
-#Link working but slow
-#wget -T 300 -t 5 -N --no-if-modified-since http://cmprod1.cibio.unitn.it/databases/HUMAnN/uniref90_annotated_v201901.tar.gz
-#Temporary cp solution
-#cp /media/me/4TB_BACKUP_LBN/Compressed/MTD/uniref90_annotated_v201901.tar.gz .
-#cp /media/me/4TB_BACKUP_LBN/Compressed/MTD/HUMAnN_updated/uniref90_annotated_v201901b_full.tar.gz .
-cp $offline_files_folder/HUMAnN/uniref90_annotated_v201901b_full.tar.gz .
+install_kraken_helper() {
+    local source_file="$1"
+    local target_name="$2"
 
-#Link 403 forbidden
-#wget -c http://huttenhower.sph.harvard.edu/humann2_data/full_mapping_v201901.tar.gz
-#Link working but slow
-#wget -c http://cmprod1.cibio.unitn.it/databases/HUMAnN/full_mapping_v201901.tar.gz
-#Link source forge patrick-douglas
-#wget -T 300 -t 5 -N --no-if-modified-since https://master.dl.sourceforge.net/project/mtd/MTD/HUMAnN/ref_database/full_mapping_v201901.tar.gz
-#cp /media/me/4TB_BACKUP_LBN/Compressed/MTD/full_mapping_v201901.tar.gz .
-#cp /media/me/4TB_BACKUP_LBN/Compressed/MTD/HUMAnN_updated/full_mapping_v201901b.tar.gz .
-cp $offline_files_folder/HUMAnN/full_mapping_v201901b.tar.gz .
-mkdir -p $dir/HUMAnN/ref_database/chocophlan
-#tar xzvf full_chocophlan.v296_201901.tar.gz -C chocophlan/
-tar xzvf full_chocophlan.v201901_v31.tar.gz -C chocophlan/
-#mkdir -p $dir/HUMAnN/ref_database/full_UniRef90
-mkdir -p $dir/HUMAnN/ref_database/uniref
-#tar xzvf uniref90_annotated_v201901.tar.gz -C full_UniRef90/
-tar xzvf uniref90_annotated_v201901b_full.tar.gz -C uniref/
-mkdir -p $dir/HUMAnN/ref_database/utility_mapping
-#tar xzvf full_mapping_v201901.tar.gz -C utility_mapping/full_mapping_v201901b.tar.gz
-tar xzvf full_mapping_v201901b.tar.gz -C utility_mapping/
-cd $dir
+    if [[ ! -d "$KRAKEN_ENV_LIBEXEC" ]]; then
+        log_error "Kraken2 environment libexec directory not found:"
+        log_error "  $KRAKEN_ENV_LIBEXEC"
+        exit 1
+    fi
 
-humann_config --update database_folders nucleotide $dir/HUMAnN/ref_database/chocophlan
-humann_config --update database_folders protein $dir/HUMAnN/ref_database/uniref
-humann_config --update database_folders utility_mapping $dir/HUMAnN/ref_database/utility_mapping
+    copy_required_file "$source_file" "$KRAKEN_ENV_LIBEXEC/$target_name"
+    chmod +x "$KRAKEN_ENV_LIBEXEC/$target_name"
 
-echo "${g}"
-echo 'MTD installation progress:'
-echo '>>>>>>>>>>>>>>      [70%]'
-echo 'Fetching host (default: rhesus, human, mouse) references from local storage...'
-echo "Local folder: $offline_files_folder"
-echo "${w}"
-# install host references
-# download host GTF
-    # download rhesus macaque GTF
-#    wget -c http://ftp.ensembl.org/pub/release-104/gtf/macaca_mulatta/Macaca_mulatta.Mmul_10.104.gtf.gz -P ref_rhesus
-#    wget -T 300 -t 5 -N --no-if-modified-since https://master.dl.sourceforge.net/project/mtd/MTD/ref_rhesus/Macaca_mulatta.Mmul_10.104.gtf.gz -P ref_rhesus
-mkdir -p ref_rhesus && cp $offline_files_folder/Ref_genomes/Macaca_mulatta/Macaca_mulatta.Mmul_10.104.gtf.gz ref_rhesus
+    # Preserve the original package-cache patch when that exact Kraken2 package
+    # directory exists. The active environment copy above is the required one.
+    if [[ -d "$KRAKEN_PKG_LIBEXEC" ]]; then
+        cp -f "$source_file" "$KRAKEN_PKG_LIBEXEC/$target_name"
+        chmod +x "$KRAKEN_PKG_LIBEXEC/$target_name"
+    else
+        log_warning "Kraken2 package-cache libexec not found; skipped optional copy:"
+        log_warning "  $KRAKEN_PKG_LIBEXEC"
+    fi
+}
 
-    # download human GTF
-#    wget -c http://ftp.ensembl.org/pub/release-104/gtf/homo_sapiens/Homo_sapiens.GRCh38.104.gtf.gz -P ref_human
-#    wget -T 300 -t 5 -N --no-if-modified-since https://master.dl.sourceforge.net/project/mtd/MTD/ref_human/Homo_sapiens.GRCh38.104.gtf.gz -P ref_human
-mkdir -p ref_human && cp $offline_files_folder/Ref_genomes/Homo_sapiens/Homo_sapiens.GRCh38.104.gtf.gz ref_human
+restore_default_rsync_helper() {
+    install_kraken_helper "$dir/Installation/rsync_from_ncbi.pl" "rsync_from_ncbi.pl"
+}
 
-    # download mouse GTF
-#    wget -c http://ftp.ensembl.org/pub/release-104/gtf/mus_musculus/Mus_musculus.GRCm39.104.gtf.gz -P ref_mouse
-#    wget -T 300 -t 5 -N --no-if-modified-since https://master.dl.sourceforge.net/project/mtd/MTD/ref_mouse/Mus_musculus.GRCm39.104.gtf.gz -P ref_mouse
-mkdir -p ref_mouse && cp $offline_files_folder/Ref_genomes/Mus_musculus/Mus_musculus.GRCm39.104.gtf.gz ref_mouse
+restore_default_genomic_library_helper() {
+    install_kraken_helper \
+        "$dir/Installation/download_genomic_library.sh" \
+        "download_genomic_library.sh"
+}
 
-# Building indexes for hisat2
-echo "${g}"
-echo 'MTD installation progress:'
-echo '>>>>>>>>>>>>>>>     [75%]'
-echo 'Building host indexes (rhesus monkey) for hisat2...'
-echo "${w}"
-# rhesus macaques
-mkdir -p hisat2_index_rhesus
-cd hisat2_index_rhesus
-cp ../ref_rhesus/Macaca_mulatta.Mmul_10.104.gtf.gz .
-gzip -d Macaca_mulatta.Mmul_10.104.gtf.gz
-mv Macaca_mulatta.Mmul_10.104.gtf genome.gtf
-python $dir/Installation/hisat2_extract_splice_sites.py genome.gtf > genome.ss
-python $dir/Installation/hisat2_extract_exons.py genome.gtf > genome.exon
-#wget -c http://ftp.ensembl.org/pub/release-104/fasta/macaca_mulatta/dna/Macaca_mulatta.Mmul_10.dna.toplevel.fa.gz #use ensembl genome to compatible with featureCount
-#wget -T 300 -t 5 -N --no-if-modified-since https://master.dl.sourceforge.net/project/mtd/MTD/ref_rhesus/Macaca_mulatta.Mmul_10.dna.toplevel.fa.gz
-cp $offline_files_folder/Ref_genomes/Macaca_mulatta/Macaca_mulatta.Mmul_10.dna.toplevel.fa.gz .
-gzip -d Macaca_mulatta.Mmul_10.dna.toplevel.fa.gz
-mv Macaca_mulatta.Mmul_10.dna.toplevel.fa genome.fa
-hisat2-build --large-index -p $threads --exon genome.exon --ss genome.ss genome.fa genome_tran
-cd ..
+patch_perl_local_download_dir() {
+    local perl_script="$1"
+    local local_directory="$2"
 
-echo "${g}"
-echo 'MTD installation progress:'
-echo '>>>>>>>>>>>>>>>>    [80%]'
-echo 'Building host indexes (mouse) for hisat2...'
-echo "${w}"
-# mouse
-mkdir -p hisat2_index_mouse
-cd hisat2_index_mouse
-cp ../ref_mouse/Mus_musculus.GRCm39.104.gtf.gz .
-gzip -d Mus_musculus.GRCm39.104.gtf.gz
-mv Mus_musculus.GRCm39.104.gtf genome.gtf
-python $dir/Installation/hisat2_extract_splice_sites.py genome.gtf > genome.ss
-python $dir/Installation/hisat2_extract_exons.py genome.gtf > genome.exon
-#wget -c http://ftp.ensembl.org/pub/release-104/fasta/mus_musculus/dna/Mus_musculus.GRCm39.dna.primary_assembly.fa.gz #use ensembl genome to compatible with featureCount
-#wget -T 300 -t 5 -N --no-if-modified-since https://master.dl.sourceforge.net/project/mtd/MTD/ref_mouse/Mus_musculus.GRCm39.dna.primary_assembly.fa.gz
-cp $offline_files_folder/Ref_genomes/Mus_musculus/Mus_musculus.GRCm39.dna.primary_assembly.fa.gz .
-gzip -d Mus_musculus.GRCm39.dna.primary_assembly.fa.gz
-mv Mus_musculus.GRCm39.dna.primary_assembly.fa genome.fa
-hisat2-build --large-index -p $threads --exon genome.exon --ss genome.ss genome.fa genome_tran
-cd ..
+    sed -i \
+        's|^[[:space:]]*my \$local_download_dir = .*;|my $local_download_dir = "'"$local_directory"'";|' \
+        "$perl_script"
 
-echo "${g}"
-echo 'MTD installation progress:'
-echo '>>>>>>>>>>>>>>>>>   [85%]'
-echo 'Building host indexes (human) for hisat2...'
-echo "${w}"
-# human
-mkdir -p hisat2_index_human
-cd hisat2_index_human
-cp ../ref_human/Homo_sapiens.GRCh38.104.gtf.gz .
-gzip -d Homo_sapiens.GRCh38.104.gtf.gz
-mv Homo_sapiens.GRCh38.104.gtf genome.gtf
-python $dir/Installation/hisat2_extract_splice_sites.py genome.gtf > genome.ss
-python $dir/Installation/hisat2_extract_exons.py genome.gtf > genome.exon
-#wget -c http://ftp.ensembl.org/pub/release-104/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz #use ensembl genome to compatible with featureCount
-#wget -T 300 -t 5 -N --no-if-modified-since https://master.dl.sourceforge.net/project/mtd/MTD/ref_human/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz
-cp $offline_files_folder/Ref_genomes/Homo_sapiens/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz .
-gzip -d Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz
-mv Homo_sapiens.GRCh38.dna.primary_assembly.fa genome.fa
-hisat2-build --large-index -p $threads --exon genome.exon --ss genome.ss genome.fa genome_tran
-cd ..
+    if ! grep -Fq 'my $local_download_dir = "'"$local_directory"'";' "$perl_script"; then
+        log_error "Could not patch Perl local_download_dir in: $perl_script"
+        exit 1
+    fi
+}
+patch_shell_local_download_dir() {
+    local shell_script="$1"
+    local local_directory="$2"
 
-# # download preduild index for hisat2 # prebuild is from NCBI, may be not compatiable with featureCount
-#     # H. sapiens
-#     mkdir -p hisat2_index_human
-#     cd hisat2_index_human
-#     wget https://genome-idx.s3.amazonaws.com/hisat/grch38_tran.tar.gz
-#     pigz -dc grch38_tran.tar.gz | tar xf -
-#     cd ..
+    sed -i \
+        "s|^[[:space:]]*local_download_dir=.*|    local_download_dir=\"$local_directory\"|" \
+        "$shell_script"
 
-echo "${g}"
-echo "Create a BLAST database for Magic-BLAST"
-echo "${w}"
-makeblastdb -in $dir/hisat2_index_human/genome.fa -dbtype nucl -parse_seqids -out $dir/human_blastdb/human_blastdb
-makeblastdb -in $dir/hisat2_index_mouse/genome.fa -dbtype nucl -parse_seqids -out $dir/mouse_blastdb/mouse_blastdb
-makeblastdb -in $dir/hisat2_index_rhesus/genome.fa -dbtype nucl -parse_seqids -out $dir/rhesus_blastdb/rhesus_blastdb
+    if ! grep -Fq "local_download_dir=\"$local_directory\"" "$shell_script"; then
+        log_error "Could not patch shell local_download_dir in: $shell_script"
+        exit 1
+    fi
+}
 
-echo "${g}"
-echo 'MTD installation progress:'
-echo '>>>>>>>>>>>>>>>>>>  [90%]'
-echo 'installing R packages...'
-echo "${w}"
+copy_manifest_with_offline_folder() {
+    local source_script="$1"
+    local destination_script="$2"
 
-# install R packages
-conda deactivate
-conda install -n py2 -y -c conda-forge pkg-config
-conda activate R412
-#$dir/update_fix/update_conda_pkgs.sh
-conda install -n R412 -y -c conda-forge pkg-config
+    copy_required_file "$source_script" "$destination_script"
+    sed -i \
+        "s|^offline_files_folder=.*|offline_files_folder=$offline_files_folder|" \
+        "$destination_script"
+    run_required_script "$destination_script"
+}
 
-#conda run -n R412 bash $dir/update_fix/Install.R.packages.R412.sh
+prepare_local_kraken_host_genome() {
+    local database="$1"
+    local source_gz="$2"
+    local compressed_name="$3"
+    local fasta_name="$4"
 
-# debug in case libcurl cannot be located in the conda R environment
-wget -T 300 -t 5 -N --no-if-modified-since https://cran.r-project.org/src/contrib/Archive/curl/curl_4.3.2.tar.gz
-# if /usr/lib/x86_64-linux-gnu/pkgconfig/libcurl.pc exists, use it
-if [ -f /usr/lib/x86_64-linux-gnu/pkgconfig/libcurl.pc ]; then
-    locate_lib=/usr/lib/x86_64-linux-gnu/pkgconfig
-    else 
-    locate_lib=$(dirname $(locate libcurl | grep '\.pc'))
-fi
+    mkdir -p "$database"
 
-#Install R412 env packages
-cd $dir
-conda deactivate
-conda env remove -n R412 -y
-rm -rf ~/miniconda3/envs/R412
-rm -rf ~/miniconda3/pkgs/r-base-4.1.2-hde4fec0_0
-rm -f ~/miniconda3/pkgs/r-base-4.1.2-hde4fec0_0*.tar.bz2
-rm -f ~/miniconda3/pkgs/r-base-4.1.2-hde4fec0_0*.conda
-conda clean --packages --tarballs -y
-conda config --set channel_priority strict
-conda env create -f $dir/Installation/R412.yml
-conda activate R412
-$dir/update_fix/Install.R.packages.R412_optimized.sh
-Rscript -e 'install.packages("https://bioconductor.org/packages/3.19/bioc/src/contrib/UCSC.utils_1.0.0.tar.gz", repos=NULL, type="source", dependencies=FALSE); library(UCSC.utils); packageVersion("UCSC.utils")'
-$dir/update_fix/check_R_pkg.R412.sh
-conda deactivate
-#Install Annotation tools for base enviroment
-R -e 'BiocManager::install("GenomeInfoDb")'
-bash $dir/update_fix/Install.R.AnnotPackages.base.sh
-echo "${g}"
-echo "*********************************"
-echo "R packages version for conda envs"
-echo "*********************************"
-echo "${g}"
-conda run -n MTD $dir/update_fix/check_R_pkg.MTD.sh
-conda run -n R412 $dir/update_fix/check_R_pkg.R412.sh
-conda run -n halla0820 $dir/update_fix/check_R_pkg.halla0820.sh
-echo "${g}"
-echo "*********************************"
-echo ""
-echo 'MTD installation progress:'
-echo '>>>>>>>>>>>>>>>>>>>>[100%]'
-echo "MTD installation is finished"
-echo "${w}"
+    if [[ -s "$database/$fasta_name" ]]; then
+        log_info "Using existing host FASTA: $database/$fasta_name"
+        return 0
+    fi
+
+    copy_required_file "$source_gz" "$database/$compressed_name"
+    unpigz -f "$database/$compressed_name"
+    mv -f "$database/${compressed_name%.gz}" "$database/$fasta_name"
+}
+
+# ------------------------------------------------------------------------------
+# Installation stages
+# ------------------------------------------------------------------------------
+
+initialize_installation() {
+    cd "$dir" || exit 1
+    printf '%s\n' "$condapath" > "$dir/condaPath"
+    # shellcheck disable=SC1090
+    source "$condapath/etc/profile.d/conda.sh"
+}
+
+install_system_dependencies() {
+    log_info "Installing system dependencies..."
+
+    # Commands are intentionally kept in the same order as the working script.
+    sudo_with_pass "sudo apt-get update"
+    sudo_with_pass "sudo apt-get install libgeos-dev -y"
+    sudo_with_pass "sudo apt install libharfbuzz-dev libfribidi-dev libfreetype6-dev -y"
+    sudo_with_pass "sudo apt install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev -y"
+    sudo_with_pass "sudo apt install libharfbuzz-dev rsync libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev pigz -y"
+}
+
+create_conda_environments() {
+    safe_conda_deactivate
+
+    log_info "Creating MTD-fastp environment..."
+    conda env create -f "$dir/Installation/MTD_fastp.yml"
+
+    log_info "Creating and updating MTD environment..."
+    conda env create -f "$dir/Installation/MTD.yml"
+    conda env update -n MTD -f "$dir/Installation/MTD_R_additions.yml"
+    conda run -n MTD bash "$dir/update_fix/Install.R.packages.MTD.sh"
+    bash "$dir/update_fix/check_R_pkg.MTD.sh"
+
+    log_info "Creating Python 2 and HAllA environments..."
+    sed -i 's/^rpy2[>=<]/# &/' "$dir/Installation/pip.requirements"
+    conda env create -f "$dir/Installation/py2.yml"
+    conda env create -f "$dir/Installation/halla0820.yml"
+    safe_conda_deactivate
+
+    log_info "Creating initial R412 environment..."
+    conda env create -f "$dir/Installation/R412.yml"
+    sed -i '/^# *rpy2/s/^# *//' "$dir/Installation/pip.requirements"
+
+    chmod +x "$dir/aux_scripts/ssGSEA/resolve_ssgsea_go_terms.py"
+    python3 -m py_compile "$dir/aux_scripts/ssGSEA/resolve_ssgsea_go_terms.py"
+}
+
+install_halla_dependencies() {
+    conda activate halla0820
+
+    conda install -n halla0820 -y -c conda-forge pkg-config
+    conda install -n halla0820 -y -c conda-forge ca-certificates openssl libcurl curl
+    conda install -n halla0820 -y -c conda-forge libuv
+
+    R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/lattice/lattice_0.22-7.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
+    R -e "install.packages('$dir/update_fix/pvr_pkg/Matrix_1.6-5.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
+    R -e "install.packages('$dir/update_fix/pvr_pkg/mnormt_2.1.0.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
+    R -e "install.packages('$dir/update_fix/pvr_pkg/nlme_3.1-167.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
+    R -e "install.packages('$dir/update_fix/pvr_pkg/GPArotation_2024.3-1.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
+    R -e "install.packages('$dir/update_fix/pvr_pkg/psych_2.5.3.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
+    R -e "install.packages('$dir/update_fix/pvr_pkg/foreign_0.8-89.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
+    R -e "install.packages('$dir/update_fix/pvr_pkg/R.methodsS3_1.8.2.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
+    R -e "install.packages('$dir/update_fix/pvr_pkg/R.oo_1.27.0.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
+    R -e "install.packages('$dir/update_fix/pvr_pkg/rtf_0.4-14.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
+    R -e "install.packages('$dir/update_fix/pvr_pkg/psychTools_2.4.3.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
+    R -e "install.packages('https://cran.r-project.org/src/contrib/XICOR_0.4.1.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
+    R -e "install.packages('https://cran.r-project.org/src/contrib/mclust_6.1.2.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
+    R -e 'install.packages("BiocManager", repos = "https://cloud.r-project.org")'
+    R -e "install.packages('$dir/update_fix/pvr_pkg/MASS_7.3-60.tar.gz', repos=NULL, type='source')"
+    R -e "install.packages('$dir/update_fix/pvr_pkg/preprocessCore_1.72.0.tar.gz', repos=NULL, type='source')"
+    R -e 'install.packages("remotes", repos="https://cloud.r-project.org")'
+    R -e 'remotes::install_url("https://cran.r-project.org/src/contrib/EnvStats_3.1.0.tar.gz", dependencies=TRUE)'
+    R -e 'remotes::install_version("Hmisc", version = "4.8-0", repos = "https://cloud.r-project.org")'
+    R -e "install.packages('https://cran.r-project.org/src/contrib/eva_0.2.6.tar.gz', repos=NULL, type='source')"
+
+    conda run -n halla0820 "$dir/update_fix/check_R_pkg.halla0820.sh"
+    safe_conda_deactivate
+}
+
+install_mtd_extra_tools() {
+    conda activate MTD
+
+    # Preserved from the original installer; rsync is also installed in the
+    # initial system-dependency stage.
+    sudo_with_pass "sudo apt-get update"
+    sudo_with_pass "sudo apt-get install rsync -y"
+
+    safe_conda_deactivate
+    conda activate MTD
+    conda install -n MTD -y -c conda-forge pkg-config
+    conda install -n MTD -y -c conda-forge ncbi-datasets-cli
+    conda install -n MTD -y -c conda-forge -c bioconda eggnog-mapper diamond
+}
+
+prepare_virome_files() {
+    copy_required_file \
+        "$offline_files_folder/Ref_genomes/MTD_virus/virushostdb.genomic.fna.gz" \
+        "$dir/virushostdb.genomic.fna.gz"
+
+    unpigz -f "$dir/virushostdb.genomic.fna.gz"
+    cat \
+        "$dir/Installation/M33262_SIVMM239.fa" \
+        "$dir/virushostdb.genomic.fna" \
+        > "$dir/viruses4kraken.fa"
+
+    log_info "Preparing additional NCBI RefSeq viral files..."
+    copy_manifest_with_offline_folder \
+        "$dir/manifest.virus.sh" \
+        "$offline_files_folder/Kraken2DB_micro/library/manifest.virus.sh"
+
+    sed -i -E \
+        's/^>([^ ]+) (.+)/>\1 [\1] \2./' \
+        "$offline_files_folder/Kraken2DB_micro/library/viral/all_viral_genomes.fna"
+
+    # The original installer intentionally leaves this append operation disabled:
+    # cat "$offline_files_folder/Kraken2DB_micro/library/viral/all_viral_genomes.fna" >> "$dir/viruses4kraken.fa"
+}
+
+install_default_kraken_helpers() {
+    restore_default_rsync_helper
+    restore_default_genomic_library_helper
+}
+
+prepare_microbiome_manifests() {
+    copy_manifest_with_offline_folder \
+        "$dir/manifest.bacteria.sh" \
+        "$offline_files_folder/Kraken2DB_micro/library/manifest.bacteria.sh"
+
+    copy_required_file \
+        "$dir/manifest.sh" \
+        "$offline_files_folder/Kraken2DB_micro/library/manifest.sh"
+
+    sed -i \
+        "s|^offline_files_folder=.*|offline_files_folder=$offline_files_folder|" \
+        "$offline_files_folder/Kraken2DB_micro/library/manifest.sh"
+}
+
+add_local_archaea_library() {
+    local database="$1"
+    local helper="$KRAKEN_ENV_LIBEXEC/rsync_from_ncbi.pl"
+
+    copy_manifest_with_offline_folder \
+        "$dir/manifest.archea.sh" \
+        "$offline_files_folder/Kraken2DB_micro/library/manifest.archea.sh"
+
+    install_kraken_helper \
+        "$dir/Installation/rsync_from_ncbi_archaea.pl" \
+        "rsync_from_ncbi.pl"
+
+    patch_perl_local_download_dir \
+        "$helper" \
+        "$offline_files_folder/Kraken2DB_micro/library/archaea/all/"
+
+    copy_required_file \
+        "$offline_files_folder/Kraken2DB_micro/library/archaea/assembly_summary_archaea.txt" \
+        "$offline_files_folder/Kraken2DB_micro/library/archaea/assembly_summary.txt"
+
+    chmod +x "$helper"
+    log_info "Adding local archaeal sequences to Kraken2 database..."
+    download_kraken2_library_until_success "$database" "archaea" --use-ftp
+
+    restore_default_rsync_helper
+}
+
+add_local_bacteria_library() {
+    local database="$1"
+    local helper="$KRAKEN_ENV_LIBEXEC/rsync_from_ncbi.pl"
+
+    install_kraken_helper \
+        "$dir/Installation/rsync_from_ncbi_bacteria.pl" \
+        "rsync_from_ncbi.pl"
+
+    patch_perl_local_download_dir \
+        "$helper" \
+        "$offline_files_folder/Kraken2DB_micro/library/bacteria/all/"
+
+    copy_required_file \
+        "$offline_files_folder/Kraken2DB_micro/library/bacteria/assembly_summary_bacteria.txt" \
+        "$offline_files_folder/Kraken2DB_micro/library/bacteria/assembly_summary.txt"
+
+    chmod +x "$helper"
+    log_info "Adding local bacterial sequences to Kraken2 database..."
+    download_kraken2_library_until_success "$database" "bacteria" --use-ftp
+
+    restore_default_rsync_helper
+}
+
+add_local_plasmid_library() {
+    local database="$1"
+    local manifest_destination="$offline_files_folder/Kraken2DB_micro/library/manifest.plasmid.sh"
+    local custom_helper="$dir/Installation/download_genomic_library_plasmid.sh"
+
+    copy_required_file "$dir/manifest.plasmid.sh" "$manifest_destination"
+    sed -i \
+        "s|^LOCAL_DIR=.*|LOCAL_DIR=$offline_files_folder/Kraken2DB_micro/library/plasmid/|" \
+        "$manifest_destination"
+    run_required_script "$manifest_destination"
+
+    patch_shell_local_download_dir \
+        "$custom_helper" \
+        "$offline_files_folder/Kraken2DB_micro/library/plasmid/"
+
+    install_kraken_helper "$custom_helper" "download_genomic_library.sh"
+
+    log_info "Adding local plasmid sequences to Kraken2 database..."
+    kraken2-build \
+        --download-library plasmid \
+        --threads "$threads" \
+        --db "$database"
+
+    restore_default_genomic_library_helper
+}
+
+build_microbiome_kraken_database() {
+    local database="$dir/kraken2DB_micro"
+
+    prepare_microbiome_manifests
+
+    chmod +x "$dir/kraken2-build-download-taxonomy"
+    log_info "Downloading NCBI taxonomy database with Kraken2..."
+    download_kraken2_taxonomy_until_success \
+        "$database" \
+        "$dir/kraken2-build-download-taxonomy"
+
+    add_local_archaea_library "$database"
+    add_local_bacteria_library "$database"
+
+    log_info "Downloading RefSeq Protozoa library..."
+    download_kraken2_library_until_success "$database" "protozoa" --use-ftp
+
+    log_info "Downloading RefSeq Fungi library..."
+    download_kraken2_library_until_success "$database" "fungi" --use-ftp
+
+    add_local_plasmid_library "$database"
+
+    log_info "Downloading UniVec_Core library..."
+    download_kraken2_library_until_success "$database" "UniVec_Core" --use-ftp
+
+    log_info "Adding custom viral sequences to Kraken2 database..."
+    kraken2-build \
+        --add-to-library "$dir/viruses4kraken.fa" \
+        --threads "$threads" \
+        --db "$database"
+
+    log_info "Building final Kraken2 microbiome database..."
+    build_kraken2_database "$database"
+}
+
+build_human_kraken_database() {
+    local database="$dir/kraken2DB_human"
+
+    download_kraken2_taxonomy_until_success \
+        "$database" \
+        kraken2-build \
+        --use-ftp
+
+    download_kraken2_library_until_success \
+        "$database" \
+        "human" \
+        --use-ftp
+
+    build_kraken2_database "$database"
+}
+
+build_mouse_kraken_database() {
+    local database="$dir/kraken2DB_mice"
+    local fasta_name="GCF_000001635.27_GRCm39_genomic.fa"
+
+    prepare_local_kraken_host_genome \
+        "$database" \
+        "$offline_files_folder/GCF_000001635.27_GRCm39_genomic.fna.gz" \
+        "GCF_000001635.27_GRCm39_genomic.fna.gz" \
+        "$fasta_name"
+
+    download_kraken2_taxonomy_until_success \
+        "$database" \
+        kraken2-build \
+        --use-ftp
+
+    kraken2-build \
+        --add-to-library "$database/$fasta_name" \
+        --threads "$threads" \
+        --db "$database"
+
+    build_kraken2_database "$database"
+}
+
+build_rhesus_kraken_database() {
+    local database="$dir/kraken2DB_rhesus"
+    local fasta_name="GCF_003339765.1_Mmul_10_genomic.fa"
+
+    prepare_local_kraken_host_genome \
+        "$database" \
+        "$offline_files_folder/GCF_003339765.1_Mmul_10_genomic.fna.gz" \
+        "GCF_003339765.1_Mmul_10_genomic.fna.gz" \
+        "$fasta_name"
+
+    download_kraken2_taxonomy_until_success \
+        "$database" \
+        kraken2-build \
+        --use-ftp
+
+    kraken2-build \
+        --add-to-library "$database/$fasta_name" \
+        --threads "$threads" \
+        --db "$database"
+
+    build_kraken2_database "$database"
+}
+
+build_bracken_database() {
+    local database="$dir/kraken2DB_micro"
+
+    if [[ -z "$kmer" ]]; then
+        bracken-build \
+            -d "$database" \
+            -t "$threads" \
+            -l "$read_len"
+    else
+        bracken-build \
+            -d "$database" \
+            -t "$threads" \
+            -l "$read_len" \
+            -k "$kmer"
+    fi
+}
+
+install_humann_databases() {
+    local humann_dir="$dir/HUMAnN/ref_database"
+
+    mkdir -p "$humann_dir/chocophlan"
+    mkdir -p "$humann_dir/uniref"
+    mkdir -p "$humann_dir/utility_mapping"
+
+    copy_required_file \
+        "$offline_files_folder/HUMAnN/full_chocophlan.v201901_v31.tar.gz" \
+        "$humann_dir/full_chocophlan.v201901_v31.tar.gz"
+
+    copy_required_file \
+        "$offline_files_folder/HUMAnN/uniref90_annotated_v201901b_full.tar.gz" \
+        "$humann_dir/uniref90_annotated_v201901b_full.tar.gz"
+
+    copy_required_file \
+        "$offline_files_folder/HUMAnN/full_mapping_v201901b.tar.gz" \
+        "$humann_dir/full_mapping_v201901b.tar.gz"
+
+    tar xzvf \
+        "$humann_dir/full_chocophlan.v201901_v31.tar.gz" \
+        -C "$humann_dir/chocophlan/"
+
+    tar xzvf \
+        "$humann_dir/uniref90_annotated_v201901b_full.tar.gz" \
+        -C "$humann_dir/uniref/"
+
+    tar xzvf \
+        "$humann_dir/full_mapping_v201901b.tar.gz" \
+        -C "$humann_dir/utility_mapping/"
+
+    humann_config --update database_folders nucleotide "$humann_dir/chocophlan"
+    humann_config --update database_folders protein "$humann_dir/uniref"
+    humann_config --update database_folders utility_mapping "$humann_dir/utility_mapping"
+}
+
+copy_host_reference_gtfs() {
+    mkdir -p "$dir/ref_rhesus"
+    mkdir -p "$dir/ref_human"
+    mkdir -p "$dir/ref_mouse"
+
+    copy_required_file \
+        "$offline_files_folder/Ref_genomes/Macaca_mulatta/Macaca_mulatta.Mmul_10.104.gtf.gz" \
+        "$dir/ref_rhesus/Macaca_mulatta.Mmul_10.104.gtf.gz"
+
+    copy_required_file \
+        "$offline_files_folder/Ref_genomes/Homo_sapiens/Homo_sapiens.GRCh38.104.gtf.gz" \
+        "$dir/ref_human/Homo_sapiens.GRCh38.104.gtf.gz"
+
+    copy_required_file \
+        "$offline_files_folder/Ref_genomes/Mus_musculus/Mus_musculus.GRCm39.104.gtf.gz" \
+        "$dir/ref_mouse/Mus_musculus.GRCm39.104.gtf.gz"
+}
+
+build_hisat2_host_index() {
+    local index_directory="$1"
+    local gtf_gz="$2"
+    local genome_gz="$3"
+
+    mkdir -p "$index_directory"
+
+    gzip -dc "$gtf_gz" > "$index_directory/genome.gtf"
+    python "$dir/Installation/hisat2_extract_splice_sites.py" \
+        "$index_directory/genome.gtf" \
+        > "$index_directory/genome.ss"
+    python "$dir/Installation/hisat2_extract_exons.py" \
+        "$index_directory/genome.gtf" \
+        > "$index_directory/genome.exon"
+
+    gzip -dc "$genome_gz" > "$index_directory/genome.fa"
+
+    hisat2-build \
+        --large-index \
+        -p "$threads" \
+        --exon "$index_directory/genome.exon" \
+        --ss "$index_directory/genome.ss" \
+        "$index_directory/genome.fa" \
+        "$index_directory/genome_tran"
+}
+
+build_magic_blast_databases() {
+    mkdir -p "$dir/human_blastdb"
+    mkdir -p "$dir/mouse_blastdb"
+    mkdir -p "$dir/rhesus_blastdb"
+
+    makeblastdb \
+        -in "$dir/hisat2_index_human/genome.fa" \
+        -dbtype nucl \
+        -parse_seqids \
+        -out "$dir/human_blastdb/human_blastdb"
+
+    makeblastdb \
+        -in "$dir/hisat2_index_mouse/genome.fa" \
+        -dbtype nucl \
+        -parse_seqids \
+        -out "$dir/mouse_blastdb/mouse_blastdb"
+
+    makeblastdb \
+        -in "$dir/hisat2_index_rhesus/genome.fa" \
+        -dbtype nucl \
+        -parse_seqids \
+        -out "$dir/rhesus_blastdb/rhesus_blastdb"
+}
+
+install_r412_and_annotation_packages() {
+    safe_conda_deactivate
+
+    conda install -n py2 -y -c conda-forge pkg-config
+    conda activate R412
+    conda install -n R412 -y -c conda-forge pkg-config
+
+    # Preserved libcurl troubleshooting step from the original installer.
+    wget \
+        -T 300 \
+        -t 5 \
+        -N \
+        --no-if-modified-since \
+        https://cran.r-project.org/src/contrib/Archive/curl/curl_4.3.2.tar.gz
+
+    if [[ -f /usr/lib/x86_64-linux-gnu/pkgconfig/libcurl.pc ]]; then
+        locate_lib=/usr/lib/x86_64-linux-gnu/pkgconfig
+    else
+        locate_lib="$(dirname "$(locate libcurl 2>/dev/null | grep '\.pc' | head -n 1)")"
+    fi
+
+    # `locate_lib` is intentionally retained for compatibility with the old
+    # troubleshooting block, although it is not consumed later in this script.
+    : "${locate_lib:=}"
+
+    cd "$dir" || exit 1
+    safe_conda_deactivate
+
+    conda env remove -n R412 -y
+    rm -rf "$condapath/envs/R412"
+    rm -rf "$condapath/pkgs/r-base-4.1.2-hde4fec0_0"
+    rm -f "$condapath"/pkgs/r-base-4.1.2-hde4fec0_0*.tar.bz2
+    rm -f "$condapath"/pkgs/r-base-4.1.2-hde4fec0_0*.conda
+
+    conda clean --packages --tarballs -y
+    conda config --set channel_priority strict
+    conda env create -f "$dir/Installation/R412.yml"
+    conda activate R412
+
+    run_required_script "$dir/update_fix/Install.R.packages.R412_optimized.sh"
+
+    Rscript -e \
+        'install.packages("https://bioconductor.org/packages/3.19/bioc/src/contrib/UCSC.utils_1.0.0.tar.gz", repos=NULL, type="source", dependencies=FALSE); library(UCSC.utils); packageVersion("UCSC.utils")'
+
+    run_required_script "$dir/update_fix/check_R_pkg.R412.sh"
+    safe_conda_deactivate
+
+    # Install annotation tools in the base environment, as in the original.
+    R -e 'BiocManager::install("GenomeInfoDb")'
+    bash "$dir/update_fix/Install.R.AnnotPackages.base.sh"
+}
+
+show_r_package_versions() {
+    echo "${g}"
+    echo "*********************************"
+    echo "R packages version for conda envs"
+    echo "*********************************"
+    echo "${w}"
+
+    conda run -n MTD "$dir/update_fix/check_R_pkg.MTD.sh"
+    conda run -n R412 "$dir/update_fix/check_R_pkg.R412.sh"
+    conda run -n halla0820 "$dir/update_fix/check_R_pkg.halla0820.sh"
+}
+
+# ------------------------------------------------------------------------------
+# Main installation sequence
+# ------------------------------------------------------------------------------
+
+main() {
+    init_colors
+    parse_arguments "$@"
+    validate_arguments
+    configure_paths_and_options
+    initialize_installation
+
+    install_system_dependencies
+    create_conda_environments
+
+    show_progress ">>" "10%" "Installing HAllA dependencies..."
+    install_halla_dependencies
+
+    show_progress ">>>" "15%" "Preparing virome database and MTD tools..."
+    install_mtd_extra_tools
+    prepare_virome_files
+    install_default_kraken_helpers
+
+    show_progress ">>>>" "20%" \
+        "Preparing microbiome (virus, bacteria, archaea, protozoa, fungi, plasmid, UniVec_Core) database..."
+    build_microbiome_kraken_database
+
+    show_progress ">>>>>>" "30%" "Preparing host (human) Kraken2 database..."
+    build_human_kraken_database
+
+    show_progress ">>>>>>>" "35%" "Preparing host (mouse) Kraken2 database..."
+    build_mouse_kraken_database
+
+    show_progress ">>>>>>>>" "40%" "Preparing host (rhesus monkey) Kraken2 database..."
+    build_rhesus_kraken_database
+
+    show_progress ">>>>>>>>>" "45%" "Building Bracken database..."
+    build_bracken_database
+
+    show_progress ">>>>>>>>>>>" "55%" "Installing HUMAnN3 databases..."
+    install_humann_databases
+
+    show_progress ">>>>>>>>>>>>>>" "70%" \
+        "Fetching host (rhesus, human, mouse) references from local storage: $offline_files_folder"
+    copy_host_reference_gtfs
+
+    show_progress ">>>>>>>>>>>>>>>" "75%" \
+        "Building host indexes (rhesus monkey) for HISAT2..."
+    build_hisat2_host_index \
+        "$dir/hisat2_index_rhesus" \
+        "$dir/ref_rhesus/Macaca_mulatta.Mmul_10.104.gtf.gz" \
+        "$offline_files_folder/Ref_genomes/Macaca_mulatta/Macaca_mulatta.Mmul_10.dna.toplevel.fa.gz"
+
+    show_progress ">>>>>>>>>>>>>>>>" "80%" \
+        "Building host indexes (mouse) for HISAT2..."
+    build_hisat2_host_index \
+        "$dir/hisat2_index_mouse" \
+        "$dir/ref_mouse/Mus_musculus.GRCm39.104.gtf.gz" \
+        "$offline_files_folder/Ref_genomes/Mus_musculus/Mus_musculus.GRCm39.dna.primary_assembly.fa.gz"
+
+    show_progress ">>>>>>>>>>>>>>>>>" "85%" \
+        "Building host indexes (human) for HISAT2..."
+    build_hisat2_host_index \
+        "$dir/hisat2_index_human" \
+        "$dir/ref_human/Homo_sapiens.GRCh38.104.gtf.gz" \
+        "$offline_files_folder/Ref_genomes/Homo_sapiens/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz"
+
+    log_info "Creating BLAST databases for Magic-BLAST..."
+    build_magic_blast_databases
+
+    show_progress ">>>>>>>>>>>>>>>>>>" "90%" "Installing R packages..."
+    install_r412_and_annotation_packages
+    show_r_package_versions
+
+    echo "${g}"
+    echo "*********************************"
+    echo
+    echo "MTD installation progress:"
+    echo ">>>>>>>>>>>>>>>>>>>>[100%]"
+    echo "MTD installation is finished"
+    echo "${w}"
+}
+
+main "$@"
+

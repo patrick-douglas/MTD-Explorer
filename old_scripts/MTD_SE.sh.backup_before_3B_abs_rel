@@ -68,29 +68,6 @@ RUN_EXPLORATORY_FIGURES_IN_COMPARISON="${RUN_EXPLORATORY_FIGURES_IN_COMPARISON:-
 # 0 = skip
 RUN_EXPLORATORY_HOST_EXPRESSION_QC="${RUN_EXPLORATORY_HOST_EXPRESSION_QC:-1}"
 
-# ------------------------------------------------------------
-# Optional detected microbiome read extraction
-# ------------------------------------------------------------
-# Disabled by default because it can generate many files.
-# When enabled, reads are extracted from the absolute detected microbiome ranking.
-# These reads can be used later for sequence reconstruction, BLAST, or gene mapping.
-
-EXTRACT_MICROBIOME_READS=0
-
-# Number of top taxa from the absolute ranking to extract.
-# 50 = top 50 taxa
-# 0  = all detected taxa
-EXTRACT_MICROBIOME_READS_TOP_N="${EXTRACT_MICROBIOME_READS_TOP_N:-50}"
-
-# Minimum abundance required in a sample to extract reads for that taxon/sample.
-# For absolute mode, this is the absolute abundance value from the Bracken-derived table.
-EXTRACT_MICROBIOME_READS_MIN_ABUNDANCE="${EXTRACT_MICROBIOME_READS_MIN_ABUNDANCE:-0}"
-
-# Include child taxa during KrakenTools extraction.
-EXTRACT_MICROBIOME_READS_INCLUDE_CHILDREN="${EXTRACT_MICROBIOME_READS_INCLUDE_CHILDREN:-1}"
-
-# Overwrite previous extracted files.
-EXTRACT_MICROBIOME_READS_OVERWRITE="${EXTRACT_MICROBIOME_READS_OVERWRITE:-1}"
 
 # Optional Kraken2 host-filtering DB override.
 # If empty, DB_host is selected automatically from --hostid.
@@ -194,18 +171,7 @@ Kraken2 microbiome classification:
 Bracken:
       --bracken-threshold INT              Bracken -t minimum read threshold
                                            Default: ${BRACKEN_THRESHOLD}
-Detected microbiome read extraction:
-      --extract-microbiome-reads           Extract Kraken-classified reads for detected microbiome taxa.
-                                           Disabled by default.
-                                           Uses the absolute detected microbiome ranking.
 
-      --extract-microbiome-reads-top-n INT Number of top taxa to extract from the absolute ranking.
-                                           Use 0 to extract all detected taxa.
-                                           Default: ${EXTRACT_MICROBIOME_READS_TOP_N}
-
-      --extract-microbiome-reads-min-abundance NUMERIC
-                                           Minimum abundance required in a sample to extract reads.
-                                           Default: ${EXTRACT_MICROBIOME_READS_MIN_ABUNDANCE}
 Other:
       --help                               Show this help message
 
@@ -429,30 +395,6 @@ while [[ $# -gt 0 ]]; do
             BRACKEN_THRESHOLD="${1#*=}"
             shift
             ;;
-        --extract-microbiome-reads)
-            EXTRACT_MICROBIOME_READS=1
-            shift
-            ;;
-
-        --extract-microbiome-reads-top-n)
-            EXTRACT_MICROBIOME_READS_TOP_N="$2"
-            shift 2
-            ;;
-
-        --extract-microbiome-reads-top-n=*)
-            EXTRACT_MICROBIOME_READS_TOP_N="${1#*=}"
-            shift
-            ;;
-
-        --extract-microbiome-reads-min-abundance)
-            EXTRACT_MICROBIOME_READS_MIN_ABUNDANCE="$2"
-            shift 2
-            ;;
-
-        --extract-microbiome-reads-min-abundance=*)
-            EXTRACT_MICROBIOME_READS_MIN_ABUNDANCE="${1#*=}"
-            shift
-            ;;
         --help)
             show_help
             exit 0
@@ -544,14 +486,6 @@ fi
 
 if [[ "$pdm" != "spearman" && "$pdm" != "pearson" && "$pdm" != "mi" && "$pdm" != "nmi" && "$pdm" != "xicor" && "$pdm" != "dcor" ]]; then
     die "--pdm must be one of: spearman, pearson, mi, nmi, xicor, dcor. Got: $pdm"
-fi
-
-if ! [[ "$EXTRACT_MICROBIOME_READS_TOP_N" =~ ^[0-9]+$ ]]; then
-    die "--extract-microbiome-reads-top-n must be an integer >= 0. Got: $EXTRACT_MICROBIOME_READS_TOP_N"
-fi
-
-if ! awk -v x="$EXTRACT_MICROBIOME_READS_MIN_ABUNDANCE" 'BEGIN { exit !(x >= 0) }'; then
-    die "--extract-microbiome-reads-min-abundance must be numeric and >= 0. Got: $EXTRACT_MICROBIOME_READS_MIN_ABUNDANCE"
 fi
 
 # ------------------------------------------------------------
@@ -757,10 +691,6 @@ echo "  Kraken host min hit groups:     $KRAKEN_HOST_MIN_HIT_GROUPS"
 echo "  Kraken micro confidence:        $KRAKEN_MICRO_CONF"
 echo "  Kraken micro min hit groups:    $KRAKEN_MICRO_MIN_HIT_GROUPS"
 echo "  Bracken threshold:              $BRACKEN_THRESHOLD"
-echo "  extract microbiome reads:       $EXTRACT_MICROBIOME_READS"
-echo "  extract microbiome reads mode:  absolute"
-echo "  extract microbiome top N:       $EXTRACT_MICROBIOME_READS_TOP_N"
-echo "  extract microbiome min abundance: $EXTRACT_MICROBIOME_READS_MIN_ABUNDANCE"
 echo "  ssGSEA GMT:                     $SSGSEA_GMT"
 echo "  ssGSEA GMT mode:                $SSGSEA_GMT_MODE"
 
@@ -888,12 +818,6 @@ write_methods_log() {
             csv_row "Abundance estimation" "Bracken" "bracken_distribution_file_status" "missing" "Bracken distribution file not found at run-start logging time"
         fi
         csv_row "Abundance estimation" "Bracken" "taxonomic_levels" "P;G;S" "Bracken is run at phylum, genus and species levels"
-        # Detected microbiome read extraction
-        csv_row "Detected microbiome read extraction" "MTD_SE.sh" "extract_microbiome_reads" "$EXTRACT_MICROBIOME_READS" "Whether Kraken-classified reads are extracted for detected microbiome taxa"
-        csv_row "Detected microbiome read extraction" "MTD_SE.sh" "ranking_mode" "absolute" "Read extraction uses the absolute detected microbiome ranking"
-        csv_row "Detected microbiome read extraction" "MTD_SE.sh" "top_n" "$EXTRACT_MICROBIOME_READS_TOP_N" "Number of top taxa extracted; 0 means all detected taxa"
-        csv_row "Detected microbiome read extraction" "MTD_SE.sh" "min_abundance" "$EXTRACT_MICROBIOME_READS_MIN_ABUNDANCE" "Minimum sample abundance required for extraction"
-        csv_row "Detected microbiome read extraction" "MTD_SE.sh" "include_children" "$EXTRACT_MICROBIOME_READS_INCLUDE_CHILDREN" "Whether child taxa are included during KrakenTools read extraction"
 
         # Host downstream analysis
         csv_row "Host downstream analysis" "$blast" "host_alignment_mode" "$blast" "Host read alignment mode: magicblast if blast, otherwise HISAT2"
@@ -991,7 +915,6 @@ run_exploratory_taxonomic_figures() {
     local beta_script="$fig_script_dir/MTD_exploratory_beta_diversity.R"
     local read_qc_script="$fig_script_dir/MTD_exploratory_read_composition_qc.R"
     local matrix_qc_script="$fig_script_dir/MTD_exploratory_matrix_qc.R"
-    local detected_microbiome_read_extract_script="$fig_script_dir/MTD_extract_reads_by_detected_microbiome.py"
 
     # Default rank is genus, but you can override it:
     # EXPLORATORY_TAX_RANK=species bash MTD_SE.sh ...
@@ -1028,7 +951,6 @@ run_exploratory_taxonomic_figures() {
     local stacked_base="$taxonomy_dir/stacked_bar"
     local prevalence_base="$taxonomy_dir/prevalence_abundance"
     local detected_microbiome_base="$taxonomy_dir/detected_microbiome"
-    local detected_microbiome_reads_base="$taxonomy_dir/detected_microbiome_extracted_reads"
     local core_base="$taxonomy_dir/core_microbiome"
     local species_overlap_base="$taxonomy_dir/species_overlap"
     local detected_species_pie_base="$taxonomy_dir/detected_microbiome_pie"
@@ -1041,7 +963,7 @@ run_exploratory_taxonomic_figures() {
 
     local log_dir="$taxonomy_dir/logs"
 
-mkdir -p "$heatmap_base" "$stacked_base" "$prevalence_base" "$detected_microbiome_base" "$detected_microbiome_reads_base" "$species_overlap_base" "$detected_species_pie_base" "$core_base" "$alpha_base" "$beta_base" "$microbiome_matrix_qc_base" "$pipeline_qc_dir" "$read_qc_base" "$log_dir"
+mkdir -p "$heatmap_base" "$stacked_base" "$prevalence_base" "$detected_microbiome_base" "$species_overlap_base" "$detected_species_pie_base" "$core_base" "$alpha_base" "$beta_base" "$microbiome_matrix_qc_base" "$pipeline_qc_dir" "$read_qc_base" "$log_dir"
 
     echo "[INFO] Taxonomic input:"
     echo "  $tax_input"
@@ -1055,7 +977,6 @@ mkdir -p "$heatmap_base" "$stacked_base" "$prevalence_base" "$detected_microbiom
     echo "  Heatmap:     $pheatmap_script"
     echo "  Stacked bar: $stacked_script"
     echo "  Prevalence:  $prevalence_script"
-    echo "  Detected microbiome ranking: $detected_microbiome_script"
     echo "  Detected microbiome ranking: $detected_microbiome_script"
     echo "  Core microbiome: $core_script"
     echo "  Alpha diversity: $alpha_script"
@@ -1240,54 +1161,49 @@ mkdir -p "$heatmap_base" "$stacked_base" "$prevalence_base" "$detected_microbiom
 
     if [[ -s "$detected_microbiome_script" ]]; then
 
-        for detected_mode in absolute relative; do
+        local detected_mode="relative"
+        local detected_in="$prevalence_base/${tax_rank}_${detected_mode}/prevalence_vs_abundance_${tax_rank}_${detected_mode}.tsv"
+        local detected_out="$detected_microbiome_base/${tax_rank}_${detected_mode}"
+        local detected_log="$log_dir/MTD.detected_microbiome_ranked.${tax_rank}.${detected_mode}.log"
 
-            local detected_in="$prevalence_base/${tax_rank}_${detected_mode}/prevalence_vs_abundance_${tax_rank}_${detected_mode}.tsv"
-            local detected_out="$detected_microbiome_base/${tax_rank}_${detected_mode}_with_samples_distribution"
-            local detected_log="$log_dir/MTD.detected_microbiome_ranked.${tax_rank}.${detected_mode}.log"
+        mkdir -p "$detected_out"
 
-            mkdir -p "$detected_out"
+        echo "------------------------------------------------------------"
+        echo "[RUN] Detected microbiome ranked tables"
+        echo "Rank: $tax_rank"
+        echo "Mode: $detected_mode"
+        echo "Input: $detected_in"
+        echo "Output: $detected_out"
+        echo "------------------------------------------------------------"
 
-            echo "------------------------------------------------------------"
-            echo "[RUN] Detected microbiome ranked tables"
-            echo "Rank: $tax_rank"
-            echo "Mode: $detected_mode"
-            echo "Input: $detected_in"
-            echo "Output: $detected_out"
-            echo "------------------------------------------------------------"
-
-            if [[ ! -s "$detected_in" ]]; then
-                echo "${y}[WARNING] Prevalence ${detected_mode} table not found. Skipping detected microbiome ranking for this mode.${w}"
-                echo "Expected:"
-                echo "  $detected_in"
-
-            elif ! Rscript "$detected_microbiome_script" \
-                --input "$detected_in" \
-                --abundance_input "$tax_input" \
-                --samplesheet "$samplesheet_file" \
-                --output "$detected_out" \
-                --rank "$tax_rank" \
-                --mode "$detected_mode" \
-                --presence_threshold 0 \
-                --w_prevalence 0.45 \
-                --w_mean 0.30 \
-                --w_max 0.15 \
-                --w_total 0.10 \
-                --core_threshold 75 \
-                --plot_top 20 \
-                > "$detected_log" 2>&1
-            then
-                echo "${y}[WARNING] Detected microbiome ranking failed for mode: $detected_mode. Continuing pipeline.${w}"
-                echo "Log:"
-                echo "  $detected_log"
-                tail -n 40 "$detected_log" || true
-
-            else
-                echo "${g}[OK] Detected microbiome ranked tables generated:${w}"
-                echo "  $detected_out"
-            fi
-
-        done
+        if [[ ! -s "$detected_in" ]]; then
+            echo "${y}[WARNING] Prevalence relative table not found. Skipping detected microbiome ranking.${w}"
+            echo "Expected:"
+            echo "  $detected_in"
+elif ! Rscript "$detected_microbiome_script" \
+    --input "$detected_in" \
+    --abundance_input "$tax_input" \
+    --samplesheet "$samplesheet_file" \
+    --output "$detected_out" \
+    --rank "$tax_rank" \
+    --mode relative \
+    --presence_threshold 0 \
+    --w_prevalence 0.45 \
+    --w_mean 0.30 \
+    --w_max 0.15 \
+    --w_total 0.10 \
+    --core_threshold 75 \
+    --plot_top 20 \
+    > "$detected_log" 2>&1
+        then
+            echo "${y}[WARNING] Detected microbiome ranking failed. Continuing pipeline.${w}"
+            echo "Log:"
+            echo "  $detected_log"
+            tail -n 40 "$detected_log" || true
+        else
+            echo "${g}[OK] Detected microbiome ranked tables generated:${w}"
+            echo "  $detected_out"
+        fi
 
     else
         echo "${y}[WARNING] Detected microbiome ranking script not found. Skipping ranking tables.${w}"
@@ -1296,117 +1212,12 @@ mkdir -p "$heatmap_base" "$stacked_base" "$prevalence_base" "$detected_microbiom
     fi
 
     # ------------------------------------------------------------
-    # 3B.1) Extract reads for detected microbiome taxa
-    # ------------------------------------------------------------
-
-    if [[ "${EXTRACT_MICROBIOME_READS:-0}" == "1" ]]; then
-
-        local extract_mode="absolute"
-        local extract_ranked_table="$detected_microbiome_base/${tax_rank}_${extract_mode}_with_samples_distribution/detected_microbiome_${tax_rank}_ranked_with_samples.tsv"
-        local extract_out="$detected_microbiome_reads_base/${tax_rank}_${extract_mode}_extracted_reads"
-        local extract_log="$log_dir/MTD.detected_microbiome_read_extraction.${tax_rank}.${extract_mode}.log"
-
-        mkdir -p "$extract_out"
-
-        echo "------------------------------------------------------------"
-        echo "[RUN] Extract reads for detected microbiome taxa"
-        echo "Rank: $tax_rank"
-        echo "Mode: $extract_mode"
-        echo "Ranked table: $extract_ranked_table"
-        echo "Bracken table: $tax_input"
-        echo "Output: $extract_out"
-        echo "Top N: $EXTRACT_MICROBIOME_READS_TOP_N"
-        echo "Minimum abundance: $EXTRACT_MICROBIOME_READS_MIN_ABUNDANCE"
-        echo "------------------------------------------------------------"
-
-        if [[ ! -s "$detected_microbiome_read_extract_script" ]]; then
-            echo "${y}[WARNING] Detected microbiome read extraction script not found. Skipping read extraction.${w}"
-            echo "Expected:"
-            echo "  $detected_microbiome_read_extract_script"
-
-        elif [[ ! -s "$MTDIR/Tools/KrakenTools/extract_kraken_reads.py" ]]; then
-            echo "${y}[WARNING] KrakenTools extract_kraken_reads.py not found. Skipping read extraction.${w}"
-            echo "Expected:"
-            echo "  $MTDIR/Tools/KrakenTools/extract_kraken_reads.py"
-
-        elif [[ ! -s "$extract_ranked_table" ]]; then
-            echo "${y}[WARNING] Absolute ranked-with-samples table not found. Skipping read extraction.${w}"
-            echo "Expected:"
-            echo "  $extract_ranked_table"
-
-        elif [[ ! -s "$tax_input" ]]; then
-            echo "${y}[WARNING] Bracken combined table not found. Skipping read extraction.${w}"
-            echo "Expected:"
-            echo "  $tax_input"
-
-        else
-            conda deactivate
-            conda activate MTD
-
-            export PYTHONNOUSERSITE=1
-            unset PYTHONPATH
-            unset PYTHONHOME
-
-            extract_args=(
-                "$detected_microbiome_read_extract_script"
-                --ranked_table "$extract_ranked_table"
-                --bracken_table "$tax_input"
-                --samplesheet "$samplesheet_file"
-                --temp_dir "$outputdr/temp"
-                --krakentools_script "$MTDIR/Tools/KrakenTools/extract_kraken_reads.py"
-                --output_dir "$extract_out"
-                --top_n "$EXTRACT_MICROBIOME_READS_TOP_N"
-                --min_abundance "$EXTRACT_MICROBIOME_READS_MIN_ABUNDANCE"
-            )
-
-            if [[ "${EXTRACT_MICROBIOME_READS_INCLUDE_CHILDREN:-1}" == "1" ]]; then
-                extract_args+=( --include_children )
-            fi
-
-            if [[ "${EXTRACT_MICROBIOME_READS_OVERWRITE:-1}" == "1" ]]; then
-                extract_args+=( --overwrite )
-            fi
-
-            if ! python "${extract_args[@]}" > "$extract_log" 2>&1
-            then
-                echo "${y}[WARNING] Detected microbiome read extraction failed. Continuing pipeline.${w}"
-                echo "Log:"
-                echo "  $extract_log"
-                tail -n 60 "$extract_log" || true
-            else
-                echo "${g}[OK] Detected microbiome reads extracted:${w}"
-                echo "  $extract_out"
-
-                if [[ -s "$extract_out/extraction_summary.tsv" ]]; then
-                    echo "[INFO] Extraction status summary:"
-                    awk -F'\t' '
-                        NR > 1 {
-                            status[$9]++
-                        }
-                        END {
-                            for (s in status) {
-                                print "  " status[s], s
-                            }
-                        }
-                    ' "$extract_out/extraction_summary.tsv" | sort -nr || true
-                fi
-            fi
-
-            conda deactivate
-            conda activate R412
-        fi
-
-    else
-        echo "${y}[INFO] --extract-microbiome-reads not provided. Skipping detected microbiome read extraction.${w}"
-    fi
-
-    # ------------------------------------------------------------
     # 3C) Detected species pie chart by phylum
     # ------------------------------------------------------------
 
     if [[ "$tax_rank" == "species" && -s "$detected_species_pie_script" ]]; then
 
-        local pie_ranked_file="$detected_microbiome_base/${tax_rank}_relative_with_samples_distribution/detected_microbiome_${tax_rank}_ranked_by_importance.tsv"
+        local pie_ranked_file="$detected_microbiome_base/${tax_rank}_relative/detected_microbiome_${tax_rank}_ranked_by_importance.tsv"
         local pie_taxonomy_file=""
         local pie_out="$detected_species_pie_base/${tax_rank}_by_phylum"
         local pie_log="$log_dir/MTD.detected_species_pie_by_phylum.${tax_rank}.log"
