@@ -33,6 +33,9 @@ FULL_GZIP_CHECK="${FULL_GZIP_CHECK:-0}"
 GZIP_CHECK_JOBS="${GZIP_CHECK_JOBS:-4}"
 DOWNLOAD_JOBS="${DOWNLOAD_JOBS:-4}"
 ARIA_CONNECTIONS="${ARIA_CONNECTIONS:-16}"
+DOWNLOAD_ATTEMPTS="${DOWNLOAD_ATTEMPTS:-3}"
+FAILED_RETRY_ROUNDS="${FAILED_RETRY_ROUNDS:-2}"
+RETRY_DELAY_SECONDS="${RETRY_DELAY_SECONDS:-5}"
 
 if [[ "$FULL_GZIP_CHECK" != "0" && "$FULL_GZIP_CHECK" != "1" ]]; then
     echo "[FAIL] FULL_GZIP_CHECK must be 0 or 1." >&2
@@ -51,6 +54,21 @@ fi
 
 if ! [[ "$ARIA_CONNECTIONS" =~ ^[1-9][0-9]*$ ]]; then
     echo "[FAIL] ARIA_CONNECTIONS must be a positive integer." >&2
+    exit 1
+fi
+
+if ! [[ "$DOWNLOAD_ATTEMPTS" =~ ^[1-9][0-9]*$ ]]; then
+    echo "[FAIL] DOWNLOAD_ATTEMPTS must be a positive integer." >&2
+    exit 1
+fi
+
+if ! [[ "$FAILED_RETRY_ROUNDS" =~ ^[1-9][0-9]*$ ]]; then
+    echo "[FAIL] FAILED_RETRY_ROUNDS must be a positive integer." >&2
+    exit 1
+fi
+
+if ! [[ "$RETRY_DELAY_SECONDS" =~ ^[0-9]+$ ]]; then
+    echo "[FAIL] RETRY_DELAY_SECONDS must be zero or a positive integer." >&2
     exit 1
 fi
 
@@ -239,6 +257,114 @@ echo "Missing files          : $missing_count"
 echo "To download now        : $to_download_count"
 echo "Remote HEAD requests   : 0"
 
+retry_failed_downloads() {
+    local phase_label="$1"
+    local round current_failed retry_urls unmapped_names
+    local total_failed remaining_count checked fname url attempt success
+
+    [[ -s "$failed_downloads" ]] || return 0
+    LC_ALL=C sort -u "$failed_downloads" -o "$failed_downloads"
+
+    declare -A retry_url_map=()
+    while IFS=$'\t' read -r fname url; do
+        [[ -n "$fname" && -n "$url" ]] || continue
+        retry_url_map["$fname"]="$url"
+    done < "$tmp_remote_index"
+
+    for ((round=1; round<=FAILED_RETRY_ROUNDS; round++)); do
+        [[ -s "$failed_downloads" ]] || break
+
+        current_failed="$work_dir/failed.${phase_label}.round${round}.txt"
+        retry_urls="$work_dir/failed.${phase_label}.round${round}.urls.txt"
+        unmapped_names="$work_dir/failed.${phase_label}.round${round}.unmapped.txt"
+
+        cp -f "$failed_downloads" "$current_failed"
+        : > "$retry_urls"
+        : > "$unmapped_names"
+        : > "$failed_downloads"
+
+        total_failed="$(wc -l < "$current_failed")"
+        echo
+        echo "[WARN] Retry round $round/$FAILED_RETRY_ROUNDS for $total_failed failed genome(s) [$phase_label]..."
+
+        while IFS= read -r fname; do
+            [[ -z "$fname" ]] && continue
+            url="${retry_url_map[$fname]:-}"
+
+            if [[ -n "$url" ]]; then
+                printf '%s\n' "$url" >> "$retry_urls"
+            else
+                echo "[WARN] URL not found in current manifest; skipping: $fname" >&2
+                printf '%s\n' "$fname" >> "$unmapped_names"
+            fi
+        done < "$current_failed"
+
+        if [[ -s "$retry_urls" ]]; then
+            if command -v parallel >/dev/null 2>&1 \
+                && command -v aria2c >/dev/null 2>&1; then
+                parallel \
+                    --bar \
+                    --halt never \
+                    -j "$DOWNLOAD_JOBS" \
+                    download_one :::: "$retry_urls" || true
+            elif command -v aria2c >/dev/null 2>&1; then
+                while IFS= read -r url; do
+                    [[ -z "$url" ]] && continue
+                    download_one "$url" || true
+                done < "$retry_urls"
+            else
+                checked=0
+                while IFS= read -r url; do
+                    [[ -z "$url" ]] && continue
+                    ((checked+=1))
+                    fname="$(basename "$url")"
+                    success=0
+
+                    for ((attempt=1; attempt<=DOWNLOAD_ATTEMPTS; attempt++)); do
+                        progress "$checked" "$total_failed" \
+                            "[RETRY $round/$FAILED_RETRY_ROUNDS] $fname attempt $attempt/$DOWNLOAD_ATTEMPTS"
+
+                        rm -f -- "$new_download_dir/$fname"
+                        if wget -4 -q -O "$new_download_dir/$fname" "$url" \
+                            && gzip -t "$new_download_dir/$fname" 2>/dev/null; then
+                            cp -p -- "$new_download_dir/$fname" "$home_download_dir/$fname"
+                            success=1
+                            break
+                        fi
+
+                        rm -f -- "$new_download_dir/$fname"
+                        sleep "$RETRY_DELAY_SECONDS"
+                    done
+
+                    if (( success == 0 )); then
+                        printf '%s\n' "$fname" >> "$failed_downloads"
+                    fi
+                done < "$retry_urls"
+                echo
+            fi
+        fi
+
+        if [[ -s "$unmapped_names" ]]; then
+            cat "$unmapped_names" >> "$failed_downloads"
+        fi
+
+        if [[ -s "$failed_downloads" ]]; then
+            LC_ALL=C sort -u "$failed_downloads" -o "$failed_downloads"
+            remaining_count="$(wc -l < "$failed_downloads")"
+            echo "[WARN] $remaining_count genome(s) still unavailable after retry round $round."
+        else
+            echo "[PASS] All previously failed genomes were recovered in retry round $round."
+            break
+        fi
+
+        if (( round < FAILED_RETRY_ROUNDS )); then
+            sleep "$RETRY_DELAY_SECONDS"
+        fi
+    done
+
+    return 0
+}
+
 ###############################################################################
 # 3. Baixar apenas arquivos faltantes
 ###############################################################################
@@ -254,7 +380,7 @@ download_one() {
 
     file="$(basename "$url")"
 
-    for attempt in 1 2 3; do
+    for ((attempt=1; attempt<=DOWNLOAD_ATTEMPTS; attempt++)); do
         rm -f -- "$file.aria2"
 
         if aria2c \
@@ -274,7 +400,7 @@ download_one() {
 
         echo "[WARN] Attempt $attempt failed for $file" >&2
         rm -f -- "$file" "$file.aria2"
-        sleep 1
+        sleep "$RETRY_DELAY_SECONDS"
     done
 
     printf '%s\n' "$file" >> "$failed_downloads"
@@ -282,7 +408,7 @@ download_one() {
 }
 
 export -f download_one
-export failed_downloads home_download_dir ARIA_CONNECTIONS
+export failed_downloads home_download_dir ARIA_CONNECTIONS DOWNLOAD_ATTEMPTS RETRY_DELAY_SECONDS
 
 if (( to_download_count == 0 )); then
     echo "[PASS] Local folder already contains every genome in the catalog."
@@ -308,7 +434,7 @@ else
             progress "$download_checked" "$to_download_count" "[DOWNLOAD] $file"
 
             success=0
-            for attempt in 1 2 3; do
+            for ((attempt=1; attempt<=DOWNLOAD_ATTEMPTS; attempt++)); do
                 rm -f -- "$file"
 
                 if wget -4 -q -O "$file" "$url" && gzip -t "$file" 2>/dev/null; then
@@ -318,7 +444,7 @@ else
                 fi
 
                 rm -f -- "$file"
-                sleep 1
+                sleep "$RETRY_DELAY_SECONDS"
             done
 
             if (( success == 0 )); then
@@ -328,8 +454,11 @@ else
         echo
     fi
 
-    echo "[PASS] Download stage completed."
+    echo "[PASS] Initial download stage completed."
 fi
+
+# Nova rodada dedicada somente aos arquivos que falharam no lote inicial.
+retry_failed_downloads "initial-downloads"
 
 ###############################################################################
 # 4. Integridade local incremental
@@ -418,14 +547,14 @@ if (( corrupted_count > 0 )); then
         url="${remote_map[$fname]:-}"
 
         if [[ -z "$url" ]]; then
-            echo "[FAIL] URL not found in manifest for $fname" >&2
+            echo "[WARN] URL not found in manifest for $fname; skipping." >&2
             printf '%s\n' "$fname" >> "$failed_downloads"
             rm -f -- "$new_download_dir/$fname" "$home_download_dir/$fname"
             continue
         fi
 
         success=0
-        for attempt in 1 2 3; do
+        for ((attempt=1; attempt<=DOWNLOAD_ATTEMPTS; attempt++)); do
             progress "$corrupted_checked" "$corrupted_count" \
                 "[REDOWNLOAD] $fname attempt $attempt"
 
@@ -439,12 +568,12 @@ if (( corrupted_count > 0 )); then
             fi
 
             rm -f -- "$new_download_dir/$fname"
-            sleep 1
+            sleep "$RETRY_DELAY_SECONDS"
         done
 
         if (( success == 0 )); then
             echo >&2
-            echo "[FAIL] Still corrupted after 3 attempts: $fname" >&2
+            echo "[WARN] Could not recover corrupted file after $DOWNLOAD_ATTEMPTS attempts: $fname" >&2
             printf '%s\n' "$fname" >> "$failed_downloads"
             rm -f -- "$new_download_dir/$fname" "$home_download_dir/$fname"
         fi
@@ -452,6 +581,11 @@ if (( corrupted_count > 0 )); then
     echo
 else
     echo "[PASS] All tested gzip files passed integrity validation."
+fi
+
+# Remover duplicatas ocasionais do arquivo de falhas.
+if [[ -s "$failed_downloads" ]]; then
+    LC_ALL=C sort -u "$failed_downloads" -o "$failed_downloads"
 fi
 
 # Atualizar cache apenas depois de finalizar os testes e re-downloads.
@@ -478,15 +612,19 @@ echo "Gzip files tested      : $integrity_candidate_count"
 echo "Integrity mode         : $integrity_mode"
 echo "Remote HEAD requests   : 0"
 echo "Failed downloads       : $failed_count"
+echo "Attempts per round     : $DOWNLOAD_ATTEMPTS"
+echo "Extra retry rounds     : $FAILED_RETRY_ROUNDS"
 echo "Local folder           : $new_download_dir"
 echo "Home mirror folder     : $home_download_dir"
 echo "Integrity cache        : $integrity_cache"
 
 if [[ -s "$failed_downloads" ]]; then
     echo
-    echo "[WARN] The following genomes could not be retrieved:"
+    echo "[WARN] The following bacterial genomes could not be retrieved after all attempts:"
     cat "$failed_downloads"
-    exit 1
+    echo
+    echo "[WARN] Synchronization completed with $failed_count unavailable genome(s)."
+    echo "[WARN] These files were skipped. The script will finish with exit status 0."
 else
     echo
     echo "[PASS] All bacterial genomes are synchronized and locally verified."

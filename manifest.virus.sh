@@ -36,6 +36,9 @@ FULL_GZIP_CHECK="${FULL_GZIP_CHECK:-0}"
 GZIP_CHECK_JOBS="${GZIP_CHECK_JOBS:-4}"
 DOWNLOAD_JOBS="${DOWNLOAD_JOBS:-4}"
 ARIA_CONNECTIONS="${ARIA_CONNECTIONS:-16}"
+DOWNLOAD_ATTEMPTS="${DOWNLOAD_ATTEMPTS:-3}"
+FAILED_RETRY_ROUNDS="${FAILED_RETRY_ROUNDS:-2}"
+RETRY_DELAY_SECONDS="${RETRY_DELAY_SECONDS:-5}"
 BUILD_COMBINED_FASTA="${BUILD_COMBINED_FASTA:-1}"
 FORCE_COMBINED_FASTA="${FORCE_COMBINED_FASTA:-0}"
 
@@ -65,6 +68,13 @@ validate_boolean FORCE_COMBINED_FASTA "$FORCE_COMBINED_FASTA"
 validate_positive_integer GZIP_CHECK_JOBS "$GZIP_CHECK_JOBS"
 validate_positive_integer DOWNLOAD_JOBS "$DOWNLOAD_JOBS"
 validate_positive_integer ARIA_CONNECTIONS "$ARIA_CONNECTIONS"
+validate_positive_integer DOWNLOAD_ATTEMPTS "$DOWNLOAD_ATTEMPTS"
+validate_positive_integer FAILED_RETRY_ROUNDS "$FAILED_RETRY_ROUNDS"
+
+if ! [[ "$RETRY_DELAY_SECONDS" =~ ^[0-9]+$ ]]; then
+    echo "[FAIL] RETRY_DELAY_SECONDS must be zero or a positive integer." >&2
+    exit 1
+fi
 
 mkdir -p "$new_download_dir" "$metadata_dir"
 
@@ -256,6 +266,113 @@ echo "Missing files          : $missing_count"
 echo "To download now        : $to_download_count"
 echo "Remote HEAD requests   : 0"
 
+retry_failed_downloads() {
+    local phase_label="$1"
+    local round current_failed retry_urls unmapped_names
+    local total_failed remaining_count checked fname url attempt success
+
+    [[ -s "$failed_downloads" ]] || return 0
+    LC_ALL=C sort -u "$failed_downloads" -o "$failed_downloads"
+
+    declare -A retry_url_map=()
+    while IFS=$'\t' read -r fname url; do
+        [[ -n "$fname" && -n "$url" ]] || continue
+        retry_url_map["$fname"]="$url"
+    done < "$tmp_remote_index"
+
+    for ((round=1; round<=FAILED_RETRY_ROUNDS; round++)); do
+        [[ -s "$failed_downloads" ]] || break
+
+        current_failed="$work_dir/failed.${phase_label}.round${round}.txt"
+        retry_urls="$work_dir/failed.${phase_label}.round${round}.urls.txt"
+        unmapped_names="$work_dir/failed.${phase_label}.round${round}.unmapped.txt"
+
+        cp -f "$failed_downloads" "$current_failed"
+        : > "$retry_urls"
+        : > "$unmapped_names"
+        : > "$failed_downloads"
+
+        total_failed="$(wc -l < "$current_failed")"
+        echo
+        echo "[WARN] Retry round $round/$FAILED_RETRY_ROUNDS for $total_failed failed viral genome(s) [$phase_label]..."
+
+        while IFS= read -r fname; do
+            [[ -z "$fname" ]] && continue
+            url="${retry_url_map[$fname]:-}"
+
+            if [[ -n "$url" ]]; then
+                printf '%s\n' "$url" >> "$retry_urls"
+            else
+                echo "[WARN] URL not found in current manifest; skipping: $fname" >&2
+                printf '%s\n' "$fname" >> "$unmapped_names"
+            fi
+        done < "$current_failed"
+
+        if [[ -s "$retry_urls" ]]; then
+            if command -v parallel >/dev/null 2>&1 \
+                && command -v aria2c >/dev/null 2>&1; then
+                parallel \
+                    --bar \
+                    --halt never \
+                    -j "$DOWNLOAD_JOBS" \
+                    download_one :::: "$retry_urls" || true
+            elif command -v aria2c >/dev/null 2>&1; then
+                while IFS= read -r url; do
+                    [[ -z "$url" ]] && continue
+                    download_one "$url" || true
+                done < "$retry_urls"
+            else
+                checked=0
+                while IFS= read -r url; do
+                    [[ -z "$url" ]] && continue
+                    ((checked+=1))
+                    fname="$(basename "$url")"
+                    success=0
+
+                    for ((attempt=1; attempt<=DOWNLOAD_ATTEMPTS; attempt++)); do
+                        progress "$checked" "$total_failed" \
+                            "[RETRY $round/$FAILED_RETRY_ROUNDS] $fname attempt $attempt/$DOWNLOAD_ATTEMPTS"
+
+                        rm -f -- "$new_download_dir/$fname"
+                        if wget -4 -q -O "$new_download_dir/$fname" "$url" \
+                            && gzip -t "$new_download_dir/$fname" 2>/dev/null; then
+                            success=1
+                            break
+                        fi
+
+                        rm -f -- "$new_download_dir/$fname"
+                        sleep "$RETRY_DELAY_SECONDS"
+                    done
+
+                    if (( success == 0 )); then
+                        printf '%s\n' "$fname" >> "$failed_downloads"
+                    fi
+                done < "$retry_urls"
+                echo
+            fi
+        fi
+
+        if [[ -s "$unmapped_names" ]]; then
+            cat "$unmapped_names" >> "$failed_downloads"
+        fi
+
+        if [[ -s "$failed_downloads" ]]; then
+            LC_ALL=C sort -u "$failed_downloads" -o "$failed_downloads"
+            remaining_count="$(wc -l < "$failed_downloads")"
+            echo "[WARN] $remaining_count viral genome(s) still unavailable after retry round $round."
+        else
+            echo "[PASS] All previously failed viral genomes were recovered in retry round $round."
+            break
+        fi
+
+        if (( round < FAILED_RETRY_ROUNDS )); then
+            sleep "$RETRY_DELAY_SECONDS"
+        fi
+    done
+
+    return 0
+}
+
 ###############################################################################
 # 3. Baixar apenas arquivos faltantes
 ###############################################################################
@@ -271,7 +388,7 @@ download_one() {
 
     file="$(basename "$url")"
 
-    for attempt in 1 2 3; do
+    for ((attempt=1; attempt<=DOWNLOAD_ATTEMPTS; attempt++)); do
         rm -f -- "$file.aria2"
 
         if aria2c \
@@ -290,7 +407,7 @@ download_one() {
 
         echo "[WARN] Attempt $attempt failed for $file" >&2
         rm -f -- "$file" "$file.aria2"
-        sleep 1
+        sleep "$RETRY_DELAY_SECONDS"
     done
 
     printf '%s\n' "$file" >> "$failed_downloads"
@@ -298,7 +415,7 @@ download_one() {
 }
 
 export -f download_one
-export failed_downloads ARIA_CONNECTIONS
+export failed_downloads ARIA_CONNECTIONS DOWNLOAD_ATTEMPTS RETRY_DELAY_SECONDS
 
 if (( to_download_count == 0 )); then
     echo "[PASS] Local folder already contains every viral genome in the catalog."
@@ -323,7 +440,7 @@ else
             progress "$download_checked" "$to_download_count" "[DOWNLOAD] $file"
 
             success=0
-            for attempt in 1 2 3; do
+            for ((attempt=1; attempt<=DOWNLOAD_ATTEMPTS; attempt++)); do
                 rm -f -- "$file"
 
                 if wget -4 -q -O "$file" "$url" && gzip -t "$file" 2>/dev/null; then
@@ -332,7 +449,7 @@ else
                 fi
 
                 rm -f -- "$file"
-                sleep 1
+                sleep "$RETRY_DELAY_SECONDS"
             done
 
             if (( success == 0 )); then
@@ -342,8 +459,11 @@ else
         echo
     fi
 
-    echo "[PASS] Download stage completed."
+    echo "[PASS] Initial download stage completed."
 fi
+
+# Nova rodada dedicada somente aos arquivos que falharam no lote inicial.
+retry_failed_downloads "initial-downloads"
 
 ###############################################################################
 # 4. Integridade local incremental
@@ -432,14 +552,14 @@ if (( corrupted_count > 0 )); then
         url="${remote_map[$fname]:-}"
 
         if [[ -z "$url" ]]; then
-            echo "[FAIL] URL not found in manifest for $fname" >&2
+            echo "[WARN] URL not found in manifest for $fname; skipping." >&2
             printf '%s\n' "$fname" >> "$failed_downloads"
             rm -f -- "$new_download_dir/$fname"
             continue
         fi
 
         success=0
-        for attempt in 1 2 3; do
+        for ((attempt=1; attempt<=DOWNLOAD_ATTEMPTS; attempt++)); do
             progress "$corrupted_checked" "$corrupted_count" \
                 "[REDOWNLOAD] $fname attempt $attempt"
 
@@ -453,12 +573,12 @@ if (( corrupted_count > 0 )); then
             fi
 
             rm -f -- "$new_download_dir/$fname"
-            sleep 1
+            sleep "$RETRY_DELAY_SECONDS"
         done
 
         if (( success == 0 )); then
             echo >&2
-            echo "[FAIL] Still corrupted after 3 attempts: $fname" >&2
+            echo "[WARN] Could not recover corrupted file after $DOWNLOAD_ATTEMPTS attempts: $fname" >&2
             printf '%s\n' "$fname" >> "$failed_downloads"
             rm -f -- "$new_download_dir/$fname"
         fi
@@ -492,22 +612,32 @@ final_local_count="$(wc -l < "$final_names")"
 failed_count="$(wc -l < "$failed_downloads")"
 combined_status="disabled"
 combined_rebuilt=0
+collection_incomplete=0
+
+if (( failed_count > 0 || final_local_count != total_remote )); then
+    collection_incomplete=1
+    {
+        echo "The combined viral FASTA is incomplete but usable."
+        echo "Remote catalog entries: $total_remote"
+        echo "Valid local gzip files included: $final_local_count"
+        echo "Failed downloads skipped: $failed_count"
+        echo "Re-run synchronization later to recover the missing genomes."
+    } > "$stale_marker"
+
+    echo "[WARN] Viral collection is incomplete; unavailable genomes will be skipped."
+    echo "[WARN] The combined FASTA will use the $final_local_count valid local genome(s)."
+    echo "[WARN] Incomplete marker: $stale_marker"
+else
+    rm -f "$stale_marker"
+fi
 
 if [[ "$BUILD_COMBINED_FASTA" == "0" ]]; then
     echo "[INFO] Combined FASTA generation disabled by BUILD_COMBINED_FASTA=0."
     combined_status="disabled"
-elif (( failed_count > 0 || final_local_count != total_remote )); then
-    {
-        echo "The combined viral FASTA is stale or incomplete."
-        echo "Remote catalog entries: $total_remote"
-        echo "Valid local gzip files: $final_local_count"
-        echo "Failed downloads: $failed_count"
-        echo "Run the synchronization again before rebuilding the Kraken2 database."
-    } > "$stale_marker"
-
-    echo "[WARN] Combined FASTA was not replaced because the local collection is incomplete."
-    echo "[WARN] Stale marker: $stale_marker"
-    combined_status="skipped (incomplete local collection)"
+elif (( final_local_count == 0 )); then
+    echo "[WARN] No valid viral gzip files are available for concatenation."
+    echo "[WARN] Any previous combined FASTA was preserved."
+    combined_status="skipped (no valid local genomes)"
 else
     rebuild_combined=0
     rebuild_reason=""
@@ -538,9 +668,13 @@ else
     fi
 
     if (( rebuild_combined == 0 )); then
-        rm -f "$stale_marker"
-        echo "[PASS] Combined FASTA is already current; concatenation skipped."
-        combined_status="current (not rebuilt)"
+        if (( collection_incomplete == 1 )); then
+            echo "[WARN] Partial combined FASTA is already current; concatenation skipped."
+            combined_status="current (partial; not rebuilt)"
+        else
+            echo "[PASS] Combined FASTA is already current; concatenation skipped."
+            combined_status="current (not rebuilt)"
+        fi
     else
         echo "[INFO] Rebuilding combined FASTA: $rebuild_reason"
         echo "[INFO] Output FASTA: $final_fasta"
@@ -552,31 +686,43 @@ else
 
         total_gz="$final_local_count"
         cat_count=0
+        concatenation_failed=0
 
         while IFS= read -r fname; do
             [[ -z "$fname" ]] && continue
             ((cat_count+=1))
             progress "$cat_count" "$total_gz" "[FASTA] adding: $fname"
-            zcat -- "$new_download_dir/$fname" >> "$combined_tmp"
+
+            if ! zcat -- "$new_download_dir/$fname" >> "$combined_tmp"; then
+                echo
+                echo "[WARN] Could not add $fname to the combined FASTA; preserving previous output." >&2
+                concatenation_failed=1
+                break
+            fi
         done < "$final_names"
         echo
 
-        if [[ ! -s "$combined_tmp" ]]; then
-            echo "[FAIL] Combined FASTA was generated empty." >&2
-            exit 1
+        if (( concatenation_failed == 1 )) || [[ ! -s "$combined_tmp" ]]; then
+            rm -f "$combined_tmp"
+            echo "[WARN] Combined FASTA was not replaced because concatenation did not finish safely." >&2
+            combined_status="skipped (concatenation warning)"
+        else
+            # Substituição atômica: o FASTA anterior permanece até o novo terminar.
+            mv -f "$combined_tmp" "$final_fasta"
+            cp -f "$final_state" "$source_state_tmp"
+            mv -f "$source_state_tmp" "$combined_source_state"
+            stat --printf='%s\t%Y' "$final_fasta" > "$output_state_tmp"
+            mv -f "$output_state_tmp" "$combined_output_state"
+
+            combined_rebuilt=1
+            if (( collection_incomplete == 1 )); then
+                combined_status="rebuilt (partial)"
+                echo "[WARN] Partial combined FASTA created from available genomes: $final_fasta"
+            else
+                combined_status="rebuilt"
+                echo "[PASS] Combined FASTA created successfully: $final_fasta"
+            fi
         fi
-
-        # Substituição atômica: o FASTA anterior permanece até o novo terminar.
-        mv -f "$combined_tmp" "$final_fasta"
-        cp -f "$final_state" "$source_state_tmp"
-        mv -f "$source_state_tmp" "$combined_source_state"
-        stat --printf='%s\t%Y' "$final_fasta" > "$output_state_tmp"
-        mv -f "$output_state_tmp" "$combined_output_state"
-        rm -f "$stale_marker"
-
-        combined_rebuilt=1
-        combined_status="rebuilt"
-        echo "[PASS] Combined FASTA created successfully: $final_fasta"
     fi
 fi
 
@@ -596,6 +742,8 @@ echo "Gzip files tested      : $integrity_candidate_count"
 echo "Integrity mode         : $integrity_mode"
 echo "Remote HEAD requests   : 0"
 echo "Failed downloads       : $failed_count"
+echo "Attempts per round     : $DOWNLOAD_ATTEMPTS"
+echo "Extra retry rounds     : $FAILED_RETRY_ROUNDS"
 echo "Combined FASTA status  : $combined_status"
 echo "Combined FASTA rebuilt : $combined_rebuilt"
 echo "Local gzip folder      : $new_download_dir"
@@ -604,16 +752,16 @@ echo "Integrity cache        : $integrity_cache"
 
 if [[ -s "$failed_downloads" ]]; then
     echo
-    echo "[WARN] The following viral genomes could not be retrieved:"
+    echo "[WARN] The following viral genomes could not be retrieved after all attempts:"
     cat "$failed_downloads"
-    exit 1
 fi
 
 if (( final_local_count != total_remote )); then
     echo
-    echo "[FAIL] Local viral collection is incomplete: $final_local_count/$total_remote." >&2
-    exit 1
+    echo "[WARN] Local viral collection is incomplete: $final_local_count/$total_remote." >&2
+    echo "[WARN] Missing genomes were skipped from the combined FASTA."
+    echo "[WARN] The script will finish with exit status 0."
+else
+    echo
+    echo "[PASS] All viral genomes are synchronized and locally verified."
 fi
-
-echo
-echo "[PASS] All viral genomes are synchronized and locally verified."
