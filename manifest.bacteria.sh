@@ -2,26 +2,76 @@
 set -euo pipefail
 
 ###############################################################################
-# 0. Diretórios e nomes de arquivos
+# manifest.bacteria.local_sync.sh
+#
+# Sincronização otimizada dos genomas bacterianos RefSeq.
+#
+# Estratégia:
+#   1. Faz apenas UM download do assembly_summary.txt.
+#   2. Gera localmente a lista esperada de arquivos.
+#   3. Compara nomes remotos e locais usando sort/comm.
+#   4. NÃO executa curl -I individual para cada genoma.
+#   5. Usa cache local de tamanho+mtime para aplicar gzip -t somente a arquivos
+#      novos ou modificados desde a última execução.
+#
+# Para forçar auditoria completa de todos os .gz:
+#   FULL_GZIP_CHECK=1 bash manifest.bacteria.local_sync.sh
+#
+# Para ajustar o número de testes gzip paralelos:
+#   GZIP_CHECK_JOBS=4 bash manifest.bacteria.local_sync.sh
+###############################################################################
+
+###############################################################################
+# 0. Diretórios e configurações
 ###############################################################################
 offline_files_folder="/media/me/4TB_BACKUP_LBN/Compressed/MTD"
-
-new_download_dir="$offline_files_folder/Kraken2DB_micro/library/bacteria/all"
+metadata_dir="$offline_files_folder/Kraken2DB_micro/library/bacteria"
+new_download_dir="$metadata_dir/all"
 home_download_dir="$HOME/MTD/kraken2DB_micro/library/bacteria/all"
 
-mkdir -p "$new_download_dir"
-mkdir -p "$home_download_dir"
-mkdir -p "$offline_files_folder/Kraken2DB_micro/library/bacteria"
+FULL_GZIP_CHECK="${FULL_GZIP_CHECK:-0}"
+GZIP_CHECK_JOBS="${GZIP_CHECK_JOBS:-4}"
+DOWNLOAD_JOBS="${DOWNLOAD_JOBS:-4}"
+ARIA_CONNECTIONS="${ARIA_CONNECTIONS:-16}"
 
-assembly_summary_file="$offline_files_folder/Kraken2DB_micro/library/bacteria/assembly_summary_bacteria.txt"
-manifest_list="$offline_files_folder/Kraken2DB_micro/library/bacteria/manifest_bacteria.list.txt"
+if [[ "$FULL_GZIP_CHECK" != "0" && "$FULL_GZIP_CHECK" != "1" ]]; then
+    echo "[FAIL] FULL_GZIP_CHECK must be 0 or 1." >&2
+    exit 1
+fi
+
+if ! [[ "$GZIP_CHECK_JOBS" =~ ^[1-9][0-9]*$ ]]; then
+    echo "[FAIL] GZIP_CHECK_JOBS must be a positive integer." >&2
+    exit 1
+fi
+
+if ! [[ "$DOWNLOAD_JOBS" =~ ^[1-9][0-9]*$ ]]; then
+    echo "[FAIL] DOWNLOAD_JOBS must be a positive integer." >&2
+    exit 1
+fi
+
+if ! [[ "$ARIA_CONNECTIONS" =~ ^[1-9][0-9]*$ ]]; then
+    echo "[FAIL] ARIA_CONNECTIONS must be a positive integer." >&2
+    exit 1
+fi
+
+mkdir -p "$new_download_dir" "$home_download_dir" "$metadata_dir"
+
+assembly_summary_file="$metadata_dir/assembly_summary_bacteria.txt"
+manifest_list="$metadata_dir/manifest_bacteria.list.txt"
+manifest_names="$metadata_dir/manifest_bacteria.names.txt"
+integrity_cache="$metadata_dir/integrity_bacteria.stat.tsv"
 failed_downloads="$offline_files_folder/failed_downloads_bacteria.txt"
 corrupted_list="$offline_files_folder/corrupted_bacteria.txt"
 to_download_list="$offline_files_folder/to_download_bacteria.txt"
 obsolete_list="$offline_files_folder/obsolete_local_bacteria.txt"
 
-rm -f "$assembly_summary_file" "$manifest_list" "$failed_downloads" \
-      "$corrupted_list" "$to_download_list" "$obsolete_list"
+work_dir="$(mktemp -d "$metadata_dir/.manifest_bacteria.tmp.XXXXXX")"
+trap 'rm -rf "$work_dir"' EXIT
+
+: > "$failed_downloads"
+: > "$corrupted_list"
+: > "$to_download_list"
+: > "$obsolete_list"
 
 progress() {
     local current="$1"
@@ -32,14 +82,46 @@ progress() {
     printf "\r\033[2K[%d/%d] %s" "$current" "$total" "$msg"
 }
 
-###############################################################################
-# 1. Baixar assembly_summary.txt e gerar manifest
-###############################################################################
-echo "STEP 1: Downloading latest assembly_summary.txt bacteria..."
+build_local_names() {
+    find "$new_download_dir" \
+        -maxdepth 1 \
+        -type f \
+        -name '*.gz' \
+        -printf '%f\n' \
+        | LC_ALL=C sort -u
+}
 
-curl -4 --retry 5 --retry-delay 2 --connect-timeout 20 -fsSL \
-  -o "$assembly_summary_file" \
-  "https://ftp.ncbi.nih.gov/genomes/refseq/bacteria/assembly_summary.txt"
+build_local_state() {
+    find "$new_download_dir" \
+        -maxdepth 1 \
+        -type f \
+        -name '*.gz' \
+        -printf '%f\t%s\t%T@\n' \
+        | LC_ALL=C sort -t $'\t' -k1,1
+}
+
+###############################################################################
+# 1. Baixar somente o catálogo do NCBI e gerar manifest local
+###############################################################################
+echo "STEP 1: Downloading latest bacterial assembly_summary.txt..."
+
+tmp_summary="$work_dir/assembly_summary_bacteria.txt"
+tmp_manifest="$work_dir/manifest_bacteria.list.txt"
+tmp_remote_index="$work_dir/remote_name_url.tsv"
+tmp_remote_names="$work_dir/remote_names.txt"
+
+curl -4 \
+    --retry 5 \
+    --retry-delay 2 \
+    --connect-timeout 20 \
+    -fsSL \
+    -o "$tmp_summary" \
+    "https://ftp.ncbi.nih.gov/genomes/refseq/bacteria/assembly_summary.txt"
+
+if [[ ! -s "$tmp_summary" ]]; then
+    echo "[FAIL] Downloaded assembly_summary.txt is empty." >&2
+    exit 1
+fi
 
 awk -F '\t' '
     /^#/ { next }
@@ -60,267 +142,275 @@ awk -F '\t' '
             print ftp_path "/" asm "_genomic.fna.gz"
         }
     }
-' "$assembly_summary_file" > "$manifest_list"
+' "$tmp_summary" | LC_ALL=C sort -u > "$tmp_manifest"
 
-echo "✅ $(wc -l < "$manifest_list") bacterial genomes listed on NCBI servers."
-
-###############################################################################
-# 2. Sincronizar pasta local com o NCBI
-###############################################################################
-echo
-echo "STEP 2: Syncing local folder against NCBI manifest..."
-
-mapfile -t remote_urls < "$manifest_list"
-total_remote=${#remote_urls[@]}
-
-declare -A remote_map
-
-for url in "${remote_urls[@]}"; do
-    fname="$(basename "$url")"
-    remote_map["$fname"]="$url"
-done
-
-shopt -s nullglob
-local_paths=("$new_download_dir"/*.gz)
-shopt -u nullglob
-
-: > "$obsolete_list"
-: > "$to_download_list"
-: > "$failed_downloads"
-
-###############################################################################
-# 2A. Remover arquivos locais obsoletos
-###############################################################################
-echo
-echo "STEP 2A: Checking LOCAL files for obsolete files..."
-
-obsolete_count=0
-local_total=${#local_paths[@]}
-local_checked=0
-
-if (( local_total == 0 )); then
-    echo "No local .gz files found yet."
-else
-    for path in "${local_paths[@]}"; do
-        ((local_checked+=1))
-        fname="$(basename "$path")"
-
-        progress "$local_checked" "$local_total" "[LOCAL] checking: $fname"
-
-        if [[ -z "${remote_map[$fname]:-}" ]]; then
-            echo
-            echo "❌ Removing obsolete local file: $fname"
-            echo "$fname" >> "$obsolete_list"
-            rm -f "$path"
-            rm -f "$home_download_dir/$fname"
-            ((obsolete_count+=1))
-        fi
-    done
-    echo
+if [[ ! -s "$tmp_manifest" ]]; then
+    echo "[FAIL] No genome URLs were generated from assembly_summary.txt." >&2
+    exit 1
 fi
 
-###############################################################################
-# Atualizar lista local após remoções
-###############################################################################
-shopt -s nullglob
-local_paths=("$new_download_dir"/*.gz)
-shopt -u nullglob
+# Índice local: filename<TAB>URL
+awk -F/ 'NF { print $NF "\t" $0 }' "$tmp_manifest" \
+    | LC_ALL=C sort -t $'\t' -k1,1 \
+    > "$tmp_remote_index"
 
-declare -A local_map
+cut -f1 "$tmp_remote_index" > "$tmp_remote_names"
 
-for path in "${local_paths[@]}"; do
-    fname="$(basename "$path")"
-    local_map["$fname"]="$path"
-done
+# Atualização atômica: arquivos antigos só são substituídos após sucesso.
+mv -f "$tmp_summary" "$assembly_summary_file"
+mv -f "$tmp_manifest" "$manifest_list"
+cp -f "$tmp_remote_names" "$manifest_names"
 
-###############################################################################
-# Função para obter tamanho remoto
-###############################################################################
-get_remote_size() {
-    local url="$1"
-
-    curl -4 -fsSI \
-      --retry 3 \
-      --retry-delay 2 \
-      --connect-timeout 20 \
-      "$url" 2>/dev/null \
-      | awk 'BEGIN{IGNORECASE=1} /^Content-Length:/ {gsub("\r","",$2); print $2; exit}'
-}
+total_remote="$(wc -l < "$manifest_names")"
+echo "[PASS] $total_remote bacterial genomes listed in the NCBI catalog."
+echo "[INFO] Remote per-file HEAD requests: 0"
 
 ###############################################################################
-# 2B. Detectar faltantes e alterados
+# 2. Comparação totalmente local: nomes esperados versus nomes presentes
 ###############################################################################
 echo
-echo "STEP 2B: Checking REMOTE files against LOCAL files..."
+echo "STEP 2: Comparing the NCBI catalog with local filenames..."
 
-missing_count=0
-changed_count=0
-size_check_failed_count=0
-checked_count=0
+local_names_before="$work_dir/local_names.before.txt"
+local_names_after="$work_dir/local_names.after.txt"
+missing_names="$work_dir/missing_names.txt"
 
-for fname in "${!remote_map[@]}"; do
-    ((checked_count+=1))
-    url="${remote_map[$fname]}"
-
-    progress "$checked_count" "$total_remote" "[REMOTE] checking: $fname"
-
-    if [[ -z "${local_map[$fname]:-}" ]]; then
-        echo "$url" >> "$to_download_list"
-        ((missing_count+=1))
-        continue
-    fi
-
-    local_size="$(stat -c%s "${local_map[$fname]}" 2>/dev/null || echo 0)"
-    remote_size="$(get_remote_size "$url" || true)"
-
-    # Se falhar por DNS/rede/NCBI temporário, NÃO marca como alterado.
-    if [[ -z "$remote_size" ]]; then
-        ((size_check_failed_count+=1))
-        continue
-    fi
-
-    if [[ "$remote_size" != "$local_size" ]]; then
-        echo
-        echo "Remote file changed, re-downloading: $fname"
-        rm -f "${local_map[$fname]}"
-        rm -f "$home_download_dir/$fname"
-        echo "$url" >> "$to_download_list"
-        ((changed_count+=1))
-    fi
-done
-
-echo
-echo "Finished checking remote/local files."
-
-available_local=$(find "$new_download_dir" -maxdepth 1 -type f -name "*.gz" | wc -l)
-to_download_count=$(wc -l < "$to_download_list" 2>/dev/null || echo 0)
-
-echo
-echo "Total remote             : $total_remote"
-echo "Already local            : $available_local"
-echo "Obsolete removed         : $obsolete_count"
-echo "Missing files            : $missing_count"
-echo "Changed files            : $changed_count"
-echo "Remote size check failed : $size_check_failed_count"
-echo "To download now          : $to_download_count"
+build_local_names > "$local_names_before"
 
 ###############################################################################
-# 3. Baixar arquivos faltantes/alterados
+# 2A. Arquivos locais obsoletos
 ###############################################################################
 echo
-echo "STEP 3: Downloading missing/changed files..."
+echo "STEP 2A: Detecting obsolete local files..."
+
+# Presentes localmente, mas ausentes do catálogo atual do NCBI.
+comm -23 "$local_names_before" "$manifest_names" > "$obsolete_list"
+obsolete_count="$(wc -l < "$obsolete_list")"
+
+if (( obsolete_count == 0 )); then
+    echo "[PASS] No obsolete local files detected."
+else
+    removed=0
+    while IFS= read -r fname; do
+        [[ -z "$fname" ]] && continue
+        ((removed+=1))
+        progress "$removed" "$obsolete_count" "[REMOVE] $fname"
+        rm -f -- "$new_download_dir/$fname"
+        rm -f -- "$home_download_dir/$fname"
+        rm -f -- "$new_download_dir/$fname.aria2"
+    done < "$obsolete_list"
+    echo
+    echo "[PASS] Removed $obsolete_count obsolete local file(s)."
+fi
+
+# Reconstruir lista local após remoções.
+build_local_names > "$local_names_after"
+
+###############################################################################
+# 2B. Arquivos ausentes
+###############################################################################
+echo
+echo "STEP 2B: Detecting missing genomes locally..."
+
+# Presentes no catálogo remoto, mas ausentes localmente.
+comm -13 "$local_names_after" "$manifest_names" > "$missing_names"
+missing_count="$(wc -l < "$missing_names")"
+
+# Traduzir filename -> URL sem fazer qualquer consulta individual ao servidor.
+awk -F '\t' '
+    NR == FNR {
+        wanted[$1] = 1
+        next
+    }
+    ($1 in wanted) {
+        print $2
+    }
+' "$missing_names" "$tmp_remote_index" > "$to_download_list"
+
+to_download_count="$(wc -l < "$to_download_list")"
+available_local="$(wc -l < "$local_names_after")"
+
+echo "[PASS] Local comparison completed."
+echo
+echo "Remote catalog entries : $total_remote"
+echo "Already local          : $available_local"
+echo "Obsolete removed       : $obsolete_count"
+echo "Missing files          : $missing_count"
+echo "To download now        : $to_download_count"
+echo "Remote HEAD requests   : 0"
+
+###############################################################################
+# 3. Baixar apenas arquivos faltantes
+###############################################################################
+echo
+echo "STEP 3: Downloading missing files..."
 
 cd "$new_download_dir"
 
 download_one() {
     local url="$1"
     local file
+    local attempt
+
     file="$(basename "$url")"
 
-    for attempt in {1..3}; do
-        aria2c --disable-ipv6=true \
-               --continue=true \
-               --auto-file-renaming=false \
-               -x16 -s16 \
-               -o "$file" \
-               "$url" > /dev/null 2>&1
+    for attempt in 1 2 3; do
+        rm -f -- "$file.aria2"
 
-        if [[ -f "$file" ]] && gzip -t "$file" 2>/dev/null; then
-            [[ -f "$home_download_dir/$file" ]] || cp -p "$file" "$home_download_dir/"
-            return 0
-        else
-            echo "❌ Attempt $attempt failed for $file"
-            rm -f "$file"
-            sleep 1
+        if aria2c \
+            --disable-ipv6=true \
+            --continue=true \
+            --auto-file-renaming=false \
+            -x "$ARIA_CONNECTIONS" \
+            -s "$ARIA_CONNECTIONS" \
+            -o "$file" \
+            "$url" > /dev/null 2>&1; then
+
+            if [[ -f "$file" ]] && gzip -t "$file" 2>/dev/null; then
+                cp -p -- "$file" "$home_download_dir/$file"
+                return 0
+            fi
         fi
+
+        echo "[WARN] Attempt $attempt failed for $file" >&2
+        rm -f -- "$file" "$file.aria2"
+        sleep 1
     done
 
-    echo "❌ $file" >> "$failed_downloads"
+    printf '%s\n' "$file" >> "$failed_downloads"
+    return 1
 }
+
 export -f download_one
-export failed_downloads
-export home_download_dir
+export failed_downloads home_download_dir ARIA_CONNECTIONS
 
 if (( to_download_count == 0 )); then
-    echo "✅ Local folder is already synchronized with NCBI."
+    echo "[PASS] Local folder already contains every genome in the catalog."
 else
-    echo "Downloading $to_download_count genome(s)..."
-    mapfile -t download_urls < "$to_download_list"
+    echo "[INFO] Downloading $to_download_count genome(s)..."
 
     if command -v parallel >/dev/null 2>&1 && command -v aria2c >/dev/null 2>&1; then
-        printf "%s\n" "${download_urls[@]}" | parallel --bar -j 4 download_one
+        # --halt never: um download com falha não interrompe os demais.
+        parallel \
+            --bar \
+            --halt never \
+            -j "$DOWNLOAD_JOBS" \
+            download_one :::: "$to_download_list" || true
     else
-        echo "⚠️ aria2c/parallel not found – falling back to serial wget."
+        echo "[WARN] aria2c and/or GNU parallel not found; using serial wget."
 
         download_checked=0
+        while IFS= read -r url; do
+            [[ -z "$url" ]] && continue
 
-        for url in "${download_urls[@]}"; do
             ((download_checked+=1))
             file="$(basename "$url")"
+            progress "$download_checked" "$to_download_count" "[DOWNLOAD] $file"
 
-            progress "$download_checked" "$to_download_count" "[DOWNLOAD] downloading: $file"
+            success=0
+            for attempt in 1 2 3; do
+                rm -f -- "$file"
 
-            wget -4 -q -c -O "$file" "$url" || {
-                echo
-                echo "❌ Failed: $file"
-                echo "❌ Failed: $file" >> "$failed_downloads"
-                rm -f "$file"
-                continue
-            }
+                if wget -4 -q -O "$file" "$url" && gzip -t "$file" 2>/dev/null; then
+                    cp -p -- "$file" "$home_download_dir/$file"
+                    success=1
+                    break
+                fi
 
-            if gzip -t "$file" 2>/dev/null; then
-                [[ -f "$home_download_dir/$file" ]] || cp -p "$file" "$home_download_dir/"
-            else
-                echo
-                echo "❌ Corrupted after download: $file"
-                echo "$file" >> "$corrupted_list"
-                rm -f "$file"
+                rm -f -- "$file"
+                sleep 1
+            done
+
+            if (( success == 0 )); then
+                printf '%s\n' "$file" >> "$failed_downloads"
             fi
-        done
-
+        done < "$to_download_list"
         echo
     fi
 
-    echo "✅ Download stage completed."
+    echo "[PASS] Download stage completed."
 fi
 
 ###############################################################################
-# 4. Checar integridade e re-baixar corrompidos
+# 4. Integridade local incremental
 ###############################################################################
 echo
-echo "STEP 4: Verifying integrity of .gz files..."
+echo "STEP 4: Verifying local gzip integrity..."
 
-: > "$corrupted_list"
+current_state="$work_dir/current_local_state.tsv"
+integrity_candidates="$work_dir/integrity_candidates.txt"
+build_local_state > "$current_state"
 
-shopt -s nullglob
-gz_files=("$new_download_dir"/*.gz)
-shopt -u nullglob
-
-if (( ${#gz_files[@]} > 0 )); then
-    total_gz=${#gz_files[@]}
-    checked_gz=0
-
-    for gz in "${gz_files[@]}"; do
-        ((checked_gz+=1))
-        fname="$(basename "$gz")"
-
-        progress "$checked_gz" "$total_gz" "[GZIP TEST] testing: $fname"
-
-        gzip -t "$gz" 2>/dev/null || echo "$fname" >> "$corrupted_list"
-    done
-
-    echo
+if [[ "$FULL_GZIP_CHECK" == "1" ]]; then
+    cut -f1 "$current_state" > "$integrity_candidates"
+    integrity_mode="full (forced)"
+elif [[ ! -s "$integrity_cache" ]]; then
+    cut -f1 "$current_state" > "$integrity_candidates"
+    integrity_mode="full (first cached run)"
 else
-    echo "⚠️ No .gz files found yet in $new_download_dir"
+    # Testar apenas arquivos novos ou cujo tamanho/mtime local mudou.
+    awk -F '\t' '
+        NR == FNR {
+            previous[$1] = $2 FS $3
+            next
+        }
+        {
+            current = $2 FS $3
+            if (!($1 in previous) || previous[$1] != current) {
+                print $1
+            }
+        }
+    ' "$integrity_cache" "$current_state" > "$integrity_candidates"
+    integrity_mode="incremental"
 fi
 
-corrupted_count=$(wc -l < "$corrupted_list")
+integrity_candidate_count="$(wc -l < "$integrity_candidates")"
+: > "$corrupted_list"
 
+echo "[INFO] Integrity mode : $integrity_mode"
+echo "[INFO] Files to test  : $integrity_candidate_count"
+
+if (( integrity_candidate_count == 0 )); then
+    echo "[PASS] No new or locally modified gzip files require testing."
+elif command -v parallel >/dev/null 2>&1; then
+    export new_download_dir
+
+    parallel \
+        --bar \
+        --keep-order \
+        -j "$GZIP_CHECK_JOBS" \
+        'gzip -t "$new_download_dir/{}" 2>/dev/null || printf "%s\n" "{}"' \
+        :::: "$integrity_candidates" \
+        > "$corrupted_list"
+else
+    checked_gz=0
+    while IFS= read -r fname; do
+        [[ -z "$fname" ]] && continue
+        ((checked_gz+=1))
+        progress "$checked_gz" "$integrity_candidate_count" "[GZIP TEST] $fname"
+
+        gzip -t "$new_download_dir/$fname" 2>/dev/null \
+            || printf '%s\n' "$fname" >> "$corrupted_list"
+    done < "$integrity_candidates"
+    echo
+fi
+
+corrupted_count="$(wc -l < "$corrupted_list")"
+
+###############################################################################
+# 4B. Rebaixar somente arquivos locais corrompidos
+###############################################################################
 if (( corrupted_count > 0 )); then
-    echo "⚠️ $corrupted_count corrupted file(s) found. Re-downloading with wget, max 3 attempts..."
+    echo "[WARN] $corrupted_count corrupted file(s) found. Re-downloading..."
+
+    # Reconstruir mapa filename -> URL uma única vez em memória.
+    declare -A remote_map=()
+    while IFS=$'\t' read -r fname url; do
+        [[ -n "$fname" && -n "$url" ]] || continue
+        remote_map["$fname"]="$url"
+    done < "$tmp_remote_index"
 
     corrupted_checked=0
-
     while IFS= read -r fname; do
         [[ -z "$fname" ]] && continue
 
@@ -328,58 +418,76 @@ if (( corrupted_count > 0 )); then
         url="${remote_map[$fname]:-}"
 
         if [[ -z "$url" ]]; then
-            echo "❌ URL not found in manifest for $fname" >> "$failed_downloads"
-            rm -f "$new_download_dir/$fname"
-            rm -f "$home_download_dir/$fname"
+            echo "[FAIL] URL not found in manifest for $fname" >&2
+            printf '%s\n' "$fname" >> "$failed_downloads"
+            rm -f -- "$new_download_dir/$fname" "$home_download_dir/$fname"
             continue
         fi
 
-        for attempt in {1..3}; do
-            progress "$corrupted_checked" "$corrupted_count" "[REDOWNLOAD] $fname attempt $attempt"
+        success=0
+        for attempt in 1 2 3; do
+            progress "$corrupted_checked" "$corrupted_count" \
+                "[REDOWNLOAD] $fname attempt $attempt"
 
-            wget -4 -q -O "$new_download_dir/$fname" "$url" || true
+            rm -f -- "$new_download_dir/$fname" "$new_download_dir/$fname.aria2"
 
-            if gzip -t "$new_download_dir/$fname" 2>/dev/null; then
-                echo
-                echo "✅ Integrity OK after attempt $attempt: $fname"
-                [[ -f "$home_download_dir/$fname" ]] || cp -p "$new_download_dir/$fname" "$home_download_dir/"
+            if wget -4 -q -O "$new_download_dir/$fname" "$url" \
+                && gzip -t "$new_download_dir/$fname" 2>/dev/null; then
+                cp -p -- "$new_download_dir/$fname" "$home_download_dir/$fname"
+                success=1
                 break
-            elif [[ $attempt -eq 3 ]]; then
-                echo
-                echo "❌ Still corrupted after 3 attempts: $fname"
-                echo "❌ Failed after 3 attempts: $fname" >> "$failed_downloads"
-                rm -f "$new_download_dir/$fname"
-                rm -f "$home_download_dir/$fname"
-            else
-                rm -f "$new_download_dir/$fname"
             fi
+
+            rm -f -- "$new_download_dir/$fname"
+            sleep 1
         done
+
+        if (( success == 0 )); then
+            echo >&2
+            echo "[FAIL] Still corrupted after 3 attempts: $fname" >&2
+            printf '%s\n' "$fname" >> "$failed_downloads"
+            rm -f -- "$new_download_dir/$fname" "$home_download_dir/$fname"
+        fi
     done < "$corrupted_list"
+    echo
 else
-    echo "✅ All .gz files passed integrity check."
+    echo "[PASS] All tested gzip files passed integrity validation."
 fi
+
+# Atualizar cache apenas depois de finalizar os testes e re-downloads.
+final_state="$work_dir/final_local_state.tsv"
+build_local_state > "$final_state"
+mv -f "$final_state" "$integrity_cache"
 
 rm -f "$corrupted_list"
 
 ###############################################################################
 # 5. Relatório final
 ###############################################################################
+final_local_count="$(find "$new_download_dir" -maxdepth 1 -type f -name '*.gz' | wc -l)"
+failed_count="$(wc -l < "$failed_downloads")"
+
 echo
 echo "STEP 5: Final report"
-echo "Remote genomes listed    : $total_remote"
-echo "Obsolete removed         : $obsolete_count"
-echo "Missing detected         : $missing_count"
-echo "Changed detected         : $changed_count"
-echo "Remote size check failed : $size_check_failed_count"
-echo "Downloaded this run      : $to_download_count"
-echo "Local folder             : $new_download_dir"
-echo "Home mirror folder       : $home_download_dir"
+echo "Remote genomes listed : $total_remote"
+echo "Final local genomes    : $final_local_count"
+echo "Obsolete removed       : $obsolete_count"
+echo "Missing detected       : $missing_count"
+echo "Requested downloads    : $to_download_count"
+echo "Gzip files tested      : $integrity_candidate_count"
+echo "Integrity mode         : $integrity_mode"
+echo "Remote HEAD requests   : 0"
+echo "Failed downloads       : $failed_count"
+echo "Local folder           : $new_download_dir"
+echo "Home mirror folder     : $home_download_dir"
+echo "Integrity cache        : $integrity_cache"
 
 if [[ -s "$failed_downloads" ]]; then
     echo
-    echo "⚠️ The following genomes could not be retrieved:"
+    echo "[WARN] The following genomes could not be retrieved:"
     cat "$failed_downloads"
+    exit 1
 else
     echo
-    echo "✅ All bacterial genomes synchronized and verified successfully!"
+    echo "[PASS] All bacterial genomes are synchronized and locally verified."
 fi
