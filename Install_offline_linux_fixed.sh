@@ -29,6 +29,7 @@ KRAKEN_ENV_LIBEXEC=""
 KRAKEN_PKG_LIBEXEC=""
 kraken_build_opts=()
 ORIGINAL_CHANNEL_PRIORITY=""
+KRAKEN_TAXONOMY_CACHE=""
 
 # ------------------------------------------------------------------------------
 # Terminal formatting and messages
@@ -203,6 +204,7 @@ validate_arguments() {
 configure_paths_and_options() {
     KRAKEN_ENV_LIBEXEC="$condapath/envs/MTD/libexec"
     KRAKEN_PKG_LIBEXEC="$condapath/pkgs/kraken2-2.1.2-pl5262h7d875b9_0/libexec"
+    KRAKEN_TAXONOMY_CACHE="$offline_files_folder/Kraken2_taxonomy_cache"
 
     kraken_build_opts=()
 
@@ -404,21 +406,172 @@ download_kraken2_library_until_success() {
     fi
 }
 
-download_kraken2_taxonomy_until_success() {
-    local database="$1"
-    local downloader="$2"
-    shift 2
+validate_kraken2_taxonomy_dir() {
+    local taxonomy_dir="$1"
+    local required_file
+
+    for required_file in \
+        names.dmp \
+        nodes.dmp \
+        nucl_gb.accession2taxid \
+        nucl_wgs.accession2taxid
+    do
+        if [[ ! -s "$taxonomy_dir/$required_file" ]]; then
+            log_warning "Missing or empty taxonomy file:"
+            log_warning "  $taxonomy_dir/$required_file"
+            return 1
+        fi
+    done
+
+    if ! head -n 1 "$taxonomy_dir/nucl_gb.accession2taxid" |
+        grep -q $'^accession\taccession.version\ttaxid'; then
+        log_warning "Invalid header in nucl_gb.accession2taxid."
+        return 1
+    fi
+
+    if ! head -n 1 "$taxonomy_dir/nucl_wgs.accession2taxid" |
+        grep -q $'^accession\taccession.version\ttaxid'; then
+        log_warning "Invalid header in nucl_wgs.accession2taxid."
+        return 1
+    fi
+
+    if ! head -n 10 "$taxonomy_dir/names.dmp" | grep -q $'\t|\t'; then
+        log_warning "names.dmp does not appear to have the expected format."
+        return 1
+    fi
+
+    if ! head -n 10 "$taxonomy_dir/nodes.dmp" | grep -q $'\t|\t'; then
+        log_warning "nodes.dmp does not appear to have the expected format."
+        return 1
+    fi
+
+    return 0
+}
+
+download_shared_kraken2_taxonomy_once() {
+    local downloader="$dir/kraken2-build-download-taxonomy"
+    local taxonomy_dir="$KRAKEN_TAXONOMY_CACHE/taxonomy"
+    local complete_marker="$KRAKEN_TAXONOMY_CACHE/.mtd_taxonomy_complete"
+
+    if [[ ! -f "$downloader" ]]; then
+        log_error "Kraken2 taxonomy downloader not found:"
+        log_error "  $downloader"
+        return 127
+    fi
+
+    if ! chmod +x "$downloader"; then
+        log_error "Could not make taxonomy downloader executable:"
+        log_error "  $downloader"
+        return 126
+    fi
+
+    log_info "Removing any incomplete taxonomy cache before download..."
+
+    rm -rf "$taxonomy_dir"
+    rm -f "$complete_marker"
+
+    if ! mkdir -p "$KRAKEN_TAXONOMY_CACHE"; then
+        log_error "Could not create taxonomy cache directory:"
+        log_error "  $KRAKEN_TAXONOMY_CACHE"
+        return 1
+    fi
+
+    log_info "Downloading the shared NCBI taxonomy cache..."
+
+    if ! "$downloader" \
+        --download-taxonomy \
+        --threads "$threads" \
+        --db "$KRAKEN_TAXONOMY_CACHE"; then
+
+        log_warning "Shared taxonomy download failed."
+        log_warning "Removing incomplete files before the next attempt."
+
+        rm -rf "$taxonomy_dir"
+        rm -f "$complete_marker"
+        return 1
+    fi
+
+    if ! validate_kraken2_taxonomy_dir "$taxonomy_dir"; then
+        log_warning "Downloaded taxonomy did not pass validation."
+        log_warning "Removing incomplete or invalid taxonomy files."
+
+        rm -rf "$taxonomy_dir"
+        rm -f "$complete_marker"
+        return 1
+    fi
+
+    date -u '+%Y-%m-%dT%H:%M:%SZ' > "$complete_marker"
+
+    log_ok "Shared Kraken2 taxonomy downloaded and validated."
+    log_info "Taxonomy cache:"
+    log_info "  $KRAKEN_TAXONOMY_CACHE"
+
+    return 0
+}
+
+prepare_shared_kraken2_taxonomy() {
+    local taxonomy_dir="$KRAKEN_TAXONOMY_CACHE/taxonomy"
+    local complete_marker="$KRAKEN_TAXONOMY_CACHE/.mtd_taxonomy_complete"
+
+    if [[ -f "$complete_marker" ]] &&
+       validate_kraken2_taxonomy_dir "$taxonomy_dir"; then
+
+        log_ok "Using the existing validated Kraken2 taxonomy cache."
+        log_info "Taxonomy cache:"
+        log_info "  $KRAKEN_TAXONOMY_CACHE"
+        return 0
+    fi
+
+    if [[ -e "$taxonomy_dir" || -e "$complete_marker" ]]; then
+        log_warning "Existing taxonomy cache is incomplete or invalid."
+        log_warning "It will be removed and downloaded again."
+        rm -rf "$taxonomy_dir"
+        rm -f "$complete_marker"
+    else
+        log_info "No valid shared Kraken2 taxonomy cache was found."
+    fi
 
     if ! retry_until_success \
-        "NCBI taxonomy for Kraken2 database '$database'" \
-        "$downloader" \
-        --download-taxonomy \
-        "$@" \
-        --threads "$threads" \
-        --db "$database"; then
-        log_error "Kraken2 taxonomy download cannot continue for database: $database"
+        "Shared NCBI taxonomy for all Kraken2 databases" \
+        download_shared_kraken2_taxonomy_once; then
+
+        log_error "The shared Kraken2 taxonomy could not be prepared."
         exit 1
     fi
+}
+
+install_shared_kraken2_taxonomy() {
+    local database="$1"
+    local source_taxonomy="$KRAKEN_TAXONOMY_CACHE/taxonomy"
+    local destination_taxonomy="$database/taxonomy"
+
+    prepare_shared_kraken2_taxonomy
+
+    log_info "Installing cached NCBI taxonomy into:"
+    log_info "  $database"
+
+    if ! mkdir -p "$database"; then
+        log_error "Could not create Kraken2 database directory:"
+        log_error "  $database"
+        exit 1
+    fi
+
+    rm -rf "$destination_taxonomy"
+
+    if ! cp -a "$source_taxonomy" "$database/"; then
+        log_error "Could not copy the shared taxonomy into:"
+        log_error "  $database"
+        exit 1
+    fi
+
+    if ! validate_kraken2_taxonomy_dir "$destination_taxonomy"; then
+        log_error "Copied taxonomy failed validation:"
+        log_error "  $destination_taxonomy"
+        exit 1
+    fi
+
+    log_ok "Cached taxonomy installed and validated:"
+    log_ok "  $destination_taxonomy"
 }
 
 build_kraken2_database() {
@@ -785,10 +938,8 @@ build_microbiome_kraken_database() {
     prepare_microbiome_manifests
 
     chmod +x "$dir/kraken2-build-download-taxonomy"
-    log_info "Downloading NCBI taxonomy database with Kraken2..."
-    download_kraken2_taxonomy_until_success \
-        "$database" \
-        "$dir/kraken2-build-download-taxonomy"
+    log_info "Preparing shared NCBI taxonomy for the microbiome database..."
+    install_shared_kraken2_taxonomy "$database"
 
     add_local_archaea_library "$database"
     add_local_bacteria_library "$database"
@@ -817,10 +968,7 @@ build_microbiome_kraken_database() {
 build_human_kraken_database() {
     local database="$dir/kraken2DB_human"
 
-    download_kraken2_taxonomy_until_success \
-        "$database" \
-        kraken2-build \
-        --use-ftp
+    install_shared_kraken2_taxonomy "$database"
 
     download_kraken2_library_until_success \
         "$database" \
@@ -840,10 +988,7 @@ build_mouse_kraken_database() {
         "GCF_000001635.27_GRCm39_genomic.fna.gz" \
         "$fasta_name"
 
-    download_kraken2_taxonomy_until_success \
-        "$database" \
-        kraken2-build \
-        --use-ftp
+    install_shared_kraken2_taxonomy "$database"
 
     kraken2-build \
         --add-to-library "$database/$fasta_name" \
@@ -863,10 +1008,7 @@ build_rhesus_kraken_database() {
         "GCF_003339765.1_Mmul_10_genomic.fna.gz" \
         "$fasta_name"
 
-    download_kraken2_taxonomy_until_success \
-        "$database" \
-        kraken2-build \
-        --use-ftp
+    install_shared_kraken2_taxonomy "$database"
 
     kraken2-build \
         --add-to-library "$database/$fasta_name" \
