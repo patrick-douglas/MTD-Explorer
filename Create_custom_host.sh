@@ -1,12 +1,19 @@
 #!/bin/bash
 # v5: gold OrgDb workflow + safe cleanup + shared Kraken taxonomy cache + fixed HostSpecies awk
 
-MTDIR=~/MTD
+dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+MTDIR="$dir"
+
 condapath=~/miniconda3
-threads=$(nproc)
+threads="$(nproc)"
 
 protein_fasta=""
 offline_files_folder=""
+
+EGGNOG_DB_CACHE=""
+CUSTOM_HOST_CACHE=""
+RESOLVED_REFERENCE=""
+
 SKIP_ORGDB=0
 FORCE_ORGDB=0
 SKIP_IF_COMPATIBLE=1
@@ -47,6 +54,376 @@ prepend_unique_path_var() {
         export "$var_name=$new_path:$cleaned"
     fi
 }
+# ------------------------------------------------------------
+# Persistent installation cache
+# ------------------------------------------------------------
+
+load_persistent_installation_cache() {
+    local cache_path_file="$MTDIR/offlineCachePath"
+
+    # -o remains available as an explicit override.
+    if [[ -z "$offline_files_folder" ]]; then
+        if [[ ! -s "$cache_path_file" ]]; then
+            echo "[ERROR] Persistent MTD cache path was not found."
+            echo "[ERROR] Expected file:"
+            echo "  $cache_path_file"
+            echo
+            echo "[ERROR] Run the updated MTD installer first or provide:"
+            echo "  --offline-folder /path/to/cache"
+            exit 1
+        fi
+
+        IFS= read -r offline_files_folder < "$cache_path_file"
+        offline_files_folder="${offline_files_folder%$'\r'}"
+    fi
+
+    if [[ -z "$offline_files_folder" ]]; then
+        echo "[ERROR] The persistent cache path is empty."
+        exit 1
+    fi
+
+    if [[ -e "$offline_files_folder" && ! -d "$offline_files_folder" ]]; then
+        echo "[ERROR] Cache path exists but is not a directory:"
+        echo "  $offline_files_folder"
+        exit 1
+    fi
+
+    if ! mkdir -p "$offline_files_folder"; then
+        echo "[ERROR] Could not create or access the persistent cache:"
+        echo "  $offline_files_folder"
+        exit 1
+    fi
+
+    offline_files_folder="$(readlink -f "$offline_files_folder")"
+
+    if [[ ! -w "$offline_files_folder" ]]; then
+        echo "[ERROR] Persistent cache is not writable:"
+        echo "  $offline_files_folder"
+        exit 1
+    fi
+
+    if [[ -z "$KRAKEN_TAXONOMY_CACHE" ]]; then
+        KRAKEN_TAXONOMY_CACHE="$offline_files_folder/Kraken2_taxonomy_cache"
+    fi
+
+    EGGNOG_DB_CACHE="$offline_files_folder/eggNOG/emapperdb-5.0.2"
+    CUSTOM_HOST_CACHE="$offline_files_folder/Customized_hosts/$customized"
+
+    mkdir -p \
+        "$KRAKEN_TAXONOMY_CACHE" \
+        "$EGGNOG_DB_CACHE" \
+        "$CUSTOM_HOST_CACHE/genome" \
+        "$CUSTOM_HOST_CACHE/annotation" \
+        "$CUSTOM_HOST_CACHE/protein"
+
+    echo "------------------------------------------------------------"
+    echo "[CACHE] Persistent MTD installation cache"
+    echo "[CACHE] Root:             $offline_files_folder"
+    echo "[CACHE] Kraken taxonomy:  $KRAKEN_TAXONOMY_CACHE"
+    echo "[CACHE] eggNOG database:  $EGGNOG_DB_CACHE"
+    echo "[CACHE] Custom host:      $CUSTOM_HOST_CACHE"
+    echo "------------------------------------------------------------"
+}
+
+is_url() {
+    case "$1" in
+        http://*|https://*|ftp://*)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+validate_reference_filename() {
+    local kind="$1"
+    local filename="$2"
+
+    case "$kind" in
+        genome)
+            case "$filename" in
+                *.fa|*.fna|*.fasta|*.fa.gz|*.fna.gz|*.fasta.gz)
+                    return 0
+                    ;;
+            esac
+            ;;
+
+        gtf)
+            case "$filename" in
+                *.gtf|*.gtf.gz)
+                    return 0
+                    ;;
+            esac
+            ;;
+
+        protein)
+            case "$filename" in
+                *.fa|*.faa|*.fna|*.fasta|*.pep|\
+                *.fa.gz|*.faa.gz|*.fna.gz|*.fasta.gz|*.pep.gz)
+                    return 0
+                    ;;
+            esac
+            ;;
+    esac
+
+    echo "[ERROR] Unsupported $kind filename:"
+    echo "  $filename"
+    return 1
+}
+
+validate_cached_reference() {
+    local cached_file="$1"
+    local original_filename="$2"
+
+    if [[ ! -s "$cached_file" ]]; then
+        echo "[ERROR] Cached reference is missing or empty:"
+        echo "  $cached_file"
+        return 1
+    fi
+
+    case "$original_filename" in
+        *.gz)
+            if ! gzip -t "$cached_file" >/dev/null 2>&1; then
+                echo "[ERROR] Cached gzip file is corrupt or incomplete:"
+                echo "  $cached_file"
+                return 1
+            fi
+            ;;
+    esac
+
+    return 0
+}
+
+download_reference_to_cache() {
+    local url="$1"
+    local destination="$2"
+    local original_filename="$3"
+    local partial_file="${destination}.part"
+
+    mkdir -p "$(dirname "$destination")"
+
+    if [[ -s "$destination" ]]; then
+        if validate_cached_reference "$destination" "$original_filename"; then
+            echo "[CACHE] Reusing downloaded reference:"
+            echo "  $destination"
+            return 0
+        fi
+
+        echo "[WARNING] Removing invalid cached reference:"
+        echo "  $destination"
+        rm -f "$destination"
+    fi
+
+    echo "[DOWNLOAD] URL:"
+    echo "  $url"
+    echo "[DOWNLOAD] Cache destination:"
+    echo "  $destination"
+
+    if command -v aria2c >/dev/null 2>&1; then
+        aria2c \
+            --continue=true \
+            --max-connection-per-server=8 \
+            --split=8 \
+            --min-split-size=10M \
+            --retry-wait=20 \
+            --max-tries=50 \
+            --timeout=60 \
+            --connect-timeout=30 \
+            --allow-overwrite=true \
+            --auto-file-renaming=false \
+            --dir "$(dirname "$partial_file")" \
+            --out "$(basename "$partial_file")" \
+            "$url"
+
+    elif command -v curl >/dev/null 2>&1; then
+        curl \
+            --fail \
+            --location \
+            --connect-timeout 30 \
+            --retry 10 \
+            --retry-delay 20 \
+            --retry-connrefused \
+            --continue-at - \
+            --output "$partial_file" \
+            "$url"
+
+    elif command -v wget >/dev/null 2>&1; then
+        wget \
+            --continue \
+            --tries=50 \
+            --waitretry=20 \
+            --timeout=60 \
+            --read-timeout=60 \
+            --retry-connrefused \
+            --output-document="$partial_file" \
+            "$url"
+
+    else
+        echo "[ERROR] aria2c, curl and wget are unavailable."
+        return 1
+    fi
+
+    if ! validate_cached_reference "$partial_file" "$original_filename"; then
+        echo "[ERROR] Downloaded reference failed validation."
+        rm -f "$partial_file"
+        return 1
+    fi
+
+    mv -f "$partial_file" "$destination"
+
+    echo "[OK] Reference stored in persistent cache:"
+    echo "  $destination"
+}
+
+resolve_reference_input() {
+    local label="$1"
+    local kind="$2"
+    local source_value="$3"
+    local cache_subdirectory="$4"
+
+    local clean_source
+    local filename
+    local destination
+    local source_absolute
+
+    clean_source="${source_value%%\?*}"
+    filename="$(basename "$clean_source")"
+
+    if [[ -z "$filename" || "$filename" == "." || "$filename" == "/" ]]; then
+        echo "[ERROR] Could not determine filename for $label:"
+        echo "  $source_value"
+        exit 1
+    fi
+
+    if ! validate_reference_filename "$kind" "$filename"; then
+        exit 1
+    fi
+
+    destination="$CUSTOM_HOST_CACHE/$cache_subdirectory/$filename"
+
+    if is_url "$source_value"; then
+        if ! download_reference_to_cache \
+            "$source_value" \
+            "$destination" \
+            "$filename"; then
+
+            echo "[ERROR] Failed to download $label."
+            exit 1
+        fi
+    else
+        if [[ ! -s "$source_value" ]]; then
+            echo "[ERROR] Local $label was not found or is empty:"
+            echo "  $source_value"
+            exit 1
+        fi
+
+        source_absolute="$(readlink -f "$source_value")"
+
+        if [[ "$source_absolute" != "$destination" ]]; then
+            if [[ -s "$destination" ]] &&
+               validate_cached_reference "$destination" "$filename"; then
+
+                echo "[CACHE] Reusing cached $label:"
+                echo "  $destination"
+            else
+                rm -f "$destination"
+
+                echo "[CACHE] Copying local $label into persistent cache:"
+                echo "  Source:      $source_absolute"
+                echo "  Destination: $destination"
+
+                if ! cp --reflink=auto -f "$source_absolute" "$destination" 2>/dev/null; then
+                    cp -f "$source_absolute" "$destination"
+                fi
+            fi
+        fi
+
+        if ! validate_cached_reference "$destination" "$filename"; then
+            echo "[ERROR] Cached copy of $label failed validation."
+            exit 1
+        fi
+    fi
+
+    RESOLVED_REFERENCE="$(readlink -f "$destination")"
+}
+
+materialize_fasta_reference() {
+    local source_file="$1"
+    local destination_file="$2"
+    local temporary_file="${destination_file}.tmp"
+
+    rm -f "$temporary_file"
+
+    case "$source_file" in
+        *.gz)
+            if ! gzip -dc -- "$source_file" > "$temporary_file"; then
+                echo "[ERROR] Could not decompress FASTA:"
+                echo "  $source_file"
+                rm -f "$temporary_file"
+                return 1
+            fi
+            ;;
+
+        *)
+            if ! cp -f -- "$source_file" "$temporary_file"; then
+                echo "[ERROR] Could not copy FASTA:"
+                echo "  $source_file"
+                rm -f "$temporary_file"
+                return 1
+            fi
+            ;;
+    esac
+
+    if [[ ! -s "$temporary_file" ]] ||
+       ! grep -qm1 '^>' "$temporary_file"; then
+
+        echo "[ERROR] Materialized FASTA is empty or invalid:"
+        echo "  $source_file"
+        rm -f "$temporary_file"
+        return 1
+    fi
+
+    mv -f "$temporary_file" "$destination_file"
+}
+
+prepare_cached_gtf_gz() {
+    local source_file="$1"
+    local destination_file="$2"
+    local temporary_file="${destination_file}.tmp"
+
+    rm -f "$temporary_file"
+
+    case "$source_file" in
+        *.gz)
+            if ! gzip -t "$source_file" >/dev/null 2>&1; then
+                echo "[ERROR] Invalid compressed GTF:"
+                echo "  $source_file"
+                return 1
+            fi
+
+            cp -f -- "$source_file" "$temporary_file"
+            ;;
+
+        *)
+            if ! gzip -c -- "$source_file" > "$temporary_file"; then
+                echo "[ERROR] Could not compress GTF:"
+                echo "  $source_file"
+                rm -f "$temporary_file"
+                return 1
+            fi
+            ;;
+    esac
+
+    if ! gzip -t "$temporary_file" >/dev/null 2>&1; then
+        echo "[ERROR] Prepared GTF failed gzip validation:"
+        echo "  $temporary_file"
+        rm -f "$temporary_file"
+        return 1
+    fi
+
+    mv -f "$temporary_file" "$destination_file"
+}
 
 # Função para mostrar instruções de uso
 usage() {
@@ -55,12 +432,16 @@ usage() {
     echo "  bash $0 --genome <genome.fa.gz> --gtf-file <annotations.gtf.gz> --ncbi-taxon-id <TaxonID> --protein-fasta <proteins.fa.gz>"
     echo ""
     echo "Required options:"
-    echo "  -d, --genome           Path to host genome FASTA (.fa.gz)"
-    echo "  -g, --gtf-file         Path to GTF annotation file (.gtf.gz)"
+    echo " -d, --genome Local path or URL to the host genome FASTA"
+    echo "                 Supported: .fa, .fna, .fasta and gzipped equivalents"
+    echo " -g, --gtf-file Local path or URL to the GTF annotation"
+    echo "                 Supported: .gtf and .gtf.gz"
     echo "  -c, --ncbi-taxon-id    NCBI Taxon ID of the host species"
     echo ""
     echo "Gold OrgDb options:"
-    echo "  -p, --protein-fasta    Protein FASTA from the same annotation/release as the GTF. Required to create the gold OrgDb."
+    echo " -p, --protein-fasta Local path or URL to the protein FASTA from"
+    echo "                       the same annotation/release as the GTF."
+    echo "                       Required to create the gold OrgDb."
     echo "      --skip-orgdb       Skip gold OrgDb creation"
     echo "      --force-orgdb      Rebuild gold OrgDb even if an existing compatible OrgDb is detected"
     echo "      --no-skip-if-compatible"
@@ -77,16 +458,30 @@ usage() {
     echo "      --rebuild-kraken-taxonomy-cache"
     echo "                         Delete and rebuild the shared Kraken2 taxonomy cache before using it"
     echo ""
-    echo "Deprecated/ignored:"
-    echo "  -o, --offline-folder   Kept for backwards compatibility with the old NCBI OrgDb workflow. Not used by the gold OrgDb workflow."
+    echo "Installation cache:"
+    echo " -o, --offline-folder Override the persistent cache recorded by the MTD installer."
+    echo "                       Normally this option is unnecessary because the path is"
+    echo "                       read automatically from: $MTDIR/offlineCachePath"
     echo ""
     echo "Other:"
     echo "      --help             Show this help message"
     echo ""
-    echo "Example:"
-    echo "  bash $0 \\\n    --genome /path/to/Biomphalaria.dna.toplevel.fa.gz \\\n    --gtf-file /path/to/Biomphalaria.62.gtf.gz \\\n    --protein-fasta /path/to/Biomphalaria.pep.all.fa.gz \\\n    --ncbi-taxon-id 6526"
-    echo ""
-    exit 1
+echo "Examples:"
+echo ""
+echo "Local files:"
+echo " bash $0 \\"
+echo "   --genome /path/to/species.dna.toplevel.fa.gz \\"
+echo "   --gtf-file /path/to/species.annotation.gtf.gz \\"
+echo "   --protein-fasta /path/to/species.pep.all.fa.gz \\"
+echo "   --ncbi-taxon-id 6526"
+echo ""
+echo "URLs:"
+echo " bash $0 \\"
+echo "   --genome https://server/species.dna.toplevel.fa.gz \\"
+echo "   --gtf-file https://server/species.annotation.gtf.gz \\"
+echo "   --protein-fasta https://server/species.pep.all.fa.gz \\"
+echo "   --ncbi-taxon-id 6526"
+echo ""    exit 1
 }
 
 # Define as opções curtas e longas
@@ -176,41 +571,57 @@ done
 
 # Verificação básica de argumentos obrigatórios
 if [[ -z "${download:-}" || -z "${gtf:-}" || -z "${customized:-}" ]]; then
-    echo "Error: Missing required arguments"
+    echo "[ERROR] Missing required arguments."
     usage
 fi
 
-if [[ ! -s "$download" ]]; then
-    echo "Error: genome FASTA not found or empty: $download"
+if ! [[ "$customized" =~ ^[1-9][0-9]*$ ]]; then
+    echo "[ERROR] Invalid NCBI Taxon ID:"
+    echo "  $customized"
     exit 1
 fi
 
-if [[ ! -s "$gtf" ]]; then
-    echo "Error: GTF file not found or empty: $gtf"
-    exit 1
-fi
+load_persistent_installation_cache
+
+resolve_reference_input \
+    "host genome" \
+    "genome" \
+    "$download" \
+    "genome"
+
+download="$RESOLVED_REFERENCE"
+
+resolve_reference_input \
+    "GTF annotation" \
+    "gtf" \
+    "$gtf" \
+    "annotation"
+
+gtf="$RESOLVED_REFERENCE"
 
 if [[ "$SKIP_ORGDB" != "1" && -z "${protein_fasta:-}" ]]; then
-    echo "WARNING: --protein-fasta was not provided. Gold OrgDb creation will be skipped."
-    echo "WARNING: To create a reference-matched OrgDb, provide the protein FASTA from the same annotation/release as the GTF."
+    echo "[WARNING] --protein-fasta was not provided."
+    echo "[WARNING] Gold OrgDb creation will be skipped."
+    echo "[WARNING] Provide the protein FASTA from the same"
+    echo "[WARNING] annotation/release as the GTF to create it."
     SKIP_ORGDB=1
 fi
 
-if [[ "$SKIP_ORGDB" != "1" && ! -s "$protein_fasta" ]]; then
-    echo "Error: protein FASTA not found or empty: $protein_fasta"
+if [[ "$SKIP_ORGDB" != "1" ]]; then
+    resolve_reference_input \
+        "protein FASTA" \
+        "protein" \
+        "$protein_fasta" \
+        "protein"
+
+    protein_fasta="$RESOLVED_REFERENCE"
+fi
+
+cd "$MTDIR" || {
+    echo "[ERROR] Could not enter MTD directory:"
+    echo "  $MTDIR"
     exit 1
-fi
-
-# get MTD folder place; same as Install.sh script file path (in the MTD folder)
-dir=$(dirname $(readlink -f $0))
-cd $dir # MTD folder place
-
-# Normalize MTDIR after possible tilde expansion.
-MTDIR=$(cd "$MTDIR" && pwd)
-
-if [[ -z "$KRAKEN_TAXONOMY_CACHE" ]]; then
-    KRAKEN_TAXONOMY_CACHE="$MTDIR/kraken2_taxonomy_cache"
-fi
+}
 
 # ------------------------------------------------------------
 # Clean previous files from the same TaxID/reference
@@ -426,25 +837,16 @@ DBNAME=kraken2DB_${customized}
 rm -rf $DBNAME 
 mkdir -p $DBNAME
 cd $DBNAME
-#cp /media/me/4TB_BACKUP_LBN/Compressed/MTD/Calidris_pugnax.ASM143184v1.dna.toplevel.fa.gz .
-#cp /media/me/4TB_BACKUP_LBN/Compressed/MTD/Myotis_lucifugus/Myotis_lucifugus.Myoluc2.0.dna.toplevel.fa.gz .
-#wget -c $download #http://ftp.ensembl.org/pub/release-104/fasta/mus_musculus/dna/Mus_musculus.GRCm39.dna.primary_assembly.fa.gz
-cp -u $download .
-#bash ~/MTD/Customized_host.sh -d http://ftp.ensembl.org/pub/release-111/fasta/myotis_lucifugus/dna/Myotis_lucifugus.Myoluc2.0.dna.toplevel.fa.gz -c 59463 -g http://ftp.ensembl.org/pub/release-111/gtf/myotis_lucifugus/Myotis_lucifugus.Myoluc2.0.111.gtf.gz
 
-#Morcego offline
-#bash ~/MTD/Customized_host_offline.sh -d /media/me/4TB_BACKUP_LBN/Compressed/MTD/Myotis_lucifugus/Myotis_lucifugus.Myoluc2.0.dna.toplevel.fa.gz -g /media/me/4TB_BACKUP_LBN/Compressed/MTD/Myotis_lucifugus/Myotis_lucifugus.Myoluc2.0.111.gtf.gz -c 59463
+echo "[INFO] Preparing host genome FASTA from cache:"
+echo "  $download"
 
-#Calidris pugnax
-#bash  ~/MTD/Customized_host.sh -t 20 -d https://ftp.ensembl.org/pub/release-111/fasta/calidris_pugnax/dna/Calidris_pugnax.ASM143184v1.dna.toplevel.fa.gz -c 198806 -g https://ftp.ensembl.org/pub/release-111/gtf/calidris_pugnax/Calidris_pugnax.ASM143184v1.111.gtf.gz
-#Rattus norvegicus
-#bash ~/MTD/Customized_host_offline.sh -d /media/me/4TB_BACKUP_LBN/Compressed/MTD/Rattus_norvegicus/Rattus_norvegicus.mRatBN7.2.dna.toplevel.fa.gz -g /media/me/4TB_BACKUP_LBN/Compressed/MTD/-c 10116
+if ! materialize_fasta_reference \
+    "$download" \
+    "genome_${customized}.fa"; then
 
-#Gallus gallus
-#bash ~/MTD/Customized_host_offline.sh -d /media/me/4TB_BACKUP_LBN/Compressed/MTD/Gallus_gallus/Gallus_gallus.bGalGal1.mat.broiler.GRCg7b.dna.toplevel.fa.gz -g /media/me/4TB_BACKUP_LBN/Compressed/MTD/Gallus_gallus/Gallus_gallus.bGalGal1.mat.broiler.GRCg7b.111.gtf.gz -c 9031
-
-unpigz *.fa.gz
-mv *.fa genome_${customized}.fa
+    exit 1
+fi
 
 # Extraia o nome científico da espécie baseado no Taxon_ID
 species_name=$(awk -F, -v taxid="$customized" '$1 == taxid {print $3}' "$MTDIR/HostSpecies.csv")
@@ -610,23 +1012,30 @@ kraken2-build --add-to-library $DBNAME/genome_${customized}.fa --threads $thread
 kraken2-build --build --threads $threads --db $DBNAME
 # download host GTF
 #wget -c $gtf -P ref_${customized} -O ref_${customized}.gtf.gz
-echo "Copying GTF file to ref_${customized}/ref_${customized}.gtf.gz"
-rm -rf ref_${customized}
-mkdir -p ref_${customized}
-cp $gtf ref_${customized}
-cd ref_${customized}
-mv *.gtf.gz ref_${customized}.gtf.gz
+echo "[INFO] Preparing GTF annotation from cache:"
+echo "  $gtf"
 
-#cp /media/me/4TB_BACKUP_LBN/Compressed/MTD/Calidris_pugnax.ASM143184v1.111.gtf.gz .
-#cp /media/me/4TB_BACKUP_LBN/Compressed/MTD/Myotis_lucifugus/Myotis_lucifugus.Myoluc2.0.111.gtf.gz .
-cd ..
+rm -rf "$MTDIR/ref_${customized}"
+mkdir -p "$MTDIR/ref_${customized}"
+
+if ! prepare_cached_gtf_gz \
+    "$gtf" \
+    "$MTDIR/ref_${customized}/ref_${customized}.gtf.gz"; then
+
+    exit 1
+fi
+
 echo "Building indexes for hisat2"
 rm -rf hisat2_index_${customized}
 mkdir -p hisat2_index_${customized}
 cd hisat2_index_${customized}
-cp ../ref_${customized}/ref_${customized}.gtf.gz .
-gzip -d *.gtf.gz
-mv *.gtf genome.gtf
+if ! gzip -dc \
+    "$MTDIR/ref_${customized}/ref_${customized}.gtf.gz" \
+    > genome.gtf; then
+
+    echo "[ERROR] Could not decompress GTF for HISAT2."
+    exit 1
+fi
 python $dir/Installation/hisat2_extract_splice_sites.py genome.gtf > genome.ss
 python $dir/Installation/hisat2_extract_exons.py genome.gtf > genome.exon
 if [[ ! -s "../$DBNAME/genome_${customized}.fa" ]]; then
@@ -638,14 +1047,22 @@ hisat2-build -p $threads --exon genome.exon --ss genome.ss genome.fa genome_tran
 cd ..
 
 echo "Creating blast databases for custom reference $customized"
-mkdir -p $MTDIR/blastdb_$customized
-cd $MTDIR/blastdb_$customized
-#cp $DBNAME/genome_${customized}.fa .
-cp $download . 
-gunzip *.fa.gz 
-mv *.fa blastdb_$customized
+rm -rf "$MTDIR/blastdb_${customized}"
+mkdir -p "$MTDIR/blastdb_${customized}"
+cd "$MTDIR/blastdb_${customized}" || exit 1
 
-makeblastdb -in $MTDIR/blastdb_$customized/blastdb_$customized -dbtype nucl -out $MTDIR/blastdb_$customized/blastdb_$customized -parse_seqids
+if ! materialize_fasta_reference \
+    "$download" \
+    "blastdb_${customized}"; then
+
+    exit 1
+fi
+
+makeblastdb \
+    -in "$MTDIR/blastdb_${customized}/blastdb_${customized}" \
+    -dbtype nucl \
+    -out "$MTDIR/blastdb_${customized}/blastdb_${customized}" \
+    -parse_seqids
 
 echo "Creating gold reference-matched OrgDb package"
 echo -e "Selected host species:\e[3m $species_name\e[0m"
@@ -670,6 +1087,7 @@ else
         --gtf "$MTDIR/ref_${customized}/ref_${customized}.gtf.gz"
         --genome "$MTDIR/kraken2DB_${customized}/genome_${customized}.fa"
         --protein-fasta "$protein_fasta"
+        --eggnog-db "$EGGNOG_DB_CACHE"
         --lib "$MTDIR/custom_R_libs"
         --build-dir "$MTDIR/build/orgdb_gold/${customized}"
         --threads "$threads"

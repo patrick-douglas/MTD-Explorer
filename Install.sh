@@ -535,6 +535,8 @@ prepare_installation_cache() {
         "$offline_files_folder/Kraken2DB_micro/library/bacteria/all" \
         "$offline_files_folder/Kraken2DB_micro/library/archaea/all" \
         "$offline_files_folder/Kraken2DB_micro/library/plasmid"
+        "$offline_files_folder/eggNOG/emapperdb-5.0.2" \
+        "$offline_files_folder/Customized_hosts"
 
     ensure_cached_file \
         "Virus-Host DB reference" \
@@ -895,6 +897,7 @@ prepare_local_kraken_host_genome() {
 initialize_installation() {
     cd "$dir" || exit 1
     printf '%s\n' "$condapath" > "$dir/condaPath"
+    printf '%s\n' "$offline_files_folder" > "$dir/offlineCachePath"
     # shellcheck disable=SC1090
     source "$condapath/etc/profile.d/conda.sh"
 

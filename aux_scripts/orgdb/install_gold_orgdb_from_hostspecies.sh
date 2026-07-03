@@ -51,7 +51,22 @@ fi
 MTDIR="${MTDIR:-$MTDIR_DEFAULT}"
 
 HOSTSPECIES_DEFAULT="$MTDIR/HostSpecies.csv"
-EGGNOG_DB_DEFAULT="$MTDIR/eggnog_db"
+
+OFFLINE_CACHE_PATH_FILE="$MTDIR/offlineCachePath"
+OFFLINE_CACHE_ROOT=""
+
+if [[ -s "$OFFLINE_CACHE_PATH_FILE" ]]; then
+    IFS= read -r OFFLINE_CACHE_ROOT < "$OFFLINE_CACHE_PATH_FILE"
+    OFFLINE_CACHE_ROOT="${OFFLINE_CACHE_ROOT%$'\r'}"
+fi
+
+if [[ -n "$OFFLINE_CACHE_ROOT" ]]; then
+    EGGNOG_DB_DEFAULT="$OFFLINE_CACHE_ROOT/eggNOG/emapperdb-5.0.2"
+else
+    # Compatibility fallback for installations created before offlineCachePath.
+    EGGNOG_DB_DEFAULT="$MTDIR/eggnog_db"
+fi
+
 LIB_DEFAULT="$MTDIR/custom_R_libs"
 BUILD_DIR_DEFAULT="$MTDIR/build/orgdb_gold"
 
