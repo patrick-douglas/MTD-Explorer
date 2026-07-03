@@ -591,7 +591,7 @@ fi
     ensure_cached_file \
     "HUMAnN utility mapping database" \
     "https://huttenhower.sph.harvard.edu/humann_data/full_mapping_v201901b.tar.gz" \
-    "$offline_files_folder/HUMAnN/full_mapping_v201901b.tar.gz""
+    "$offline_files_folder/HUMAnN/full_mapping_v201901b.tar.gz"
 
     ensure_cached_file \
         "HUMAnN UniRef90 annotated database" \
