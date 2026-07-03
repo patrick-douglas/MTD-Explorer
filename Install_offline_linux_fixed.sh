@@ -984,7 +984,7 @@ build_mouse_kraken_database() {
 
     prepare_local_kraken_host_genome \
         "$database" \
-        "$offline_files_folder/GCF_000001635.27_GRCm39_genomic.fna.gz" \
+        "$offline_files_folder/Ref_genomes/Mus_musculus/GCF_000001635.27_GRCm39_genomic.fna.gz" \
         "GCF_000001635.27_GRCm39_genomic.fna.gz" \
         "$fasta_name"
 
@@ -1004,7 +1004,7 @@ build_rhesus_kraken_database() {
 
     prepare_local_kraken_host_genome \
         "$database" \
-        "$offline_files_folder/GCF_003339765.1_Mmul_10_genomic.fna.gz" \
+        "$offline_files_folder/Ref_genomes/Macaca_mulatta/GCF_003339765.1_Mmul_10_genomic.fna.gz" \
         "GCF_003339765.1_Mmul_10_genomic.fna.gz" \
         "$fasta_name"
 
