@@ -544,9 +544,9 @@ then
 fi
 
     ensure_cached_file \
-        "Virus-Host DB reference" \
-        "https://www.genome.jp/ftp/db/virushostdb/virushostdb.genomic.fna.gz" \
-        "$offline_files_folder/Ref_genomes/MTD_virus/virushostdb.genomic.fna.gz"
+    "Virus-Host DB reference" \
+    "https://sourceforge.net/projects/mtd/files/MTD/virushostdb.genomic.fna.gz/download" \
+    "$offline_files_folder/Ref_genomes/MTD_virus/virushostdb.genomic.fna.gz"
 
     ensure_cached_file \
         "Mouse NCBI GRCm39 genome for Kraken2" \
@@ -588,10 +588,11 @@ fi
         "https://ftp.ensembl.org/pub/release-104/gtf/homo_sapiens/Homo_sapiens.GRCh38.104.gtf.gz" \
         "$offline_files_folder/Ref_genomes/Homo_sapiens/Homo_sapiens.GRCh38.104.gtf.gz"
 
-    ensure_cached_file \
-        "HUMAnN utility mapping database" \
-        "https://huttenhower.sph.harvard.edu/humann_data/full_mapping_v201901b.tar.gz" \
-        "$offline_files_folder/HUMAnN/full_mapping_v201901b.tar.gz"
+    ensure_cached_file_with_fallback \
+    "HUMAnN utility mapping database" \
+    "https://sourceforge.net/projects/mtd/files/MTD/HUMAnN/ref_database/full_mapping_v201901b.tar.gz/download" \
+    "https://huttenhower.sph.harvard.edu/humann_data/full_mapping_v201901b.tar.gz" \
+    "$offline_files_folder/HUMAnN/full_mapping_v201901b.tar.gz"
 
     ensure_cached_file \
         "HUMAnN UniRef90 annotated database" \
