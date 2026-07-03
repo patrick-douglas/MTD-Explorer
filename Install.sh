@@ -924,8 +924,8 @@ install_system_dependencies() {
     sudo_with_pass "sudo apt install libharfbuzz-dev libfribidi-dev libfreetype6-dev -y"
     sudo_with_pass "sudo apt install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev -y"
     sudo_with_pass "sudo apt install libharfbuzz-dev rsync libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev pigz -y"
-    sudo_with_pass "sudo apt-get install curl wget ca-certificates -y"
-}
+    sudo_with_pass "sudo apt-get install curl wget ca-certificates git -y"
+    }
 
 create_conda_environments() {
     safe_conda_deactivate
