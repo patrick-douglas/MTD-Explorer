@@ -114,20 +114,33 @@ trap on_interrupt INT TERM
 
 usage() {
     cat <<USAGE
+
 Usage:
-  $0 -p <condapath> -o <offline_files_folder> [options]
+
+  $0 -o <offline_files_folder> [options]
 
 Required:
-  -p PATH   Conda installation path
-  -o PATH   Persistent installation cache; created and populated if absent
+
+  -o PATH  Persistent installation cache; created and populated if absent
 
 Optional:
-  -k INT    Kraken2 k-mer length used during --build
-  -m INT    Kraken2 minimizer length used during --build
-  -s INT    Kraken2 minimizer spaces used during --build
-  -r INT    Bracken read length (default: 75)
-  -w TEXT Sudo password for non-interactive installation (legacy compatibility)
-  -h        Show this help message
+
+  -p PATH  Miniconda installation path
+           Default: \$HOME/miniconda3
+
+  -k INT   Kraken2 k-mer length used during --build
+  -m INT   Kraken2 minimizer length used during --build
+  -s INT   Kraken2 minimizer spaces used during --build
+  -r INT   Bracken read length (default: 75)
+  -w TEXT  Sudo password for non-interactive installation
+  -h       Show this help message
+
+The installer automatically downloads and installs Miniconda.
+
+WARNING:
+If the selected Miniconda directory already exists, the installer will ask
+for explicit confirmation before permanently deleting it.
+
 USAGE
 }
 
@@ -137,7 +150,7 @@ parse_arguments() {
         exit 0
     fi
 
-    if [[ $# -lt 4 ]]; then
+   if [[ $# -lt 2 ]]; then
         usage
         exit 1
     fi
@@ -170,19 +183,35 @@ parse_arguments() {
 }
 
 validate_arguments() {
-    if [[ -z "$condapath" || -z "$offline_files_folder" ]]; then
+    if [[ -z "$offline_files_folder" ]]; then
+        log_error "The persistent installation cache path is required."
         usage
         exit 1
     fi
 
-    if ! condapath="$(readlink -f "$condapath")"; then
-        log_error "Could not resolve Conda installation path."
+    # Expand a literal leading ~, including when the user passed it quoted.
+    if [[ "$condapath" == "~" ]]; then
+        condapath="$HOME"
+    elif [[ "$condapath" == "~/"* ]]; then
+        condapath="$HOME/${condapath#~/}"
+    fi
+
+    if [[ "$offline_files_folder" == "~" ]]; then
+        offline_files_folder="$HOME"
+    elif [[ "$offline_files_folder" == "~/"* ]]; then
+        offline_files_folder="$HOME/${offline_files_folder#~/}"
+    fi
+
+    # -m allows the final path to be resolved even before Miniconda exists.
+    if ! condapath="$(readlink -m -- "$condapath")"; then
+        log_error "Could not resolve the Miniconda installation path."
         exit 1
     fi
 
-    if [[ ! -f "$condapath/etc/profile.d/conda.sh" ]]; then
-        log_error "Conda initialization script not found:"
-        log_error "  $condapath/etc/profile.d/conda.sh"
+    if [[ -z "$condapath" || "$condapath" == "/" || "$condapath" == "$HOME" ]]; then
+        log_error "Unsafe Miniconda installation path:"
+        log_error "  $condapath"
+        log_error "Refusing to continue because this path must never be removed."
         exit 1
     fi
 
@@ -198,7 +227,7 @@ validate_arguments() {
         exit 1
     fi
 
-    if ! offline_files_folder="$(readlink -f "$offline_files_folder")"; then
+    if ! offline_files_folder="$(readlink -f -- "$offline_files_folder")"; then
         log_error "Could not resolve the installation cache path."
         exit 1
     fi
@@ -218,6 +247,12 @@ validate_arguments() {
         log_error "Invalid Bracken read length: $read_len"
         exit 1
     fi
+
+    log_info "Miniconda installation path:"
+    log_info "  $condapath"
+
+    log_info "Persistent installation cache:"
+    log_info "  $offline_files_folder"
 }
 
 configure_paths_and_options() {
@@ -286,6 +321,171 @@ run_as_root() {
     # Authentication was validated above, so this command must not prompt.
     sudo -n "$@"
 }
+confirm_miniconda_removal() {
+    local confirmation=""
+
+    print_rule
+    log_warning "An existing Miniconda installation was found at:"
+    log_warning "  $condapath"
+    echo
+    log_warning "Continuing will permanently delete this directory."
+    log_warning "All Conda environments and packages stored inside it will be lost."
+    log_warning "This operation cannot be undone."
+    print_rule
+
+    if [[ ! -t 0 ]]; then
+        log_error "Interactive confirmation is required before deleting Miniconda."
+        log_error "Run the installer directly from an interactive terminal."
+        exit 1
+    fi
+
+    printf '%s' "${y}Remove the existing Miniconda installation? [y/N]: ${w}"
+    read -r confirmation
+
+    case "$confirmation" in
+        y | Y)
+            echo
+            log_warning "Removal confirmed by the user."
+            ;;
+        *)
+            echo
+            log_warning "Miniconda removal was not confirmed."
+            log_warning "Installation cancelled without deleting anything."
+            exit 0
+            ;;
+    esac
+}
+
+detect_miniconda_architecture() {
+    local machine_arch
+
+    machine_arch="$(uname -m)"
+
+    case "$machine_arch" in
+        x86_64 | amd64)
+            printf '%s\n' "x86_64"
+            ;;
+
+        aarch64 | arm64)
+            printf '%s\n' "aarch64"
+            ;;
+
+        *)
+            log_error "Unsupported CPU architecture for Miniconda:"
+            log_error "  $machine_arch"
+            return 1
+            ;;
+    esac
+}
+
+remove_existing_miniconda() {
+    if [[ ! -e "$condapath" ]]; then
+        return 0
+    fi
+
+    case "$condapath" in
+        "" | "/" | "$HOME")
+            log_error "Refusing to remove unsafe path:"
+            log_error "  $condapath"
+            exit 1
+            ;;
+    esac
+
+    confirm_miniconda_removal
+
+    log_info "Removing the previous Miniconda installation:"
+    log_info "  $condapath"
+
+    if ! rm -rf -- "$condapath"; then
+        log_error "Could not remove the previous Miniconda installation:"
+        log_error "  $condapath"
+        exit 1
+    fi
+
+    if [[ -e "$condapath" ]]; then
+        log_error "The previous Miniconda directory still exists:"
+        log_error "  $condapath"
+        exit 1
+    fi
+
+    log_ok "Previous Miniconda installation removed."
+}
+
+install_miniconda() {
+    local miniconda_arch
+    local miniconda_url
+    local miniconda_installer
+
+    miniconda_arch="$(detect_miniconda_architecture)" || exit 1
+
+    miniconda_url="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-${miniconda_arch}.sh"
+    miniconda_installer="${TMPDIR:-/tmp}/mtd-miniconda-installer-${USER:-user}-$$.sh"
+
+    remove_existing_miniconda
+
+    log_info "Downloading the latest Miniconda installer..."
+    log_info "Architecture: $miniconda_arch"
+    log_info "URL: $miniconda_url"
+
+    rm -f -- "$miniconda_installer"
+
+    if ! curl \
+        --fail \
+        --location \
+        --show-error \
+        --retry 5 \
+        --retry-delay 10 \
+        --connect-timeout 30 \
+        --output "$miniconda_installer" \
+        "$miniconda_url"; then
+
+        rm -f -- "$miniconda_installer"
+
+        log_error "Could not download the Miniconda installer."
+        exit 1
+    fi
+
+    if [[ ! -s "$miniconda_installer" ]]; then
+        rm -f -- "$miniconda_installer"
+
+        log_error "The downloaded Miniconda installer is empty."
+        exit 1
+    fi
+
+    log_ok "Miniconda installer downloaded successfully."
+
+    log_info "Installing Miniconda in batch mode:"
+    log_info "  $condapath"
+
+    if ! bash "$miniconda_installer" -b -p "$condapath"; then
+        rm -f -- "$miniconda_installer"
+
+        log_error "Miniconda installation failed."
+        exit 1
+    fi
+
+    rm -f -- "$miniconda_installer"
+
+    if [[ ! -x "$condapath/bin/conda" ]]; then
+        log_error "The Conda executable was not created:"
+        log_error "  $condapath/bin/conda"
+        exit 1
+    fi
+
+    if [[ ! -f "$condapath/etc/profile.d/conda.sh" ]]; then
+        log_error "The Conda initialization script was not created:"
+        log_error "  $condapath/etc/profile.d/conda.sh"
+        exit 1
+    fi
+
+    # Remove cached shell command paths inherited from an older installation.
+    hash -r
+
+    log_ok "Miniconda installed and validated successfully."
+    log_info "Installed Conda version:"
+    "$condapath/bin/conda" --version
+}
+
 
 safe_conda_deactivate() {
     conda deactivate >/dev/null 2>&1 || true
@@ -1476,12 +1676,16 @@ show_r_package_versions() {
 
 main() {
     init_colors
+
     parse_arguments "$@"
     validate_arguments
+
+    install_system_dependencies
+    install_miniconda
+
     configure_paths_and_options
     initialize_installation
 
-    install_system_dependencies
     show_progress ">" "5%" "Preparing persistent installation cache..."
     prepare_installation_cache
 
