@@ -524,19 +524,24 @@ prepare_installation_cache() {
     log_info "Preparing persistent MTD installation cache:"
     log_info "  $offline_files_folder"
 
-    mkdir -p \
-        "$offline_files_folder/Ref_genomes/MTD_virus" \
-        "$offline_files_folder/Ref_genomes/Mus_musculus" \
-        "$offline_files_folder/Ref_genomes/Macaca_mulatta" \
-        "$offline_files_folder/Ref_genomes/Homo_sapiens" \
-        "$offline_files_folder/HUMAnN" \
-        "$offline_files_folder/Kraken2_taxonomy_cache" \
-        "$offline_files_folder/Kraken2DB_micro/library/viral/all" \
-        "$offline_files_folder/Kraken2DB_micro/library/bacteria/all" \
-        "$offline_files_folder/Kraken2DB_micro/library/archaea/all" \
-        "$offline_files_folder/Kraken2DB_micro/library/plasmid"
-        "$offline_files_folder/eggNOG/emapperdb-5.0.2" \
-        "$offline_files_folder/Customized_hosts"
+if ! mkdir -p \
+    "$offline_files_folder/Ref_genomes/MTD_virus" \
+    "$offline_files_folder/Ref_genomes/Mus_musculus" \
+    "$offline_files_folder/Ref_genomes/Macaca_mulatta" \
+    "$offline_files_folder/Ref_genomes/Homo_sapiens" \
+    "$offline_files_folder/HUMAnN" \
+    "$offline_files_folder/Kraken2_taxonomy_cache" \
+    "$offline_files_folder/Kraken2DB_micro/library/viral/all" \
+    "$offline_files_folder/Kraken2DB_micro/library/bacteria/all" \
+    "$offline_files_folder/Kraken2DB_micro/library/archaea/all" \
+    "$offline_files_folder/Kraken2DB_micro/library/plasmid" \
+    "$offline_files_folder/eggNOG/emapperdb-5.0.2" \
+    "$offline_files_folder/Customized_hosts"
+then
+    log_error "Could not create the persistent cache structure:"
+    log_error "  $offline_files_folder"
+    exit 1
+fi
 
     ensure_cached_file \
         "Virus-Host DB reference" \
