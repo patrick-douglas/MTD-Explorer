@@ -126,7 +126,7 @@ Optional:
   -m INT    Kraken2 minimizer length used during --build
   -s INT    Kraken2 minimizer spaces used during --build
   -r INT    Bracken read length (default: 75)
-  -w TEXT   Sudo password used by the existing expect helper
+  -w TEXT Sudo password for non-interactive installation (legacy compatibility)
   -h        Show this help message
 USAGE
 }
@@ -242,28 +242,49 @@ configure_paths_and_options() {
 # General helpers
 # ------------------------------------------------------------------------------
 
-sudo_with_pass() {
-    local cmd="$1"
-
-    if command -v expect >/dev/null 2>&1; then
-        expect <<EXPECT_EOF
-            set timeout -1
-            spawn bash -c "$cmd"
-            expect {
-                "*password*" {
-                    send "$sudo_password\r"
-                    exp_continue
-                }
-                eof
-            }
-EXPECT_EOF
-    elif [[ -n "$sudo_password" ]]; then
-        log_warning "expect is unavailable; using sudo -S fallback."
-        printf '%s\n' "$sudo_password" | sudo -S bash -c "${cmd#sudo }"
-    else
-        log_warning "expect is unavailable and no sudo password was supplied."
-        bash -c "$cmd"
+ensure_sudo_credentials() {
+    if (( EUID == 0 )); then
+        return 0
     fi
+
+    if ! command -v sudo >/dev/null 2>&1; then
+        log_error "sudo is required to install system dependencies."
+        return 127
+    fi
+
+    # Reuse an existing valid sudo authentication, when available.
+    if sudo -n -v >/dev/null 2>&1; then
+        return 0
+    fi
+
+    if [[ -n "$sudo_password" ]]; then
+        log_info "Validating administrator privileges..."
+
+        if ! printf '%s\n' "$sudo_password" |
+            sudo -S -p '' -v; then
+            log_error "The supplied sudo password was rejected."
+            return 1
+        fi
+    else
+        log_info "Administrator privileges are required to install system dependencies."
+
+        if ! sudo -v; then
+            log_error "Could not obtain administrator privileges."
+            return 1
+        fi
+    fi
+}
+
+run_as_root() {
+    if (( EUID == 0 )); then
+        "$@"
+        return $?
+    fi
+
+    ensure_sudo_credentials || return $?
+
+    # Authentication was validated above, so this command must not prompt.
+    sudo -n "$@"
 }
 
 safe_conda_deactivate() {
@@ -916,16 +937,33 @@ initialize_installation() {
 }
 
 install_system_dependencies() {
+    local -a system_packages=(
+        libgeos-dev
+        libharfbuzz-dev
+        libfribidi-dev
+        libfreetype6-dev
+        libpng-dev
+        libtiff5-dev
+        libjpeg-dev
+        rsync
+        pigz
+        curl
+        wget
+        ca-certificates
+    )
+
     log_info "Installing system dependencies..."
 
-    # Commands are intentionally kept in the same order as the working script.
-    sudo_with_pass "sudo apt-get update"
-    sudo_with_pass "sudo apt-get install libgeos-dev -y"
-    sudo_with_pass "sudo apt install libharfbuzz-dev libfribidi-dev libfreetype6-dev -y"
-    sudo_with_pass "sudo apt install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev -y"
-    sudo_with_pass "sudo apt install libharfbuzz-dev rsync libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev pigz -y"
-    sudo_with_pass "sudo apt-get install curl wget ca-certificates expect -y"
-    }
+    run_required_command \
+        "Updating APT package indexes" \
+        run_as_root apt-get update
+
+    run_required_command \
+        "Installing required system packages" \
+        run_as_root apt-get install -y "${system_packages[@]}"
+
+    log_ok "System dependencies installed successfully."
+}
 
 create_conda_environments() {
     safe_conda_deactivate
