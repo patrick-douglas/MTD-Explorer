@@ -167,3 +167,33 @@ Before each timed run:
 The clean installation on each machine demonstrates reproducibility.
 Repeated warm-cache component benchmarks provide the statistical performance
 comparison.
+
+
+## Important path rule
+
+Do not quote a path beginning with a literal tilde:
+
+```bash
+# Wrong: the shell passes "~" literally
+-o "~/MTD_install_cache"
+
+# Correct
+-o "$HOME/MTD_install_cache"
+
+# Also correct
+-o ~/MTD_install_cache
+```
+
+The benchmark wrapper now stops immediately if it detects a literal `~` path.
+
+## Locale hotfix for profiler versions generated before this correction
+
+Some locales format Bash `EPOCHREALTIME` with a decimal comma. If an older
+`Install_profiled.sh` reports `value too great for base`, run:
+
+```bash
+bash ./MTD_fix_profiled_locale.sh ./Install_profiled.sh
+```
+
+Alternatively, replace the suite scripts and regenerate `Install_profiled.sh`
+from the unchanged original `Install.sh`.

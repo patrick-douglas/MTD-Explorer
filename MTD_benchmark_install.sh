@@ -101,6 +101,21 @@ done
 [[ "$INTERVAL" =~ ^[0-9]+([.][0-9]+)?$ ]] || die "--interval must be numeric."
 awk -v x="$INTERVAL" 'BEGIN { exit !(x > 0) }' || die "--interval must be greater than zero."
 ((${#COMMAND[@]} > 0)) || die "No installation command was provided after --."
+
+# A tilde inside quotes is passed literally by the shell. Reject it before a
+# long installation creates paths such as /home/user/~/MTD_install_cache.
+for _mtd_arg in "${COMMAND[@]}"; do
+    if [[ "$_mtd_arg" == "~/"* || "$_mtd_arg" == *"/~/"* ]]; then
+        die "Literal '~' detected in command argument: $_mtd_arg. Use \$HOME/path or an unquoted ~/path."
+    fi
+done
+for _mtd_watch in "${WATCH_PATHS[@]}"; do
+    if [[ "$_mtd_watch" == "~/"* || "$_mtd_watch" == *"/~/"* ]]; then
+        die "Literal '~' detected in --watch-path: $_mtd_watch. Use \$HOME/path or an unquoted ~/path."
+    fi
+done
+unset _mtd_arg _mtd_watch
+
 command -v python3 >/dev/null 2>&1 || die "python3 is required for monitoring."
 
 safe_label="$(printf '%s' "$LABEL" | tr -cs 'A-Za-z0-9._-' '_')"

@@ -120,7 +120,9 @@ mtd_bench_epoch_us() {
     local realtime seconds fraction
 
     if [[ -n "${EPOCHREALTIME:-}" ]]; then
-        realtime="$EPOCHREALTIME"
+        # Bash may format EPOCHREALTIME with a comma under locales such as
+        # pt_BR. Normalize it before splitting seconds and microseconds.
+        realtime="${EPOCHREALTIME/,/.}"
         seconds="${realtime%%.*}"
         fraction="${realtime#*.}000000"
         fraction="${fraction:0:6}"
@@ -135,6 +137,8 @@ mtd_bench_seconds_to_us() {
     local value="$1"
     local whole fraction
 
+    # Accept either decimal dot or decimal comma in user-supplied values.
+    value="${value/,/.}"
     whole="${value%%.*}"
     if [[ "$value" == *.* ]]; then
         fraction="${value#*.}000000"
