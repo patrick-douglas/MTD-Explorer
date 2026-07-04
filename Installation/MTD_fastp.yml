@@ -8,3 +8,7 @@ dependencies:
   - fastp=1.3.3
   - libdeflate=1.25
   - "rust>=1.88.0"
+
+  # R packages
+  - r-ggvenndiagram=1.5.7
+  - r-eulerr=7.1.0
