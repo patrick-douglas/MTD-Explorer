@@ -11,4 +11,4 @@ dependencies:
 
   # R packages
   - r-ggvenndiagram=1.5.7
-  - r-eulerr=7.1.0
+  - r-eulerr=8.1.0
