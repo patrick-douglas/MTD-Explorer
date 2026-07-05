@@ -3308,7 +3308,318 @@ if (!is.null(cgo) && nrow(cgo@compareClusterResult) > 0) {
       unique(cgo@compareClusterResult$Cluster)
     )
   )
+  ## ------------------------------------------------------------
+  ## Additional publication-ready faceted GO dotplot
+  ## ------------------------------------------------------------
+  ## The original combined dotplot above is preserved.
+  ##
+  ## This additional script generates a faceted dotplot with:
+  ##   rows    = BP, CC and MF;
+  ##   columns = UP and DOWN;
+  ##   x-axis  = GeneRatio;
+  ##   size    = gene count;
+  ##   colour  = -log10(adjusted p-value).
+  ## ------------------------------------------------------------
 
+  go_faceted_top_n <- 5L
+
+  ## Locate the MTD installation directory from the path of the
+  ## currently running DEG_Anno_Plot.R script.
+
+  all_command_args <- commandArgs(
+    trailingOnly = FALSE
+  )
+
+  current_script_argument <- grep(
+    "^--file=",
+    all_command_args,
+    value = TRUE
+  )
+
+  if (length(current_script_argument) == 0L) {
+
+    warning(
+      "Could not determine the location of DEG_Anno_Plot.R. ",
+      "The additional faceted GO dotplot will be skipped."
+    )
+
+    writeLines(
+      "Could not determine the location of DEG_Anno_Plot.R.",
+      "biological_theme_comparison_GO_faceted_dotplot_skipped.txt"
+    )
+
+  } else {
+
+    current_script_path <- sub(
+      "^--file=",
+      "",
+      current_script_argument[1]
+    )
+
+    current_script_path <- normalizePath(
+      current_script_path,
+      mustWork = TRUE
+    )
+
+    mtd_installation_directory <- dirname(
+      current_script_path
+    )
+
+    go_faceted_script <- file.path(
+      mtd_installation_directory,
+      "aux_scripts",
+      "GO",
+      "GO_faceted_dotplot.R"
+    )
+
+    go_host_deg_directory <- normalizePath(
+      getwd(),
+      mustWork = TRUE
+    )
+
+    go_faceted_log <- paste0(
+      "biological_theme_comparison_GO_faceted_dotplot_top",
+      go_faceted_top_n,
+      ".log"
+    )
+
+    go_faceted_expected_pdf <- paste0(
+      "biological_theme_comparison_GO_faceted_dotplot_top",
+      go_faceted_top_n,
+      ".pdf"
+    )
+
+    go_faceted_expected_tiff <- paste0(
+      "biological_theme_comparison_GO_faceted_dotplot_top",
+      go_faceted_top_n,
+      ".tiff"
+    )
+
+    go_faceted_expected_data <- paste0(
+      "biological_theme_comparison_GO_faceted_dotplot_top",
+      go_faceted_top_n,
+      "_data.csv"
+    )
+
+    if (!file.exists(go_faceted_script)) {
+
+      warning(
+        "Faceted GO dotplot script was not found: ",
+        go_faceted_script
+      )
+
+      writeLines(
+        c(
+          "Faceted GO dotplot script was not found.",
+          paste0(
+            "Expected script: ",
+            go_faceted_script
+          )
+        ),
+        "biological_theme_comparison_GO_faceted_dotplot_skipped.txt"
+      )
+
+    } else {
+
+      rscript_binary <- unname(
+        Sys.which("Rscript")
+      )
+
+      if (!nzchar(rscript_binary)) {
+
+        warning(
+          "Rscript could not be found in the current environment."
+        )
+
+        writeLines(
+          "Rscript could not be found in the current environment.",
+          "biological_theme_comparison_GO_faceted_dotplot_skipped.txt"
+        )
+
+      } else {
+
+        message(
+          "============================================================"
+        )
+
+        message(
+          "[GO DOTPLOT] Running additional faceted GO dotplot"
+        )
+
+        message(
+          "[GO DOTPLOT] Script: ",
+          go_faceted_script
+        )
+
+        message(
+          "[GO DOTPLOT] Input: ",
+          go_host_deg_directory
+        )
+
+        message(
+          "[GO DOTPLOT] Top terms per ontology/direction: ",
+          go_faceted_top_n
+        )
+
+        message(
+          "============================================================"
+        )
+
+        go_faceted_execution <- tryCatch(
+          {
+
+            command_output <- suppressWarnings(
+              system2(
+                command = rscript_binary,
+                args = c(
+                  shQuote(go_faceted_script),
+                  shQuote(go_host_deg_directory)
+                ),
+                env = paste0(
+                  "GO_TOP_N=",
+                  go_faceted_top_n
+                ),
+                stdout = TRUE,
+                stderr = TRUE
+              )
+            )
+
+            command_status <- attr(
+              command_output,
+              "status"
+            )
+
+            if (is.null(command_status)) {
+              command_status <- 0L
+            }
+
+            list(
+              output = command_output,
+              status = as.integer(command_status),
+              error = NULL
+            )
+          },
+          error = function(e) {
+
+            list(
+              output = character(0),
+              status = 1L,
+              error = conditionMessage(e)
+            )
+          }
+        )
+
+        go_faceted_log_content <- c(
+          paste0(
+            "Script: ",
+            go_faceted_script
+          ),
+          paste0(
+            "Input directory: ",
+            go_host_deg_directory
+          ),
+          paste0(
+            "GO_TOP_N=",
+            go_faceted_top_n
+          ),
+          paste0(
+            "Exit status: ",
+            go_faceted_execution$status
+          ),
+          "",
+          go_faceted_execution$output
+        )
+
+        if (!is.null(go_faceted_execution$error)) {
+
+          go_faceted_log_content <- c(
+            go_faceted_log_content,
+            "",
+            paste0(
+              "Execution error: ",
+              go_faceted_execution$error
+            )
+          )
+        }
+
+        writeLines(
+          go_faceted_log_content,
+          go_faceted_log
+        )
+
+        if (length(go_faceted_execution$output) > 0) {
+
+          message(
+            paste(
+              tail(
+                go_faceted_execution$output,
+                20
+              ),
+              collapse = "\n"
+            )
+          )
+        }
+
+        if (
+          go_faceted_execution$status == 0L &&
+          file.exists(go_faceted_expected_pdf)
+        ) {
+
+          unlink(
+            "biological_theme_comparison_GO_faceted_dotplot_skipped.txt"
+          )
+
+          message(
+            "[GO DOTPLOT] Faceted PDF generated: ",
+            go_faceted_expected_pdf
+          )
+
+          if (file.exists(go_faceted_expected_tiff)) {
+
+            message(
+              "[GO DOTPLOT] Faceted TIFF generated: ",
+              go_faceted_expected_tiff
+            )
+          }
+
+          if (file.exists(go_faceted_expected_data)) {
+
+            message(
+              "[GO DOTPLOT] Selected-term table generated: ",
+              go_faceted_expected_data
+            )
+          }
+
+        } else {
+
+          warning(
+            "The additional faceted GO dotplot was not generated. ",
+            "See log: ",
+            go_faceted_log
+          )
+
+          writeLines(
+            c(
+              "The additional faceted GO dotplot was skipped.",
+              paste0(
+                "Exit status: ",
+                go_faceted_execution$status
+              ),
+              paste0(
+                "Expected PDF: ",
+                go_faceted_expected_pdf
+              ),
+              paste0(
+                "Log: ",
+                go_faceted_log
+              )
+            ),
+            "biological_theme_comparison_GO_faceted_dotplot_skipped.txt"
+          )
+        }
+      }
+    }
+  }
   ## ------------------------------------------------------------
   ## GO cnetplots separated by ontology
   ## ------------------------------------------------------------
