@@ -1150,6 +1150,9 @@ install_system_dependencies() {
         curl
         wget
         ca-certificates
+        build-essential
+        pkg-config
+        libssl-dev
     )
 
     log_info "Installing system dependencies..."

@@ -1518,7 +1518,8 @@ mkdir -p "$heatmap_base" "$stacked_base" "$prevalence_base" "$detected_microbiom
             echo "Output: $species_overlap_out"
             echo "------------------------------------------------------------"
 
-            if ! Rscript "$species_overlap_script" \
+            if ! conda run --no-capture-output -n MTD_fastp -- \
+            Rscript "$species_overlap_script" \
                 --input "$tax_input" \
                 --samplesheet "$samplesheet_file" \
                 --group1 "$group1" \

@@ -3283,38 +3283,523 @@ if (!is.null(cgo) && nrow(cgo@compareClusterResult) > 0) {
     row.names = FALSE
   )
 
-  dotplot(cgo, showCategory = nrow(cgo@compareClusterResult)) +
-    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+    ## ------------------------------------------------------------
+  ## Combined GO dotplot: BP + CC + MF
+  ## ------------------------------------------------------------
+
+  p.cgo.dot <- dotplot(
+    cgo,
+    showCategory = nrow(cgo@compareClusterResult)
+  ) +
+    theme(
+      axis.text.x = element_text(
+        angle = 45,
+        vjust = 1,
+        hjust = 1
+      )
+    )
 
   ggsave(
-    "biological_theme_comparison_GO.pdf",
+    filename = "biological_theme_comparison_GO.pdf",
+    plot = p.cgo.dot,
     limitsize = FALSE,
     height = 0.54 * nrow(cgo@compareClusterResult),
-    width = 3 * length(unique(cgo@compareClusterResult$Cluster))
+    width = 3 * length(
+      unique(cgo@compareClusterResult$Cluster)
+    )
   )
 
-  cnet_show <- max(1, round(nrow(cgo@compareClusterResult) / 6))
+  ## ------------------------------------------------------------
+  ## GO cnetplots separated by ontology
+  ## ------------------------------------------------------------
+  ## enrichplot 1.14.2 can generate NA values in Cluster when
+  ## BP, CC and MF are sent together to cnetplot().
+  ##
+  ## Therefore:
+  ##   - the dotplot remains combined;
+  ##   - cnetplots are generated separately for BP, CC and MF;
+  ##   - only category labels are printed;
+  ##   - gene nodes and edges remain in the network;
+  ##   - individual and multi-page PDF files are generated.
+  ## ------------------------------------------------------------
 
-tryCatch({
-  p.cgo.net <- cnetplot(
-    cgo,
-    cex_label_gene = 0.6,
-    showCategory = cnet_show
+  go_cnet_show <- 10
+  go_cnet_width <- 14
+  go_cnet_height <- 11
+
+  go_ontology_titles <- c(
+    BP = "GO Biological Process (BP)",
+    CC = "GO Cellular Component (CC)",
+    MF = "GO Molecular Function (MF)"
   )
 
-  ggsave(
-    "biological_theme_comparison_GO_net.pdf",
-    plot = p.cgo.net,
-    limitsize = FALSE
-  )
-}, error = function(e) {
-  message("GO compareCluster cnetplot skipped: ", conditionMessage(e))
+  build_go_cnetplot <- function(
+    cgo_object,
+    ontology_name,
+    show_category = 10
+  ) {
 
-  write(
-    paste0("GO compareCluster cnetplot skipped: ", conditionMessage(e)),
-    "biological_theme_comparison_GO_net_skipped.txt"
+    go_df <- cgo_object@compareClusterResult
+
+    if (!"ONTOLOGY" %in% colnames(go_df)) {
+      stop(
+        "The GO compareCluster result does not contain ",
+        "an ONTOLOGY column."
+      )
+    }
+
+    ontology_values <- toupper(
+      trimws(
+        as.character(go_df$ONTOLOGY)
+      )
+    )
+
+    ontology_df <- go_df[
+      !is.na(ontology_values) &
+      ontology_values == ontology_name,
+      ,
+      drop = FALSE
+    ]
+
+    if (nrow(ontology_df) == 0) {
+      stop(
+        "No GO results were found for ontology ",
+        ontology_name,
+        "."
+      )
+    }
+
+    required_columns <- c(
+      "Cluster",
+      "ID",
+      "Description",
+      "GeneRatio",
+      "geneID",
+      "Count"
+    )
+
+    missing_columns <- setdiff(
+      required_columns,
+      colnames(ontology_df)
+    )
+
+    if (length(missing_columns) > 0) {
+      stop(
+        "Missing columns in GO compareCluster result: ",
+        paste(missing_columns, collapse = ", ")
+      )
+    }
+
+    ## Remove rows that cannot be represented in the network.
+
+    valid_rows <- (
+      !is.na(ontology_df$Cluster) &
+      nzchar(trimws(as.character(ontology_df$Cluster))) &
+      !is.na(ontology_df$ID) &
+      nzchar(trimws(as.character(ontology_df$ID))) &
+      !is.na(ontology_df$Description) &
+      nzchar(trimws(as.character(ontology_df$Description))) &
+      !is.na(ontology_df$geneID) &
+      nzchar(trimws(as.character(ontology_df$geneID))) &
+      !is.na(ontology_df$Count) &
+      ontology_df$Count > 0
+    )
+
+    ontology_df <- ontology_df[
+      valid_rows,
+      ,
+      drop = FALSE
+    ]
+
+    if (nrow(ontology_df) == 0) {
+      stop(
+        "No valid GO rows remained for ontology ",
+        ontology_name,
+        "."
+      )
+    }
+
+    ## Remove unused Cluster levels. This prevents fortify() from
+    ## creating invalid cluster values.
+
+    cluster_levels <- unique(
+      as.character(ontology_df$Cluster)
+    )
+
+    ontology_df$Cluster <- factor(
+      as.character(ontology_df$Cluster),
+      levels = cluster_levels
+    )
+
+    ontology_df$ID <- as.character(
+      ontology_df$ID
+    )
+
+    ontology_df$Description <- as.character(
+      ontology_df$Description
+    )
+
+    ontology_df$geneID <- as.character(
+      ontology_df$geneID
+    )
+
+    rownames(ontology_df) <- NULL
+
+    ## Rebuild the geneClusters slot from the ontology subset.
+
+    gene_clusters <- lapply(
+      split(
+        ontology_df$geneID,
+        ontology_df$Cluster,
+        drop = TRUE
+      ),
+      function(gene_strings) {
+
+        genes <- unlist(
+          strsplit(
+            as.character(gene_strings),
+            split = "/",
+            fixed = TRUE
+          ),
+          use.names = FALSE
+        )
+
+        genes <- trimws(genes)
+
+        unique(
+          genes[
+            !is.na(genes) &
+            nzchar(genes)
+          ]
+        )
+      }
+    )
+
+    ## Reconstruct a clean compareClusterResult containing only
+    ## one ontology.
+
+    cgo_ontology <- methods::new(
+      "compareClusterResult",
+      compareClusterResult = ontology_df,
+      geneClusters = gene_clusters,
+      fun = "enrichGO"
+    )
+
+    ## Validate the exact data that cnetplot() will consume.
+
+    fortified <- ggplot2::fortify(
+      cgo_ontology,
+      showCategory = show_category,
+      includeAll = TRUE
+    )
+
+    if (nrow(fortified) == 0) {
+      stop(
+        "fortify() returned no terms for ontology ",
+        ontology_name,
+        "."
+      )
+    }
+
+    if (anyNA(fortified$Cluster)) {
+      stop(
+        "fortify() generated ",
+        sum(is.na(fortified$Cluster)),
+        " NA Cluster value(s) for ontology ",
+        ontology_name,
+        "."
+      )
+    }
+
+    ontology_title <- if (
+      ontology_name %in% names(go_ontology_titles)
+    ) {
+      unname(
+        go_ontology_titles[ontology_name]
+      )
+    } else {
+      paste("GO", ontology_name)
+    }
+
+    ## node_label = "category" hides gene-ID labels while keeping
+    ## gene nodes and gene-category connections in the network.
+
+    p <- cnetplot(
+      cgo_ontology,
+      showCategory = show_category,
+      layout = "kk",
+      node_label = "category",
+      cex_category = 1.10,
+      cex_gene = 0.45,
+      cex_label_category = 0.85
+    ) +
+      ggplot2::labs(
+        title = ontology_title
+      ) +
+      ggplot2::theme(
+        plot.title = ggplot2::element_text(
+          hjust = 0.5,
+          face = "bold",
+          size = 14
+        ),
+        legend.position = "right"
+      )
+
+    return(p)
+  }
+
+  ## ------------------------------------------------------------
+  ## Generate BP, CC and MF
+  ## ------------------------------------------------------------
+
+  available_ontologies <- unique(
+    toupper(
+      trimws(
+        as.character(
+          cgo@compareClusterResult$ONTOLOGY
+        )
+      )
+    )
   )
-})
+
+  available_ontologies <- available_ontologies[
+    !is.na(available_ontologies) &
+    nzchar(available_ontologies)
+  ]
+
+  ontology_order <- c(
+    "BP",
+    "CC",
+    "MF"
+  )
+
+  ontologies_to_plot <- intersect(
+    ontology_order,
+    available_ontologies
+  )
+
+  go_cnet_plots <- list()
+  go_cnet_errors <- character()
+
+  for (ontology_name in ontologies_to_plot) {
+
+    message(
+      "Creating GO compareCluster cnetplot for ontology: ",
+      ontology_name
+    )
+
+    plot_attempt <- tryCatch(
+      {
+
+        plot_object <- build_go_cnetplot(
+          cgo_object = cgo,
+          ontology_name = ontology_name,
+          show_category = go_cnet_show
+        )
+
+        list(
+          plot = plot_object,
+          error = NULL
+        )
+      },
+      error = function(e) {
+
+        list(
+          plot = NULL,
+          error = conditionMessage(e)
+        )
+      }
+    )
+
+    if (is.null(plot_attempt$plot)) {
+
+      go_cnet_errors[ontology_name] <- plot_attempt$error
+
+      message(
+        "GO ",
+        ontology_name,
+        " cnetplot skipped: ",
+        plot_attempt$error
+      )
+
+      next
+    }
+
+    ontology_output <- paste0(
+      "biological_theme_comparison_GO_net_",
+      ontology_name,
+      ".pdf"
+    )
+
+    save_attempt <- tryCatch(
+      {
+
+        ggsave(
+          filename = ontology_output,
+          plot = plot_attempt$plot,
+          limitsize = FALSE,
+          width = go_cnet_width,
+          height = go_cnet_height
+        )
+
+        list(
+          success = TRUE,
+          error = NULL
+        )
+      },
+      error = function(e) {
+
+        list(
+          success = FALSE,
+          error = conditionMessage(e)
+        )
+      }
+    )
+
+    if (save_attempt$success) {
+
+      go_cnet_plots[[ontology_name]] <- plot_attempt$plot
+
+      message(
+        "Saved GO cnetplot: ",
+        ontology_output
+      )
+
+    } else {
+
+      go_cnet_errors[ontology_name] <- save_attempt$error
+
+      message(
+        "Failed to save GO ",
+        ontology_name,
+        " cnetplot: ",
+        save_attempt$error
+      )
+    }
+  }
+
+  ## ------------------------------------------------------------
+  ## Generate the original expected filename as a multi-page PDF
+  ## ------------------------------------------------------------
+
+  if (length(go_cnet_plots) > 0) {
+
+    combined_pdf_open <- FALSE
+
+    combined_attempt <- tryCatch(
+      {
+
+        grDevices::pdf(
+          file = "biological_theme_comparison_GO_net.pdf",
+          width = go_cnet_width,
+          height = go_cnet_height,
+          onefile = TRUE
+        )
+
+        combined_pdf_open <- TRUE
+
+        for (ontology_name in names(go_cnet_plots)) {
+          print(
+            go_cnet_plots[[ontology_name]]
+          )
+        }
+
+        grDevices::dev.off()
+        combined_pdf_open <- FALSE
+
+        list(
+          success = TRUE,
+          error = NULL
+        )
+      },
+      error = function(e) {
+
+        if (
+          combined_pdf_open &&
+          grDevices::dev.cur() > 1
+        ) {
+          grDevices::dev.off()
+        }
+
+        list(
+          success = FALSE,
+          error = conditionMessage(e)
+        )
+      }
+    )
+
+    if (combined_attempt$success) {
+
+      unlink(
+        "biological_theme_comparison_GO_net_skipped.txt"
+      )
+
+      message(
+        "Saved multi-page GO cnetplot: ",
+        "biological_theme_comparison_GO_net.pdf"
+      )
+
+    } else {
+
+      message(
+        "Failed to save multi-page GO cnetplot: ",
+        combined_attempt$error
+      )
+    }
+
+    if (length(go_cnet_errors) > 0) {
+
+      writeLines(
+        c(
+          "Some GO ontology cnetplots were skipped:",
+          paste0(
+            names(go_cnet_errors),
+            ": ",
+            unname(go_cnet_errors)
+          )
+        ),
+        "biological_theme_comparison_GO_net_partial_warnings.txt"
+      )
+
+    } else {
+
+      unlink(
+        "biological_theme_comparison_GO_net_partial_warnings.txt"
+      )
+    }
+
+  } else {
+
+    error_text <- if (length(go_cnet_errors) > 0) {
+
+      paste0(
+        names(go_cnet_errors),
+        ": ",
+        unname(go_cnet_errors),
+        collapse = "\n"
+      )
+
+    } else {
+
+      paste0(
+        "No BP, CC or MF ontology was available in the ",
+        "GO compareCluster result."
+      )
+    }
+
+    message(
+      "GO compareCluster cnetplots skipped: ",
+      error_text
+    )
+
+    writeLines(
+      c(
+        "GO compareCluster cnetplots skipped.",
+        error_text
+      ),
+      "biological_theme_comparison_GO_net_skipped.txt"
+    )
+  }
 
 } else {
 
