@@ -1054,44 +1054,6 @@ restore_default_rsync_helper() {
     install_kraken_helper "$dir/Installation/rsync_from_ncbi.pl" "rsync_from_ncbi.pl"
 }
 
-install_kraken_helper \
-    "$dir/Installation/download_genomic_library_plasmid.sh" \
-    "download_genomic_library.sh"
-
-export MTD_KRAKEN2_PLASMID_CACHE="$offline_files_folder/Kraken2DB_micro/library/plasmid"
-
-if [[ ! -d "$MTD_KRAKEN2_PLASMID_CACHE" ]]; then
-    log_error "Plasmid cache directory not found:"
-    log_error "  $MTD_KRAKEN2_PLASMID_CACHE"
-    exit 1
-fi
-
-plasmid_cache_count="$(
-    find "$MTD_KRAKEN2_PLASMID_CACHE" \
-        -maxdepth 1 \
-        -type f \
-        -name '*.genomic.fna.gz' \
-        -size +0c |
-    wc -l
-)"
-
-if (( plasmid_cache_count == 0 )); then
-    log_info "Usable genomic plasmid FASTA archives: $plasmid_cache_count"
-    log_error "  $MTD_KRAKEN2_PLASMID_CACHE"
-    exit 1
-fi
-
-log_info "Plasmid cache:"
-log_info "  $MTD_KRAKEN2_PLASMID_CACHE"
-log_info "Plasmid files available: $plasmid_cache_count"
-
-download_kraken2_library_until_success \
-    "$dir/kraken2DB_micro" \
-    plasmid
-
-unset MTD_KRAKEN2_PLASMID_CACHE
-
-
 patch_perl_local_download_dir() {
     local perl_script="$1"
     local local_directory="$2"
@@ -1405,28 +1367,97 @@ add_local_bacteria_library() {
 
 add_local_plasmid_library() {
     local database="$1"
-    local manifest_destination="$offline_files_folder/Kraken2DB_micro/library/manifest.plasmid.sh"
-    local custom_helper="$dir/Installation/download_genomic_library_plasmid.sh"
+    local manifest_destination
+    local custom_helper
+    local plasmid_cache
+    local plasmid_cache_count
+    local download_status=0
 
-    copy_required_file "$dir/manifest.plasmid.sh" "$manifest_destination"
-    sed -i \
-        "s|^LOCAL_DIR=.*|LOCAL_DIR=$offline_files_folder/Kraken2DB_micro/library/plasmid/|" \
+    manifest_destination="$offline_files_folder/Kraken2DB_micro/library/manifest.plasmid.sh"
+    custom_helper="$dir/Installation/download_genomic_library_plasmid.sh"
+    plasmid_cache="$offline_files_folder/Kraken2DB_micro/library/plasmid"
+
+    log_info "Preparing cached plasmid genomic sequences..."
+
+    copy_required_file \
+        "$dir/manifest.plasmid.sh" \
         "$manifest_destination"
+
+    sed -i \
+        "s|^LOCAL_DIR=.*|LOCAL_DIR=$plasmid_cache/|" \
+        "$manifest_destination"
+
     run_required_script "$manifest_destination"
 
-    patch_shell_local_download_dir \
-        "$custom_helper" \
-        "$offline_files_folder/Kraken2DB_micro/library/plasmid/"
+    if [[ ! -d "$plasmid_cache" ]]; then
+        log_error "Plasmid cache directory not found:"
+        log_error "  $plasmid_cache"
+        exit 1
+    fi
 
-    install_kraken_helper "$custom_helper" "download_genomic_library.sh"
+    plasmid_cache_count="$(
+        find "$plasmid_cache" \
+            -maxdepth 1 \
+            -type f \
+            -name '*.genomic.fna.gz' \
+            -size +0c |
+        wc -l
+    )"
+
+    if (( plasmid_cache_count == 0 )); then
+        log_error "No usable genomic plasmid FASTA archives were found:"
+        log_error "  $plasmid_cache"
+        exit 1
+    fi
+
+    log_ok "Usable genomic plasmid FASTA archives: $plasmid_cache_count"
+    log_info "Plasmid cache:"
+    log_info "  $plasmid_cache"
+
+    export MTD_KRAKEN2_PLASMID_CACHE="$plasmid_cache"
+
+    install_kraken_helper \
+        "$custom_helper" \
+        "download_genomic_library.sh"
 
     log_info "Adding local plasmid sequences to Kraken2 database..."
-    kraken2-build \
+
+    retry_until_success \
+        "Kraken2 plasmid library for database '$database'" \
+        kraken2-build \
         --download-library plasmid \
         --threads "$threads" \
-        --db "$database"
+        --db "$database" ||
+        download_status=$?
+
+    log_info "Restoring the standard Kraken2 genomic-library helper..."
 
     restore_default_genomic_library_helper
+
+    unset MTD_KRAKEN2_PLASMID_CACHE
+
+    if (( download_status != 0 )); then
+        log_error "The Kraken2 plasmid library could not be prepared."
+        exit "$download_status"
+    fi
+
+    local plasmid_library_dir="$database/library/plasmid"
+    local required_file
+
+    for required_file in \
+        library.fna \
+        manifest.txt \
+        prelim_map.txt
+    do
+        if [[ ! -s "$plasmid_library_dir/$required_file" ]]; then
+            log_error "Required plasmid-library output is missing or empty:"
+            log_error "  $plasmid_library_dir/$required_file"
+            exit 1
+        fi
+    done
+
+    log_ok "Plasmid library prepared and validated:"
+    log_ok "  $plasmid_library_dir"
 }
 
 build_microbiome_kraken_database() {
