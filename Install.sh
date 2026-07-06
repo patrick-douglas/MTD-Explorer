@@ -1248,7 +1248,8 @@ install_halla_dependencies() {
     R -e 'install.packages("remotes", repos="https://cloud.r-project.org")'
     R -e 'remotes::install_url("https://cran.r-project.org/src/contrib/EnvStats_3.1.0.tar.gz", dependencies=TRUE)'
     R -e 'remotes::install_version("Hmisc", version = "4.8-0", repos = "https://cloud.r-project.org")'
-    R -e "install.packages('https://cran.r-project.org/src/contrib/00Archive/eva/eva_0.2.6.tar.gz', repos=NULL, type='source')"
+#    R -e "install.packages('https://cran.r-project.org/src/contrib/00Archive/eva/eva_0.2.6.tar.gz', repos=NULL, type='source')"
+    R -e "install.packages('$dir/update_fix/pvr_pkg/eva_0.2.6.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
 
     conda run -n halla0820 "$dir/update_fix/check_R_pkg.halla0820.sh"
     safe_conda_deactivate
