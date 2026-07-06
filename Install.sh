@@ -1054,11 +1054,43 @@ restore_default_rsync_helper() {
     install_kraken_helper "$dir/Installation/rsync_from_ncbi.pl" "rsync_from_ncbi.pl"
 }
 
-restore_default_genomic_library_helper() {
-    install_kraken_helper \
-        "$dir/Installation/download_genomic_library.sh" \
-        "download_genomic_library.sh"
-}
+install_kraken_helper \
+    "$dir/Installation/download_genomic_library_plasmid.sh" \
+    "download_genomic_library.sh"
+
+export MTD_KRAKEN2_PLASMID_CACHE="$offline_files_folder/Kraken2DB_micro/library/plasmid"
+
+if [[ ! -d "$MTD_KRAKEN2_PLASMID_CACHE" ]]; then
+    log_error "Plasmid cache directory not found:"
+    log_error "  $MTD_KRAKEN2_PLASMID_CACHE"
+    exit 1
+fi
+
+plasmid_cache_count="$(
+    find "$MTD_KRAKEN2_PLASMID_CACHE" \
+        -maxdepth 1 \
+        -type f \
+        -name '*.genomic.fna.gz' \
+        -size +0c |
+    wc -l
+)"
+
+if (( plasmid_cache_count == 0 )); then
+    log_info "Usable genomic plasmid FASTA archives: $plasmid_cache_count"
+    log_error "  $MTD_KRAKEN2_PLASMID_CACHE"
+    exit 1
+fi
+
+log_info "Plasmid cache:"
+log_info "  $MTD_KRAKEN2_PLASMID_CACHE"
+log_info "Plasmid files available: $plasmid_cache_count"
+
+download_kraken2_library_until_success \
+    "$dir/kraken2DB_micro" \
+    plasmid
+
+unset MTD_KRAKEN2_PLASMID_CACHE
+
 
 patch_perl_local_download_dir() {
     local perl_script="$1"

@@ -52,6 +52,10 @@ SSGSEA_GMT="default"                  # default, auto, or path to custom GMT
 SSGSEA_GMT_MODE="default_MSigDB_c2"
 SSGSEA_PROTEIN_FASTA=""
 SSGSEA_ANNOTATION_GFF=""
+# Optional eggNOG-mapper database override.
+# If empty, MTD resolves it from EGGNOG_DATA_DIR,
+# offlineCachePath, or the legacy MTD/eggnog_db location.
+EGGNOG_DB_DIR=""
 
 # Exploratory-only taxonomic figures
 # 1 = run taxonomic heatmap and stacked bar in exploratory mode
@@ -161,7 +165,13 @@ Optional:
 
       --ssgsea-annotation-gff FILE         Required when --ssgsea-gmt custom_eggnog.
                                            GFF3/GTF annotation matching the host reference.
-
+    --eggnog-db DIR
+        Optional eggNOG-mapper database directory.
+        Resolution order:
+          1. --eggnog-db
+          2. EGGNOG_DATA_DIR environment variable
+          3. offlineCachePath/eggNOG/emapperdb-5.0.2
+          4. MTD/eggnog_db
 Host processing:
   -b, --blast                              Use Magic-BLAST instead of HISAT2
   -t, --no-trim                            Skip fastp trimming
@@ -354,6 +364,20 @@ while [[ $# -gt 0 ]]; do
             ;;
         --ssgsea-annotation-gff=*)
             SSGSEA_ANNOTATION_GFF="${1#*=}"
+            shift
+            ;;
+        --eggnog-db)
+            if [[ $# -lt 2 || -z "${2:-}" ]]; then
+                die "--eggnog-db requires a directory argument"
+            fi
+            EGGNOG_DB_DIR="$2"
+            shift 2
+            ;;
+        --eggnog-db=*)
+            EGGNOG_DB_DIR="${1#*=}"
+            if [[ -z "$EGGNOG_DB_DIR" ]]; then
+                die "--eggnog-db requires a non-empty directory"
+            fi
             shift
             ;;
         -b|--blast)
@@ -600,6 +624,90 @@ fi
 
 MTDIR=$(dirname "$(readlink -f "$0")")
 echo "MTD directory is $MTDIR"
+
+# ------------------------------------------------------------
+# eggNOG database path resolution
+# ------------------------------------------------------------
+resolve_eggnog_db_dir() {
+    local cache_root=""
+    local candidate=""
+    local required_file=""
+
+    echo "${g}[INFO] Resolving eggNOG-mapper database directory...${w}"
+
+    # 1. Explicit command-line option
+    if [[ -n "${EGGNOG_DB_DIR:-}" ]]; then
+        candidate="$EGGNOG_DB_DIR"
+        echo "[INFO] Source: --eggnog-db"
+
+    # 2. Standard eggNOG environment variable
+    elif [[ -n "${EGGNOG_DATA_DIR:-}" ]]; then
+        candidate="$EGGNOG_DATA_DIR"
+        echo "[INFO] Source: EGGNOG_DATA_DIR"
+
+    # 3. Persistent MTD installation cache
+    elif [[ -s "$MTDIR/offlineCachePath" ]]; then
+        cache_root="$(
+            head -n 1 "$MTDIR/offlineCachePath" |
+            tr -d '\r' |
+            sed 's/[[:space:]]*$//'
+        )"
+
+        if [[ -z "$cache_root" ]]; then
+            die "offlineCachePath exists but is empty: $MTDIR/offlineCachePath"
+        fi
+
+        candidate="$cache_root/eggNOG/emapperdb-5.0.2"
+        echo "[INFO] Source: $MTDIR/offlineCachePath"
+
+    # 4. Backward-compatible legacy directory
+    elif [[ -d "$MTDIR/eggnog_db" ]]; then
+        candidate="$MTDIR/eggnog_db"
+        echo "[INFO] Source: legacy MTD/eggnog_db"
+    fi
+
+    if [[ -z "$candidate" ]]; then
+        die "Could not resolve the eggNOG database directory.
+
+Provide one of:
+  --eggnog-db DIR
+  EGGNOG_DATA_DIR=/path/to/database
+  $MTDIR/offlineCachePath
+  $MTDIR/eggnog_db"
+    fi
+
+    # Expand an initial ~/ when supplied through the command line.
+    if [[ "$candidate" == "~/"* ]]; then
+        candidate="$HOME/${candidate#~/}"
+    fi
+
+    if [[ ! -d "$candidate" ]]; then
+        die "eggNOG database directory was not found:
+  $candidate"
+    fi
+
+    candidate="$(readlink -f "$candidate")"
+
+    for required_file in \
+        eggnog.db \
+        eggnog_proteins.dmnd \
+        eggnog.taxa.db \
+        eggnog.taxa.db.traverse.pkl
+    do
+        if [[ ! -s "$candidate/$required_file" ]]; then
+            die "Required eggNOG database file is missing or empty:
+  $candidate/$required_file"
+        fi
+
+        echo "${g}[OK]${w} $required_file"
+    done
+
+    EGGNOG_DB_DIR="$candidate"
+    export EGGNOG_DATA_DIR="$EGGNOG_DB_DIR"
+
+    echo "${g}[INFO] eggNOG database directory:${w}"
+    echo "  $EGGNOG_DB_DIR"
+}
 
 # ------------------------------------------------------------
 # Custom R library for MTD-generated OrgDb packages
@@ -4299,6 +4407,8 @@ if [[ "$SSGSEA_GMT" == "auto" || "$SSGSEA_GMT" == "custom_eggnog" ]]; then
     require_file "$SSGSEA_PROTEIN_FASTA" "ssGSEA protein FASTA"
     require_file "$SSGSEA_ANNOTATION_GFF" "ssGSEA GFF/GTF annotation"
 
+    resolve_eggnog_db_dir
+
     CUSTOM_GMT_DIR="$outputdr/ssGSEA/custom_gmt_user_files"
     mkdir -p "$CUSTOM_GMT_DIR"
 
@@ -4344,7 +4454,7 @@ if [[ "$SSGSEA_GMT" == "auto" || "$SSGSEA_GMT" == "custom_eggnog" ]]; then
         --host-gct "$outputdr/ssGSEA/host.gct" \
         --outdir "$CUSTOM_GMT_DIR" \
         --threads "$threads" \
-        --eggnog-db "$MTDIR/eggnog_db" \
+        --eggnog-db "$EGGNOG_DB_DIR" \
         --protein-fasta "$SSGSEA_PROTEIN_FASTA" \
         --annotation-gff "$SSGSEA_ANNOTATION_GFF" \
         --force

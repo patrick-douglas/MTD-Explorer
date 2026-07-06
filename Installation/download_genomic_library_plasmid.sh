@@ -12,8 +12,22 @@
 set -u  # Protect against uninitialized vars.
 set -e  # Stop on error
 
-dir=~/MTD
-LIBRARY_DIR="$dir/$KRAKEN2_DB_NAME/library"
+# Kraken2 supplies the database path through KRAKEN2_DB_NAME.
+# It may already be an absolute path, so it must not be prefixed
+# with the MTD installation directory.
+if [[ -z "${KRAKEN2_DB_NAME:-}" ]]; then
+    echo "Error: KRAKEN2_DB_NAME is not defined." >&2
+    exit 1
+fi
+
+if [[ "$KRAKEN2_DB_NAME" = /* ]]; then
+    KRAKEN2_DB_DIR="$KRAKEN2_DB_NAME"
+else
+    KRAKEN2_DB_DIR="$(readlink -m -- "$KRAKEN2_DB_NAME")"
+fi
+
+LIBRARY_DIR="$KRAKEN2_DB_DIR/library"
+
 NCBI_SERVER="ftp.ncbi.nlm.nih.gov"
 FTP_SERVER="https://$NCBI_SERVER"
 RSYNC_SERVER="rsync://$NCBI_SERVER"
@@ -57,43 +71,113 @@ case $library_name in
     rsync_from_ncbi.pl assembly_summary.txt
     scan_fasta_file.pl $library_file >> prelim_map.txt
     ;;
-  "plasmid")
-    mkdir -p $LIBRARY_DIR/plasmid
-    cd $LIBRARY_DIR/plasmid
-    rm -f library.f* plasmid.*
+"plasmid")
+    mkdir -p "$LIBRARY_DIR/plasmid"
+    cd "$LIBRARY_DIR/plasmid"
 
-    # Use local files instead of downloading via FTP
-    echo -n "Using local files for plasmid library..."
-    local_download_dir="/media/me/18TB_BACKUP_LBN/drive.ifpa/LBN_RNA-Seq/Metatranscriptomics/MTD/MTD_Offline_Install_files//Kraken2DB_micro/library/plasmid/"
+    rm -f \
+        library.fna \
+        library.faa \
+        manifest.txt \
+        prelim_map.txt \
+        plasmid.* \
+        .listing
 
-    if [ -d "$local_download_dir" ]; then
-      echo "Local directory found: $local_download_dir"
+    local_download_dir="${MTD_KRAKEN2_PLASMID_CACHE:-}"
 
-      # Copy .gz files to the destination directory
-      cp "$local_download_dir"/*.gz "$LIBRARY_DIR/plasmid/"
-
-      # Ensure we are in the destination directory
-      cd $LIBRARY_DIR/plasmid/
-
-      if [ -n "$KRAKEN2_PROTEIN_DB" ]; then
-        ls *.faa.gz > manifest.txt
-      else
-        ls *.fna.gz > manifest.txt
-      fi
-
-      if [ ! -s manifest.txt ]; then
-        echo "Error: manifest.txt is empty or was not created correctly."
+    if [[ -z "$local_download_dir" ]]; then
+        echo "Error: MTD_KRAKEN2_PLASMID_CACHE is not defined." >&2
+        echo "The MTD installer must export the plasmid cache path." >&2
         exit 1
-      fi
-
-      cat manifest.txt | xargs -I{} gunzip -c {} > $library_file
-      rm -f plasmid.* .listing
-      scan_fasta_file.pl $library_file > prelim_map.txt
-      echo " done."
-    else
-      1>&2 echo "Error: Local directory $local_download_dir not found."
-      exit 1
     fi
+
+    if [[ ! -d "$local_download_dir" ]]; then
+        echo "Error: plasmid cache directory not found:" >&2
+        echo "  $local_download_dir" >&2
+        exit 1
+    fi
+
+    echo "Using cached plasmid files from:"
+    echo "  $local_download_dir"
+
+    mapfile -d '' plasmid_files < <(
+        find "$local_download_dir" \
+            -maxdepth 1 \
+            -type f \
+            -name '*.genomic.fna.gz' \
+            -size +0c \
+            -print0 |
+        sort -z
+    )
+
+    if (( ${#plasmid_files[@]} == 0 )); then
+        echo "Error: no non-empty *.genomic.fna.gz files found in:" >&2
+        echo "  $local_download_dir" >&2
+        exit 1
+    fi
+
+    echo "Plasmid files found: ${#plasmid_files[@]}"
+
+    for plasmid_file in "${plasmid_files[@]}"; do
+        if ! gzip -t "$plasmid_file"; then
+            echo "Error: invalid gzip file:" >&2
+            echo "  $plasmid_file" >&2
+            exit 1
+        fi
+    done
+
+    printf '%s\n' "${plasmid_files[@]##*/}" > manifest.txt
+
+    if [[ ! -s manifest.txt ]]; then
+        echo "Error: manifest.txt was not created." >&2
+        exit 1
+    fi
+
+    : > "$library_file"
+
+    current_file=0
+    total_files="${#plasmid_files[@]}"
+
+    for plasmid_file in "${plasmid_files[@]}"; do
+        current_file=$((current_file + 1))
+
+        printf '[%d/%d] Processing %s\n' \
+            "$current_file" \
+            "$total_files" \
+            "$(basename "$plasmid_file")"
+
+        if ! gzip -cd -- "$plasmid_file" >> "$library_file"; then
+            echo "Error while extracting:" >&2
+            echo "  $plasmid_file" >&2
+            rm -f "$library_file"
+            exit 1
+        fi
+    done
+
+    if [[ ! -s "$library_file" ]]; then
+        echo "Error: $library_file is empty." >&2
+        exit 1
+    fi
+
+    if ! grep -m 1 -q '^>' "$library_file"; then
+        echo "Error: no FASTA header found in $library_file." >&2
+        exit 1
+    fi
+
+    if ! scan_fasta_file.pl "$library_file" > prelim_map.txt; then
+        echo "Error: scan_fasta_file.pl failed." >&2
+        exit 1
+    fi
+
+    if [[ ! -s prelim_map.txt ]]; then
+        echo "Error: prelim_map.txt is empty." >&2
+        exit 1
+    fi
+
+    echo "Plasmid library prepared successfully."
+    echo "Library FASTA: $LIBRARY_DIR/plasmid/$library_file"
+    echo "Manifest:      $LIBRARY_DIR/plasmid/manifest.txt"
+    echo "Preliminary map: $LIBRARY_DIR/plasmid/prelim_map.txt"
     ;;
   "nr" | "nt")
     protein_lib=0
