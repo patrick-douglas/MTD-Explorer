@@ -764,11 +764,10 @@ then
     exit 1
 fi
 
-    ensure_cached_file \
+   ensure_cached_file \
     "Virus-Host DB reference" \
-    "https://sourceforge.net/projects/mtd/files/MTD/virushostdb.genomic.fna.gz/download" \
+    "https://github.com/patrick-douglas/MTD/releases/download/virushostdb-cache-2026.07.07/virushostdb.genomic.fna.gz" \
     "$offline_files_folder/Ref_genomes/MTD_virus/virushostdb.genomic.fna.gz"
-
     ensure_cached_file \
         "Mouse NCBI GRCm39 genome for Kraken2" \
         "https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/635/GCF_000001635.27_GRCm39/GCF_000001635.27_GRCm39_genomic.fna.gz" \
