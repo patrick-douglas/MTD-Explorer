@@ -25,7 +25,7 @@
 
 set -uo pipefail
 
-CHECKER_VERSION="2026.07.06-r5"
+CHECKER_VERSION="2026.07.06-r6"
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 MTD_DIR="$SCRIPT_DIR"
 CONDA_PATH=""
@@ -1489,7 +1489,15 @@ def names_from_file(path):
     return out
 
 installed = names_from_file(installed_path)
-if mode == "cache":
+if mode == "plasmid_genomic_cache":
+    # Only genomic nucleotide FASTA archives are inputs to the Kraken2
+    # plasmid library. Protein, GenBank, RNA, and WGS-master archives in
+    # the same NCBI cache directory are intentionally excluded.
+    expected = {n for n in os.listdir(cache_dir)
+                if n.endswith(".genomic.fna.gz")
+                and os.path.isfile(os.path.join(cache_dir, n))
+                and os.path.getsize(os.path.join(cache_dir, n)) > 0}
+elif mode == "cache":
     expected = {n for n in os.listdir(cache_dir)
                 if n.endswith(".gz") and os.path.isfile(os.path.join(cache_dir, n))
                 and os.path.getsize(os.path.join(cache_dir, n)) > 0}
@@ -1792,11 +1800,11 @@ check_installation_cache() {
     local plasmid_cache="$OFFLINE_DIR/Kraken2DB_micro/library/plasmid"
     check_path FAIL "Installation cache" "Kraken2DB_micro/library/plasmid" "$plasmid_cache" nonempty_dir
     local plasmid_count
-    plasmid_count="$(find "$plasmid_cache" -maxdepth 1 -type f -name '*.gz' -size +0c 2>/dev/null | wc -l)"
+    plasmid_count="$(find "$plasmid_cache" -maxdepth 1 -type f -name '*.genomic.fna.gz' -size +0c 2>/dev/null | wc -l)"
     if [[ "$plasmid_count" -gt 0 ]]; then
-        record PASS "Kraken cache" "plasmid compressed files" "$plasmid_count non-empty .gz file(s)"
+        record PASS "Kraken cache" "plasmid genomic FASTA archives"             "$plasmid_count non-empty *.genomic.fna.gz file(s)"
     else
-        record FAIL "Kraken cache" "plasmid compressed files" "no non-empty .gz files found in $plasmid_cache"
+        record FAIL "Kraken cache" "plasmid genomic FASTA archives"             "no non-empty *.genomic.fna.gz files found in $plasmid_cache"
     fi
 
     local eggnog="$OFFLINE_DIR/eggNOG/emapperdb-5.0.2"
@@ -2134,7 +2142,7 @@ if [[ -n "$OFFLINE_DIR" ]]; then
     check_installed_manifest_alignment "microbiome/plasmid" \
         "$MTD_DIR/kraken2DB_micro/library/plasmid/manifest.txt" \
         /dev/null \
-        "$OFFLINE_DIR/Kraken2DB_micro/library/plasmid" cache
+        "$OFFLINE_DIR/Kraken2DB_micro/library/plasmid" plasmid_genomic_cache
 fi
 
 check_kraken_database microbiome "$MTD_DIR/kraken2DB_micro"

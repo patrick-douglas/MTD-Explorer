@@ -33,10 +33,13 @@ echo "Fetching remote file list..."
 
 curl -4 -fsSL "$BASE_URL/$REMOTE_DIR/" -o "$TMP_REMOTE_HTML"
 
-grep -oP 'href="\K[^"]+\.gz(?=")' "$TMP_REMOTE_HTML" | sort -u > "$TMP_REMOTE_NAMES"
+grep -oP 'href="\K[^"]+\.genomic\.fna\.gz(?=")' \
+    "$TMP_REMOTE_HTML" |
+    sort -u > "$TMP_REMOTE_NAMES"
 
 if [[ ! -s "$TMP_REMOTE_NAMES" ]]; then
-  echo "ERROR: Failed to retrieve remote .gz file list from $BASE_URL/$REMOTE_DIR/"
+  echo "ERROR: Failed to retrieve remote *.genomic.fna.gz file list from:"
+echo "  $BASE_URL/$REMOTE_DIR/"
   rm -f "$TMP_REMOTE_HTML" "$TMP_REMOTE_NAMES"
   exit 1
 fi
@@ -44,7 +47,13 @@ fi
 ###############################################################################
 # FETCH LOCAL FILE LIST
 ###############################################################################
-find "$LOCAL_DIR" -maxdepth 1 -type f -printf "%f\n" | sort > "$TMP_LOCAL_LIST"
+find "$LOCAL_DIR" \
+    -maxdepth 1 \
+    -type f \
+    -name '*.genomic.fna.gz' \
+    -size +0c \
+    -printf '%f\n' |
+    sort > "$TMP_LOCAL_LIST"
 
 ###############################################################################
 # DEFINE FILES TO BE DOWNLOADED
@@ -61,9 +70,9 @@ NEEDED=${#MISSING[@]}
 ALREADY_LOCAL=$((TOTAL - NEEDED))
 
 echo -e "\n────────  SUMMARY  ────────"
-echo "Total on remote  : $TOTAL"
-echo "Already local    : $ALREADY_LOCAL"
-echo "To be downloaded : $NEEDED"
+echo "Genomic FASTA archives on remote : $TOTAL"
+echo "Already present locally          : $ALREADY_LOCAL"
+echo "To be downloaded                 : $NEEDED"
 echo -e "───────────────────────────"
 
 ###############################################################################
@@ -160,12 +169,13 @@ fi
 ###############################################################################
 # FINAL EXTRA INTEGRITY CHECK
 ###############################################################################
-echo -e "\nVerifying integrity of all local .gz files..."
+echo -e "\nVerifying integrity of genomic plasmid FASTA archives..."
 
 > "$CORRUPTED_LIST"
 
 shopt -s nullglob
-for file in "$LOCAL_DIR"/*.gz; do
+
+for file in "$LOCAL_DIR"/*.genomic.fna.gz; do
   if ! gzip -t "$file" 2>/dev/null; then
     echo "$(basename "$file")" >> "$CORRUPTED_LIST"
   fi
