@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Automatically accept the Anaconda Terms of Service required by
+# the default Conda channels during unattended MTD installation.
+export CONDA_PLUGINS_AUTO_ACCEPT_TOS=yes
+
 # ==============================================================================
 # MTD installer
 # ==============================================================================
@@ -22,7 +26,7 @@ threads="$(nproc)"
 condapath="${HOME}/miniconda3"
 offline_files_folder=""
 sudo_password=""
-accept_conda_tos="ask"
+
 dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 
 KRAKEN_ENV_LIBEXEC=""
@@ -133,8 +137,6 @@ Optional:
   -s INT   Kraken2 minimizer spaces used during --build
   -r INT   Bracken read length (default: 75)
   -w TEXT  Sudo password for non-interactive installation
-  -a       Accept the Anaconda Terms of Service required by the
-           default Conda channels without prompting
   -h       Show this help message
 
 The installer automatically downloads and installs Miniconda.
@@ -157,7 +159,7 @@ parse_arguments() {
         exit 1
     fi
 
-    while getopts ":p:o:k:m:s:r:w:ah" option; do
+    while getopts ":p:o:k:m:s:r:w:h" option; do
         case "$option" in
             p) condapath="$OPTARG" ;;
             o) offline_files_folder="$OPTARG" ;;
@@ -166,7 +168,6 @@ parse_arguments() {
             s) min_s="$OPTARG" ;;
             r) read_len="$OPTARG" ;;
             w) sudo_password="$OPTARG" ;;
-            a) accept_conda_tos="yes" ;;
             h)
                 usage
                 exit 0
@@ -489,81 +490,6 @@ install_miniconda() {
     "$condapath/bin/conda" --version
 }
 
-accept_required_conda_tos() {
-    local conda_bin="$condapath/bin/conda"
-    local confirmation=""
-    local channel=""
-
-    local required_channels=(
-        "https://repo.anaconda.com/pkgs/main"
-        "https://repo.anaconda.com/pkgs/r"
-    )
-
-    if [[ ! -x "$conda_bin" ]]; then
-        log_error "Conda executable not found:"
-        log_error "  $conda_bin"
-        return 1
-    fi
-
-    # Older Conda installations do not provide the ToS plugin.
-    if ! "$conda_bin" tos --help >/dev/null 2>&1; then
-        log_info "Conda Terms-of-Service plugin is not present."
-        log_info "No explicit ToS acceptance step is required."
-        return 0
-    fi
-
-    if [[ "$accept_conda_tos" != "yes" ]]; then
-        print_rule
-        log_warning "Anaconda Terms of Service acceptance is required."
-        log_warning "The MTD Conda environments use these default channels:"
-        log_warning "  https://repo.anaconda.com/pkgs/main"
-        log_warning "  https://repo.anaconda.com/pkgs/r"
-        echo
-        log_warning "Continuing means that you accept the applicable"
-        log_warning "Anaconda Terms of Service for these channels."
-        print_rule
-
-        if [[ ! -t 0 ]]; then
-            log_error "Interactive ToS confirmation is unavailable."
-            log_error "For an automated installation, rerun with -a."
-            return 1
-        fi
-
-        printf '%s' "${y}Accept the Anaconda Terms of Service? [y/N]: ${w}"
-        read -r confirmation
-
-        # Deliberately accept only lowercase y, following the MTD prompt style.
-        if [[ "$confirmation" != "y" ]]; then
-            echo
-            log_warning "Anaconda Terms of Service were not accepted."
-            log_warning "Installation cancelled before creating Conda environments."
-            return 1
-        fi
-
-        echo
-    else
-        log_info "Automatic Anaconda ToS acceptance requested with -a."
-    fi
-
-    for channel in "${required_channels[@]}"; do
-        log_info "Accepting Anaconda Terms of Service for:"
-        log_info "  $channel"
-
-        if ! "$conda_bin" tos accept \
-            --override-channels \
-            --channel "$channel"
-        then
-            log_error "Could not accept the Anaconda Terms of Service for:"
-            log_error "  $channel"
-            return 1
-        fi
-    done
-
-    log_ok "Required Anaconda Terms of Service accepted."
-
-    log_info "Current Conda ToS status:"
-    "$conda_bin" tos || true
-}
 
 safe_conda_deactivate() {
     conda deactivate >/dev/null 2>&1 || true
@@ -1826,7 +1752,6 @@ main() {
 
     install_system_dependencies
     install_miniconda
-    accept_required_conda_tos
 
     configure_paths_and_options
     initialize_installation
