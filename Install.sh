@@ -1146,6 +1146,8 @@ install_system_dependencies() {
         pigz
         curl
         wget
+        aria2
+        parallel
         ca-certificates
         build-essential
         pkg-config
