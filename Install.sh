@@ -25,7 +25,6 @@ read_len=75                 # Bracken read length
 threads="$(nproc)"
 condapath="${HOME}/miniconda3"
 offline_files_folder=""
-sudo_password=""
 
 dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 
@@ -136,7 +135,6 @@ Optional:
   -m INT   Kraken2 minimizer length used during --build
   -s INT   Kraken2 minimizer spaces used during --build
   -r INT   Bracken read length (default: 75)
-  -w TEXT  Sudo password for non-interactive installation
   -h       Show this help message
 
 The installer automatically downloads and installs Miniconda.
@@ -159,7 +157,7 @@ parse_arguments() {
         exit 1
     fi
 
-    while getopts ":p:o:k:m:s:r:w:h" option; do
+    while getopts ":p:o:k:m:s:r:h" option; do
         case "$option" in
             p) condapath="$OPTARG" ;;
             o) offline_files_folder="$OPTARG" ;;
@@ -167,7 +165,6 @@ parse_arguments() {
             m) min_l="$OPTARG" ;;
             s) min_s="$OPTARG" ;;
             r) read_len="$OPTARG" ;;
-            w) sudo_password="$OPTARG" ;;
             h)
                 usage
                 exit 0
@@ -296,21 +293,17 @@ ensure_sudo_credentials() {
         return 0
     fi
 
-    if [[ -n "$sudo_password" ]]; then
-        log_info "Validating administrator privileges..."
+    if [[ ! -t 0 ]]; then
+        log_error "Interactive sudo authentication is required."
+        log_error "Run the installer directly from an interactive terminal."
+        return 1
+    fi
 
-        if ! printf '%s\n' "$sudo_password" |
-            sudo -S -p '' -v; then
-            log_error "The supplied sudo password was rejected."
-            return 1
-        fi
-    else
-        log_info "Administrator privileges are required to install system dependencies."
+    log_info "Administrator privileges are required to install system dependencies."
 
-        if ! sudo -v; then
-            log_error "Could not obtain administrator privileges."
-            return 1
-        fi
+    if ! sudo -v; then
+        log_error "Could not obtain administrator privileges."
+        return 1
     fi
 }
 
@@ -1057,6 +1050,12 @@ restore_default_rsync_helper() {
     install_kraken_helper "$dir/Installation/rsync_from_ncbi.pl" "rsync_from_ncbi.pl"
 }
 
+restore_default_genomic_library_helper() {
+    install_kraken_helper \
+        "$dir/Installation/download_genomic_library.sh" \
+        "download_genomic_library.sh"
+}
+
 patch_perl_local_download_dir() {
     local perl_script="$1"
     local local_directory="$2"
@@ -1257,13 +1256,6 @@ install_halla_dependencies() {
 install_mtd_extra_tools() {
     activate_required_env MTD
 
-    # Preserved from the original installer; rsync is also installed in the
-    # initial system-dependency stage.
-    sudo_with_pass "sudo apt-get update"
-    sudo_with_pass "sudo apt-get install rsync -y"
-
-    safe_conda_deactivate
-    activate_required_env MTD
     run_required_command \
         "Installing pkg-config in MTD" \
         conda install -n MTD -y -c conda-forge pkg-config
