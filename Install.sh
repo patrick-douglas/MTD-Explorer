@@ -1203,9 +1203,26 @@ create_conda_environments() {
 
     safe_conda_deactivate
 
-    run_required_command \
+        run_required_command \
         "Creating initial R412 environment" \
         conda env create -f "$dir/Installation/R412.yml"
+
+    # ----------------------------------------------------------
+    # Dedicated environment for custom OrgDb construction
+    # ----------------------------------------------------------
+
+    run_required_command \
+        "Creating dedicated MTD_orgdb environment" \
+        conda env create -f "$dir/Installation/MTD_orgdb.yml"
+
+    require_env_command MTD_orgdb Rscript
+    require_env_command MTD_orgdb jq
+    require_env_command MTD_orgdb yq
+
+    run_required_command \
+        "Validating MTD_orgdb R packages" \
+        conda run -n MTD_orgdb \
+        Rscript "$dir/Installation/check_MTD_orgdb.R"
 
     sed -i '/^# *rpy2/s/^# *//' "$dir/Installation/pip.requirements"
 
@@ -1718,9 +1735,12 @@ install_r412_and_annotation_packages() {
     run_required_script "$dir/update_fix/check_R_pkg.R412.sh"
     safe_conda_deactivate
 
-    # Install annotation tools in the base environment, as in the original.
-    R -e 'BiocManager::install("GenomeInfoDb")'
-    bash "$dir/update_fix/Install.R.AnnotPackages.base.sh"
+    log_info "OrgDb annotation packages are managed by the dedicated MTD_orgdb environment."
+
+    run_required_command \
+        "Rechecking MTD_orgdb environment" \
+        conda run -n MTD_orgdb \
+        Rscript "$dir/Installation/check_MTD_orgdb.R"
 }
 
 show_r_package_versions() {
@@ -1733,6 +1753,14 @@ show_r_package_versions() {
     conda run -n MTD "$dir/update_fix/check_R_pkg.MTD.sh"
     conda run -n R412 "$dir/update_fix/check_R_pkg.R412.sh"
     conda run -n halla0820 "$dir/update_fix/check_R_pkg.halla0820.sh"
+
+    echo
+    echo "${g}MTD_orgdb environment:${w}"
+
+    run_required_command \
+        "Reporting MTD_orgdb package versions" \
+        conda run -n MTD_orgdb \
+        Rscript "$dir/Installation/check_MTD_orgdb.R"
 }
 
 # ------------------------------------------------------------------------------
