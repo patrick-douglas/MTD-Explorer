@@ -29,7 +29,7 @@ VERSION="0.3.0"
 THREADS="20"
 FORCE=0
 SKIP_IF_COMPATIBLE=0
-CONDA_R_ENV="R412"
+CONDA_R_ENV="${MTD_ORGDB_ENV:-MTD_orgdb}"
 CONDA_MTD_ENV="MTD"
 SYMBOL_MODE="gene_id"
 GENE_PATTERN='(?:gene[:=]|gene_id[:=]|gene=)([A-Za-z0-9_.:-]+)'

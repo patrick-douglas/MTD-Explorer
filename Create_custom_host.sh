@@ -23,7 +23,8 @@ CLEAN_ONLY=0
 USE_KRAKEN_TAXONOMY_CACHE=1
 REBUILD_KRAKEN_TAXONOMY_CACHE=0
 KRAKEN_TAXONOMY_CACHE=""
-
+MTD_ORGDB_ENV="${MTD_ORGDB_ENV:-MTD_orgdb}"
+export MTD_ORGDB_ENV
 
 # ------------------------------------------------------------
 # Add a path to a colon-separated environment variable only once

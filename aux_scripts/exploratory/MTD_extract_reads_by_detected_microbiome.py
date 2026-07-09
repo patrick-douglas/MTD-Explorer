@@ -233,27 +233,50 @@ def select_ranked_rows(rows, top_n: int):
 def extract_reads_for_taxon_sample(
     krakentools_script: Path,
     kraken_file: Path,
-    seq_file: Path,
+    seq_file1: Path,
+    seq_file2,
     report_file: Path,
     taxid: str,
-    out_file: Path,
+    out_file1: Path,
+    out_file2,
     include_children: bool,
     seq_format: str,
+    read_layout: str,
 ):
     cmd = [
         sys.executable,
         str(krakentools_script),
         "-k",
         str(kraken_file),
-        "-s",
-        str(seq_file),
+        "-s1",
+        str(seq_file1),
         "-r",
         str(report_file),
         "-t",
         str(taxid),
         "-o",
-        str(out_file),
+        str(out_file1),
     ]
+
+    if read_layout == "pe":
+        if seq_file2 is None:
+            raise ValueError(
+                "Paired-end extraction requires seq_file2."
+            )
+
+        if out_file2 is None:
+            raise ValueError(
+                "Paired-end extraction requires out_file2."
+            )
+
+        cmd.extend(
+            [
+                "-s2",
+                str(seq_file2),
+                "-o2",
+                str(out_file2),
+            ]
+        )
 
     if include_children:
         cmd.append("--include-children")
@@ -294,7 +317,19 @@ def main():
     parser.add_argument("--ranked_table", required=True, help="detected_microbiome_*_ranked_with_samples.tsv")
     parser.add_argument("--bracken_table", required=True, help="Combined Bracken table, e.g. bracken_species_all")
     parser.add_argument("--samplesheet", required=True, help="samplesheet.csv")
-    parser.add_argument("--temp_dir", required=True, help="MTD temp directory containing Kraken and non-host files")
+    parser.add_argument(
+        "--temp_dir",
+        required=True,
+        help="MTD temp directory containing Kraken and non-host files",
+    )
+    parser.add_argument(
+        "--read-layout",
+        "--read_layout",
+        dest="read_layout",
+        required=True,
+        choices=("se", "pe"),
+        help="Effective sequencing layout: se or pe",
+    )
     parser.add_argument("--krakentools_script", required=True, help="Path to extract_kraken_reads.py")
     parser.add_argument("--output_dir", required=True, help="Output directory")
     parser.add_argument("--top_n", type=int, default=50, help="Top N taxa to extract. Use 0 for all. Default: 50")
@@ -358,6 +393,10 @@ def main():
         "extracted_reads",
         "status",
         "message",
+        "layout",
+        "output_file_r2",
+        "extracted_reads_r2",
+        "pair_count_match",
     ]
 
     print("============================================================")
@@ -367,6 +406,7 @@ def main():
     print("Samplesheet:", samplesheet)
     print("Temp dir:", temp_dir)
     print("Output dir:", output_dir)
+    print("Read layout:", args.read_layout)
     print("Top N:", args.top_n)
     print("Min abundance:", args.min_abundance)
     print("Include children:", args.include_children)
@@ -407,7 +447,8 @@ def main():
         taxon_dir = output_dir / f"{int(index):06d}_taxid{taxid}_{taxon_safe}"
         taxon_dir.mkdir(parents=True, exist_ok=True)
 
-        sample_output_files = []
+        sample_output_files_r1 = []
+        sample_output_files_r2 = []
         sample_output_format = None
 
         for sample in sample_cols:
@@ -418,15 +459,28 @@ def main():
 
             kraken_file = temp_dir / f"Report_non-host_{sample}.kraken"
             report_file = temp_dir / f"Report_non-host_{sample}.txt"
-            seq_file = temp_dir / f"{sample}_non-host.fq"
 
-            missing = []
-            if not kraken_file.exists() or kraken_file.stat().st_size == 0:
-                missing.append(str(kraken_file))
-            if not report_file.exists() or report_file.stat().st_size == 0:
-                missing.append(str(report_file))
-            if not seq_file.exists() or seq_file.stat().st_size == 0:
-                missing.append(str(seq_file))
+            if args.read_layout == "pe":
+                seq_file1 = temp_dir / f"{sample}_non-host_1.fq"
+                seq_file2 = temp_dir / f"{sample}_non-host_2.fq"
+            else:
+                seq_file1 = temp_dir / f"{sample}_non-host.fq"
+                seq_file2 = None
+
+            required_paths = [
+                kraken_file,
+                report_file,
+                seq_file1,
+            ]
+
+            if seq_file2 is not None:
+                required_paths.append(seq_file2)
+
+            missing = [
+                str(path)
+                for path in required_paths
+                if not path.exists() or path.stat().st_size == 0
+            ]
 
             if missing:
                 all_summary_rows.append({
@@ -440,10 +494,14 @@ def main():
                     "extracted_reads": "0",
                     "status": "missing_input",
                     "message": "Missing: " + ";".join(missing),
+                    "layout": args.read_layout,
+                    "output_file_r2": "NA",
+                    "extracted_reads_r2": "0",
+                    "pair_count_match": "NA",
                 })
                 continue
 
-            seq_format = detect_sequence_format(seq_file)
+            seq_format = detect_sequence_format(seq_file1)
 
             if seq_format == "unknown":
                 all_summary_rows.append({
@@ -456,15 +514,95 @@ def main():
                     "output_file": "NA",
                     "extracted_reads": "0",
                     "status": "unknown_sequence_format",
-                    "message": f"Could not detect FASTA/FASTQ format: {seq_file}",
+                    "message": f"Could not detect FASTA/FASTQ format: {seq_file1}",
+                    "layout": args.read_layout,
+                    "output_file_r2": "NA",
+                    "extracted_reads_r2": "0",
+                    "pair_count_match": "NA",
                 })
                 continue
 
-            ext = "fastq" if seq_format == "fastq" else "fasta"
-            out_file = taxon_dir / f"{sample}.taxid{taxid}.{taxon_safe}.{ext}"
+            if args.read_layout == "pe":
+                seq_format2 = detect_sequence_format(seq_file2)
 
-            if out_file.exists() and out_file.stat().st_size > 0 and not args.overwrite:
-                extracted_reads = count_sequences(out_file, seq_format)
+                if seq_format2 != seq_format:
+                    all_summary_rows.append({
+                        "rank_position": rank_position,
+                        "taxon": taxon,
+                        "taxid": taxid,
+                        "sample": sample,
+                        "abundance": abundance,
+                        "seq_format": seq_format,
+                        "output_file": "NA",
+                        "extracted_reads": "0",
+                        "status": "mate_format_mismatch",
+                        "message": (
+                            f"R1 format is {seq_format}; "
+                            f"R2 format is {seq_format2}"
+                        ),
+                        "layout": args.read_layout,
+                        "output_file_r2": "NA",
+                        "extracted_reads_r2": "0",
+                        "pair_count_match": "NA",
+                    })
+                    continue
+
+            ext = "fastq" if seq_format == "fastq" else "fasta"
+            output_prefix = f"{sample}.taxid{taxid}.{taxon_safe}"
+
+            if args.read_layout == "pe":
+                out_file1 = taxon_dir / f"{output_prefix}.R1.{ext}"
+                out_file2 = taxon_dir / f"{output_prefix}.R2.{ext}"
+            else:
+                out_file1 = taxon_dir / f"{output_prefix}.{ext}"
+                out_file2 = None
+
+            output_exists = (
+                out_file1.exists()
+                and out_file1.stat().st_size > 0
+            )
+
+            if args.read_layout == "pe":
+                output_exists = (
+                    output_exists
+                    and out_file2.exists()
+                    and out_file2.stat().st_size > 0
+                )
+
+            if output_exists and not args.overwrite:
+                extracted_reads1 = count_sequences(
+                    out_file1,
+                    seq_format,
+                )
+
+                if args.read_layout == "pe":
+                    extracted_reads2 = count_sequences(
+                        out_file2,
+                        seq_format,
+                    )
+
+                    pair_count_match = (
+                        "yes"
+                        if extracted_reads1 == extracted_reads2
+                        else "no"
+                    )
+                else:
+                    extracted_reads2 = 0
+                    pair_count_match = "not_applicable"
+
+                if pair_count_match == "no":
+                    status = "pair_count_mismatch"
+                    message = (
+                        "Existing paired outputs have different "
+                        "sequence counts."
+                    )
+                else:
+                    status = "already_exists"
+                    message = (
+                        "Existing file kept. "
+                        "Use --overwrite to regenerate."
+                    )
+
                 all_summary_rows.append({
                     "rank_position": rank_position,
                     "taxon": taxon,
@@ -472,39 +610,109 @@ def main():
                     "sample": sample,
                     "abundance": abundance,
                     "seq_format": seq_format,
-                    "output_file": str(out_file),
-                    "extracted_reads": str(extracted_reads),
-                    "status": "already_exists",
-                    "message": "Existing file kept. Use --overwrite to regenerate.",
+                    "output_file": str(out_file1),
+                    "extracted_reads": str(extracted_reads1),
+                    "status": status,
+                    "message": message,
+                    "layout": args.read_layout,
+                    "output_file_r2": (
+                        str(out_file2)
+                        if out_file2 is not None
+                        else "NA"
+                    ),
+                    "extracted_reads_r2": str(extracted_reads2),
+                    "pair_count_match": pair_count_match,
                 })
-                sample_output_files.append(out_file)
-                sample_output_format = seq_format
+
+                if extracted_reads1 > 0 and pair_count_match != "no":
+                    sample_output_files_r1.append(out_file1)
+
+                    if args.read_layout == "pe":
+                        sample_output_files_r2.append(out_file2)
+
+                    sample_output_format = seq_format
+
                 continue
 
-            print(f"[EXTRACT] rank={rank_position} taxid={taxid} taxon={taxon} sample={sample} abundance={abundance}")
+            print(
+                "[EXTRACT]",
+                f"rank={rank_position}",
+                f"taxid={taxid}",
+                f"taxon={taxon}",
+                f"sample={sample}",
+                f"abundance={abundance}",
+                f"layout={args.read_layout}",
+            )
 
             result, cmd = extract_reads_for_taxon_sample(
                 krakentools_script=krakentools_script,
                 kraken_file=kraken_file,
-                seq_file=seq_file,
+                seq_file1=seq_file1,
+                seq_file2=seq_file2,
                 report_file=report_file,
                 taxid=taxid,
-                out_file=out_file,
+                out_file1=out_file1,
+                out_file2=out_file2,
                 include_children=args.include_children,
                 seq_format=seq_format,
+                read_layout=args.read_layout,
             )
 
-            extracted_reads = count_sequences(out_file, seq_format)
+            extracted_reads1 = count_sequences(
+                out_file1,
+                seq_format,
+            )
+
+            if args.read_layout == "pe":
+                extracted_reads2 = count_sequences(
+                    out_file2,
+                    seq_format,
+                )
+
+                pair_count_match = (
+                    "yes"
+                    if extracted_reads1 == extracted_reads2
+                    else "no"
+                )
+            else:
+                extracted_reads2 = 0
+                pair_count_match = "not_applicable"
 
             if result.returncode == 0:
-                status = "ok"
-                message = f"Extracted reads: {extracted_reads}"
-                if extracted_reads > 0:
-                    sample_output_files.append(out_file)
+                if pair_count_match == "no":
+                    status = "pair_count_mismatch"
+                    message = (
+                        "KrakenTools completed, but R1 and R2 "
+                        f"counts differ: R1={extracted_reads1}; "
+                        f"R2={extracted_reads2}"
+                    )
+                else:
+                    status = "ok"
+
+                    if args.read_layout == "pe":
+                        message = (
+                            "Extracted paired reads: "
+                            f"{extracted_reads1} pairs"
+                        )
+                    else:
+                        message = (
+                            f"Extracted reads: {extracted_reads1}"
+                        )
+
+                if extracted_reads1 > 0 and status == "ok":
+                    sample_output_files_r1.append(out_file1)
+
+                    if args.read_layout == "pe":
+                        sample_output_files_r2.append(out_file2)
+
                     sample_output_format = seq_format
             else:
                 status = "failed"
-                message = (result.stderr or result.stdout or "extract_kraken_reads.py failed").replace("\n", " | ")
+                message = (
+                    result.stderr
+                    or result.stdout
+                    or "extract_kraken_reads.py failed"
+                ).replace("\n", " | ")
 
             all_summary_rows.append({
                 "rank_position": rank_position,
@@ -513,32 +721,124 @@ def main():
                 "sample": sample,
                 "abundance": abundance,
                 "seq_format": seq_format,
-                "output_file": str(out_file),
-                "extracted_reads": str(extracted_reads),
+                "output_file": str(out_file1),
+                "extracted_reads": str(extracted_reads1),
                 "status": status,
                 "message": message,
+                "layout": args.read_layout,
+                "output_file_r2": (
+                    str(out_file2)
+                    if out_file2 is not None
+                    else "NA"
+                ),
+                "extracted_reads_r2": str(extracted_reads2),
+                "pair_count_match": pair_count_match,
             })
 
         # Concatenate sample-level outputs into one file per taxon.
-        if sample_output_files:
-            ext = "fastq" if sample_output_format == "fastq" else "fasta"
-            combined_file = taxon_dir / f"all_samples.taxid{taxid}.{taxon_safe}.{ext}"
-            concatenate_files(sample_output_files, combined_file)
+        if sample_output_files_r1:
+            ext = (
+                "fastq"
+                if sample_output_format == "fastq"
+                else "fasta"
+            )
 
-            combined_count = count_sequences(combined_file, sample_output_format)
+            if args.read_layout == "pe":
+                combined_file1 = (
+                    taxon_dir
+                    / f"all_samples.taxid{taxid}.{taxon_safe}.R1.{ext}"
+                )
 
-            all_summary_rows.append({
-                "rank_position": rank_position,
-                "taxon": taxon,
-                "taxid": taxid,
-                "sample": "all_samples",
-                "abundance": "NA",
-                "seq_format": sample_output_format,
-                "output_file": str(combined_file),
-                "extracted_reads": str(combined_count),
-                "status": "combined",
-                "message": f"Concatenated {len(sample_output_files)} sample files",
-            })
+                combined_file2 = (
+                    taxon_dir
+                    / f"all_samples.taxid{taxid}.{taxon_safe}.R2.{ext}"
+                )
+
+                concatenate_files(
+                    sample_output_files_r1,
+                    combined_file1,
+                )
+
+                concatenate_files(
+                    sample_output_files_r2,
+                    combined_file2,
+                )
+
+                combined_count1 = count_sequences(
+                    combined_file1,
+                    sample_output_format,
+                )
+
+                combined_count2 = count_sequences(
+                    combined_file2,
+                    sample_output_format,
+                )
+
+                pair_count_match = (
+                    "yes"
+                    if combined_count1 == combined_count2
+                    else "no"
+                )
+
+                all_summary_rows.append({
+                    "rank_position": rank_position,
+                    "taxon": taxon,
+                    "taxid": taxid,
+                    "sample": "all_samples",
+                    "abundance": "NA",
+                    "seq_format": sample_output_format,
+                    "output_file": str(combined_file1),
+                    "extracted_reads": str(combined_count1),
+                    "status": (
+                        "combined"
+                        if pair_count_match == "yes"
+                        else "combined_pair_count_mismatch"
+                    ),
+                    "message": (
+                        "Concatenated paired outputs from "
+                        f"{len(sample_output_files_r1)} samples"
+                    ),
+                    "layout": args.read_layout,
+                    "output_file_r2": str(combined_file2),
+                    "extracted_reads_r2": str(combined_count2),
+                    "pair_count_match": pair_count_match,
+                })
+
+            else:
+                combined_file = (
+                    taxon_dir
+                    / f"all_samples.taxid{taxid}.{taxon_safe}.{ext}"
+                )
+
+                concatenate_files(
+                    sample_output_files_r1,
+                    combined_file,
+                )
+
+                combined_count = count_sequences(
+                    combined_file,
+                    sample_output_format,
+                )
+
+                all_summary_rows.append({
+                    "rank_position": rank_position,
+                    "taxon": taxon,
+                    "taxid": taxid,
+                    "sample": "all_samples",
+                    "abundance": "NA",
+                    "seq_format": sample_output_format,
+                    "output_file": str(combined_file),
+                    "extracted_reads": str(combined_count),
+                    "status": "combined",
+                    "message": (
+                        f"Concatenated "
+                        f"{len(sample_output_files_r1)} sample files"
+                    ),
+                    "layout": args.read_layout,
+                    "output_file_r2": "NA",
+                    "extracted_reads_r2": "0",
+                    "pair_count_match": "not_applicable",
+                })
 
     with summary_file.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=summary_fields, delimiter="\t")

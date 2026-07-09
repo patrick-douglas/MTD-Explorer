@@ -1151,6 +1151,7 @@ install_system_dependencies() {
         build-essential
         pkg-config
         libssl-dev
+        sra-toolkit
     )
 
     log_info "Installing system dependencies..."
