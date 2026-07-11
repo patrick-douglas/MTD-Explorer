@@ -1,0 +1,202 @@
+Taxon_ID,MartDatasets,Scientific_name,OrgDb,Common_name,kegg
+80966,apolyacanthus_gene_ensembl,Acanthochromis polyacanthus,,Spiny_chromis,
+9646,amelanoleuca_gene_ensembl,Ailuropoda melanoleuca,,Giant_panda,aml
+61819,acitrinellus_gene_ensembl,Amphilophus citrinellus,,Midas_cichlid,
+80972,aocellaris_gene_ensembl,Amphiprion ocellaris,,Clown_anemonefish,aoce
+161767,apercula_gene_ensembl,Amphiprion percula,,Orange_clownfish,
+64144,atestudineus_gene_ensembl,Anabas testudineus,,Climbing_perch,
+8839,aplatyrhynchos_gene_ensembl,Anas platyrhynchos,org.Aplatyrhynchos.eg.db,Mallard,apla
+8840,applatyrhynchos_gene_ensembl,Anas platyrhynchos platyrhynchos,,Common_mallard,
+28377,acarolinensis_gene_ensembl,Anolis carolinensis,,Green_anole,acs
+132585,abrachyrhynchus_gene_ensembl,Anser brachyrhynchus,,Pink_footed_goose,abrc
+37293,anancymaae_gene_ensembl,Aotus nancymaae,,Ma_s_night_monkey,anan
+223781,acchrysaetos_gene_ensembl,Aquila chrysaetos chrysaetos,,Golden_eagle,achc
+8154,acalliptera_gene_ensembl,Astatotilapia calliptera,,Eastern_happy,
+7994,amexicanus_gene_ensembl,Astyanax mexicanus,,Mexican_tetra,amex
+9771,bmusculus_gene_ensembl,Balaenoptera musculus,,Blue_whale,bmus
+158456,bsplendens_gene_ensembl,Betta splendens,,Siamese_fighting_fish,bspl
+43346,bbbison_gene_ensembl,Bison bison bison,,American_bison,bbis
+6526,bggca947242115v1rs_eg_gene,Biomphalaria glabrata,org.Bglabrata.eg.db,Bloodfluke_planorb,bgt
+30521,bgrunniens_gene_ensembl,Bos grunniens,,Domestic_yak,
+30522,bihybrid_gene_ensembl,Bos indicus x Bos taurus,,Hybrid_cattle,
+72004,bmutus_gene_ensembl,Bos mutus,,Wild_yak,bom
+9913,btaurus_gene_ensembl,Bos taurus,org.Bt.eg.db,Cattle,bta
+6239,celegans_gene_ensembl,Caenorhabditis elegans,org.Ce.eg.db,Nematode,cel
+198806,cpugnax_gene_ensembl,Calidris pugnax,org.Cpugnax.eg.db,Ruff,narq
+9483,cjacchus_gene_ensembl,Callithrix jacchus,,White_tufted_ear_marmoset,cjc
+7868,cmilii_gene_ensembl,Callorhinchus milii,,Elephant_shark,cmk
+9838,cdromedarius_gene_ensembl,Camelus dromedarius,,Arabian_camel,cdk
+286419,cldingo_gene_ensembl,Canis lupus dingo,,Dingo,clud
+9615,clfamiliaris_gene_ensembl,Canis lupus familiaris,org.Cf.eg.db,Dog,cfa
+9925,chircus_gene_ensembl,Capra hircus,,Goat,chx
+7957,cauratus_gene_ensembl,Carassius auratus,org.Cauratus.eg.db,Goldfish,caua
+1868482,csyrichta_gene_ensembl,Carlito syrichta,,Philippine_tarsier,csyr
+51154,cwagneri_gene_ensembl,Catagonus wagneri,,Chacoan_peccary,
+10141,cporcellus_gene_ensembl,Cavia porcellus,,Domestic_guinea_pig,cpoc
+2715852,ccapucinus_gene_ensembl,Cebus capucinus imitator,,Panamanian_white_faced_capuchin,cimi
+9531,catys_gene_ensembl,Cercocebus atys,,Sooty_mangabey,caty
+84702,chyarkandensis_gene_ensembl,Cervus hanglu yarkandensis,,Yarkand_deer,
+106734,cabingdonii_gene_ensembl,Chelonoidis abingdonii,,Abingdon_island_giant_tortoise,cabi
+34839,clanigera_gene_ensembl,Chinchilla lanigera,,Long_tailed_chinchilla,
+60711,csabaeus_gene_ensembl,Chlorocebus sabaeus,,African_green_monkey,csab
+9358,choffmanni_gene_ensembl,Choloepus hoffmanni,,Hoffmann_s_two_fingered_sloth,
+8478,cpbellii_gene_ensembl,Chrysemys picta bellii,,Western_painted_turtle,cpic
+7719,cintestinalis_gene_ensembl,Ciona intestinalis,,Sea_squirt_Ciona_intestinalis,cin
+51511,csavignyi_gene_ensembl,Ciona savignyi,,Sea_squirt_Ciona_savignyi,
+7950,charengus_gene_ensembl,Clupea harengus,,Atlantic_herring,char
+56716,cgobio_gene_ensembl,Cottoperca gobio,,Channel_bull_blenny,cgob
+93934,cjaponica_gene_ensembl,Coturnix japonica,,Japanese_quail,cjo
+8502,cporosus_gene_ensembl,Crocodylus porosus,,Australian_saltwater_crocodile,cpoo
+8103,clumpus_gene_ensembl,Cyclopterus lumpus,,Lumpfish,clum
+244447,csemilaevis_gene_ensembl,Cynoglossus semilaevis,,Tongue_sole,csem
+28743,cvariegatus_gene_ensembl,Cyprinodon variegatus,,Sheepshead_minnow,cvg
+7962,ccarpio_gene_ensembl,Cyprinus carpio,,,ccar
+7955,drerio_gene_ensembl,Danio rerio,org.Dr.eg.db,Zebrafish,dre
+9361,dnovemcinctus_gene_ensembl,Dasypus novemcinctus,,Nine_banded_armadillo,dnm
+9749,dleucas_gene_ensembl,Delphinapterus leucas,,Beluga_whale,dle
+299321,dclupeoides_gene_ensembl,Denticeps clupeoides,,Denticle_herring,
+13489,dlabrax_gene_ensembl,Dicentrarchus labrax,,European_seabass,
+10020,dordii_gene_ensembl,Dipodomys ordii,,Ord_s_kangaroo_rat,dord
+7227,dmelanogaster_gene_ensembl,Drosophila melanogaster,org.Dm.eg.db,Fruit_fly,dme
+9371,etelfairi_gene_ensembl,Echinops telfairi,,Small_Madagascar_hedgehog,etf
+8005,eelectricus_gene_ensembl,Electrophorus electricus,,Electric_eel,eee
+7764,eburgeri_gene_ensembl,Eptatretus burgeri,,Inshore_hagfish,
+83772,eaasinus_gene_ensembl,Equus asinus asinus,,,
+9796,ecaballus_gene_ensembl,Equus caballus,,Horse,ecb
+9365,eeuropaeus_gene_ensembl,Erinaceus europaeus,,Western_European_hedgehog,
+27687,ecalabaricus_gene_ensembl,Erpetoichthys calabaricus,,Reedfish,
+8010,elucius_gene_ensembl,Esox lucius,,Northern_pike,els
+9685,fcatus_gene_ensembl,Felis catus,,Domestic_cat,fca
+59894,falbicollis_gene_ensembl,Ficedula albicollis,,Collared_flycatcher,fab
+8078,fheteroclitus_gene_ensembl,Fundulus heteroclitus,,Mummichog,
+8049,gmorhua_gene_ensembl,Gadus morhua,,Atlantic_cod,gmh
+9031,ggallus_gene_ensembl,Gallus gallus,org.Gg.eg.db,Chicken,gga
+69293,gaculeatus_gene_ensembl,Gasterosteus aculeatus,,Three_spined_stickleback,gat
+48883,gfortis_gene_ensembl,Geospiza fortis,,Medium_ground_finch,gfr
+1825980,gevgoodei_gene_ensembl,Gopherus evgoodei,,Goodes_thornscrub_tortoise,
+9595,ggorilla_gene_ensembl,Gorilla gorilla gorilla,,Western_Lowland_Gorilla,ggo
+8153,hburtoni_gene_ensembl,Haplochromis burtoni,,Burton_s_mouthbrooder,
+10181,hgfemale_gene_ensembl,Heterocephalus glaber,,Naked_mole_rat,hgl
+109280,hcomes_gene_ensembl,Hippocampus comes,,Tiger_tail_seahorse,hcq
+9606,hsapiens_gene_ensembl,Homo sapiens,org.Hs.eg.db,Human,hsa
+62062,hhucho_gene_ensembl,Hucho hucho,,Huchen,
+7998,ipunctatus_gene_ensembl,Ictalurus punctatus,,Channel_catfish,ipu
+43179,itridecemlineatus_gene_ensembl,Ictidomys tridecemlineatus,,Thirteen_lined_ground_squirrel,iti
+51337,jjaculus_gene_ensembl,Jaculus jaculus,,Lesser_Egyptian_jerboa,
+37003,kmarmoratus_gene_ensembl,Kryptolebias marmoratus,,Mangrove_rivulus,kmr
+56723,lbergylta_gene_ensembl,Labrus bergylta,,Ballan_wrasse,
+215358,lcrocea_gene_ensembl,Larimichthys crocea,,Large_yellow_croaker,lco
+8187,lcalcarifer_gene_ensembl,Lates calcarifer,,Barramundi_perch,lcf
+8630,llaticaudata_gene_ensembl,Laticauda laticaudata,,Blue_ringed_sea_krait,
+7897,lchalumnae_gene_ensembl,Latimeria chalumnae,,Coelacanth,lcm
+7918,loculatus_gene_ensembl,Lepisosteus oculatus,,Spotted_gar,loc
+445787,lleishanense_gene_ensembl,Leptobrachium leishanense,,Leishan_spiny_toad,
+9785,lafricana_gene_ensembl,Loxodonta africana,,African_savanna_elephant,lav
+9541,mfascicularis_gene_ensembl,Macaca fascicularis,,Crab_eating_macaque,mcf
+9544,mmulatta_gene_ensembl,Macaca mulatta,org.Mmu.eg.db,Macaque,mcc
+9545,mnemestrina_gene_ensembl,Macaca nemestrina,,Pig_tailed_macaque,mni
+9568,mleucophaeus_gene_ensembl,Mandrillus leucophaeus,,Drill,mleu
+9994,mmmarmota_gene_ensembl,Marmota marmota marmota,,Alpine_marmot,mmma
+205130,marmatus_gene_ensembl,Mastacembelus armatus,,Zig_zag_eel,
+106582,mzebra_gene_ensembl,Maylandia zebra,,Zebra_mbuna,mze
+9103,mgallopavo_gene_ensembl,Meleagris gallopavo,,Turkey,mgp
+10036,mauratus_gene_ensembl,Mesocricetus auratus,,Golden_Hamster,maua
+30608,mmurinus_gene_ensembl,Microcebus murinus,,Gray_mouse_lemur,mmur
+79684,mochrogaster_gene_ensembl,Microtus ochrogaster,,Vole,
+13616,mdomestica_gene_ensembl,Monodelphis domestica,,Gray_short_tailed_opossum,mdo
+40151,mmonoceros_gene_ensembl,Monodon monoceros,,Narwhal,
+68415,mmoschiferus_gene_ensembl,Moschus moschiferus,,Siberian_musk_deer,
+10089,mcaroli_gene_ensembl,Mus caroli,,Ryukyu_mouse,mcal
+10090,mmusculus_gene_ensembl,Mus musculus,org.Mmusculus.eg.db,Mouse,mmu
+10093,mpahari_gene_ensembl,Mus pahari,,Shrew_mouse,mpah
+10103,mspicilegus_gene_ensembl,Mus spicilegus,,Steppe_mouse,
+10096,mspretus_gene_ensembl,Mus spretus,,Western_wild_mouse,
+9669,mpfuro_gene_ensembl,Mustela putorius furo,,Domestic_ferret,mpuf
+59463,mlucifugus_gene_ensembl,Myotis lucifugus,org.Mlucifugus.eg.db,Little_brown_bat,mlf
+586833,mmurdjan_gene_ensembl,Myripristis murdjan,,Pinecone_soldierfish,
+35670,nnaja_gene_ensembl,Naja naja,,Indian_cobra,
+1026970,ngalili_gene_ensembl,Nannospalax galili,,Upper_Galilee_mountains_blind_mole_rat,ngi
+32507,nbrichardi_gene_ensembl,Neolamprologus brichardi,,Lyretail_cichlid,
+452646,nvison_gene_ensembl,Neovison vison,,American_mink,nvs
+61853,nleucogenys_gene_ensembl,Nomascus leucogenys,,Northern_white_cheeked_gibbon,nle
+9315,neugenii_gene_ensembl,Notamacropus eugenii,,Tammar_wallaby,
+8663,nscutatus_gene_ensembl,Notechis scutatus,,Mainland_tiger_snake,nss
+105023,nfurzeri_gene_ensembl,Nothobranchius furzeri,,Turquoise_killifish,nfu
+9978,oprinceps_gene_ensembl,Ochotona princeps,,American_pika,opi
+10160,odegus_gene_ensembl,Octodon degus,,Degu,
+8019,okisutch_gene_ensembl,Oncorhynchus kisutch,,Coho_salmon,oki
+8022,omykiss_gene_ensembl,Oncorhynchus mykiss,,Rainbow_trout,omy
+74940,otshawytscha_gene_ensembl,Oncorhynchus tshawytscha,,Chinook_salmon,otw
+8128,oniloticus_gene_ensembl,Oreochromis niloticus,,Nile_tilapia,onl
+9258,oanatinus_gene_ensembl,Ornithorhynchus anatinus,,Platypus,oaa
+9986,ocuniculus_gene_ensembl,Oryctolagus cuniculus,,Rabbit,ocu
+123683,ojavanicus_gene_ensembl,Oryzias javanicus,,Javanese_ricefish,
+8090,olatipes_gene_ensembl,Oryzias latipes,,Japanese_medaka_HdrR,ola
+30732,omelastigma_gene_ensembl,Oryzias melastigma,,Indian_medaka,oml
+183150,osinensis_gene_ensembl,Oryzias sinensis,,Chinese_medaka,
+30611,ogarnettii_gene_ensembl,Otolemur garnettii,,Small_eared_galago,oga
+9940,oaries_gene_ensembl,Ovis aries,,Sheep,oas
+9597,ppaniscus_gene_ensembl,Pan paniscus,,Bonobo,pps
+9598,ptroglodytes_gene_ensembl,Pan troglodytes,org.Pt.eg.db,Chimpanzee,ptr
+9689,pleo_gene_ensembl,Panthera leo,,Lion,plez
+9691,ppardus_gene_ensembl,Panthera pardus,,Leopard,ppad
+74533,ptaltaica_gene_ensembl,Panthera tigris altaica,,Tiger,ptg
+9555,panubis_gene_ensembl,Papio anubis,,Olive_baboon,panu
+1676925,pkingsleyae_gene_ensembl,Paramormyrops kingsleyae,,Paramormyrops_kingsleyae,pki
+9157,pmajor_gene_ensembl,Parus major,,Great_Tit,pmaj
+13735,psinensis_gene_ensembl,Pelodiscus sinensis,,Chinese_softshell_turtle,pss
+230844,pmbairdii_gene_ensembl,Peromyscus maniculatus bairdii,,Northern_American_deer_mouse,pmav
+7757,pmarinus_gene_ensembl,Petromyzon marinus,,Sea_lamprey,pmrn
+38626,pcinereus_gene_ensembl,Phascolarctos cinereus,,Koala,pcw
+42100,psinus_gene_ensembl,Phocoena sinus,,Vaquita,psiu
+9755,pcatodon_gene_ensembl,Physeter catodon,,Sperm_whale,pcad
+64176,pmuralis_gene_ensembl,Podarcis muralis,,Common_wall_lizard,pmua
+48698,pformosa_gene_ensembl,Poecilia formosa,,Amazon_molly,pfor
+48699,platipinna_gene_ensembl,Poecilia latipinna,,Sailfin_molly,plai
+8081,preticulata_gene_ensembl,Poecilia reticulata,,Guppy,pret
+9601,pabelii_gene_ensembl,Pongo abelii,,Sumatran_orangutan,pon
+9813,pcapensis_gene_ensembl,Procavia capensis,,Cape_rock_hyrax,
+1328070,psimus_gene_ensembl,Prolemur simus,,Greater_bamboo_lemur,
+379532,pcoquereli_gene_ensembl,Propithecus coquereli,,Coquerel_s_sifaka,pcoq
+8673,ptextilis_gene_ensembl,Pseudonaja textilis,,Eastern_brown_snake,ptex
+132908,pvampyrus_gene_ensembl,Pteropus vampyrus,org.Pvampyrus.eg.db,Large_flying_fox,pva
+303518,pnyererei_gene_ensembl,Pundamilia nyererei,,Makobe_Island_cichlid,
+42514,pnattereri_gene_ensembl,Pygocentrus nattereri,,Red_bellied_piranha,
+10116,rnorvegicus_gene_ensembl,Rattus norvegicus,org.Rn.eg.db,Norway_rat,rno
+59479,rferrumequinum_gene_ensembl,Rhinolophus ferrumequinum,,Greater_horseshoe_bat,rfq
+61621,rbieti_gene_ensembl,Rhinopithecus bieti,,Black_snub_nosed_monkey,rbb
+61622,rroxellana_gene_ensembl,Rhinopithecus roxellana,,Golden_snub_nosed_monkey,rro
+559292,scerevisiae_gene_ensembl,Saccharomyces cerevisiae,org.Sc.sgd.db,Baker_s_yeast,sce
+39432,sbboliviensis_gene_ensembl,Saimiri boliviensis boliviensis,,Bolivian_squirrel_monkey,sbq
+8030,ssalar_gene_ensembl,Salmo salar,,Atlantic_salmon,sasa
+8032,strutta_gene_ensembl,Salmo trutta,,Brown_trout,stru
+96440,smerianae_gene_ensembl,Salvator merianae,,Argentine_black_and_white_tegu,
+283035,slucioperca_gene_ensembl,Sander lucioperca,,Pike_perch,sluc
+9305,sharrisii_gene_ensembl,Sarcophilus harrisii,,Tasmanian_devil,shr
+55149,svulgaris_gene_ensembl,Sciurus vulgaris,,Eurasian_red_squirrel,svul
+113540,sformosus_gene_ensembl,Scleropages formosus,,Asian_bonytongue,sfm
+52904,smaximus_gene_ensembl,Scophthalmus maximus,,Turbot,smau
+9135,scanaria_gene_ensembl,Serinus canaria,,Common_canary,scan
+41447,sdumerili_gene_ensembl,Seriola dumerili,,Greater_amberjack,sdu
+1841481,sldorsalis_gene_ensembl,Seriola lalandi dorsalis,,Yellowtail_amberjack,slal
+75366,sgrahami_gene_ensembl,Sinocyclocheilus grahami,,Golden_line_barbel,sgh
+42254,saraneus_gene_ensembl,Sorex araneus,,European_shrew,sara
+8175,saurata_gene_ensembl,Sparus aurata,,Gilthead_seabream,
+8508,spunctatus_gene_ensembl,Sphenodon punctatus,,Tuatara,
+144197,spartitus_gene_ensembl,Stegastes partitus,,Bicolor_damselfish,
+2489341,shabroptila_gene_ensembl,Strigops habroptila,,Kakapo,shab
+441894,scaustralis_gene_ensembl,Struthio camelus australis,,African_ostrich,scam
+9823,sscrofa_gene_ensembl,Sus scrofa,org.Ss.eg.db,Pig,ssc
+59729,tguttata_gene_ensembl,Taeniopygia guttata,,Zebra_finch,tgu
+2587831,trubripes_gene_ensembl,Terrapene carolina triunguis,,Three_toed_box_turtle,
+99883,tnigroviridis_gene_ensembl,Tetraodon nigroviridis,,Spotted_green_pufferfish,tng
+37347,tbelangeri_gene_ensembl,Tupaia belangeri,,Northern_tree_shrew,tup
+9739,ttruncatus_gene_ensembl,Tursiops truncatus,,Bottlenosed_dolphin,
+9999,uparryii_gene_ensembl,Urocitellus parryii,,Arctic_ground_squirrel,
+9643,uamericanus_gene_ensembl,Ursus americanus,,American_black_bear,uar
+29073,umaritimus_gene_ensembl,Ursus maritimus,,Polar_bear,umr
+30538,vpacos_gene_ensembl,Vicugna pacos,,Alpaca,vpc
+29139,vursinus_gene_ensembl,Vombatus ursinus,,Common_wombat,
+9627,vvulpes_gene_ensembl,Vulpes vulpes,,Red_fox,vvp
+8364,xtropicalis_gene_ensembl,Xenopus tropicalis,org.Xl.eg.db,Tropical_clawed_frog,xtr
+8083,xmaculatus_gene_ensembl,Xiphophorus maculatus,,Southern_platyfish,xma

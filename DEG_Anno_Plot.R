@@ -2341,9 +2341,9 @@ get_host_kegg_code <- function(host_sp, taxid) {
     host_sp[as.character(host_sp$Taxon_ID) == as.character(taxid), 6][1]
   ))
 
-  if ((is.na(ko.db) || ko.db == "") && as.character(taxid) == "59463") {
-    ko.db <- "mlf"
-  }
+#  if ((is.na(ko.db) || ko.db == "") && as.character(taxid) == "59463") {
+#    ko.db <- "mlf"
+#  }
 
   ko.db
 }
