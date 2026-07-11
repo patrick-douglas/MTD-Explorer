@@ -15,7 +15,7 @@
 
 set -uo pipefail
 
-CHECKER_VERSION="2026.07.11-r8"
+CHECKER_VERSION="2026.07.11-r8.1"
 
 MTD_DIR="$HOME/MTD"
 CONDA_PATH=""
@@ -967,22 +967,72 @@ if [[ -s "$INSTALL_SH" ]]; then
             "not present"
     fi
 
-    if grep -Eq '(^|[[:space:]])-w([[:space:]]|$)|sudo_password' "$INSTALL_SH"; then
-        record WARN "Installer contract" "legacy sudo password option" \
-            "-w or sudo_password reference detected"
-    else
-        record PASS "Installer contract" "legacy sudo password option" \
-            "removed"
-    fi
+    installer_getopts="$(
+    sed -nE \
+        's/.*while[[:space:]]+getopts[[:space:]]+"([^"]+)".*/\1/p' \
+        "$INSTALL_SH" |
+    head -n 1
+)"
 
-    if grep -Eq '(^|[[:space:]])-a([[:space:]]|$)|accept_required_conda_tos|accept_conda_tos' \
-        "$INSTALL_SH"; then
-        record WARN "Installer contract" "legacy ToS prompt option" \
-            "old -a/prompt code detected"
-    else
-        record PASS "Installer contract" "legacy ToS prompt option" \
-            "removed"
-    fi
+legacy_sudo_password=0
+
+if grep -Eq \
+    '(^|[^[:alnum:]_])sudo_password([^[:alnum:]_]|$)|^[[:space:]]*w\)[[:space:]]' \
+    "$INSTALL_SH"; then
+    legacy_sudo_password=1
+fi
+
+if [[ "$installer_getopts" == *"w:"* ]]; then
+    legacy_sudo_password=1
+fi
+
+if grep -Eq \
+    '^[[:space:]]*-w[[:space:]]+(TEXT|PASSWORD|PASS)' \
+    "$INSTALL_SH"; then
+    legacy_sudo_password=1
+fi
+
+if (( legacy_sudo_password == 1 )); then
+    record WARN \
+        "Installer contract" \
+        "legacy sudo password option" \
+        "old -w or sudo_password implementation detected"
+else
+    record PASS \
+        "Installer contract" \
+        "legacy sudo password option" \
+        "removed; Bash file-test operator -w is allowed"
+fi
+
+legacy_tos_prompt=0
+
+if grep -Eq \
+    'accept_required_conda_tos|accept_conda_tos|^[[:space:]]*a\)[[:space:]]' \
+    "$INSTALL_SH"; then
+    legacy_tos_prompt=1
+fi
+
+if [[ "$installer_getopts" == *a* ]]; then
+    legacy_tos_prompt=1
+fi
+
+if grep -Eq \
+    '^[[:space:]]*-a[[:space:]]+(Accept|AUTO|Auto|Anaconda|TOS|ToS)' \
+    "$INSTALL_SH"; then
+    legacy_tos_prompt=1
+fi
+
+if (( legacy_tos_prompt == 1 )); then
+    record WARN \
+        "Installer contract" \
+        "legacy ToS prompt option" \
+        "old -a option or interactive ToS implementation detected"
+else
+    record PASS \
+        "Installer contract" \
+        "legacy ToS prompt option" \
+        "removed; unrelated command options such as cp -a are allowed"
+fi
 
     if grep -q 'offlineCachePath' "$INSTALL_SH"; then
         record PASS "Installer contract" "writes offlineCachePath" \
