@@ -1,0 +1,2 @@
+Taxon_ID	Reference_Taxon_ID	Reference_Scientific_name	Ensembl_name	Ensembl_division	Ensembl_release	Assembly	GTF_URL	Pep_URL
+83772	9793	Equus asinus	equus_asinus	EnsemblMain	116	ASM1607732v2	https://ftp.ensembl.org/pub/release-116/gtf/equus_asinus/Equus_asinus.ASM1607732v2.116.gtf.gz	https://ftp.ensembl.org/pub/release-116/fasta/equus_asinus/pep/Equus_asinus.ASM1607732v2.pep.all.fa.gz

@@ -8,7 +8,27 @@ condapath=~/miniconda3
 threads="$(nproc)"
 
 protein_fasta=""
+scientific_name_arg=""
+REFERENCE_MODE=""
 offline_files_folder=""
+
+REFERENCE_RESOLVER="$MTDIR/aux_scripts/host_reference/resolve_host_reference_from_csv.py"
+HOSTSPECIES_ENTRY_HELPER="$MTDIR/aux_scripts/host_reference/ensure_hostspecies_entry.py"
+
+CSV_REFERENCE_FOUND=0
+CSV_TAXID=""
+CSV_SCIENTIFIC_NAME=""
+CSV_REFERENCE_TAXID=""
+CSV_REFERENCE_SCIENTIFIC_NAME=""
+CSV_ENSEMBL_NAME=""
+CSV_ENSEMBL_DIVISION=""
+CSV_ENSEMBL_RELEASE=""
+CSV_ASSEMBLY=""
+CSV_GENOME_URL=""
+CSV_GTF_URL=""
+CSV_PEP_URL=""
+CSV_REFERENCE_STATUS=""
+
 
 EGGNOG_DB_CACHE=""
 CUSTOM_HOST_CACHE=""
@@ -428,21 +448,30 @@ prepare_cached_gtf_gz() {
 
 # Função para mostrar instruções de uso
 usage() {
+echo "Usage:"
     echo ""
-    echo "Usage:"
-    echo "  bash $0 --genome <genome.fa.gz> --gtf-file <annotations.gtf.gz> --ncbi-taxon-id <TaxonID> --protein-fasta <proteins.fa.gz>"
+    echo "Automatic mode for a species in HostSpecies.csv:"
+    echo "  bash $0 --ncbi-taxon-id TAXID"
+    echo ""
+    echo "Manual mode for a species outside HostSpecies.csv:"
+    echo "  bash $0 \\"
+    echo "    --ncbi-taxon-id TAXID \\"
+    echo "    --scientific-name \"Genus species\" \\"
+    echo "    --genome genome.fa.gz \\"
+    echo "    --gtf-file annotation.gtf.gz \\"
+    echo "    --protein-fasta proteins.fa.gz"
     echo ""
     echo "Required options:"
-    echo " -d, --genome Local path or URL to the host genome FASTA"
-    echo "                 Supported: .fa, .fna, .fasta and gzipped equivalents"
-    echo " -g, --gtf-file Local path or URL to the GTF annotation"
+    echo " -d, --genome           Manual genome path or URL."
+    echo "                         Not required when TaxID exists in the curated CSV."
+    echo " -g, --gtf-file         Manual GTF path or URL."
+    echo "                         Not required when TaxID exists in the curated CSV."
+    echo " -p, --protein-fasta    Manual protein FASTA path or URL."
+    echo "                         Automatically resolved for curated species."
     echo "                 Supported: .gtf and .gtf.gz"
     echo "  -c, --ncbi-taxon-id    NCBI Taxon ID of the host species"
     echo ""
     echo "Gold OrgDb options:"
-    echo " -p, --protein-fasta Local path or URL to the protein FASTA from"
-    echo "                       the same annotation/release as the GTF."
-    echo "                       Required to create the gold OrgDb."
     echo "      --skip-orgdb       Skip gold OrgDb creation"
     echo "      --force-orgdb      Rebuild gold OrgDb even if an existing compatible OrgDb is detected"
     echo "      --no-skip-if-compatible"
@@ -450,6 +479,10 @@ usage() {
     echo "      --orgdb-version    Version for the generated OrgDb package [default: 0.3.0]"
     echo "      --no-clean         Do not remove previous files for this TaxID/reference before starting"
     echo "      --clean-only       Remove previous files for this TaxID/reference and exit"
+    echo " -s, --scientific-name NAME"
+    echo "                         Scientific name for a TaxID absent from"
+    echo "                         HostSpecies.csv. Required in manual mode"
+    echo "                         when creating a new species entry."
     echo ""
     echo "Kraken taxonomy cache options:"
     echo "      --kraken-taxonomy-cache DIR"
@@ -486,8 +519,8 @@ echo ""    exit 1
 }
 
 # Define as opções curtas e longas
-OPTIONS=c:d:g:o:p:
-LONGOPTIONS=ncbi-taxon-id:,genome:,gtf-file:,offline-folder:,protein-fasta:,skip-orgdb,force-orgdb,no-skip-if-compatible,orgdb-version:,no-clean,clean-only,kraken-taxonomy-cache:,no-kraken-taxonomy-cache,rebuild-kraken-taxonomy-cache,help
+OPTIONS=c:d:g:o:p:s:
+LONGOPTIONS=ncbi-taxon-id:,genome:,gtf-file:,offline-folder:,protein-fasta:,scientific-name:,skip-orgdb,force-orgdb,no-skip-if-compatible,orgdb-version:,no-clean,clean-only,kraken-taxonomy-cache:,no-kraken-taxonomy-cache,rebuild-kraken-taxonomy-cache,help
 
 # Processa os argumentos
 PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTIONS --name "$0" -- "$@")
@@ -518,6 +551,10 @@ while true; do
             ;;
         -p|--protein-fasta)
             protein_fasta="$2"
+            shift 2
+            ;;
+        -s|--scientific-name)
+            scientific_name_arg="$2"
             shift 2
             ;;
         --skip-orgdb)
@@ -570,17 +607,156 @@ while true; do
     esac
 done
 
-# Verificação básica de argumentos obrigatórios
-if [[ -z "${download:-}" || -z "${gtf:-}" || -z "${customized:-}" ]]; then
-    echo "[ERROR] Missing required arguments."
+# ------------------------------------------------------------
+# Resolve automatic or manual reference mode
+# ------------------------------------------------------------
+
+if [[ -z "${customized:-}" ]]; then
+    echo "[ERROR] --ncbi-taxon-id is required."
     usage
 fi
 
 if ! [[ "$customized" =~ ^[1-9][0-9]*$ ]]; then
     echo "[ERROR] Invalid NCBI Taxon ID:"
-    echo "  $customized"
+    echo " $customized"
     exit 1
 fi
+
+HOSTSPECIES_CSV="$MTDIR/HostSpecies.csv"
+
+if [[ ! -s "$HOSTSPECIES_CSV" ]]; then
+    echo "[ERROR] HostSpecies.csv was not found or is empty:"
+    echo " $HOSTSPECIES_CSV"
+    exit 1
+fi
+
+if [[ ! -s "$REFERENCE_RESOLVER" ]]; then
+    echo "[ERROR] Automatic reference resolver was not found:"
+    echo " $REFERENCE_RESOLVER"
+    exit 1
+fi
+
+if [[ ! -s "$HOSTSPECIES_ENTRY_HELPER" ]]; then
+    echo "[ERROR] HostSpecies entry helper was not found:"
+    echo " $HOSTSPECIES_ENTRY_HELPER"
+    exit 1
+fi
+
+# Genome and GTF determine whether this is automatic or manual mode.
+if [[ -z "${download:-}" && -z "${gtf:-}" ]]; then
+    if [[ -n "${protein_fasta:-}" ]]; then
+        echo "[ERROR] --protein-fasta was provided without --genome and --gtf-file."
+        echo "[ERROR] Use either:"
+        echo "  automatic mode: only --ncbi-taxon-id"
+        echo "or:"
+        echo "  manual mode: --genome + --gtf-file + --protein-fasta"
+        exit 1
+    fi
+
+    REFERENCE_MODE="automatic"
+
+elif [[ -n "${download:-}" && -n "${gtf:-}" ]]; then
+    REFERENCE_MODE="manual"
+
+else
+    echo "[ERROR] Partial manual reference input detected."
+    echo "[ERROR] --genome and --gtf-file must be supplied together."
+    echo "[ERROR] Do not mix automatic and partial manual references."
+    exit 1
+fi
+
+echo "------------------------------------------------------------"
+echo "[REFERENCE] Input mode: $REFERENCE_MODE"
+echo "[REFERENCE] Requested TaxID: $customized"
+echo "------------------------------------------------------------"
+
+if [[ "$REFERENCE_MODE" == "automatic" ]]; then
+    reference_env="$(mktemp)"
+
+    if python3 "$REFERENCE_RESOLVER" \
+        --csv "$HOSTSPECIES_CSV" \
+        --taxid "$customized" \
+        > "$reference_env"; then
+
+        # The resolver emits shell-escaped assignments.
+        # shellcheck disable=SC1090
+        source "$reference_env"
+        rm -f "$reference_env"
+
+    else
+        resolver_status=$?
+        rm -f "$reference_env"
+
+        if [[ "$resolver_status" -eq 3 ]]; then
+            echo "[ERROR] TaxID $customized is not present in the curated CSV."
+            echo
+            echo "Use manual mode:"
+            echo
+            echo "  bash $0 \\"
+            echo "    --ncbi-taxon-id $customized \\"
+            echo "    --scientific-name \"Genus species\" \\"
+            echo "    --genome /path/genome.fa.gz \\"
+            echo "    --gtf-file /path/annotation.gtf.gz \\"
+            echo "    --protein-fasta /path/proteins.fa.gz"
+            exit 1
+        fi
+
+        echo "[ERROR] Could not resolve the automatic reference."
+        exit 1
+    fi
+
+    download="$CSV_GENOME_URL"
+    gtf="$CSV_GTF_URL"
+    protein_fasta="$CSV_PEP_URL"
+
+    echo "[REFERENCE] Scientific name: $CSV_SCIENTIFIC_NAME"
+    echo "[REFERENCE] Assembly:        $CSV_ASSEMBLY"
+    echo "[REFERENCE] Ensembl release: $CSV_ENSEMBL_RELEASE"
+    echo "[REFERENCE] Division:        $CSV_ENSEMBL_DIVISION"
+    echo "[REFERENCE] Genome URL:      $download"
+    echo "[REFERENCE] GTF URL:         $gtf"
+    echo "[REFERENCE] Protein URL:     $protein_fasta"
+
+    if [[ "$CSV_REFERENCE_TAXID" != "$customized" ]]; then
+        echo "[WARNING] Requested TaxID and reference TaxID differ:"
+        echo " Requested TaxID: $customized"
+        echo " Reference TaxID: $CSV_REFERENCE_TAXID"
+        echo " Reference name:  $CSV_REFERENCE_SCIENTIFIC_NAME"
+    fi
+
+else
+    # Manual mode. Ensure the TaxID exists in HostSpecies.csv.
+    entry_args=(
+        --csv "$HOSTSPECIES_CSV"
+        --taxid "$customized"
+        --add-if-missing
+    )
+
+    if [[ -n "$scientific_name_arg" ]]; then
+        entry_args+=(
+            --scientific-name "$scientific_name_arg"
+        )
+    fi
+
+    if ! python3 "$HOSTSPECIES_ENTRY_HELPER" \
+        "${entry_args[@]}"; then
+
+        echo
+        echo "[ERROR] Manual species registration failed."
+        echo "[ERROR] For a TaxID outside HostSpecies.csv, provide:"
+        echo " --scientific-name \"Genus species\""
+        exit 1
+    fi
+
+    echo "[REFERENCE] Manual genome:  $download"
+    echo "[REFERENCE] Manual GTF:     $gtf"
+
+    if [[ -n "${protein_fasta:-}" ]]; then
+        echo "[REFERENCE] Manual protein: $protein_fasta"
+    fi
+fi
+
+load_persistent_installation_cache
 
 load_persistent_installation_cache
 
