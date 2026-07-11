@@ -652,16 +652,109 @@ check_library() {
         return
     fi
 
-    for file in library.fna prelim_map.txt manifest.txt; do
-        if [[ -s "$library_dir/$file" ]]; then
-            record PASS "Kraken library" "microbiome/$library $file" \
-                "$library_dir/$file ($(file_size "$library_dir/$file"))"
-        else
-            record "$severity" "Kraken library" "microbiome/$library $file" \
-                "missing or empty: $library_dir/$file"
-        fi
-    done
+local -a required_files=(
+    library.fna
+    prelim_map.txt
+)
 
+case "$library" in
+    bacteria | archaea | protozoa | fungi | plasmid)
+        required_files+=(manifest.txt)
+        ;;
+
+    UniVec | UniVec_Core)
+        # UniVec libraries are distributed as a single source file.
+        # Kraken2 creates library.fna and prelim_map.txt, but no manifest.txt.
+        ;;
+esac
+
+for file in "${required_files[@]}"; do
+    if [[ -s "$library_dir/$file" ]]; then
+        record PASS "Kraken library" "microbiome/$library $file" \
+            "$library_dir/$file ($(file_size "$library_dir/$file"))"
+    else
+        record "$severity" "Kraken library" "microbiome/$library $file" \
+            "missing or empty: $library_dir/$file"
+    fi
+done
+
+if [[ "$library" == "UniVec_Core" ]]; then
+    if [[ -s "$library_dir/UniVec_Core" ]]; then
+        record PASS \
+            "Kraken library" \
+            "microbiome/UniVec_Core source file" \
+            "$library_dir/UniVec_Core ($(file_size "$library_dir/UniVec_Core"))"
+    else
+        record FAIL \
+            "Kraken library" \
+            "microbiome/UniVec_Core source file" \
+            "missing or empty: $library_dir/UniVec_Core"
+    fi
+
+    local first_header=""
+    local raw_count=0
+    local library_count=0
+    local map_count=0
+
+    first_header="$(
+        awk '/^>/{print; exit}' \
+            "$library_dir/library.fna" \
+            2>/dev/null || true
+    )"
+
+    if [[ "$first_header" == '>kraken:taxid|28384|'* ]]; then
+        record PASS \
+            "Kraken library" \
+            "microbiome/UniVec_Core taxid" \
+            "expected taxid 28384 detected"
+    else
+        record FAIL \
+            "Kraken library" \
+            "microbiome/UniVec_Core taxid" \
+            "expected kraken:taxid|28384| was not detected"
+    fi
+
+    raw_count="$(
+        grep -c '^>' "$library_dir/UniVec_Core" 2>/dev/null || true
+    )"
+
+    library_count="$(
+        grep -c '^>' "$library_dir/library.fna" 2>/dev/null || true
+    )"
+
+    map_count="$(
+        awk 'NF {n++} END {print n+0}' \
+            "$library_dir/prelim_map.txt" \
+            2>/dev/null
+    )"
+
+    if (( raw_count > 0 &&
+          raw_count == library_count &&
+          library_count == map_count )); then
+
+        record PASS \
+            "Kraken library" \
+            "microbiome/UniVec_Core sequence alignment" \
+            "$raw_count source sequences; $library_count library sequences; $map_count map entries"
+    else
+        record FAIL \
+            "Kraken library" \
+            "microbiome/UniVec_Core sequence alignment" \
+            "source=$raw_count; library=$library_count; map=$map_count"
+    fi
+
+    if [[ -e "$library_dir/library.fna.masked" ]]; then
+        record PASS \
+            "Kraken library" \
+            "microbiome/UniVec_Core masking marker" \
+            "library.fna.masked exists; zero-byte marker is expected"
+    else
+        record WARN \
+            "Kraken library" \
+            "microbiome/UniVec_Core masking marker" \
+            "library.fna.masked is absent"
+    fi
+fi
     if [[ "$MODE" == "deep" && -s "$library_dir/library.fna" ]]; then
         local header
         header="$(awk '/^>/{print; exit}' "$library_dir/library.fna" 2>/dev/null || true)"
