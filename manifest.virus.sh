@@ -2,7 +2,10 @@
 set -euo pipefail
 
 ###############################################################################
-# manifest.viral.local_sync.sh
+# manifest.virus.sh
+#   FULL_GZIP_CHECK=1 bash manifest.virus.sh
+#   FORCE_COMBINED_FASTA=1 bash manifest.virus.sh
+#   GZIP_CHECK_JOBS=4 DOWNLOAD_JOBS=4 bash manifest.virus.sh
 #
 # Sincronização otimizada dos genomas virais RefSeq.
 #
@@ -28,7 +31,26 @@ set -euo pipefail
 ###############################################################################
 # 0. Diretórios e configurações
 ###############################################################################
-offline_files_folder="/media/me/18TB_BACKUP_LBN/lbn_workspace/RNA-Seq-LBN/viral-rna-seq/MTD/Compressed/MTD"
+offline_files_folder="${MTD_OFFLINE_FILES_FOLDER:-}"
+
+if [[ -z "$offline_files_folder" ]]; then
+    echo "[FAIL] MTD_OFFLINE_FILES_FOLDER is not defined." >&2
+    echo "[INFO] Run this script through Install.sh or define the cache path:" >&2
+    echo "[INFO]   MTD_OFFLINE_FILES_FOLDER=/path/to/cache bash $0" >&2
+    exit 1
+fi
+
+if ! mkdir -p "$offline_files_folder"; then
+    echo "[FAIL] Could not create or access the installation cache:" >&2
+    echo "[FAIL]   $offline_files_folder" >&2
+    exit 1
+fi
+
+if ! offline_files_folder="$(readlink -f -- "$offline_files_folder")"; then
+    echo "[FAIL] Could not resolve the installation cache path." >&2
+    exit 1
+fi
+
 metadata_dir="$offline_files_folder/Kraken2DB_micro/library/viral"
 new_download_dir="$metadata_dir/all"
 
@@ -41,6 +63,7 @@ FAILED_RETRY_ROUNDS="${FAILED_RETRY_ROUNDS:-2}"
 RETRY_DELAY_SECONDS="${RETRY_DELAY_SECONDS:-5}"
 BUILD_COMBINED_FASTA="${BUILD_COMBINED_FASTA:-1}"
 FORCE_COMBINED_FASTA="${FORCE_COMBINED_FASTA:-0}"
+REQUIRE_COMPLETE_COLLECTION="${REQUIRE_COMPLETE_COLLECTION:-0}"
 
 validate_boolean() {
     local name="$1"
@@ -65,11 +88,13 @@ validate_positive_integer() {
 validate_boolean FULL_GZIP_CHECK "$FULL_GZIP_CHECK"
 validate_boolean BUILD_COMBINED_FASTA "$BUILD_COMBINED_FASTA"
 validate_boolean FORCE_COMBINED_FASTA "$FORCE_COMBINED_FASTA"
+validate_boolean REQUIRE_COMPLETE_COLLECTION "$REQUIRE_COMPLETE_COLLECTION"
 validate_positive_integer GZIP_CHECK_JOBS "$GZIP_CHECK_JOBS"
 validate_positive_integer DOWNLOAD_JOBS "$DOWNLOAD_JOBS"
 validate_positive_integer ARIA_CONNECTIONS "$ARIA_CONNECTIONS"
 validate_positive_integer DOWNLOAD_ATTEMPTS "$DOWNLOAD_ATTEMPTS"
 validate_positive_integer FAILED_RETRY_ROUNDS "$FAILED_RETRY_ROUNDS"
+
 
 if ! [[ "$RETRY_DELAY_SECONDS" =~ ^[0-9]+$ ]]; then
     echo "[FAIL] RETRY_DELAY_SECONDS must be zero or a positive integer." >&2
@@ -175,6 +200,29 @@ awk -F '\t' '
 if [[ ! -s "$tmp_manifest" ]]; then
     echo "[FAIL] No viral genome URLs were generated from assembly_summary.txt." >&2
     exit 1
+fi
+
+new_catalog_count="$(wc -l < "$tmp_manifest")"
+
+if (( new_catalog_count < 1000 )); then
+    echo "[FAIL] The downloaded viral catalog is unexpectedly small." >&2
+    echo "[FAIL] Entries found: $new_catalog_count" >&2
+    echo "[FAIL] Refusing to modify the existing viral cache." >&2
+    exit 1
+fi
+
+if [[ -s "$manifest_names" ]]; then
+    previous_catalog_count="$(wc -l < "$manifest_names")"
+    minimum_expected_count=$((previous_catalog_count * 80 / 100))
+
+    if (( new_catalog_count < minimum_expected_count )); then
+        echo "[FAIL] The new viral catalog is unexpectedly smaller than the cached catalog." >&2
+        echo "[FAIL] Previous entries: $previous_catalog_count" >&2
+        echo "[FAIL] Current entries:  $new_catalog_count" >&2
+        echo "[FAIL] Minimum accepted: $minimum_expected_count" >&2
+        echo "[FAIL] Refusing to remove cached genomes." >&2
+        exit 1
+    fi
 fi
 
 # Índice local: filename<TAB>URL
@@ -760,6 +808,13 @@ if (( final_local_count != total_remote )); then
     echo
     echo "[WARN] Local viral collection is incomplete: $final_local_count/$total_remote." >&2
     echo "[WARN] Missing genomes were skipped from the combined FASTA."
+
+    if [[ "$REQUIRE_COMPLETE_COLLECTION" == "1" ]]; then
+        echo "[FAIL] A complete viral collection was required for this execution." >&2
+        echo "[FAIL] Re-run the synchronization to recover the missing genomes." >&2
+        exit 1
+    fi
+
     echo "[WARN] The script will finish with exit status 0."
 else
     echo

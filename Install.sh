@@ -763,12 +763,129 @@ ensure_cached_file() {
     fi
 }
 
+prepare_virushost_release_cache() {
+    local base_url="https://www.genome.jp/ftp/db/virushostdb"
+    local release_dir
+    local staging_dir
+    local current_release
+    local staged_release
+    local required_file
+    local cache_is_complete=1
+
+    release_dir="$offline_files_folder/Ref_genomes/MTD_virus/official_current"
+    current_release="$release_dir/dbrel.txt"
+
+    if ! mkdir -p "$release_dir"; then
+        log_error "Could not create the Virus-Host DB cache directory:"
+        log_error "  $release_dir"
+        exit 1
+    fi
+
+    staging_dir="$(mktemp -d "$release_dir/.incoming.XXXXXX")" || {
+        log_error "Could not create the Virus-Host DB staging directory."
+        exit 1
+    }
+
+    staged_release="$staging_dir/dbrel.txt"
+
+    if ! retry_until_success \
+        "Current Virus-Host DB release metadata" \
+        download_cache_file_once \
+        "Current Virus-Host DB release metadata" \
+        "$base_url/dbrel.txt" \
+        "$staged_release"
+    then
+        rm -rf -- "$staging_dir"
+        log_error "Could not determine the current Virus-Host DB release."
+        exit 1
+    fi
+
+    for required_file in \
+        virushostdb.genomic.fna.gz \
+        non-segmented_virus_list.tsv \
+        segmented_virus_list.tsv
+    do
+        if [[ ! -s "$release_dir/$required_file" ]]; then
+            cache_is_complete=0
+            break
+        fi
+    done
+
+    if (( cache_is_complete == 1 )) &&
+       [[ -s "$current_release" ]] &&
+       cmp -s "$current_release" "$staged_release" &&
+       gzip -t "$release_dir/virushostdb.genomic.fna.gz" \
+           >/dev/null 2>&1
+    then
+        rm -rf -- "$staging_dir"
+
+        log_ok "Using the cached current Virus-Host DB release."
+
+        while IFS= read -r release_line; do
+            [[ -n "$release_line" ]] &&
+                log_info "  $release_line"
+        done < "$current_release"
+
+        return 0
+    fi
+
+    log_info "A new or incomplete Virus-Host DB release was detected."
+    log_info "Downloading its FASTA and matching metadata..."
+
+    for required_file in \
+        virushostdb.genomic.fna.gz \
+        non-segmented_virus_list.tsv \
+        segmented_virus_list.tsv
+    do
+        if ! retry_until_success \
+            "Official Virus-Host DB file: $required_file" \
+            download_cache_file_once \
+            "Official Virus-Host DB file: $required_file" \
+            "$base_url/$required_file" \
+            "$staging_dir/$required_file"
+        then
+            rm -rf -- "$staging_dir"
+            log_error "Could not synchronize the Virus-Host DB release."
+            exit 1
+        fi
+    done
+
+    if ! gzip -t "$staging_dir/virushostdb.genomic.fna.gz"; then
+        rm -rf -- "$staging_dir"
+        log_error "The downloaded Virus-Host DB FASTA failed validation."
+        exit 1
+    fi
+
+    for required_file in \
+        virushostdb.genomic.fna.gz \
+        non-segmented_virus_list.tsv \
+        segmented_virus_list.tsv
+    do
+        mv -f -- \
+            "$staging_dir/$required_file" \
+            "$release_dir/$required_file"
+    done
+
+    # O marcador de release é atualizado por último.
+    mv -f -- "$staged_release" "$current_release"
+    rm -rf -- "$staging_dir"
+
+    # Produtos derivados devem ser recriados para o novo release.
+    rm -f -- \
+        "$release_dir/virushostdb.genomic.fna" \
+        "$release_dir/virushostdb_accession2taxid.tsv" \
+        "$release_dir/virushostdb_accession_conflicts.tsv"
+
+    log_ok "Official Virus-Host DB release synchronized successfully."
+}
+
 prepare_installation_cache() {
     log_info "Preparing persistent MTD installation cache:"
     log_info "  $offline_files_folder"
 
     if ! mkdir -p \
         "$offline_files_folder/Ref_genomes/MTD_virus" \
+        "$offline_files_folder/Ref_genomes/MTD_virus/official_current" \
         "$offline_files_folder/HUMAnN" \
         "$offline_files_folder/Kraken2_taxonomy_cache" \
         "$offline_files_folder/Kraken2DB_micro/library/viral/all" \
@@ -783,10 +900,7 @@ prepare_installation_cache() {
         exit 1
     fi
 
-    ensure_cached_file \
-        "Virus-Host DB reference" \
-        "https://github.com/patrick-douglas/MTD/releases/download/virushostdb-cache-2026.07.07/virushostdb.genomic.fna.gz" \
-        "$offline_files_folder/Ref_genomes/MTD_virus/virushostdb.genomic.fna.gz"
+    prepare_virushost_release_cache
     
     ensure_cached_file \
     "HUMAnN utility mapping database" \
@@ -1059,8 +1173,8 @@ copy_manifest_with_offline_folder() {
 
     copy_required_file "$source_script" "$destination_script"
     sed -i \
-        "s|^offline_files_folder=.*|offline_files_folder=$offline_files_folder|" \
-        "$destination_script"
+    "s|^offline_files_folder=.*|offline_files_folder=\"$offline_files_folder\"|" \
+    "$destination_script"
     run_required_script "$destination_script"
 }
 
@@ -1241,27 +1355,246 @@ install_mtd_extra_tools() {
 }
 
 prepare_virome_files() {
-    copy_required_file \
-        "$offline_files_folder/Ref_genomes/MTD_virus/virushostdb.genomic.fna.gz" \
-        "$dir/virushostdb.genomic.fna.gz"
+    local viral_cache_dir
+    local viral_download_dir
+    local manifest_destination
+    local all_viral_fasta
+    local siv_fasta
 
-    unpigz -f "$dir/virushostdb.genomic.fna.gz"
-    cat \
-        "$dir/Installation/M33262_SIVMM239.fa" \
-        "$dir/virushostdb.genomic.fna" \
-        > "$dir/viruses4kraken.fa"
+    local combined_fasta
+    local combined_summary
+    local combined_details
 
-    log_info "Preparing additional NCBI RefSeq viral files..."
-    copy_manifest_with_offline_folder \
-        "$dir/manifest.virus.sh" \
-        "$offline_files_folder/Kraken2DB_micro/library/manifest.virus.sh"
+    local viral_builder
+    local refseq_map_builder
+    local virushost_map_builder
+    local taxonomy_dir
 
-    sed -i -E \
-        's/^>([^ ]+) (.+)/>\1 [\1] \2./' \
-        "$offline_files_folder/Kraken2DB_micro/library/viral/all_viral_genomes.fna"
+    local virushost_release_dir
+    local virushost_fasta_gz
+    local virushost_fasta
+    local virushost_release_file
+    local virushost_non_segmented
+    local virushost_segmented
+    local virushost_taxid_map
+    local virushost_conflicts
 
-    # The original installer intentionally leaves this append operation disabled:
-    # cat "$offline_files_folder/Kraken2DB_micro/library/viral/all_viral_genomes.fna" >> "$dir/viruses4kraken.fa"
+    local refseq_assembly_summary
+    local refseq_taxid_map
+    local refseq_conflicts
+
+    local unresolved_taxids
+    local records_without_accession
+    local required_file
+    local decompressed_tmp
+
+    viral_cache_dir="$offline_files_folder/Kraken2DB_micro/library/viral"
+    viral_download_dir="$viral_cache_dir/all"
+
+    manifest_destination="$offline_files_folder/Kraken2DB_micro/library/manifest.virus.sh"
+
+    all_viral_fasta="$viral_cache_dir/all_viral_genomes.fna"
+
+    refseq_assembly_summary="$viral_cache_dir/assembly_summary_viral.txt"
+    refseq_taxid_map="$viral_cache_dir/refseq_viral_accession2taxid.tsv"
+    refseq_conflicts="$viral_cache_dir/refseq_viral_accession_conflicts.tsv"
+
+    virushost_release_dir="$offline_files_folder/Ref_genomes/MTD_virus/official_current"
+
+    virushost_fasta_gz="$virushost_release_dir/virushostdb.genomic.fna.gz"
+    virushost_fasta="$virushost_release_dir/virushostdb.genomic.fna"
+    virushost_release_file="$virushost_release_dir/dbrel.txt"
+
+    virushost_non_segmented="$virushost_release_dir/non-segmented_virus_list.tsv"
+    virushost_segmented="$virushost_release_dir/segmented_virus_list.tsv"
+
+    virushost_taxid_map="$virushost_release_dir/virushostdb_accession2taxid.tsv"
+    virushost_conflicts="$virushost_release_dir/virushostdb_accession_conflicts.tsv"
+
+    siv_fasta="$dir/Installation/M33262_SIVMM239.fa"
+
+    combined_fasta="$viral_cache_dir/viral_genomes_combined_nonredundant.fna"
+    combined_summary="$viral_cache_dir/viral_genomes_combined_nonredundant.summary.tsv"
+    combined_details="$viral_cache_dir/viral_genomes_combined_nonredundant.details.tsv"
+
+    viral_builder="$dir/aux_scripts/Kraken2/build_nonredundant_viral_fasta.py"
+    refseq_map_builder="$dir/aux_scripts/Kraken2/build_refseq_viral_taxid_map.py"
+    virushost_map_builder="$dir/aux_scripts/Kraken2/build_virushost_taxid_map.py"
+
+    taxonomy_dir="$KRAKEN_TAXONOMY_CACHE/taxonomy"
+
+    for required_file in \
+        "$virushost_fasta_gz" \
+        "$virushost_release_file" \
+        "$virushost_non_segmented" \
+        "$virushost_segmented" \
+        "$siv_fasta" \
+        "$viral_builder" \
+        "$refseq_map_builder" \
+        "$virushost_map_builder"
+    do
+        if [[ ! -s "$required_file" ]]; then
+            log_error "Required virome input is missing or empty:"
+            log_error "  $required_file"
+            exit 1
+        fi
+    done
+
+    log_info "Using the official Virus-Host DB release:"
+
+    while IFS= read -r release_line; do
+        [[ -n "$release_line" ]] &&
+            log_info "  $release_line"
+    done < "$virushost_release_file"
+
+    if [[ ! -s "$virushost_fasta" ||
+          "$virushost_fasta_gz" -nt "$virushost_fasta" ]]
+    then
+        log_info "Decompressing the official Virus-Host DB FASTA..."
+
+        decompressed_tmp="${virushost_fasta}.tmp.$$"
+        rm -f -- "$decompressed_tmp"
+
+        if ! gzip -dc -- "$virushost_fasta_gz" > "$decompressed_tmp"; then
+            rm -f -- "$decompressed_tmp"
+            log_error "Could not decompress the official Virus-Host DB FASTA."
+            exit 1
+        fi
+
+        if [[ ! -s "$decompressed_tmp" ]]; then
+            rm -f -- "$decompressed_tmp"
+            log_error "The decompressed Virus-Host DB FASTA is empty."
+            exit 1
+        fi
+
+        mv -f -- "$decompressed_tmp" "$virushost_fasta"
+    else
+        log_ok "Using the existing decompressed Virus-Host DB FASTA."
+    fi
+
+    log_info "Synchronizing the NCBI RefSeq viral collection..."
+
+copy_required_file \
+    "$dir/manifest.virus.sh" \
+    "$manifest_destination"
+
+chmod +x "$manifest_destination"
+
+run_required_command \
+    "Synchronizing NCBI RefSeq viral genomes" \
+    env \
+    MTD_OFFLINE_FILES_FOLDER="$offline_files_folder" \
+    BUILD_COMBINED_FASTA=1 \
+    REQUIRE_COMPLETE_COLLECTION=1 \
+    "$manifest_destination"
+
+    if [[ ! -s "$all_viral_fasta" ]]; then
+        log_error "The RefSeq viral combined FASTA is missing or empty:"
+        log_error "  $all_viral_fasta"
+        exit 1
+    fi
+
+    if [[ ! -s "$refseq_assembly_summary" ]]; then
+        log_error "The RefSeq viral assembly summary is missing or empty:"
+        log_error "  $refseq_assembly_summary"
+        exit 1
+    fi
+
+    log_info "Preparing taxonomy for viral deduplication..."
+
+    prepare_shared_kraken2_taxonomy
+
+    if ! validate_kraken2_taxonomy_dir "$taxonomy_dir"; then
+        log_error "Kraken2 taxonomy is unavailable or invalid:"
+        log_error "  $taxonomy_dir"
+        exit 1
+    fi
+
+    run_required_command \
+        "Building the RefSeq viral accession-to-TaxID map" \
+        python3 "$refseq_map_builder" \
+        --assembly-summary "$refseq_assembly_summary" \
+        --fasta-dir "$viral_download_dir" \
+        --output "$refseq_taxid_map" \
+        --conflicts "$refseq_conflicts"
+
+    run_required_command \
+        "Building the Virus-Host DB accession-to-TaxID map" \
+        python3 "$virushost_map_builder" \
+        --non-segmented "$virushost_non_segmented" \
+        --segmented "$virushost_segmented" \
+        --output "$virushost_taxid_map" \
+        --conflicts "$virushost_conflicts"
+
+    run_required_command \
+        "Combining and deduplicating viral reference sequences" \
+        python3 "$viral_builder" \
+        --primary "$all_viral_fasta" \
+        --primary-taxid-map "$refseq_taxid_map" \
+        --virushost "$virushost_fasta" \
+        --virushost-taxid-map "$virushost_taxid_map" \
+        --extra "$siv_fasta" \
+        --taxonomy-dir "$taxonomy_dir" \
+        --output "$combined_fasta" \
+        --summary "$combined_summary" \
+        --details "$combined_details"
+
+    for required_file in \
+        "$combined_fasta" \
+        "$combined_summary" \
+        "$combined_details"
+    do
+        if [[ ! -s "$required_file" ]]; then
+            log_error "Required combined viral output is missing or empty:"
+            log_error "  $required_file"
+            exit 1
+        fi
+    done
+
+    unresolved_taxids="$(
+        awk -F $'\t' \
+            '$1 == "records_without_taxid" { print $2; exit }' \
+            "$combined_summary"
+    )"
+
+    records_without_accession="$(
+        awk -F $'\t' \
+            '$1 == "records_without_accession" { print $2; exit }' \
+            "$combined_summary"
+    )"
+
+    if ! [[ "$unresolved_taxids" =~ ^[0-9]+$ ]]; then
+        log_error "Could not read records_without_taxid from:"
+        log_error "  $combined_summary"
+        exit 1
+    fi
+
+    if ! [[ "$records_without_accession" =~ ^[0-9]+$ ]]; then
+        log_error "Could not read records_without_accession from:"
+        log_error "  $combined_summary"
+        exit 1
+    fi
+
+    if (( unresolved_taxids != 0 ||
+          records_without_accession != 0 ))
+    then
+        log_error "The viral collection is not safe to add to Kraken2."
+        log_error "Records without TaxID:     $unresolved_taxids"
+        log_error "Records without accession: $records_without_accession"
+        log_error "Details:"
+        log_error "  $combined_details"
+        exit 1
+    fi
+
+    log_ok "Nonredundant viral collection completed with complete taxonomy:"
+    log_ok "  $combined_fasta"
+
+    log_info "Viral deduplication summary:"
+
+    while IFS=$'\t' read -r metric value; do
+        [[ "$metric" == "metric" ]] && continue
+        printf '  %-55s %s\n' "$metric" "$value"
+    done < "$combined_summary"
 }
 
 install_default_kraken_helpers() {
@@ -1430,6 +1763,9 @@ add_local_plasmid_library() {
 
 build_microbiome_kraken_database() {
     local database="$dir/kraken2DB_micro"
+    local viral_library
+
+    viral_library="$offline_files_folder/Kraken2DB_micro/library/viral/viral_genomes_combined_nonredundant.fna"
 
     show_progress 40 "Preparing microbiome manifests"
     prepare_microbiome_manifests
@@ -1457,11 +1793,20 @@ build_microbiome_kraken_database() {
     show_progress 64 "Adding the UniVec_Core library"
     download_kraken2_library_until_success "$database" "UniVec_Core" --use-ftp
 
-    show_progress 66 "Adding custom viral sequences"
+    show_progress 66 "Adding the nonredundant viral collection"
+
+    if [[ ! -s "$viral_library" ]]; then
+        log_error "The nonredundant viral library is missing or empty:"
+        log_error " $viral_library"
+        exit 1
+    fi
+
+    run_required_command \
+    "Adding the nonredundant viral collection to Kraken2" \
     kraken2-build \
-        --add-to-library "$dir/viruses4kraken.fa" \
-        --threads "$threads" \
-        --db "$database"
+    --add-to-library "$viral_library" \
+    --threads "$threads" \
+    --db "$database"
 
     show_progress 68 "Building the final Kraken2 microbiome database"
     build_kraken2_database "$database"
