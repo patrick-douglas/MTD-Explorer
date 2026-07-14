@@ -1218,7 +1218,6 @@ install_system_dependencies() {
         build-essential
         pkg-config
         libssl-dev
-        sra-toolkit
     )
 
     log_info "Installing system dependencies..."
@@ -1229,7 +1228,15 @@ install_system_dependencies() {
 
     run_required_command \
         "Installing required system packages" \
-        run_as_root apt-get install -y "${system_packages[@]}"
+        run_as_root env \
+            DEBIAN_FRONTEND=noninteractive \
+            apt-get install -y "${system_packages[@]}"
+
+    run_required_command \
+        "Installing SRA Toolkit without optional Debian Med configuration" \
+        run_as_root env \
+            DEBIAN_FRONTEND=noninteractive \
+            apt-get install -y --no-install-recommends sra-toolkit
 
     log_ok "System dependencies installed successfully."
 }
