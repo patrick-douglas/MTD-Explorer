@@ -381,7 +381,7 @@ def main() -> int:
                     accession, accession_base = extract_accession(header)
                     if source_label == "refseq_viral":
                         source_mapping = primary_taxids
-                        prefer_source_mapping = False
+                        prefer_source_mapping = True
                     elif source_label == "virushostdb":
                         source_mapping = virushost_taxids
                         prefer_source_mapping = True

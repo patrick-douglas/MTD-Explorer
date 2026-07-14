@@ -33,6 +33,14 @@ KRAKEN_PKG_LIBEXEC=""
 kraken_build_opts=()
 ORIGINAL_CHANNEL_PRIORITY=""
 KRAKEN_TAXONOMY_CACHE=""
+# Validated and immutable Virus-Host DB mirror used by MTD Explorer.
+VIRUSHOST_MIRROR_REPOSITORY="patrick-douglas/MTD"
+VIRUSHOST_MIRROR_TAG="virushostdb-mirror-r235-g271.0-a250b2e61d9f"
+
+VIRUSHOST_MIRROR_BASE_URL="https://github.com/${VIRUSHOST_MIRROR_REPOSITORY}/releases/download/${VIRUSHOST_MIRROR_TAG}"
+
+# SHA-256 of the SHA256SUMS asset from the validated mirror release.
+VIRUSHOST_MIRROR_SHA256SUMS_SHA256="a250b2e61d9f9365773205d04d019e0976a778ebd589553f3a0a0e6f159f4bec"
 
 # ------------------------------------------------------------------------------
 # Terminal formatting and messages
@@ -764,13 +772,24 @@ ensure_cached_file() {
 }
 
 prepare_virushost_release_cache() {
-    local base_url="https://www.genome.jp/ftp/db/virushostdb"
+    local base_url="$VIRUSHOST_MIRROR_BASE_URL"
     local release_dir
     local staging_dir
     local current_release
     local staged_release
+    local current_manifest_hash
+    local staged_manifest_hash
     local required_file
     local cache_is_complete=1
+
+    local -a mirrored_files=(
+        virushostdb.genomic.fna.gz
+        non-segmented_virus_list.tsv
+        segmented_virus_list.tsv
+        dbrel.txt
+        SHA256SUMS
+        MIRROR_METADATA.tsv
+    )
 
     release_dir="$offline_files_folder/Ref_genomes/MTD_virus/official_current"
     current_release="$release_dir/dbrel.txt"
@@ -788,23 +807,48 @@ prepare_virushost_release_cache() {
 
     staged_release="$staging_dir/dbrel.txt"
 
-    if ! retry_until_success \
-        "Current Virus-Host DB release metadata" \
-        download_cache_file_once \
-        "Current Virus-Host DB release metadata" \
-        "$base_url/dbrel.txt" \
-        "$staged_release"
+    log_info "Checking the pinned Virus-Host DB mirror release:"
+    log_info "  $VIRUSHOST_MIRROR_TAG"
+
+    # Download the small provenance and checksum files first.
+    for required_file in \
+        dbrel.txt \
+        SHA256SUMS \
+        MIRROR_METADATA.tsv
+    do
+        if ! retry_until_success \
+            "Virus-Host DB mirror file: $required_file" \
+            download_cache_file_once \
+            "Virus-Host DB mirror file: $required_file" \
+            "$base_url/$required_file" \
+            "$staging_dir/$required_file"
+        then
+            rm -rf -- "$staging_dir"
+
+            log_error "Could not retrieve the Virus-Host DB mirror metadata."
+            exit 1
+        fi
+    done
+
+    staged_manifest_hash="$(
+        sha256sum "$staging_dir/SHA256SUMS" |
+        awk '{print $1}'
+    )"
+
+    if [[ "$staged_manifest_hash" != "$VIRUSHOST_MIRROR_SHA256SUMS_SHA256" ]]
     then
         rm -rf -- "$staging_dir"
-        log_error "Could not determine the current Virus-Host DB release."
+
+        log_error "The downloaded Virus-Host DB checksum manifest is unexpected."
+        log_error "Expected:"
+        log_error "  $VIRUSHOST_MIRROR_SHA256SUMS_SHA256"
+        log_error "Observed:"
+        log_error "  $staged_manifest_hash"
         exit 1
     fi
 
-    for required_file in \
-        virushostdb.genomic.fna.gz \
-        non-segmented_virus_list.tsv \
-        segmented_virus_list.tsv
-    do
+    # Check whether the existing cache is already this exact validated release.
+    for required_file in "${mirrored_files[@]}"; do
         if [[ ! -s "$release_dir/$required_file" ]]; then
             cache_is_complete=0
             break
@@ -812,25 +856,41 @@ prepare_virushost_release_cache() {
     done
 
     if (( cache_is_complete == 1 )) &&
-       [[ -s "$current_release" ]] &&
-       cmp -s "$current_release" "$staged_release" &&
-       gzip -t "$release_dir/virushostdb.genomic.fna.gz" \
-           >/dev/null 2>&1
+       cmp -s "$current_release" "$staged_release"
     then
-        rm -rf -- "$staging_dir"
+        current_manifest_hash="$(
+            sha256sum "$release_dir/SHA256SUMS" |
+            awk '{print $1}'
+        )"
 
-        log_ok "Using the cached current Virus-Host DB release."
+        if [[ "$current_manifest_hash" == "$VIRUSHOST_MIRROR_SHA256SUMS_SHA256" ]] &&
+           (
+               cd "$release_dir" &&
+               sha256sum -c SHA256SUMS
+           ) &&
+           gzip -t "$release_dir/virushostdb.genomic.fna.gz"
+        then
+            rm -rf -- "$staging_dir"
 
-        while IFS= read -r release_line; do
-            [[ -n "$release_line" ]] &&
-                log_info "  $release_line"
-        done < "$current_release"
+            log_ok "Using the validated cached Virus-Host DB mirror."
+            log_info "Mirror tag:"
+            log_info "  $VIRUSHOST_MIRROR_TAG"
 
-        return 0
+            while IFS= read -r release_line; do
+                [[ -n "$release_line" ]] &&
+                    log_info "  $release_line"
+            done < "$current_release"
+
+            return 0
+        fi
+
+        log_warning "The cached Virus-Host DB release failed validation."
+        log_warning "It will be downloaded again from the pinned mirror."
     fi
 
-    log_info "A new or incomplete Virus-Host DB release was detected."
-    log_info "Downloading its FASTA and matching metadata..."
+    log_info "Downloading the validated Virus-Host DB mirror..."
+    log_info "Mirror URL:"
+    log_info "  $base_url"
 
     for required_file in \
         virushostdb.genomic.fna.gz \
@@ -838,45 +898,80 @@ prepare_virushost_release_cache() {
         segmented_virus_list.tsv
     do
         if ! retry_until_success \
-            "Official Virus-Host DB file: $required_file" \
+            "Virus-Host DB mirror file: $required_file" \
             download_cache_file_once \
-            "Official Virus-Host DB file: $required_file" \
+            "Virus-Host DB mirror file: $required_file" \
             "$base_url/$required_file" \
             "$staging_dir/$required_file"
         then
             rm -rf -- "$staging_dir"
-            log_error "Could not synchronize the Virus-Host DB release."
+
+            log_error "Could not synchronize the Virus-Host DB mirror."
             exit 1
         fi
     done
 
-    if ! gzip -t "$staging_dir/virushostdb.genomic.fna.gz"; then
+    log_info "Validating Virus-Host DB mirror checksums..."
+
+    if ! (
+        cd "$staging_dir" &&
+        sha256sum -c SHA256SUMS
+    ); then
         rm -rf -- "$staging_dir"
-        log_error "The downloaded Virus-Host DB FASTA failed validation."
+
+        log_error "Virus-Host DB mirror checksum validation failed."
         exit 1
     fi
 
+    if ! gzip -t "$staging_dir/virushostdb.genomic.fna.gz"; then
+        rm -rf -- "$staging_dir"
+
+        log_error "The Virus-Host DB FASTA failed gzip validation."
+        exit 1
+    fi
+
+    # Promote the complete validated release atomically, file by file.
+    # dbrel.txt is moved last and acts as the release marker.
     for required_file in \
         virushostdb.genomic.fna.gz \
         non-segmented_virus_list.tsv \
-        segmented_virus_list.tsv
+        segmented_virus_list.tsv \
+        SHA256SUMS \
+        MIRROR_METADATA.tsv
     do
-        mv -f -- \
+        if ! mv -f -- \
             "$staging_dir/$required_file" \
             "$release_dir/$required_file"
+        then
+            rm -rf -- "$staging_dir"
+
+            log_error "Could not promote Virus-Host DB mirror file:"
+            log_error "  $required_file"
+            exit 1
+        fi
     done
 
-    # O marcador de release é atualizado por último.
-    mv -f -- "$staged_release" "$current_release"
+    if ! mv -f -- \
+        "$staged_release" \
+        "$current_release"
+    then
+        rm -rf -- "$staging_dir"
+
+        log_error "Could not update the Virus-Host DB release marker."
+        exit 1
+    fi
+
     rm -rf -- "$staging_dir"
 
-    # Produtos derivados devem ser recriados para o novo release.
+    # Derived files must be regenerated when the source release changes.
     rm -f -- \
         "$release_dir/virushostdb.genomic.fna" \
         "$release_dir/virushostdb_accession2taxid.tsv" \
         "$release_dir/virushostdb_accession_conflicts.tsv"
 
-    log_ok "Official Virus-Host DB release synchronized successfully."
+    log_ok "Validated Virus-Host DB mirror synchronized successfully."
+    log_info "Mirror tag:"
+    log_info "  $VIRUSHOST_MIRROR_TAG"
 }
 
 prepare_installation_cache() {
@@ -1118,7 +1213,36 @@ build_kraken2_database() {
         --db "$database" \
         "${kraken_build_opts[@]}"
 }
+validate_built_kraken2_database() {
+    local database="$1"
+    local required_file
 
+    for required_file in \
+        hash.k2d \
+        opts.k2d \
+        taxo.k2d
+    do
+        if [[ ! -s "$database/$required_file" ]]; then
+            log_error "Required Kraken2 database file is missing or empty:"
+            log_error "  $database/$required_file"
+            exit 1
+        fi
+    done
+
+    if [[ -s "$database/unmapped.txt" ]]; then
+        log_error "Kraken2 left reference sequences without taxonomy mapping:"
+        log_error "  $database/unmapped.txt"
+
+        head -n 20 \
+            "$database/unmapped.txt" \
+            >&2
+
+        exit 1
+    fi
+
+    log_ok "Kraken2 database outputs were created successfully:"
+    log_ok "  $database"
+}
 install_kraken_helper() {
     local source_file="$1"
     local target_name="$2"
@@ -1816,9 +1940,16 @@ build_microbiome_kraken_database() {
     --db "$database"
 
     show_progress 68 "Building the final Kraken2 microbiome database"
-    build_kraken2_database "$database"
 
-    show_progress 72 "Kraken2 microbiome database completed"
+run_required_command \
+    "Building the final Kraken2 microbiome database" \
+    build_kraken2_database \
+    "$database"
+
+validate_built_kraken2_database \
+    "$database"
+
+show_progress 72 "Kraken2 microbiome database completed"
 }
 
 build_bracken_database() {
@@ -1991,6 +2122,9 @@ main() {
     build_microbiome_kraken_database
 
     show_progress 72 "Building the Bracken database"
+
+run_required_command \
+    "Building the Bracken database" \
     build_bracken_database
 
     show_progress 82 "Installing and configuring HUMAnN databases"
