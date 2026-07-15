@@ -947,7 +947,7 @@ elif [[ -d "$MTDIR/kraken2DB_${hostid}" ]]; then
 
 else
     echo "${r}[ERROR] Host species is not supported for --hostid $hostid.${w}"
-    echo "You can use bash Customized_host.sh for building the required resources."
+    echo "You can use bash Create_annotation_package.R for building the required resources."
     exit 1
 fi
 
@@ -2785,9 +2785,34 @@ download_sra_fastq_if_needed() {
         die "SRA prefetch failed for accession: $accession"
     fi
 
+    # Locate the actual .sra file created by prefetch.
+    # Depending on SRA Toolkit configuration/version, prefetch usually creates:
+    #   $inputdr/$accession/$accession.sra
+    # but cache settings may differ. Passing the directory itself to
+    # fasterq-dump can fail with "invalid accession", so use the real .sra
+    # file when it is available.
+    local sra_input_for_fasterq=""
+
+    sra_input_for_fasterq="$(
+        find "$sra_download_dir" "$inputdr" \
+            -maxdepth 2 \
+            -type f \
+            -name "${accession}.sra" \
+            -print \
+            2>/dev/null | \
+        head -n 1
+    )"
+
+    if [[ -z "$sra_input_for_fasterq" ]]; then
+        echo "${y}[WARNING] Could not find prefetched .sra file for accession:${w} $accession"
+        echo "${y}[WARNING] Falling back to accession name for fasterq-dump.${w}"
+        sra_input_for_fasterq="$accession"
+    fi
+
     echo
     echo "============================================================"
     echo "[FASTERQ-DUMP] Accession: $accession"
+    echo "Input: $sra_input_for_fasterq"
     echo "Output directory: $inputdr"
     echo "Scratch directory: $sra_scratch_dir"
     echo "Threads: $threads"
@@ -2795,7 +2820,7 @@ download_sra_fastq_if_needed() {
     echo "============================================================"
 
     if ! fasterq-dump \
-        "$sra_download_dir" \
+        "$sra_input_for_fasterq" \
         --outdir "$inputdr" \
         --temp "$sra_scratch_dir" \
         --threads "$threads" \
@@ -3068,7 +3093,9 @@ fi
 echo
 echo "${g}============================================"
 echo "[OK] FASTQ input validation completed"
-echo "Effective read layout:${w} $READ_LAYOUT"
+echo "Requested read layout:${w} $READ_LAYOUT_MODE"
+echo "${g}Detected read layout:${w} $detected_run_layout"
+echo "${g}Effective read layout:${w} $READ_LAYOUT"
 echo "FASTQ input manifest:"
 echo "  $FASTQ_INPUT_MANIFEST"
 echo "${g}============================================${w}"
@@ -3611,7 +3638,6 @@ else
         require_file "$fastp_json" "fastp JSON report for sample $i"
     done
 fi
-#$MTDIR/MTD_scripts/data_trimming.sh 
 conda deactivate
 conda activate MTD
 
@@ -5846,10 +5872,8 @@ humann_regroup_table --input humann_genefamilies_relab_stratified.tsv --groups u
 echo "${g}Translate KEGG and GO ID to human readable terms${w}"
 conda deactivate
 conda activate R412
-#Rscript $MTDIR/humann_ID_translation.R \
 Rscript $MTDIR/humann_ID_translation_adjusted.R $outputdr/temp/HUMAnN_output/humann_genefamilies_relAbundance_kegg.tsv $outputdr/temp/HUMAnN_output/humann_genefamilies_relAbundance_go.tsv $MTDIR
     # Tranlate unnormalized table (for Deseq2)
-#    Rscript $MTDIR/humann_ID_translation.R \
 Rscript $MTDIR/humann_ID_translation_adjusted.R $outputdr/temp/HUMAnN_output/humann_genefamilies_Abundance_kegg.tsv $outputdr/temp/HUMAnN_output/humann_genefamilies_Abundance_go.tsv $MTDIR
 conda deactivate
 conda activate MTD
@@ -5861,7 +5885,6 @@ mv *pathabundance* $outputdr/hmn_pathway_abundance_files/
 mv *genefamilies* $outputdr/hmn_genefamily_abundance_files/
 
 # #Translate KEGG and GO ID to human readable terms
-# Rscript $MTDIR/humann_ID_translation.R $outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_kegg.tsv \
 #     $outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_go.tsv
 
 echo "${g}DEG & Annotation & Plots & Diversity & Preprocess${w}"

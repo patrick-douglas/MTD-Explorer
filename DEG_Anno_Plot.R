@@ -2,6 +2,246 @@
 #options(echo = TRUE)
 httr::set_config(httr::config(ssl_verifypeer = FALSE))
 args = commandArgs(trailingOnly=TRUE) # Passing arguments to an R script from bash/shell command lines
+
+# MTD Explorer helper functions for robust Kraken host summaries
+
+find_host_summary_path <- function(start_dir, max_depth = 6) {
+    current_dir <- normalizePath(
+        start_dir,
+        mustWork = FALSE
+    )
+
+    for (depth in seq_len(max_depth)) {
+        candidate <- file.path(
+            current_dir,
+            "kraken",
+            "kraken_host_summary.tsv"
+        )
+
+        if (file.exists(candidate)) {
+            return(candidate)
+        }
+
+        parent_dir <- dirname(current_dir)
+
+        if (identical(parent_dir, current_dir)) {
+            break
+        }
+
+        current_dir <- parent_dir
+    }
+
+    return(NA_character_)
+}
+
+read_host_report_counts <- function(report_file) {
+    tab <- read.table(
+        report_file,
+        sep = "	",
+        quote = "",
+        fill = TRUE,
+        comment.char = "",
+        stringsAsFactors = FALSE
+    )
+
+    if (ncol(tab) < 5) {
+        stop("Invalid Kraken2 host report: ", report_file)
+    }
+
+    unclassified <- suppressWarnings(
+        as.numeric(tab[tab[[4]] == "U", 2][1])
+    )
+
+    classified_root <- suppressWarnings(
+        as.numeric(tab[tab[[4]] == "R" & tab[[5]] == 1, 2][1])
+    )
+
+    if (is.na(unclassified)) {
+        unclassified <- 0
+    }
+
+    if (is.na(classified_root)) {
+        classified_root <- 0
+    }
+
+    total <- classified_root + unclassified
+
+    if (total <= 0) {
+        stop(
+            "Kraken2 host report has zero total reads/read pairs: ",
+            report_file
+        )
+    }
+
+    list(
+        classified = classified_root,
+        unclassified = unclassified,
+        total = total
+    )
+}
+
+read_host_totals <- function(summary_path, report_files) {
+    if (!is.na(summary_path) && file.exists(summary_path)) {
+        summary <- read.table(
+            summary_path,
+            sep = "	",
+            header = TRUE,
+            quote = "",
+            check.names = FALSE,
+            stringsAsFactors = FALSE
+        )
+
+        required <- c(
+            "sample",
+            "host_classified_reads",
+            "host_unclassified_reads"
+        )
+
+        missing <- setdiff(required, names(summary))
+
+        if (length(missing) > 0) {
+            stop(
+                "Host Kraken summary is missing columns: ",
+                paste(missing, collapse = ", ")
+            )
+        }
+
+        totals <- suppressWarnings(
+            as.numeric(summary$host_classified_reads) +
+            as.numeric(summary$host_unclassified_reads)
+        )
+
+        names(totals) <- summary$sample
+
+        if (any(is.na(totals)) || any(totals <= 0)) {
+            stop(
+                "Invalid total host read/read-pair counts in: ",
+                summary_path
+            )
+        }
+
+        return(totals)
+    }
+
+    if (length(report_files) == 0) {
+        stop(
+            "No host Kraken summary or Report_host_*.txt files were found."
+        )
+    }
+
+    totals <- c()
+
+    for (report_file in report_files) {
+        counts <- read_host_report_counts(report_file)
+
+        sample <- gsub(
+            "^Report_host_|\\.txt$",
+            "",
+            basename(report_file)
+        )
+
+        totals <- c(
+            totals,
+            setNames(counts$total, sample)
+        )
+    }
+
+    totals
+}
+
+read_host_ratios <- function(summary_path, report_files) {
+    if (!is.na(summary_path) && file.exists(summary_path)) {
+        summary <- read.table(
+            summary_path,
+            sep = "	",
+            header = TRUE,
+            quote = "",
+            check.names = FALSE,
+            stringsAsFactors = FALSE
+        )
+
+        required <- c(
+            "sample",
+            "host_classified_reads",
+            "host_unclassified_reads"
+        )
+
+        missing <- setdiff(required, names(summary))
+
+        if (length(missing) > 0) {
+            stop(
+                "Host Kraken summary is missing columns: ",
+                paste(missing, collapse = ", ")
+            )
+        }
+
+        classified <- suppressWarnings(
+            as.numeric(summary$host_classified_reads)
+        )
+
+        unclassified <- suppressWarnings(
+            as.numeric(summary$host_unclassified_reads)
+        )
+
+        total <- classified + unclassified
+
+        unclassified_pct <- 100 * unclassified / total
+
+        non_host_host_ratio <- ifelse(
+            classified > 0,
+            unclassified / classified,
+            NA_real_
+        )
+
+        names(unclassified_pct) <- summary$sample
+        names(non_host_host_ratio) <- summary$sample
+
+        return(
+            list(
+                unclassified_reads_ratio_percent = unclassified_pct,
+                non_host_host_reads_ratio = non_host_host_ratio
+            )
+        )
+    }
+
+    unclassified_pct <- c()
+    non_host_host_ratio <- c()
+
+    for (report_file in report_files) {
+        counts <- read_host_report_counts(report_file)
+
+        sample <- gsub(
+            "^Report_host_|\\.txt$",
+            "",
+            basename(report_file)
+        )
+
+        pct <- 100 * counts$unclassified / counts$total
+
+        ratio <- ifelse(
+            counts$classified > 0,
+            counts$unclassified / counts$classified,
+            NA_real_
+        )
+
+        unclassified_pct <- c(
+            unclassified_pct,
+            setNames(pct, sample)
+        )
+
+        non_host_host_ratio <- c(
+            non_host_host_ratio,
+            setNames(ratio, sample)
+        )
+    }
+
+    list(
+        unclassified_reads_ratio_percent = unclassified_pct,
+        non_host_host_reads_ratio = non_host_host_ratio
+    )
+}
+
+
 # make folder DEG to store outputs
 setwd(dirname(args[1]))
 #system("mkdir -p DEG") # make new a folder DEG in current working directory
@@ -109,14 +349,19 @@ if (filename %in% c("bracken_species_all","bracken_phylum_all","bracken_genus_al
     humann_f <- gsub("/hmn_genefamily_abundance_files","",dirname(args[1]))
     files_h <- list.files(path=paste0(humann_f,"/temp"), pattern="^Report_host_.*\\.txt$", full.names=TRUE, recursive=FALSE)
   }
-  # to get a list for host
-  transcriptome_size<-c() #generate a empty list
-  for (i in files_h){
-    t<-read.table(i,sep="\t", quote= "")
-    total_reads<-t[1,2] + t[2,2] #get total reads abundance of a sample
-    fn<-gsub("^Report_host_|\\.txt$","",basename(i)) #grep the sample name
-    transcriptome_size<-c(transcriptome_size,setNames(total_reads,fn)) #add sample name with value to the list lh
-  }
+  # Robust host transcriptome size covariate.
+  # Prefer the MTD_explorer.sh summary table, which is explicit and
+  # works for both single-end reads and paired-end read pairs.
+  # Fall back to Report_host_*.txt for backward compatibility.
+  host_summary_path <- find_host_summary_path(
+    dirname(args[1])
+  )
+
+  transcriptome_size <- read_host_totals(
+    summary_path = host_summary_path,
+    report_files = files_h
+  )
+
   transcriptome_size <- log2(transcriptome_size)-mean(log2(transcriptome_size))
   coldata$order<-1:nrow(coldata)
   coldata<-merge(coldata,as.data.frame(transcriptome_size), by.x="sample_name",by.y="row.names")
@@ -1103,16 +1348,18 @@ if (length(unique(coldata$group))>=2){
 
 if (filename %in% c("bracken_species_all","bracken_phylum_all","bracken_genus_all")){
   files_h <- list.files(paste0(dirname(args[1]),"/temp"), pattern="^Report_host_.*\\.txt$", full.names=TRUE, recursive=FALSE)
-  lh<-c() #generate a empty list
-  la<-c()
-  for (i in files_h){
-    t<-read.table(i,sep="\t", quote= "")
-    a<-t[1,1] #get unclassified reads ratio: non-host part
-    r<-a/(100-a) #non_host_host_reads_ratio in kraken2 host report
-    fn<-gsub("^Report_host_|\\.txt$","",basename(i)) #grep the sample name
-    lh<-c(lh,setNames(r,fn)) #add sample name with value to the list lh; non_host_host_reads_ratio
-    la<-c(la,setNames(a,fn)) #unclassified reads ratio: non-host part
-  }
+  host_summary_path <- find_host_summary_path(
+    dirname(args[1])
+  )
+
+  host_ratios <- read_host_ratios(
+    summary_path = host_summary_path,
+    report_files = files_h
+  )
+
+  lh <- host_ratios$non_host_host_reads_ratio
+  la <- host_ratios$unclassified_reads_ratio_percent
+
   lah<-cbind(la,lh)
   lah<-merge(lah,coldata,by.x="row.names",by.y="sample_name")
   colnames(lah)<-c("Sample","unclassified_reads_ratio_percent","non_host_host_reads_ratio","Groups")
