@@ -473,6 +473,8 @@ echo "Usage:"
     echo ""
     echo "Gold OrgDb options:"
     echo "      --skip-orgdb       Skip gold OrgDb creation"
+    echo "Skip only the R OrgDb package construction."
+    echo "Representative proteins, eggNOG annotations and the master ssGSEA GMT are still generated."
     echo "      --force-orgdb      Rebuild gold OrgDb even if an existing compatible OrgDb is detected"
     echo "      --no-skip-if-compatible"
     echo "                         Do not skip when an existing OrgDb appears compatible"
@@ -758,8 +760,6 @@ fi
 
 load_persistent_installation_cache
 
-load_persistent_installation_cache
-
 resolve_reference_input \
     "host genome" \
     "genome" \
@@ -776,23 +776,29 @@ resolve_reference_input \
 
 gtf="$RESOLVED_REFERENCE"
 
-if [[ "$SKIP_ORGDB" != "1" && -z "${protein_fasta:-}" ]]; then
-    echo "[WARNING] --protein-fasta was not provided."
-    echo "[WARNING] Gold OrgDb creation will be skipped."
-    echo "[WARNING] Provide the protein FASTA from the same"
-    echo "[WARNING] annotation/release as the GTF to create it."
-    SKIP_ORGDB=1
+if [[ -z "${protein_fasta:-}" ]]; then
+    echo "[ERROR] A protein FASTA is required to create a complete"
+    echo "[ERROR] MTD custom host reference."
+    echo
+    echo "[ERROR] The protein FASTA is used once by Create_custom_host.sh"
+    echo "[ERROR] to generate:"
+    echo "  - representative proteins per gene"
+    echo "  - eggNOG annotations"
+    echo "  - reference master GO GMT"
+    echo "  - optional custom OrgDb"
+    echo
+    echo "[ERROR] Provide --protein-fasta using the same annotation"
+    echo "[ERROR] and release as the GTF."
+    exit 1
 fi
 
-if [[ "$SKIP_ORGDB" != "1" ]]; then
-    resolve_reference_input \
-        "protein FASTA" \
-        "protein" \
-        "$protein_fasta" \
-        "protein"
+resolve_reference_input \
+    "protein FASTA" \
+    "protein" \
+    "$protein_fasta" \
+    "protein"
 
-    protein_fasta="$RESOLVED_REFERENCE"
-fi
+protein_fasta="$RESOLVED_REFERENCE"
 
 cd "$MTDIR" || {
     echo "[ERROR] Could not enter MTD directory:"
@@ -1269,70 +1275,227 @@ makeblastdb \
     -out "$MTDIR/blastdb_${customized}/blastdb_${customized}" \
     -parse_seqids
 
-echo "Creating gold reference-matched OrgDb package"
-echo -e "Selected host species:\e[3m $species_name\e[0m"
+echo "============================================================"
+echo "Creating reference-matched functional host resources"
+echo "Host: $species_name"
 echo "Taxon ID: $customized"
-echo ''
+echo "============================================================"
+
+GOLD_ORGDB_SCRIPT="$MTDIR/aux_scripts/orgdb/install_gold_orgdb_from_hostspecies.sh"
+
+if [[ ! -s "$GOLD_ORGDB_SCRIPT" ]]; then
+    echo "[ERROR] Gold OrgDb installer not found:"
+    echo "  $GOLD_ORGDB_SCRIPT"
+    exit 1
+fi
+
+GOLD_ORGDB_ARGS=(
+    --taxid "$customized"
+    --hostspecies "$MTDIR/HostSpecies.csv"
+    --gtf "$MTDIR/ref_${customized}/ref_${customized}.gtf.gz"
+    --genome "$MTDIR/kraken2DB_${customized}/genome_${customized}.fa"
+    --protein-fasta "$protein_fasta"
+    --eggnog-db "$EGGNOG_DB_CACHE"
+    --lib "$MTDIR/custom_R_libs"
+    --build-dir "$MTDIR/build/orgdb_gold/${customized}"
+    --threads "$threads"
+    --version "$ORGDB_VERSION"
+    --conda-r-env "$MTD_ORGDB_ENV"
+)
+
+if [[ "$SKIP_IF_COMPATIBLE" == "1" ]]; then
+    GOLD_ORGDB_ARGS+=(--skip-if-compatible)
+fi
+
+if [[ "$FORCE_ORGDB" == "1" ]]; then
+    GOLD_ORGDB_ARGS+=(--force)
+fi
 
 if [[ "$SKIP_ORGDB" == "1" ]]; then
-    echo "[WARNING] Gold OrgDb creation skipped."
-else
-    GOLD_ORGDB_SCRIPT="$MTDIR/aux_scripts/orgdb/install_gold_orgdb_from_hostspecies.sh"
+    GOLD_ORGDB_ARGS+=(--skip-orgdb-build)
+fi
 
-    if [[ ! -s "$GOLD_ORGDB_SCRIPT" ]]; then
-        echo "ERROR: Gold OrgDb installer not found:"
-        echo "  $GOLD_ORGDB_SCRIPT"
-        echo "Install/copy the new orgdb helper scripts into $MTDIR/aux_scripts/orgdb first."
-        exit 1
-    fi
+echo "[INFO] Running reference-matched annotation builder:"
+printf ' %q' bash "$GOLD_ORGDB_SCRIPT" "${GOLD_ORGDB_ARGS[@]}"
+echo
 
-    GOLD_ORGDB_ARGS=(
-        --taxid "$customized"
-        --hostspecies "$MTDIR/HostSpecies.csv"
-        --gtf "$MTDIR/ref_${customized}/ref_${customized}.gtf.gz"
-        --genome "$MTDIR/kraken2DB_${customized}/genome_${customized}.fa"
-        --protein-fasta "$protein_fasta"
-        --eggnog-db "$EGGNOG_DB_CACHE"
-        --lib "$MTDIR/custom_R_libs"
-        --build-dir "$MTDIR/build/orgdb_gold/${customized}"
-        --threads "$threads"
-        --version "$ORGDB_VERSION"
-        --conda-r-env "$MTD_ORGDB_ENV"
-    )
+if ! bash "$GOLD_ORGDB_SCRIPT" "${GOLD_ORGDB_ARGS[@]}"; then
+    echo "[ERROR] Reference-matched annotation builder failed."
+    echo "[ERROR] Stopping customized host reference build."
+    exit 1
+fi
 
-    if [[ "$SKIP_IF_COMPATIBLE" == "1" ]]; then
-        GOLD_ORGDB_ARGS+=(--skip-if-compatible)
-    fi
+# ------------------------------------------------------------
+# Persist eggNOG/GO resources with the custom reference
+# ------------------------------------------------------------
 
-    if [[ "$FORCE_ORGDB" == "1" ]]; then
-        GOLD_ORGDB_ARGS+=(--force)
-    fi
+FUNCTIONAL_DIR="$MTDIR/ref_${customized}/functional_annotation"
 
-    echo "[INFO] Running gold OrgDb installer:"
-    printf '  %q' bash "$GOLD_ORGDB_SCRIPT" "${GOLD_ORGDB_ARGS[@]}"
-    echo
+ORGDB_WORK_DIR="$MTDIR/build/orgdb_gold/${customized}/work_taxid_${customized}"
 
-    if ! bash "$GOLD_ORGDB_SCRIPT" "${GOLD_ORGDB_ARGS[@]}"; then
-        echo "ERROR: Gold OrgDb installer failed. Stopping customized host reference build."
-        exit 1
-    fi
+ORGDB_EGGNOG_ANNOT="$ORGDB_WORK_DIR/eggnog_results/taxid_${customized}_gold_orgdb.emapper.annotations"
 
-    prepend_unique_path_var R_LIBS_USER "$MTDIR/custom_R_libs"
+ORGDB_GTF_GENES="$ORGDB_WORK_DIR/gtf_gene_ids.txt"
+
+ORGDB_REP_REPORT="$ORGDB_WORK_DIR/taxid_${customized}_representative_proteins_report.tsv"
+
+ORGDB_EGGNOG_COMPAT="$ORGDB_WORK_DIR/eggnog_gtf_compatibility.tsv"
+
+ORGDB_INPUT_COMPAT="$ORGDB_WORK_DIR/input_compatibility_report.tsv"
+
+MASTER_GMT_BUILDER="$MTDIR/aux_scripts/ssGSEA/build_master_gmt_from_eggnog.py"
+
+if [[ ! -s "$ORGDB_EGGNOG_ANNOT" ]]; then
+    echo "[ERROR] Reference-matched eggNOG annotation was not found:"
+    echo "  $ORGDB_EGGNOG_ANNOT"
+    exit 1
+fi
+
+if [[ ! -s "$ORGDB_GTF_GENES" ]]; then
+    echo "[ERROR] Reference GTF gene list was not found:"
+    echo "  $ORGDB_GTF_GENES"
+    exit 1
+fi
+
+if [[ ! -s "$MASTER_GMT_BUILDER" ]]; then
+    echo "[ERROR] Master GMT builder was not found:"
+    echo "  $MASTER_GMT_BUILDER"
+    exit 1
+fi
+
+mkdir -p "$FUNCTIONAL_DIR"
+
+PERSISTENT_EGGNOG_ANNOT="$FUNCTIONAL_DIR/taxid_${customized}_gold_orgdb.emapper.annotations"
+
+cp -f \
+    "$ORGDB_EGGNOG_ANNOT" \
+    "$PERSISTENT_EGGNOG_ANNOT"
+
+if [[ -s "$ORGDB_REP_REPORT" ]]; then
+    cp -f \
+        "$ORGDB_REP_REPORT" \
+        "$FUNCTIONAL_DIR/"
+fi
+
+if [[ -s "$ORGDB_EGGNOG_COMPAT" ]]; then
+    cp -f \
+        "$ORGDB_EGGNOG_COMPAT" \
+        "$FUNCTIONAL_DIR/"
+fi
+
+if [[ -s "$ORGDB_INPUT_COMPAT" ]]; then
+    cp -f \
+        "$ORGDB_INPUT_COMPAT" \
+        "$FUNCTIONAL_DIR/"
+fi
+
+echo "============================================================"
+echo "[FUNCTIONAL ANNOTATION]"
+echo "TaxID: $customized"
+echo "eggNOG annotations:"
+echo "  $PERSISTENT_EGGNOG_ANNOT"
+echo "Reference GTF genes:"
+echo "  $ORGDB_GTF_GENES"
+echo "Output directory:"
+echo "  $FUNCTIONAL_DIR"
+echo "============================================================"
+
+if ! conda run \
+    --no-capture-output \
+    -n MTD \
+    python3 "$MASTER_GMT_BUILDER" \
+        --taxid "$customized" \
+        --eggnog "$PERSISTENT_EGGNOG_ANNOT" \
+        --gtf-genes "$ORGDB_GTF_GENES" \
+        --outdir "$FUNCTIONAL_DIR"
+then
+    echo "[ERROR] Persistent master GMT generation failed."
+    exit 1
+fi
+
+MASTER_GMT="$FUNCTIONAL_DIR/custom_taxid_${customized}_eggNOG_GO_master.gmt"
+
+if [[ ! -s "$MASTER_GMT" ]]; then
+    echo "[ERROR] Master GMT was not created:"
+    echo "  $MASTER_GMT"
+    exit 1
+fi
+
+FUNCTIONAL_MANIFEST="$FUNCTIONAL_DIR/functional_annotation_manifest.tsv"
+
+{
+    printf 'parameter\tvalue\n'
+    printf 'taxid\t%s\n' "$customized"
+    printf 'scientific_name\t%s\n' "$species_name"
+    printf 'gtf\t%s\n' "$MTDIR/ref_${customized}/ref_${customized}.gtf.gz"
+    printf 'protein_fasta_cache\t%s\n' "$protein_fasta"
+    printf 'eggnog_annotations\t%s\n' "$PERSISTENT_EGGNOG_ANNOT"
+    printf 'master_gmt\t%s\n' "$MASTER_GMT"
+    printf 'created_at\t%s\n' "$(date -Is)"
+} > "$FUNCTIONAL_MANIFEST"
+
+(
+    cd "$FUNCTIONAL_DIR" || exit 1
+
+    find . \
+        -maxdepth 1 \
+        -type f \
+        ! -name 'checksums.sha256' \
+        -printf '%P\n' |
+    sort |
+    xargs -r sha256sum \
+        > checksums.sha256
+)
+
+echo "[OK] Persistent host functional resources:"
+echo "  $FUNCTIONAL_DIR"
+
+if [[ "$SKIP_ORGDB" != "1" ]]; then
+    prepend_unique_path_var \
+        R_LIBS_USER \
+        "$MTDIR/custom_R_libs"
 
     echo "[INFO] Gold OrgDb check:"
+
     conda deactivate
     conda activate "$MTD_ORGDB_ENV"
+
     Rscript - <<'RS'
-cat("R_LIBS_USER=", Sys.getenv("R_LIBS_USER"), "\n", sep="")
+cat("R_LIBS_USER=", Sys.getenv("R_LIBS_USER"), "\n", sep = "")
 cat(".libPaths():\n")
 print(.libPaths())
-libs <- strsplit(Sys.getenv("R_LIBS_USER"), .Platform$path.sep, fixed = TRUE)[[1]]
+
+libs <- strsplit(
+    Sys.getenv("R_LIBS_USER"),
+    .Platform$path.sep,
+    fixed = TRUE
+)[[1]]
+
 libs <- unique(libs[nzchar(libs) & dir.exists(libs)])
-hits <- unique(unlist(lapply(libs, function(p) list.files(p, pattern = "^org[.].*[.]eg[.]db$", full.names = TRUE))))
+
+hits <- unique(
+    unlist(
+        lapply(
+            libs,
+            function(path) {
+                list.files(
+                    path,
+                    pattern = "^org[.].*[.]eg[.]db$",
+                    full.names = TRUE
+                )
+            }
+        )
+    )
+)
+
 cat("Gold/custom OrgDb packages found in R_LIBS_USER:\n")
 print(hits)
 RS
+
     conda deactivate
+else
+    echo "[INFO] --skip-orgdb was used."
+    echo "[INFO] eggNOG annotations and master GMT were still generated."
 fi
 
 echo "Customized host reference building is done"

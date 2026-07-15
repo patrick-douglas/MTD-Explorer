@@ -29,6 +29,7 @@ VERSION="0.3.0"
 THREADS="20"
 FORCE=0
 SKIP_IF_COMPATIBLE=0
+SKIP_ORGDB_BUILD=0
 CONDA_R_ENV="${MTD_ORGDB_ENV:-MTD_orgdb}"
 CONDA_MTD_ENV="MTD"
 SYMBOL_MODE="gene_id"
@@ -77,6 +78,7 @@ Usage:
     --taxid TAXID \\
     --hostspecies /path/to/HostSpecies.csv \\
     --gtf /path/to/annotation.gtf.gz \\
+    --skip-orgdb-build \\
     [--genome /path/to/genome.fa] \\
     [--protein-fasta /path/to/proteins.fa.gz | --eggnog /path/to/file.emapper.annotations] \\
     [--lib $LIB_DEFAULT] \\
@@ -157,6 +159,7 @@ while [[ $# -gt 0 ]]; do
     --min-eggnog-genes=*) MIN_EGGNOG_GENES="${1#*=}"; shift ;;
     --min-eggnog-gtf-pct) MIN_EGGNOG_GTF_PCT="$2"; shift 2 ;;
     --min-eggnog-gtf-pct=*) MIN_EGGNOG_GTF_PCT="${1#*=}"; shift ;;
+    --skip-orgdb-build) SKIP_ORGDB_BUILD=1 shift ;;
     --force) FORCE=1; shift ;;
     -h|--help) show_help; exit 0 ;;
     *) echo "[ERROR] Unknown argument: $1"; show_help; exit 1 ;;
@@ -433,11 +436,17 @@ RS
       echo "[INFO] Best keytype: $BEST_KEYTYPE"
       echo "[INFO] Best overlap: $BEST_OVERLAP genes (${BEST_PCT}%)"
       echo "[INFO] Existing OrgDb compatibility report: $ORGDB_COMPAT_REPORT"
-      if [[ "$STATUS" == "installed" ]] && awk -v pct="$BEST_PCT" -v min="$MIN_EXISTING_ORGDB_PCT" 'BEGIN{exit !(pct >= min)}'; then
-        echo "[OK] Existing OrgDb is compatible enough. Skipping gold OrgDb creation."
-        echo "[OK] Use --force to rebuild anyway."
-        exit 0
-      fi
+      if [[ "$STATUS" == "installed" ]] && \
+       awk -v pct="$BEST_PCT" -v min="$MIN_EXISTING_ORGDB_PCT" \
+         'BEGIN { exit !(pct >= min) }'
+    then
+    echo "[OK] Existing OrgDb is compatible enough."
+    echo "[INFO] The R OrgDb package will not be rebuilt."
+    echo "[INFO] Continuing to ensure that representative proteins,"
+    echo "[INFO] eggNOG annotations and ssGSEA resources are available."
+
+    SKIP_ORGDB_BUILD=1
+fi
       echo "[WARNING] Existing OrgDb is missing or not compatible enough. Building gold OrgDb."
     else
       echo "[WARNING] Existing OrgDb compatibility report was not created. Building gold OrgDb anyway."
@@ -452,7 +461,11 @@ fi
 # or the existing OrgDb was missing/incompatible. Since we are building a gold
 # reference-matched OrgDb, remove previous installs/source dirs for this package
 # from the custom library/build folder to avoid stale or duplicated artifacts.
-clean_previous_orgdb_artifacts
+if [[ "$SKIP_ORGDB_BUILD" == "1" ]]; then
+    echo "[INFO] Keeping the existing OrgDb package and build artifacts."
+else
+    clean_previous_orgdb_artifacts
+fi
 
 # ------------------------------------------------------------
 # eggNOG DB check/download
@@ -738,21 +751,31 @@ fi
 # ------------------------------------------------------------
 # Build OrgDb in R412
 # ------------------------------------------------------------
-echo "[INFO] Building OrgDb from eggNOG file: $EGGNOG"
-FORCE_ARG=()
-if [[ "$FORCE" == "1" ]]; then FORCE_ARG=(--force); fi
+if [[ "$SKIP_ORGDB_BUILD" == "1" ]]; then
+    echo "[INFO] Skipping R OrgDb package construction."
+    echo "[INFO] Reference-matched eggNOG annotations remain available:"
+    echo "  $EGGNOG"
+else
+    echo "[INFO] Building OrgDb from eggNOG file: $EGGNOG"
 
-conda run -n "$CONDA_R_ENV" Rscript "$R_BUILD" \
-  --gtf "$GTF" \
-  --eggnog "$EGGNOG" \
-  --lib "$LIB" \
-  --build-dir "$BUILD_DIR" \
-  --version "$VERSION" \
-  --taxid "$TAXID" \
-  --genus "$GENUS" \
-  --species "$SPECIES" \
-  --symbol-mode "$SYMBOL_MODE" \
-  "${FORCE_ARG[@]}"
+    FORCE_ARG=()
+
+    if [[ "$FORCE" == "1" ]]; then
+        FORCE_ARG=(--force)
+    fi
+
+    conda run -n "$CONDA_R_ENV" Rscript "$R_BUILD" \
+        --gtf "$GTF" \
+        --eggnog "$EGGNOG" \
+        --lib "$LIB" \
+        --build-dir "$BUILD_DIR" \
+        --version "$VERSION" \
+        --taxid "$TAXID" \
+        --genus "$GENUS" \
+        --species "$SPECIES" \
+        --symbol-mode "$SYMBOL_MODE" \
+        "${FORCE_ARG[@]}"
+fi
 
 cat <<EOF
 
