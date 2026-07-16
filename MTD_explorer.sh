@@ -4973,6 +4973,48 @@ for i in $lsn; do
     mv *${i}_* $i
 done
 
+# Keep an untouched copy of the original Bracken/Kraken-style
+# species reports. This is important for sparse microbiome/viral
+# matrices where DESeq2-based normalization may fail.
+ORIGINAL_BRACKEN_REPORT_DIR="$outputdr/temp/Report_non-host_bracken_species_original"
+mkdir -p "$ORIGINAL_BRACKEN_REPORT_DIR"
+rm -f "$ORIGINAL_BRACKEN_REPORT_DIR"/*
+
+for i in $lsn; do
+    if [[ ! -e "$i" ]]; then
+        echo "${r}[ERROR] Missing original Bracken/Kraken report after renaming:${w} $i"
+        echo "Current directory:"
+        pwd
+        echo "Files:"
+        ls -lh
+        exit 1
+    fi
+
+    cp -f "$i" "$ORIGINAL_BRACKEN_REPORT_DIR/$i"
+done
+
+restore_original_bracken_reports_for_visualization() {
+    local normalized_dir="$outputdr/temp/Report_non-host_bracken_species_normalized"
+    local original_dir="$outputdr/temp/Report_non-host_bracken_species_original"
+
+    echo "${y}[INFO] Restoring original Bracken/Kraken reports for visualization.${w}"
+    echo "  From: $original_dir"
+    echo "  To:   $normalized_dir"
+
+    mkdir -p "$normalized_dir"
+
+    for sample in $lsn; do
+        if [[ ! -e "$original_dir/$sample" ]]; then
+            echo "${r}[ERROR] Cannot restore original Bracken/Kraken report:${w} $sample"
+            echo "Expected:"
+            echo "  $original_dir/$sample"
+            exit 1
+        fi
+
+        cp -f "$original_dir/$sample" "$normalized_dir/$sample"
+    done
+}
+
 echo "${g}Converted original _bracken report files (tree like) into .biom file for ANCOMBC and diversity analysis in phyloseq (R) etc. in DEG_Anno_Plot.R ${w}"
 kraken-biom * -o $outputdr/temp/bracken_species_all0.biom --fmt json
 
@@ -4998,16 +5040,35 @@ else
     if ! Rscript "$MTDIR/Normalization_afbr.R" "${norm_args[@]}"; then
         echo "${y}[WARNING] Normalization_afbr.R failed.${w}"
         echo "${y}[WARNING] Continuing with original Bracken tree-like reports for visualization.${w}"
+        restore_original_bracken_reports_for_visualization
     fi
 
     conda deactivate
     conda activate MTD
 fi
 
+# Verify that the reports expected by Krona/MPA/GraPhlAn exist.
+# If normalization failed partially or produced unexpected filenames,
+# fall back to the original Bracken/Kraken-style reports.
+missing_bracken_visualization_reports=0
+
+for i in $lsn; do
+    if [[ ! -e "$outputdr/temp/Report_non-host_bracken_species_normalized/$i" ]]; then
+        echo "${y}[WARNING] Missing Bracken/Kraken visualization report after normalization:${w} $i"
+        missing_bracken_visualization_reports=1
+    fi
+done
+
+if [[ "$missing_bracken_visualization_reports" == "1" ]]; then
+    echo "${y}[WARNING] Normalized Bracken reports are incomplete.${w}"
+    echo "${y}[WARNING] Falling back to original Bracken tree-like reports for visualization.${w}"
+    restore_original_bracken_reports_for_visualization
+fi
+
 echo "${g}MTD running  progress:"
 echo '>>>>>>>>>>          [50%]'
 
-echo "Converted adjusted _bracken report files for visualization: GraPhlAn, MPA, Krona ${w}"
+echo "Prepared Bracken/Kraken report files for visualization: GraPhlAn, MPA, Krona ${w}"
 
 # ------------------------------------------------------------
 # Important:
@@ -5080,9 +5141,11 @@ if ! command -v ktImportText >/dev/null 2>&1; then
 fi
 
 krona_all_inputs=()
+processed_bracken_visualization_samples=()
+skipped_empty_bracken_visualization_samples=()
 
 for i in $lsn; do
-    if [[ ! -s "$i" ]]; then
+    if [[ ! -e "$i" ]]; then
         echo "${r}[ERROR] Missing normalized Bracken/Kraken report for sample:${w} $i"
         echo "Expected file:"
         echo "  $outputdr/temp/Report_non-host_bracken_species_normalized/$i"
@@ -5091,14 +5154,31 @@ for i in $lsn; do
 
     sample=$(basename "$i")
 
+    # Sparse custom databases, especially viral-only databases, may
+    # produce an empty Bracken/Kraken-style report for samples with no
+    # taxa detected at species level. This is not a pipeline failure.
+    # Krona/MPA conversion needs taxonomic rows, so skip only these
+    # empty per-sample visualization files and keep processing the
+    # samples that do contain taxa.
+    if [[ ! -s "$i" ]]; then
+        echo "${y}[WARNING] Empty Bracken/Kraken report for sample:${w} $sample"
+        echo "${y}[WARNING] No species-level taxa were detected for this sample; skipping Krona/MPA conversion for this sample.${w}"
+        skipped_empty_bracken_visualization_samples+=("$sample")
+        continue
+    fi
+
     krona_file="$outputdr/krona/${sample}-bracken.krona"
     krona_html="$outputdr/krona/${sample}-bracken.html"
     mpa_file="$GRAPHLAN_MPA_DIR/${sample}-bracken.mpa.txt"
 
     echo "  [Krona] $sample"
-    python "$MTDIR/Tools/KrakenTools/kreport2krona.py" \
+    if ! python "$MTDIR/Tools/KrakenTools/kreport2krona.py" \
         -r "$i" \
         -o "$krona_file"
+    then
+        echo "${r}[ERROR] kreport2krona.py failed for sample:${w} $sample"
+        exit 1
+    fi
 
     if [[ ! -s "$krona_file" ]]; then
         echo "${r}[ERROR] Krona file was not generated or is empty:${w} $krona_file"
@@ -5106,8 +5186,12 @@ for i in $lsn; do
     fi
 
     echo "  [Krona HTML] $sample"
-    ktImportText "$krona_file" \
+    if ! ktImportText "$krona_file" \
         -o "$krona_html"
+    then
+        echo "${r}[ERROR] ktImportText failed for sample:${w} $sample"
+        exit 1
+    fi
 
     if [[ ! -s "$krona_html" ]]; then
         echo "${r}[ERROR] Krona HTML was not generated or is empty:${w} $krona_html"
@@ -5115,13 +5199,38 @@ for i in $lsn; do
     fi
 
     krona_all_inputs+=("$krona_file")
+    processed_bracken_visualization_samples+=("$sample")
 
     echo "  [MPA] $sample"
-    python "$MTDIR/Tools/KrakenTools/kreport2mpa.py" \
+    if ! python "$MTDIR/Tools/KrakenTools/kreport2mpa.py" \
         --display-header \
         -r "$i" \
         -o "$mpa_file"
+    then
+        echo "${r}[ERROR] kreport2mpa.py failed for sample:${w} $sample"
+        exit 1
+    fi
+
+    if [[ ! -s "$mpa_file" ]]; then
+        echo "${r}[ERROR] MPA file was not generated or is empty:${w} $mpa_file"
+        exit 1
+    fi
 done
+
+echo
+echo "${g}[INFO] Bracken/Kraken visualization sample summary:${w}"
+echo "  Processed non-empty reports: ${#processed_bracken_visualization_samples[@]}"
+echo "  Skipped empty reports:       ${#skipped_empty_bracken_visualization_samples[@]}"
+
+if [[ ${#skipped_empty_bracken_visualization_samples[@]} -gt 0 ]]; then
+    printf '  Empty samples skipped: %s\n' "${skipped_empty_bracken_visualization_samples[*]}"
+fi
+
+if [[ ${#processed_bracken_visualization_samples[@]} -eq 0 ]]; then
+    echo "${r}[ERROR] No non-empty Bracken/Kraken reports were available for Krona/MPA/GraPhlAn.${w}"
+    echo "${r}[ERROR] The microbiome/target database produced no species-level taxa in any sample.${w}"
+    exit 1
+fi
 
 # ------------------------------------------------------------
 # Generate combined Krona HTML for all detected taxa across animals
