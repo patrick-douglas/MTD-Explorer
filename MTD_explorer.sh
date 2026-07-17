@@ -5918,9 +5918,9 @@ humann_regroup_table --input humann_genefamilies_relab_stratified.tsv --groups u
 echo "${g}Translate KEGG and GO ID to human readable terms${w}"
 conda deactivate
 conda activate R412
-Rscript "$HUMANN_ANALYSIS_DIR/humann_ID_translation_adjusted.R" $outputdr/temp/HUMAnN_output/humann_genefamilies_relAbundance_kegg.tsv $outputdr/temp/HUMAnN_output/humann_genefamilies_relAbundance_go.tsv $MTDIR
+Rscript "$HUMANN_ANALYSIS_DIR/humann_ID_translation_adjusted.R" "$outputdr/temp/HUMAnN_output/humann_genefamilies_relAbundance_kegg.tsv" "$outputdr/temp/HUMAnN_output/humann_genefamilies_relAbundance_go.tsv" "$HUMANN_ANALYSIS_DIR"
     # Tranlate unnormalized table (for Deseq2)
-Rscript "$HUMANN_ANALYSIS_DIR/humann_ID_translation_adjusted.R" $outputdr/temp/HUMAnN_output/humann_genefamilies_Abundance_kegg.tsv $outputdr/temp/HUMAnN_output/humann_genefamilies_Abundance_go.tsv $MTDIR
+Rscript "$HUMANN_ANALYSIS_DIR/humann_ID_translation_adjusted.R" "$outputdr/temp/HUMAnN_output/humann_genefamilies_Abundance_kegg.tsv" "$outputdr/temp/HUMAnN_output/humann_genefamilies_Abundance_go.tsv" "$HUMANN_ANALYSIS_DIR"
 conda deactivate
 conda activate MTD
 
