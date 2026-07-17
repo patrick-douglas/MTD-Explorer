@@ -949,7 +949,7 @@ prepare_kraken_taxonomy_for_db() {
 
     if [[ "$use_cache" != "1" ]]; then
         echo "[KRAKEN-CACHE] Shared cache disabled. Downloading taxonomy directly into: $dbname"
-        "$mtdir/download_kraken2_taxonomy_https.sh" --db "$dbname" --threads "$threads"
+        "$mtdir/aux_scripts/Kraken2/download_kraken2_taxonomy_https.sh" --db "$dbname" --threads "$threads"
         return
     fi
 
@@ -973,7 +973,7 @@ prepare_kraken_taxonomy_for_db() {
         echo "[KRAKEN-CACHE] Shared taxonomy cache missing/incomplete. Creating it once."
         rm -rf --one-file-system "$cache_dir"
         mkdir -p "$cache_dir"
-        "$mtdir/download_kraken2_taxonomy_https.sh" --db "$cache_dir" --threads "$threads"
+        "$mtdir/aux_scripts/Kraken2/download_kraken2_taxonomy_https.sh" --db "$cache_dir" --threads "$threads"
     fi
 
     if ! validate_kraken_taxonomy_dir "$cache_taxdir"; then

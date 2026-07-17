@@ -28,6 +28,7 @@ offline_files_folder=""
 
 dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 MANIFEST_SCRIPTS_DIR="$dir/aux_scripts/manifest_scripts"
+KRAKEN_AUX_DIR="$dir/aux_scripts/Kraken2"
 
 KRAKEN_ENV_LIBEXEC=""
 KRAKEN_PKG_LIBEXEC=""
@@ -1080,7 +1081,7 @@ validate_kraken2_taxonomy_dir() {
 }
 
 download_shared_kraken2_taxonomy_once() {
-    local downloader="$dir/kraken2-build-download-taxonomy"
+    local downloader="$KRAKEN_AUX_DIR/kraken2-build-download-taxonomy"
     local taxonomy_dir="$KRAKEN_TAXONOMY_CACHE/taxonomy"
     local complete_marker="$KRAKEN_TAXONOMY_CACHE/.mtd_taxonomy_complete"
 
@@ -1902,7 +1903,7 @@ build_microbiome_kraken_database() {
     show_progress 40 "Preparing microbiome manifests"
     prepare_microbiome_manifests
 
-    chmod +x "$dir/kraken2-build-download-taxonomy"
+    chmod +x "$KRAKEN_AUX_DIR/kraken2-build-download-taxonomy"
 
     show_progress 42 "Preparing the shared NCBI taxonomy"
     install_shared_kraken2_taxonomy "$database"

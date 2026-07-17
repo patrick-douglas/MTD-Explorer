@@ -1110,7 +1110,7 @@ if [[ "$MODE" != "quick" ]]; then
         manifest.bacteria.sh \
         manifest.archea.sh \
         manifest.plasmid.sh \
-        kraken2-build-download-taxonomy \
+        aux_scripts/Kraken2/kraken2-build-download-taxonomy \
         Create_custom_host.sh \
         HostSpecies.csv \
         aux_scripts/orgdb/build_gold_orgdb_from_gtf_eggnog.R \

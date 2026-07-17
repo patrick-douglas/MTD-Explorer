@@ -10,7 +10,7 @@ set -eo pipefail
 # Usando HTTPS em vez de rsync.
 #
 # Uso:
-#   ./download_kraken2_taxonomy_https.sh --db kraken2DB_59463 --threads 20
+#   ./aux_scripts/Kraken2/download_kraken2_taxonomy_https.sh --db kraken2DB_59463 --threads 20
 #
 # Opções:
 #   --db <folder>      Pasta do banco Kraken2
