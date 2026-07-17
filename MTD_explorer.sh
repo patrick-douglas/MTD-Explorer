@@ -5018,11 +5018,28 @@ restore_original_bracken_reports_for_visualization() {
 echo "${g}Converted original _bracken report files (tree like) into .biom file for ANCOMBC and diversity analysis in phyloseq (R) etc. in DEG_Anno_Plot.R ${w}"
 kraken-biom * -o $outputdr/temp/bracken_species_all0.biom --fmt json
 
-echo "${g}Adjust bracken file (tree like) for additional visualization (.biom, .mpa, .krona) ${w}"
+# ------------------------------------------------------------
+# Generate transformed abundance matrices
+#
+# Original Kraken/Bracken tree-like reports remain untouched.
+#
+# Outputs:
+#   *.vst.tsv
+#   *.vst_batch_corrected.tsv
+#   *.deseq2_normalized_counts.tsv
+#
+# These matrices are intended for PCA, heatmaps, clustering and
+# similar multivariate analyses. They are not used to generate
+# Krona, MPA, GraPhlAn or Kraken-style reports.
+# ------------------------------------------------------------
+
+BRACKEN_TRANSFORM_DIR="$outputdr/temp/bracken_transformed"
+
+mkdir -p "$BRACKEN_TRANSFORM_DIR"
 
 if [[ "$NO_COMPARISON" == "1" ]]; then
-    echo "${y}[INFO] Exploratory mode: skipping DESeq2-based Bracken normalization.${w}"
-    echo "${y}[INFO] Using original Bracken tree-like reports for BIOM, Krona, MPA and GraPhlAn.${w}"
+    echo "${y}[INFO] Exploratory mode: skipping DESeq2/VST Bracken transformation.${w}"
+    echo "${y}[INFO] Original Bracken reports will be used for BIOM, Krona, MPA and GraPhlAn.${w}"
 else
     conda deactivate
     conda activate R412
@@ -5030,17 +5047,19 @@ else
     norm_args=(
         "$outputdr/bracken_species_all"
         "$samplesheet_file"
-        "$outputdr/temp/Report_non-host_bracken_species_normalized"
+        "$BRACKEN_TRANSFORM_DIR"
     )
 
     if [[ -n "${metadata:-}" ]]; then
         norm_args+=( "$metadata" )
     fi
 
-    if ! Rscript "$MTDIR/Normalization_afbr.R" "${norm_args[@]}"; then
-        echo "${y}[WARNING] Normalization_afbr.R failed.${w}"
-        echo "${y}[WARNING] Continuing with original Bracken tree-like reports for visualization.${w}"
-        restore_original_bracken_reports_for_visualization
+    if Rscript "$MTDIR/Normalization_afbr.R" "${norm_args[@]}"; then
+        echo "${g}[OK] Bracken transformation matrices created.${w}"
+        echo "  $BRACKEN_TRANSFORM_DIR"
+    else
+        echo "${y}[WARNING] Could not generate transformed Bracken matrices.${w}"
+        echo "${y}[WARNING] Original taxonomic reports remain valid and the pipeline will continue.${w}"
     fi
 
     conda deactivate
@@ -5086,7 +5105,14 @@ echo "Prepared Bracken/Kraken report files for visualization: GraPhlAn, MPA, Kro
 # This avoids the fragile BIOM parser inside export2graphlan.py.
 # ------------------------------------------------------------
 
-cd "$outputdr/temp/Report_non-host_bracken_species_normalized" || exit 1
+BRACKEN_VIS_REPORT_DIR="$outputdr/temp/Report_non-host_bracken_species_normalized"
+
+echo "${g}[INFO] Taxonomic hierarchy source:${w}"
+echo "  Original Bracken/Kraken tree-like reports"
+echo "  $BRACKEN_VIS_REPORT_DIR"
+
+cd "$BRACKEN_VIS_REPORT_DIR" || \
+    die "Could not enter Bracken visualization report directory."
 
 conda deactivate
 conda activate MTD
@@ -5095,7 +5121,7 @@ conda activate MTD
 # Keep BIOM generation for compatibility with downstream outputs
 # ------------------------------------------------------------
 
-echo "${g}Creating BIOM file from normalized species reports${w}"
+echo "${g}Generating Krona, MPA and GraPhlAn from original Bracken reports${w}"
 
 kraken-biom * -o "$outputdr/bracken_species_all.biom" --fmt json
 

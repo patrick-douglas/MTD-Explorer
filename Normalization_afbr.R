@@ -87,111 +87,142 @@ norm <- limma::removeBatchEffect(normtrans, vsd$transcriptome_size, design=mm)
 #   norm <- limma::removeBatchEffect(normtrans, covariates=coldata.n[,2:ncol(coldata.n)])
 # }
 
-# read the un-normalized bracken files (tree like)
-files<-list.files(path=args[3],full.names=TRUE, recursive=FALSE)
+# ------------------------------------------------------------
+# Export transformed matrices
+#
+# Important:
+# These matrices are intended for ordination, clustering,
+# heatmaps and other multivariate visualizations.
+#
+# They must not be written back into Kraken/Bracken reports,
+# because VST/batch-corrected values are not read counts and
+# may contain negative or non-integer values.
+# ------------------------------------------------------------
 
-# Apply normalized results to bracken table (tree like); 3rd column
-bracken_l <- list()
-for (f in files){
-  t<-read.table(f,sep="\t", quote= "")
-  i <- basename(f)
-  t[2]<-0 # clear the 2nd column value
-  for (nr in 1:nrow(norm)){
-    for (r in 1:nrow(t)){
-      if (row.names(norm)[nr]==trimws(t[r,6])){
-        t[r,2:3]<-round(norm[nr,i]) # replace with normalized counts
-      }
+output_dir <- args[3]
+
+dir.create(
+    output_dir,
+    recursive = TRUE,
+    showWarnings = FALSE
+)
+
+write_taxon_matrix <- function(matrix_object, output_file) {
+    matrix_object <- as.matrix(matrix_object)
+
+    if (is.null(rownames(matrix_object))) {
+        stop(
+            paste(
+                "The matrix has no taxon row names:",
+                output_file
+            )
+        )
     }
-  }
-  spaces<-stringr::str_count(t[,6], "\\G ") 
-  level_num <- spaces/2 #Determine which level based on number of spaces
-  t[7]<-level_num # add level to a new column
-  bracken_l[[i]] <-t # save bracken table (tree like) into a list
-}
 
-# Function of applying normalized results to bracken table (tree like); 2nd column
-Bracken_adj <- function(t){
-  tmp_ll<-1
-  for (nl in 1:max(t[7])){ # from F level to above
-    pre_r_nearest<-0
-    pre_r_nearest_up<-0
-    for (r in 1:(nrow(t)-1)){
-      if (t[r,7] > t[r+1,7]){ # locate the bottom layer/level S of a branch; store in variable r
-        cl <- t[r,7]-nl # current level to fill (target level)
-        print(paste0("r= ",r,"  cl= ",cl))
-        r_nearest <- match(cl,t[(r+1):nrow(t),7]) # get row number that level number matches to the next one
-        r_nearest_up <- match(cl,t[(r-1):1,7]) # get row number that level number matches to the upper one
-        if (is.na(r_nearest_up)==F){ # to avoid the minus/external levels
-          r_nearest_up <- r-r_nearest_up
-          if (is.na(r_nearest)==F){
-            r_nearest <- r + r_nearest
-            if (r_nearest != pre_r_nearest){ # to avoid multiple r share the same target level
-              print(paste0("r_nearest=",r_nearest))
-              if (r_nearest_up != pre_r_nearest_up){ # to avoid multiple r share the same target level
-                print(paste0("r_nearest_up=",r_nearest_up))
-                r_section <- t[r_nearest_up:(r_nearest-1),] # get a subset/section from previous S-after level to the next current level (e.g., G/F/O)
-                t[r_nearest_up:(r_nearest-1),][t[r_nearest_up:(r_nearest-1),][,7] == cl,2] <- sum(r_section[r_section[,7]==(cl+1),2]) # save to parent level (F)
-                print(t[r_nearest_up:(r_nearest-1),][t[r_nearest_up:(r_nearest-1),][,7] == cl,2])
-              }
-              pre_r_nearest <- r_nearest
-              pre_r_nearest_up <- r_nearest_up
-            }
-            # if (cl %in% t[isUnique(t[,7]),7]){ # for unique section (R)
-            #   t[t[,7]==cl,2]<-sum(t[t[,7]==(t[r,7]-(nl-1)),2])}
-          }
-          if (is.na(r_nearest)==T){ # from current to bottom of the list
-            print(paste0("r_nearest is NA, r=",r))
-            print(paste0("pre_nearest_up is ",pre_r_nearest_up))
-            print(paste0("r_nearest_up is ",r_nearest_up))
-            r_section <- t[r_nearest_up:nrow(t),] # get a subset to the end
-            t[r_nearest_up:nrow(t),][t[r_nearest_up:nrow(t),][,7] == cl,2] <- sum(r_section[r_section[,7]==(cl+1),2]) # save to parent level (F)
-            print(t[r_nearest_up:nrow(t),][t[r_nearest_up:nrow(t),][,7] == cl,2])
-          }
-        }
-        tmp_ll<-r+1 # next branch starting row number
-      }
-      if (r == (nrow(t)-1)){ # for the bottom layer/level S in the list
-        print(paste0("The last S r=",r,"; tmp_ll=" ,tmp_ll))
-        r <- r+1 # locate to the bottom layer/level S in the list; store in variable r
-        cl <- t[r,7]-nl # current level to fill (target level)
-        r_nearest_up <- match(cl,t[(r-1):tmp_ll,7]) # get row number that level number matches to the upper one
-        print(paste0("r_nearest_up is ",r_nearest_up))
-        if (is.na(r_nearest_up)==F){ # to avoid the minus/external levels
-          r_nearest_up <- r-r_nearest_up
-          print(paste0("r_nearest_up is ",r_nearest_up))
-          r_section <- t[r_nearest_up:nrow(t),] # get a subset to the end
-          t[r_nearest_up:nrow(t),][t[r_nearest_up:nrow(t),][,7] == cl,2] <- sum(r_section[r_section[,7]==(cl+1),2]) # save to parent level (F)
-          print(paste0("in last branch ",t[r_nearest_up:nrow(t),][t[r_nearest_up:nrow(t),][,7] == cl,2]))
-        }
-      }
+    if (any(!is.finite(matrix_object))) {
+        stop(
+            paste(
+                "The matrix contains NA, NaN or infinite values:",
+                output_file
+            )
+        )
     }
-  }
-  return(t)
+
+    output_table <- data.frame(
+        taxon = rownames(matrix_object),
+        matrix_object,
+        check.names = FALSE
+    )
+
+    write.table(
+        output_table,
+        file = output_file,
+        sep = "\t",
+        quote = FALSE,
+        row.names = FALSE,
+        col.names = TRUE
+    )
 }
 
-# Run the function to apply normalized results to bracken table (tree like); 2nd column
-for (i in 1:length(bracken_l)){
-  bracken_l[[i]] <- Bracken_adj(bracken_l[[i]])
-}
 
-# Function of correcting the percentage according to the normalized results; 1st column
-Bracken_adj1 <- function(t){
-  for (i in 1:nrow(t)){
-    t[i,1]<-round(t[i,2]/t[1,2]*100, digits = 2)
-  }
-  t<-t[,-7] # remove the temporary/last column
-  return(t)
-}
+vst_output <- file.path(
+    output_dir,
+    paste0(filename, ".vst.tsv")
+)
 
-# Run the function to apply percentage of normalized results to bracken table (tree like); 1st column
-for (i in 1:length(bracken_l)){
-  bracken_l[[i]] <- Bracken_adj1(bracken_l[[i]])
-}
+batch_corrected_output <- file.path(
+    output_dir,
+    paste0(filename, ".vst_batch_corrected.tsv")
+)
 
-# Write tables
-for (i in 1:length(bracken_l)){
-  write.table(bracken_l[[i]],paste0(args[3],"/",names(bracken_l[i])),sep="\t",quote = F,
-              row.names = F, col.names = F)
-}
+normalized_counts_output <- file.path(
+    output_dir,
+    paste0(filename, ".deseq2_normalized_counts.tsv")
+)
 
-print("Adjustment process is done")
+
+# Uncorrected VST matrix.
+write_taxon_matrix(
+    normtrans,
+    vst_output
+)
+
+
+# VST matrix with the transcriptome-size/batch component removed.
+#
+# Negative values are valid here because this is a transformed
+# visualization matrix, not a count table.
+write_taxon_matrix(
+    norm,
+    batch_corrected_output
+)
+
+
+# DESeq2 size-factor-normalized counts.
+#
+# This is exported for descriptive/tabular use, but it is not
+# converted into a Kraken hierarchy.
+normalized_counts <- counts(
+    dds,
+    normalized = TRUE
+)
+
+write_taxon_matrix(
+    normalized_counts,
+    normalized_counts_output
+)
+
+
+# Preserve sample metadata used in the transformation.
+metadata_output <- file.path(
+    output_dir,
+    paste0(filename, ".sample_metadata.tsv")
+)
+
+metadata_table <- data.frame(
+    sample_name = rownames(as.data.frame(colData(vsd))),
+    as.data.frame(colData(vsd)),
+    check.names = FALSE
+)
+
+write.table(
+    metadata_table,
+    file = metadata_output,
+    sep = "\t",
+    quote = FALSE,
+    row.names = FALSE,
+    col.names = TRUE
+)
+
+
+message("Transformation completed.")
+message("VST matrix: ", vst_output)
+message(
+    "Batch-corrected VST matrix: ",
+    batch_corrected_output
+)
+message(
+    "DESeq2 normalized counts: ",
+    normalized_counts_output
+)
+message("Sample metadata: ", metadata_output)
