@@ -321,7 +321,7 @@ printf '%-18s %s\n' "Cache:" "$CACHE"
 printf '%-18s %s\n' "Output root:" "$BENCHMARK_ROOT"
 printf '%s\n' "============================================================"
 
-sset +e
+set +e
 
 bash "$BENCHMARK_DIR/MTD_benchmark_install.sh" \
     --label "$BENCHMARK_LABEL" \
