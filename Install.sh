@@ -27,6 +27,7 @@ condapath="${HOME}/miniconda3"
 offline_files_folder=""
 
 dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+MANIFEST_SCRIPTS_DIR="$dir/aux_scripts/manifest_scripts"
 
 KRAKEN_ENV_LIBEXEC=""
 KRAKEN_PKG_LIBEXEC=""
@@ -1606,7 +1607,7 @@ prepare_virome_files() {
     log_info "Synchronizing the NCBI RefSeq viral collection..."
 
 copy_required_file \
-    "$dir/manifest.virus.sh" \
+    "$MANIFEST_SCRIPTS_DIR/manifest.virus.sh" \
     "$manifest_destination"
 
 chmod +x "$manifest_destination"
@@ -1735,11 +1736,11 @@ install_default_kraken_helpers() {
 
 prepare_microbiome_manifests() {
     copy_manifest_with_offline_folder \
-        "$dir/manifest.bacteria.sh" \
+        "$MANIFEST_SCRIPTS_DIR/manifest.bacteria.sh" \
         "$offline_files_folder/Kraken2DB_micro/library/manifest.bacteria.sh"
 
     copy_required_file \
-        "$dir/manifest.sh" \
+        "$MANIFEST_SCRIPTS_DIR/manifest.sh" \
         "$offline_files_folder/Kraken2DB_micro/library/manifest.sh"
 
     sed -i \
@@ -1752,7 +1753,7 @@ add_local_archaea_library() {
     local helper="$KRAKEN_ENV_LIBEXEC/rsync_from_ncbi.pl"
 
     copy_manifest_with_offline_folder \
-        "$dir/manifest.archea.sh" \
+        "$MANIFEST_SCRIPTS_DIR/manifest.archea.sh" \
         "$offline_files_folder/Kraken2DB_micro/library/manifest.archea.sh"
 
     install_kraken_helper \
@@ -1812,8 +1813,8 @@ add_local_plasmid_library() {
     log_info "Preparing cached plasmid genomic sequences..."
 
     copy_required_file \
-        "$dir/manifest.plasmid.sh" \
-        "$manifest_destination"
+    "$MANIFEST_SCRIPTS_DIR/manifest.plasmid.sh" \
+    "$manifest_destination"
 
     sed -i \
         "s|^LOCAL_DIR=.*|LOCAL_DIR=$plasmid_cache/|" \
