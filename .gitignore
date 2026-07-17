@@ -33,3 +33,7 @@ condaPath
 
 # Local temporary and diagnostic outputs
 /temp/
+
+# MkDocs local environment and build output
+.venv-docs/
+site/
