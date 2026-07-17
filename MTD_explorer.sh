@@ -755,6 +755,16 @@ fi
 # ------------------------------------------------------------
 
 MTDIR=$(dirname "$(readlink -f "$0")")
+
+# ------------------------------------------------------------
+# Analysis helper script directories
+# ------------------------------------------------------------
+ANALYSIS_SCRIPTS_DIR="$MTDIR/aux_scripts/analysis"
+DIFFERENTIAL_ANALYSIS_DIR="$ANALYSIS_SCRIPTS_DIR/differential"
+INTEGRATION_ANALYSIS_DIR="$ANALYSIS_SCRIPTS_DIR/integration"
+HUMANN_ANALYSIS_DIR="$ANALYSIS_SCRIPTS_DIR/humann"
+SINGLE_CELL_ANALYSIS_DIR="$ANALYSIS_SCRIPTS_DIR/single_cell"
+
 echo "MTD directory is $MTDIR"
 
 
@@ -5012,7 +5022,7 @@ else
         norm_args+=( "$metadata" )
     fi
 
-    if Rscript "$MTDIR/Normalization_afbr.R" "${norm_args[@]}"; then
+    if Rscript "$DIFFERENTIAL_ANALYSIS_DIR/Normalization_afbr.R" "${norm_args[@]}"; then
         echo "${g}[OK] Bracken transformation matrices created.${w}"
         echo "  $BRACKEN_TRANSFORM_DIR"
     else
@@ -5591,7 +5601,7 @@ else
         deg_args+=( "$metadata" )
     fi
 
-    Rscript "$MTDIR/DEG_Anno_Plot.R" "${deg_args[@]}"
+    Rscript "$DIFFERENTIAL_ANALYSIS_DIR/DEG_Anno_Plot.R" "${deg_args[@]}"
 
     conda deactivate
     conda activate MTD
@@ -5908,9 +5918,9 @@ humann_regroup_table --input humann_genefamilies_relab_stratified.tsv --groups u
 echo "${g}Translate KEGG and GO ID to human readable terms${w}"
 conda deactivate
 conda activate R412
-Rscript $MTDIR/humann_ID_translation_adjusted.R $outputdr/temp/HUMAnN_output/humann_genefamilies_relAbundance_kegg.tsv $outputdr/temp/HUMAnN_output/humann_genefamilies_relAbundance_go.tsv $MTDIR
+Rscript "$HUMANN_ANALYSIS_DIR/humann_ID_translation_adjusted.R" $outputdr/temp/HUMAnN_output/humann_genefamilies_relAbundance_kegg.tsv $outputdr/temp/HUMAnN_output/humann_genefamilies_relAbundance_go.tsv $MTDIR
     # Tranlate unnormalized table (for Deseq2)
-Rscript $MTDIR/humann_ID_translation_adjusted.R $outputdr/temp/HUMAnN_output/humann_genefamilies_Abundance_kegg.tsv $outputdr/temp/HUMAnN_output/humann_genefamilies_Abundance_go.tsv $MTDIR
+Rscript "$HUMANN_ANALYSIS_DIR/humann_ID_translation_adjusted.R" $outputdr/temp/HUMAnN_output/humann_genefamilies_Abundance_kegg.tsv $outputdr/temp/HUMAnN_output/humann_genefamilies_Abundance_go.tsv $MTDIR
 conda deactivate
 conda activate MTD
 
@@ -5930,11 +5940,11 @@ conda activate R412
 if [[ "$NO_COMPARISON" == "1" ]]; then
     echo "${y}[INFO] Exploratory mode: skipping HUMAnN DEG analysis.${w}"
 else
-    Rscript "$MTDIR/DEG_Anno_Plot.R" \
+    Rscript "$DIFFERENTIAL_ANALYSIS_DIR/DEG_Anno_Plot.R" \
         "$outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_kegg_translated.tsv" \
         "$samplesheet_file"
 
-    Rscript "$MTDIR/DEG_Anno_Plot.R" \
+    Rscript "$DIFFERENTIAL_ANALYSIS_DIR/DEG_Anno_Plot.R" \
         "$outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_go_translated.tsv" \
         "$samplesheet_file"
 fi
@@ -6509,7 +6519,7 @@ else
     fi
 
 
-    Rscript "$MTDIR/DEG_Anno_Plot.R" "${host_deg_args[@]}"
+    Rscript "$DIFFERENTIAL_ANALYSIS_DIR/DEG_Anno_Plot.R" "${host_deg_args[@]}"
 
     # ------------------------------------------------------------
     # Extra DEG volcano plots with EnhancedVolcano
@@ -6633,7 +6643,7 @@ echo "ssGSEA${w}"
 
 require_file "$outputdr/Host_DEG/host_counts_TPM.csv" "Host TPM matrix"
 
-run_cmd Rscript "$MTDIR/gct_making.R" \
+run_cmd Rscript "$INTEGRATION_ANALYSIS_DIR/gct_making.R" \
     "$outputdr/Host_DEG/host_counts_TPM.csv" \
     "$samplesheet_file"
 
@@ -6745,7 +6755,7 @@ run_cmd Rscript "$MTDIR/Tools/ssGSEA2.0/ssgsea-cli.R" \
 
 require_file "$outputdr/ssGSEA/ssgsea-results-scores.gct" "ssGSEA scores"
 
-run_cmd Rscript "$MTDIR/for_halla.R" \
+run_cmd Rscript "$INTEGRATION_ANALYSIS_DIR/for_halla.R" \
     "$outputdr/ssGSEA/ssgsea-results-scores.gct" \
     "$samplesheet_file" \
     $metadata
@@ -7088,9 +7098,9 @@ echo "${g}Analyzing microbiome x host_genes associations...${w}"
 
 run_halla_safe "$outputdr/halla/Microbiomes.txt" "$outputdr/halla/Host_gene.txt" "$outputdr/halla/host_gene" "$pdm" "Microbiomes" "Host_gene"
 
-run_python_plot_safe "PLS-DA microbiome x host_gene" "python $MTDIR/pls_da_analysis.py -x $outputdr/halla/Microbiomes.txt -y $outputdr/halla/Host_gene.txt -o $outputdr/halla/pls_da_results.pdf" "$outputdr/halla/pls_da_analysis.log"
+run_python_plot_safe "PLS-DA microbiome x host_gene" "python $INTEGRATION_ANALYSIS_DIR/pls_da_analysis.py -x $outputdr/halla/Microbiomes.txt -y $outputdr/halla/Host_gene.txt -o $outputdr/halla/pls_da_results.pdf" "$outputdr/halla/pls_da_analysis.log"
 
-run_python_plot_safe "k-means microbiome x host_gene" "python $MTDIR/kmeans_clustering.py -x $outputdr/halla/Microbiomes.txt -y $outputdr/halla/Host_gene.txt -o $outputdr/halla/kmeans_results.pdf -k 3" "$outputdr/halla/kmeans_clustering.log"
+run_python_plot_safe "k-means microbiome x host_gene" "python $INTEGRATION_ANALYSIS_DIR/kmeans_clustering.py -x $outputdr/halla/Microbiomes.txt -y $outputdr/halla/Host_gene.txt -o $outputdr/halla/kmeans_results.pdf -k 3" "$outputdr/halla/kmeans_clustering.log"
 
 if [[ "$RUN_EXTRA_PEARSON" == "1" ]]; then
     echo "[INFO] RUN_EXTRA_PEARSON=1, running extra Pearson HAllA analysis."
