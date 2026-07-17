@@ -4973,48 +4973,6 @@ for i in $lsn; do
     mv *${i}_* $i
 done
 
-# Keep an untouched copy of the original Bracken/Kraken-style
-# species reports. This is important for sparse microbiome/viral
-# matrices where DESeq2-based normalization may fail.
-ORIGINAL_BRACKEN_REPORT_DIR="$outputdr/temp/Report_non-host_bracken_species_original"
-mkdir -p "$ORIGINAL_BRACKEN_REPORT_DIR"
-rm -f "$ORIGINAL_BRACKEN_REPORT_DIR"/*
-
-for i in $lsn; do
-    if [[ ! -e "$i" ]]; then
-        echo "${r}[ERROR] Missing original Bracken/Kraken report after renaming:${w} $i"
-        echo "Current directory:"
-        pwd
-        echo "Files:"
-        ls -lh
-        exit 1
-    fi
-
-    cp -f "$i" "$ORIGINAL_BRACKEN_REPORT_DIR/$i"
-done
-
-restore_original_bracken_reports_for_visualization() {
-    local normalized_dir="$outputdr/temp/Report_non-host_bracken_species_normalized"
-    local original_dir="$outputdr/temp/Report_non-host_bracken_species_original"
-
-    echo "${y}[INFO] Restoring original Bracken/Kraken reports for visualization.${w}"
-    echo "  From: $original_dir"
-    echo "  To:   $normalized_dir"
-
-    mkdir -p "$normalized_dir"
-
-    for sample in $lsn; do
-        if [[ ! -e "$original_dir/$sample" ]]; then
-            echo "${r}[ERROR] Cannot restore original Bracken/Kraken report:${w} $sample"
-            echo "Expected:"
-            echo "  $original_dir/$sample"
-            exit 1
-        fi
-
-        cp -f "$original_dir/$sample" "$normalized_dir/$sample"
-    done
-}
-
 echo "${g}Converted original _bracken report files (tree like) into .biom file for ANCOMBC and diversity analysis in phyloseq (R) etc. in DEG_Anno_Plot.R ${w}"
 kraken-biom * -o $outputdr/temp/bracken_species_all0.biom --fmt json
 
@@ -5066,24 +5024,6 @@ else
     conda activate MTD
 fi
 
-# Verify that the reports expected by Krona/MPA/GraPhlAn exist.
-# If normalization failed partially or produced unexpected filenames,
-# fall back to the original Bracken/Kraken-style reports.
-missing_bracken_visualization_reports=0
-
-for i in $lsn; do
-    if [[ ! -e "$outputdr/temp/Report_non-host_bracken_species_normalized/$i" ]]; then
-        echo "${y}[WARNING] Missing Bracken/Kraken visualization report after normalization:${w} $i"
-        missing_bracken_visualization_reports=1
-    fi
-done
-
-if [[ "$missing_bracken_visualization_reports" == "1" ]]; then
-    echo "${y}[WARNING] Normalized Bracken reports are incomplete.${w}"
-    echo "${y}[WARNING] Falling back to original Bracken tree-like reports for visualization.${w}"
-    restore_original_bracken_reports_for_visualization
-fi
-
 echo "${g}MTD running  progress:"
 echo '>>>>>>>>>>          [50%]'
 
@@ -5094,7 +5034,8 @@ echo "Prepared Bracken/Kraken report files for visualization: GraPhlAn, MPA, Kro
 # At this point the script should still be inside:
 #   $outputdr/temp/Report_non-host_bracken_species_normalized
 #
-# These files are normalized Kraken/Bracken-style reports.
+# The directory name is retained for backward compatibility.
+# Its contents are original Kraken/Bracken-style reports.
 # We will:
 #   1) keep BIOM generation for compatibility with the old pipeline
 #   2) generate Krona files
@@ -5151,10 +5092,10 @@ rm -f "$GRAPHLAN_MPA_DIR"/*.mpa.txt
 rm -f "$GRAPHLAN_COMBINED_MPA" "$GRAPHLAN_INPUT"
 
 # ------------------------------------------------------------
-# Generate Krona, Krona HTML, and MPA files from normalized reports
+# Generate Krona, Krona HTML, and MPA files from original reports
 # ------------------------------------------------------------
 
-echo "${g}Generating Krona, Krona HTML, and MPA files from normalized reports${w}"
+echo "${g}Generating Krona, Krona HTML, and MPA files from original reports${w}"
 
 mkdir -p "$outputdr/krona"
 mkdir -p "$GRAPHLAN_MPA_DIR"
@@ -5172,7 +5113,7 @@ skipped_empty_bracken_visualization_samples=()
 
 for i in $lsn; do
     if [[ ! -e "$i" ]]; then
-        echo "${r}[ERROR] Missing normalized Bracken/Kraken report for sample:${w} $i"
+        echo "${r}[ERROR] Missing original Bracken/Kraken report for sample:${w} $i"
         echo "Expected file:"
         echo "  $outputdr/temp/Report_non-host_bracken_species_normalized/$i"
         exit 1
