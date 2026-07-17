@@ -8,7 +8,10 @@ set -eo pipefail
 
 ENV_NAME="MTD"
 MODE="isolated"
-OUT_FILE="MTD_R_package_health.tsv"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+MTD_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd -P)"
+PACKAGE_HEALTH_DIR="$MTD_ROOT/temp/package_health"
+OUT_FILE="$PACKAGE_HEALTH_DIR/MTD_R_package_health.tsv"
 SHOW_MODE="all"
 MSG_WIDTH="80"
 STRICT_WARNINGS="false"
@@ -23,7 +26,7 @@ Options:
   --env NAME                 Conda environment name [default: MTD]
   --isolated                 Test each package in a fresh R session [default]
   --fast                     Test all packages in the same R session
-  --out FILE                 Save TSV report [default: MTD_R_package_health.tsv]
+  --out FILE                 Save TSV report [default: MTD/temp/package_health/MTD_R_package_health.tsv]
 
   --show all                 Show all packages [default]
   --show warnings            Show only BUILD_WARN, LOAD_WARN, LOAD_FAIL, NOT_INSTALLED
@@ -142,6 +145,8 @@ fi
 # -------------------------
 # Main R script
 # -------------------------
+mkdir -p "$(dirname -- "$OUT_FILE")"
+
 TMP_R="$(mktemp "${TMPDIR:-/tmp}/check_R_pkg_MTD.XXXXXX.R")"
 trap 'rm -f "$TMP_R"' EXIT
 

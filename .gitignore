@@ -29,3 +29,7 @@ Tools/graphlan/src/__pycache__/pyphlan.cpython-38.pyc
 
 
 /Install_profiled.sh
+condaPath
+
+# Local temporary and diagnostic outputs
+/temp/
