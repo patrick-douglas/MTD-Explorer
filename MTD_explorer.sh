@@ -226,11 +226,6 @@ KRAKEN_MICRO_CONF="0.10"
 KRAKEN_MICRO_MIN_HIT_GROUPS="3"
 BRACKEN_THRESHOLD="10"
 
-# Optional cache folder containing already compressed FASTQ files.
-# Used only to speed up --no-trim mode.
-# If empty, --no-trim uses FASTQ files from the samplesheet directory.
-CUSTOM_PATH=""
-
 # ------------------------------------------------------------
 # Sequencing library layout
 # ------------------------------------------------------------
@@ -300,10 +295,6 @@ Host processing:
 
   -b, --blast                              Use Magic-BLAST instead of HISAT2
   -t, --no-trim                            Skip fastp trimming
-      --custom-raw-path DIR                Folder containing already compressed FASTQ files.
-                                           Forces --no-trim mode automatically.
-                                           Default: ${CUSTOM_PATH}
-
 Kraken2 host filtering:
       --kraken-host-db DIR                 Optional custom Kraken2 host-filtering database.
                                            If not provided, DB_host is selected automatically from --hostid.
@@ -496,14 +487,6 @@ while [[ $# -gt 0 ]]; do
             no_trimm=1
             shift
             ;;
-        --custom-raw-path)
-            CUSTOM_PATH="$2"
-            shift 2
-            ;;
-        --custom-raw-path=*)
-            CUSTOM_PATH="${1#*=}"
-            shift
-            ;;
         --kraken-host-db|--host-kraken-db)
             KRAKEN_HOST_DB="$2"
             shift 2
@@ -597,25 +580,6 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
-
-# ------------------------------------------------------------
-# Custom raw path behavior
-# ------------------------------------------------------------
-# --custom-raw-path is a cache of already compressed FASTQ files.
-# It is intended only for --no-trim mode.
-# If provided, force no_trimm=1 and copy .gz files directly.
-
-if [[ -n "${CUSTOM_PATH:-}" ]]; then
-    if [[ ! -d "$CUSTOM_PATH" ]]; then
-        die "--custom-raw-path was provided but directory was not found: $CUSTOM_PATH"
-    fi
-
-    if [[ "$no_trimm" != "1" ]]; then
-        echo "${y}[WARNING] --custom-raw-path was provided, so --no-trim mode will be enabled automatically.${w}"
-        no_trimm=1
-    fi
-fi
-
 # ------------------------------------------------------------
 # Required argument checks
 # ------------------------------------------------------------
@@ -952,7 +916,6 @@ echo "  Bracken read length:            $read_len"
 echo "  threads:                        $threads"
 echo "  host alignment mode:            $blast"
 echo "  no_trim:                        $no_trimm"
-echo "  custom raw cache path:          ${CUSTOM_PATH:-not provided}"
 echo "  sequencing read layout request: $READ_LAYOUT_MODE"
 echo "  automatic SRA download:         enabled for SRR/ERR/DRR when no local FASTQ exists"
 echo "  SRA FASTQ conversion mode:      fasterq-dump default split-3"
@@ -1104,13 +1067,6 @@ write_methods_log() {
             "read_layout" \
             "${READ_LAYOUT:-pending_auto_detection}" \
             "Effective sequencing library layout"
-
-        csv_row \
-            "Read preparation" \
-            "$SCRIPT_NAME" \
-            "custom_raw_cache_path" \
-            "${CUSTOM_PATH:-not provided}" \
-            "Optional cache directory containing already compressed FASTQ files"
 
         csv_row \
             "Read preparation" \
@@ -2633,19 +2589,13 @@ resolve_fastq_for_sample() {
 # Resolve FASTQ from the appropriate input source
 # ------------------------------------------------------------
 # Search order:
-#   1. --custom-raw-path, when provided
-#   2. samplesheet directory
-#   3. pipeline temp directory, for files downloaded from SRA
+#   1. samplesheet directory
+#   2. pipeline temp directory, for files downloaded from SRA
 # ------------------------------------------------------------
 resolve_fastq_input() {
     local sample="$1"
     local resolved=""
     local status=0
-
-    if [[ -n "${CUSTOM_PATH:-}" ]]; then
-        resolve_fastq_for_sample "$sample" "$CUSTOM_PATH" 1
-        return $?
-    fi
 
     resolved="$(resolve_fastq_for_sample "$sample" "$inputdr" 0)"
     status=$?
@@ -2951,21 +2901,17 @@ echo "  $lsn"
 # files in the input directory
 # ------------------------------------------------------------
 
-if [[ -z "${CUSTOM_PATH:-}" ]]; then
-    for i in $lsn; do
-        case "$i" in
-            SRR[0-9]*|ERR[0-9]*|DRR[0-9]*)
-                download_sra_fastq_if_needed "$i"
-                ;;
+for i in $lsn; do
+    case "$i" in
+        SRR[0-9]*|ERR[0-9]*|DRR[0-9]*)
+            download_sra_fastq_if_needed "$i"
+            ;;
 
-            *)
-                # Ordinary local sample name; no SRA download.
-                ;;
-        esac
-    done
-else
-    echo "${y}[INFO] --custom-raw-path is active. Automatic SRA download is disabled.${w}"
-fi
+        *)
+            # Ordinary local sample name; no SRA download.
+            ;;
+    esac
+done
 
 FASTQ_INPUT_MANIFEST="$PIPELINE_TEMP_DIR/fastq_input_manifest.tsv"
 
@@ -2987,14 +2933,9 @@ for i in $lsn; do
         if [[ "$resolve_status" -eq 1 ]]; then
             echo "${r}[ERROR] No supported FASTQ input was found for sample:${w} $i" >&2
 
-            if [[ -n "${CUSTOM_PATH:-}" ]]; then
-                echo "Search directory:" >&2
-                echo "  $CUSTOM_PATH" >&2
-            else
-                echo "Search directories:" >&2
-                echo "  $inputdr" >&2
-                echo "  $PIPELINE_TEMP_DIR" >&2
-            fi
+            echo "Search directories:" >&2
+            echo "  $inputdr" >&2
+            echo "  $PIPELINE_TEMP_DIR" >&2
         fi
 
         fastq_errors=1
@@ -3201,18 +3142,13 @@ echo "Raw reads preparation${w}"
 #     Trimmed_${sample}_R2.fq.gz
 #
 # Modes:
-#   1) Normal mode:
-#        no --no-trim and no --custom-raw-path
-#        -> run fastp using FASTQ files from samplesheet directory
-#
-#   2) No-trim mode without custom cache:
+#   1) No-trim mode:
 #        --no-trim
 #        -> copy .gz files or compress uncompressed FASTQ files from samplesheet directory
 #
-#   3) No-trim mode with custom cache:
-#        --custom-raw-path DIR
-#        -> copy already compressed FASTQ files from DIR
-#        -> no fastp, no pigz compression
+#   2) Normal mode:
+#        no --no-trim
+#        -> run fastp using FASTQ files from samplesheet directory
 # ------------------------------------------------------------
 total_cores=$(nproc)
 
@@ -3377,74 +3313,10 @@ load_prepared_fastq_manifest_row() {
 }
 
 # ------------------------------------------------------------
-# Mode 1: custom cache path provided
+# Mode 1: no-trim
 # ------------------------------------------------------------
 
-if [[ -n "${CUSTOM_PATH:-}" ]]; then
-    echo "${y}[INFO] Using --custom-raw-path cache mode.${w}"
-    echo "This mode expects already compressed FASTQ files."
-    echo "No fastp and no pigz compression will be performed."
-    echo "Custom FASTQ cache:"
-    echo "  $CUSTOM_PATH"
-    echo
-
-        for i in $lsn; do
-        load_fastq_manifest_row "$i"
-
-        echo "============================================================"
-        echo "[COPY CACHED FASTQ] Sample: $i"
-        echo "Layout: $INPUT_LAYOUT"
-
-        if [[ "$INPUT_LAYOUT" == "pe" ]]; then
-            out_fq1="$PIPELINE_TEMP_DIR/Trimmed_${i}_R1.fq.gz"
-            out_fq2="$PIPELINE_TEMP_DIR/Trimmed_${i}_R2.fq.gz"
-
-            echo "Input R1:  $INPUT_READ1"
-            echo "Input R2:  $INPUT_READ2"
-            echo "Output R1: $out_fq1"
-            echo "Output R2: $out_fq2"
-            echo "============================================================"
-
-            prepare_fastq_without_trimming \
-                "$INPUT_READ1" \
-                "$out_fq1" \
-                "$i R1"
-
-            prepare_fastq_without_trimming \
-                "$INPUT_READ2" \
-                "$out_fq2" \
-                "$i R2"
-
-            register_prepared_fastq \
-                "$i" \
-                "pe" \
-                "$out_fq1" \
-                "$out_fq2"
-        else
-            out_fq="$PIPELINE_TEMP_DIR/Trimmed_${i}.fq.gz"
-
-            echo "Input:  $INPUT_READ1"
-            echo "Output: $out_fq"
-            echo "============================================================"
-
-            prepare_fastq_without_trimming \
-                "$INPUT_READ1" \
-                "$out_fq" \
-                "$i SE"
-
-            register_prepared_fastq \
-                "$i" \
-                "se" \
-                "$out_fq" \
-                "-"
-        fi
-    done
-
-# ------------------------------------------------------------
-# Mode 2: no-trim without custom cache
-# ------------------------------------------------------------
-
-elif [[ "$no_trimm" == "1" ]]; then
+if [[ "$no_trimm" == "1" ]]; then
     echo "${y}[INFO] --no-trim was declared.${w}"
     echo "Using FASTQ files from samplesheet directory:"
     echo "  $inputdr"
@@ -3504,7 +3376,7 @@ elif [[ "$no_trimm" == "1" ]]; then
     done
 
 # ------------------------------------------------------------
-# Mode 3: normal fastp trimming
+# Mode 2: normal fastp trimming
 # ------------------------------------------------------------
 
 else
