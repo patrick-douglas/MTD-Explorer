@@ -1,1 +1,32 @@
 /virushostdb.genomic.fna.gz
+
+# Local Virus-Host DB mirror staging
+/build/virushost_mirror/
+
+# Local/generated files
+.~lock.*
+HUMAnN/
+MTD_R_package_health.tsv
+R412_package_health.tsv
+blastdb_*/
+build/
+curl_*.tar.gz
+custom_R_libs/
+hisat2_index_*/
+kraken2DB_*/
+offlineCachePath
+ref_*/
+update_fix/*_logs/
+viral_genomes_combined.fna
+.gitignore
+# Python cache
+__pycache__/
+*.pyc
+.gitignore
+MTD_benchmark_merge.py
+MTD_fix_profiled_locale.sh
+MTD_make_instrumented_installer.sh
+Tools/graphlan/src/__pycache__/__init__.cpython-38.pyc
+Tools/graphlan/src/__pycache__/graphlan_lib.cpython-38.pyc
+Tools/graphlan/src/__pycache__/pyphlan.cpython-38.pyc
+
