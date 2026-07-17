@@ -20,15 +20,17 @@ This package contains three scripts:
 ```bash
 cd ~/MTD
 cp /path/to/MTD_benchmark_suite/* .
-chmod +x MTD_benchmark_install.sh
-chmod +x MTD_make_instrumented_installer.sh
-chmod +x MTD_benchmark_merge.py
+chmod +x \
+    benchmark/MTD_benchmark_install.sh \
+    benchmark/MTD_make_instrumented_installer.sh \
+    benchmark/MTD_fix_profiled_locale.sh \
+    benchmark/run_mtd_clean_benchmark.sh
 ```
 
 ## 2. Create the profiled installer
 
 ```bash
-bash ./MTD_make_instrumented_installer.sh \
+bash ./benchmark/MTD_make_instrumented_installer.sh \
     --input ./Install.sh \
     --output ./Install_profiled.sh
 ```
@@ -47,7 +49,7 @@ The original `Install.sh` is not modified.
 Example for the master machine:
 
 ```bash
-bash ./MTD_benchmark_install.sh \
+bash ./benchmark/MTD_benchmark_install.sh \
     --label master_cold_native_r1 \
     --interval 5 \
     --output-root "$HOME/MTD_benchmarks" \
@@ -62,7 +64,7 @@ bash ./MTD_benchmark_install.sh \
 Example for the independent lower-performance machine:
 
 ```bash
-bash ./MTD_benchmark_install.sh \
+bash ./benchmark/MTD_benchmark_install.sh \
     --label secondary_cold_native_r1 \
     --interval 5 \
     --output-root "$HOME/MTD_benchmarks" \
@@ -108,7 +110,7 @@ than summing every row blindly.
 Copy both benchmark root directories to one machine, then run:
 
 ```bash
-python3 ./MTD_benchmark_merge.py \
+python3 ./benchmark/MTD_benchmark_merge.py \
     --input "$HOME/MTD_benchmarks_master" \
     --input "$HOME/MTD_benchmarks_secondary" \
     --output "$HOME/MTD_benchmark_merged"
@@ -192,7 +194,7 @@ Some locales format Bash `EPOCHREALTIME` with a decimal comma. If an older
 `Install_profiled.sh` reports `value too great for base`, run:
 
 ```bash
-bash ./MTD_fix_profiled_locale.sh ./Install_profiled.sh
+bash ./benchmark/MTD_fix_profiled_locale.sh ./Install_profiled.sh
 ```
 
 Alternatively, replace the suite scripts and regenerate `Install_profiled.sh`

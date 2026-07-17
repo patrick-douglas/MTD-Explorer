@@ -7,7 +7,7 @@ MTD_benchmark_install.sh. When steps.tsv exists, function-level timings are
 also merged and summarized.
 
 Example:
-    python3 MTD_benchmark_merge.py \
+    python3 benchmark/MTD_benchmark_merge.py \
         --input ~/MTD_benchmarks \
         --input /mnt/secondary_machine_benchmarks \
         --output ~/MTD_benchmark_merged

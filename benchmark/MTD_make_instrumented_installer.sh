@@ -7,7 +7,7 @@
 # Install_profiled.sh.
 #
 # Usage:
-#   bash MTD_make_instrumented_installer.sh \
+#   bash benchmark/MTD_make_instrumented_installer.sh \
 #       --input ./Install.sh \
 #       --output ./Install_profiled.sh
 #
@@ -324,7 +324,7 @@ printf '  %s\n' "$(readlink -f "$output")"
 printf '[OK] Original installer was not modified:\n'
 printf '  %s\n' "$(readlink -f "$input")"
 printf '\nRun it through the system benchmark wrapper, for example:\n\n'
-printf '  bash ./MTD_benchmark_install.sh \\\n'
+printf '  bash ./benchmark/MTD_benchmark_install.sh \\\n'
 printf '    --label master_cold_native_r1 \\\n'
 printf '    --watch-path "$HOME/miniconda3" \\\n'
 printf '    --watch-path "/path/to/cache" \\\n'

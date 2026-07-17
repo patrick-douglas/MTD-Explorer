@@ -14,7 +14,7 @@
 # interactive confirmations continue to work.
 #
 # Example:
-#   bash MTD_benchmark_install.sh \
+#   bash benchmark/MTD_benchmark_install.sh \
 #     --label master_cold_allthreads \
 #     --interval 5 \
 #     --output-root "$HOME/MTD_benchmarks" \

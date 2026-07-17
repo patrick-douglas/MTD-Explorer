@@ -23,10 +23,9 @@ viral_genomes_combined.fna
 __pycache__/
 *.pyc
 .gitignore
-MTD_benchmark_merge.py
-MTD_fix_profiled_locale.sh
-MTD_make_instrumented_installer.sh
 Tools/graphlan/src/__pycache__/__init__.cpython-38.pyc
 Tools/graphlan/src/__pycache__/graphlan_lib.cpython-38.pyc
 Tools/graphlan/src/__pycache__/pyphlan.cpython-38.pyc
 
+
+/Install_profiled.sh

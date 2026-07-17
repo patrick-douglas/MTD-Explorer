@@ -3,6 +3,9 @@
 set -Eeuo pipefail
 
 PROGRAM_NAME="$(basename "$0")"
+
+BENCHMARK_SUBDIR="benchmark"
+
 MACHINE_NAME=""
 CACHE_INPUT=""
 
@@ -109,6 +112,7 @@ BENCHMARK_LABEL="${MACHINE_SAFE}_${CACHE_MODE}_cache_auto_tos_r1"
 
 STAGING_ROOT="$(mktemp -d "$HOME/.mtd_clone_staging.XXXXXX")"
 STAGED_REPO="$STAGING_ROOT/MTD"
+STAGED_BENCHMARK_DIR="$STAGED_REPO/$BENCHMARK_SUBDIR"
 
 cleanup_staging() {
     if [[ -n "${STAGING_ROOT:-}" && -d "$STAGING_ROOT" ]]; then
@@ -155,7 +159,8 @@ for required_script in \
     MTD_make_instrumented_installer.sh \
     MTD_benchmark_merge.py \
     MTD_fix_profiled_locale.sh; do
-    [[ -s "$STAGED_REPO/$required_script" ]] || die "Missing benchmark component: $required_script"
+    [[ -s "$STAGED_BENCHMARK_DIR/$required_script" ]] || \
+        die "Missing benchmark component: $BENCHMARK_SUBDIR/$required_script"
 done
 
 CLONED_COMMIT="$(git -C "$STAGED_REPO" rev-parse HEAD)"
@@ -239,27 +244,33 @@ rmdir "$STAGING_ROOT" 2>/dev/null || true
 STAGING_ROOT=""
 
 cd "$MTD_DIR"
+
+BENCHMARK_DIR="$MTD_DIR/$BENCHMARK_SUBDIR"
+
 printf '%s\n' "$CLONED_COMMIT" | tee "$HOME/MTD_git_commit_${MACHINE_SAFE}.txt"
 
 chmod +x \
-    Install.sh \
-    MTD_benchmark_install.sh \
-    MTD_make_instrumented_installer.sh \
-    MTD_benchmark_merge.py \
-    MTD_fix_profiled_locale.sh
+    "$MTD_DIR/Install.sh" \
+    "$BENCHMARK_DIR/MTD_benchmark_install.sh" \
+    "$BENCHMARK_DIR/MTD_make_instrumented_installer.sh" \
+    "$BENCHMARK_DIR/MTD_benchmark_merge.py" \
+    "$BENCHMARK_DIR/MTD_fix_profiled_locale.sh" \
+    "$BENCHMARK_DIR/run_mtd_clean_benchmark.sh"
 
-bash -n Install.sh
-bash -n MTD_benchmark_install.sh
-bash -n MTD_make_instrumented_installer.sh
-bash -n MTD_fix_profiled_locale.sh
-python3 -m py_compile MTD_benchmark_merge.py
+bash -n "$MTD_DIR/Install.sh"
+bash -n "$BENCHMARK_DIR/MTD_benchmark_install.sh"
+bash -n "$BENCHMARK_DIR/MTD_make_instrumented_installer.sh"
+bash -n "$BENCHMARK_DIR/MTD_fix_profiled_locale.sh"
+python3 -m py_compile "$BENCHMARK_DIR/MTD_benchmark_merge.py"
 
-rm -f Install_profiled.sh
-bash ./MTD_make_instrumented_installer.sh \
-    --input ./Install.sh \
-    --output ./Install_profiled.sh
+rm -f "$MTD_DIR/Install_profiled.sh"
 
-bash ./MTD_fix_profiled_locale.sh ./Install_profiled.sh
+bash "$BENCHMARK_DIR/MTD_make_instrumented_installer.sh" \
+    --input "$MTD_DIR/Install.sh" \
+    --output "$MTD_DIR/Install_profiled.sh"
+
+bash "$BENCHMARK_DIR/MTD_fix_profiled_locale.sh" \
+    "$MTD_DIR/Install_profiled.sh"
 bash -n ./Install_profiled.sh
 
 grep -q 'BEGIN MTD FUNCTION PROFILER' ./Install_profiled.sh || \
@@ -310,8 +321,9 @@ printf '%-18s %s\n' "Cache:" "$CACHE"
 printf '%-18s %s\n' "Output root:" "$BENCHMARK_ROOT"
 printf '%s\n' "============================================================"
 
-set +e
-bash ./MTD_benchmark_install.sh \
+sset +e
+
+bash "$BENCHMARK_DIR/MTD_benchmark_install.sh" \
     --label "$BENCHMARK_LABEL" \
     --interval 5 \
     --output-root "$BENCHMARK_ROOT" \
@@ -319,9 +331,11 @@ bash ./MTD_benchmark_install.sh \
     --watch-path "$CACHE" \
     --watch-path "$MTD_DIR" \
     -- \
-    bash ./Install_profiled.sh \
-        -o "$CACHE"
+    bash "$MTD_DIR/Install_profiled.sh" \
+    -o "$CACHE"
+
 benchmark_status=$?
+
 set -e
 
 LATEST_BENCHMARK="$(
