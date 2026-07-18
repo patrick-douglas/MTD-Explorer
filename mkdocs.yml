@@ -1,14 +1,14 @@
 site_name: MTD Explorer
 
-site_url: https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/
+site_url: https://patrick-douglas.github.io/MTD-Explorer/
 
 site_description: Joint host transcriptome and microbiome analysis from RNA-seq data
 
 site_author: Patrick Douglas Correa Pereira
 
-repo_name: patrick-douglas/MTD-Explorer-Explorer
+repo_name: patrick-douglas/MTD-Explorer
 
-repo_url: https://github.com/patrick-douglas/MTD-Explorer-Explorer-Explorer-Explorer
+repo_url: https://github.com/patrick-douglas/MTD-Explorer
 
 edit_uri: edit/main/docs/
 

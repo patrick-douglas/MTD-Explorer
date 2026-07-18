@@ -368,7 +368,7 @@ expected for that environment or indicate a missing executable.
 - [HAllA integration outputs](halla-integration-outputs.md)
 - [Command-line reference](command-line.md)
 
-[mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer-Explorer
+[mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer
 [kraken2]: https://ccb.jhu.edu/software/kraken2/index.shtml
 [bracken]: https://github.com/jenniferlu717/Bracken
 [fastp]: https://github.com/OpenGene/fastp

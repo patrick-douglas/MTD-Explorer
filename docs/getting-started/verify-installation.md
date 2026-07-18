@@ -389,7 +389,7 @@ If the installation checker reports a `FAIL`, or if a `WARN` remains unclear
 after reviewing this documentation, please open an issue in the MTD Explorer
 GitHub repository:
 
-[Open a GitHub issue](https://github.com/patrick-douglas/MTD-Explorer-Explorer/issues)
+[Open a GitHub issue](https://github.com/patrick-douglas/MTD-Explorer/issues)
 
 When opening an issue, include the information listed below whenever possible.
 This makes it easier to reproduce the problem and identify whether it is

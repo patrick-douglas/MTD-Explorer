@@ -280,7 +280,7 @@ Microbiome comparison outputs may be missing or incomplete when:
 - [Host expression outputs](host-expression-outputs.md)
 - [Command-line reference](command-line.md)
 
-[mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer-Explorer
+[mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer
 [kraken2]: https://ccb.jhu.edu/software/kraken2/index.shtml
 [bracken]: https://github.com/jenniferlu717/Bracken
 [ancombc]: https://bioconductor.org/packages/ANCOMBC/

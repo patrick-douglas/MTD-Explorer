@@ -1303,7 +1303,7 @@ After reviewing taxonomic exploratory outputs, inspect the broader
 [Output files](output-files.md) page or continue to the
 [Command-line reference](command-line.md).
 
-[mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer-Explorer
+[mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer
 [kraken2]: https://ccb.jhu.edu/software/kraken2/index.shtml
 [bracken]: https://github.com/jenniferlu717/Bracken
 [pheatmap]: https://cran.r-project.org/package=pheatmap

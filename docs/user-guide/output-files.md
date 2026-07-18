@@ -585,7 +585,7 @@ After reviewing output files, continue to the
 [Command-line reference](command-line.md) or the
 [Troubleshooting guide](../troubleshooting/index.md).
 
-[mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer-Explorer
+[mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer
 [fastp]: https://github.com/OpenGene/fastp
 [kraken2]: https://ccb.jhu.edu/software/kraken2/index.shtml
 [bracken]: https://github.com/jenniferlu717/Bracken

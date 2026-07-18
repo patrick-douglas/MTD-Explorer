@@ -131,5 +131,5 @@ finish successfully.
 - [ssGSEA outputs](ssgsea-outputs.md)
 - [Command-line reference](command-line.md)
 
-[mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer-Explorer
+[mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer
 [halla]: https://github.com/biobakery/halla

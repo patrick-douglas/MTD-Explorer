@@ -194,7 +194,7 @@ matrix was too sparse.
 - [Host expression outputs](host-expression-outputs.md)
 - [Command-line reference](command-line.md)
 
-[mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer-Explorer
+[mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer
 [humann]: https://github.com/biobakery/humann
 [gene-ontology]: https://geneontology.org/
 [kegg]: https://www.genome.jp/kegg/

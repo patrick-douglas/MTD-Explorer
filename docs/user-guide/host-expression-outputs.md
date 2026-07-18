@@ -521,7 +521,7 @@ or was executed without comparison-mode host differential expression.
 - [Taxonomic visualizations](taxonomic-visualizations.md)
 - [Command-line reference](command-line.md)
 
-[mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer-Explorer
+[mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer
 [hisat2]: https://daehwankimlab.github.io/hisat2/
 [magic-blast]: https://ncbi.github.io/magicblast/
 [featurecounts]: https://subread.sourceforge.net/featureCounts.html

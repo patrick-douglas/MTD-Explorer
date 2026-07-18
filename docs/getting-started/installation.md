@@ -43,7 +43,7 @@ After installing Git, download the MTD Explorer repository.
 
 ```bash
 cd ~
-git clone https://github.com/patrick-douglas/MTD-Explorer-Explorer-Explorer.git
+git clone https://github.com/patrick-douglas/MTD-Explorer.git
 cd MTD
 ```
 
@@ -55,7 +55,7 @@ Users with a GitHub SSH key already configured may use:
 
 ```bash
 cd ~
-git clone git@github.com:patrick-douglas/MTD-Explorer-Explorer.git
+git clone git@github.com:patrick-douglas/MTD-Explorer.git
 cd MTD
 ```
 
