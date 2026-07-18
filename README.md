@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://patrick-douglas.github.io/MTD/">
+  <a href="https://patrick-douglas.github.io/MTD-Explorer/">
     <img src="docs/assets/images/mtd-explorer-logo-1024.png" alt="MTD Explorer logo" width="150">
   </a>
 </p>
@@ -11,19 +11,19 @@
 </p>
 
 <p align="center">
-  <a href="https://patrick-douglas.github.io/MTD/"><strong>Documentation</strong></a>
+  <a href="https://patrick-douglas.github.io/MTD-Explorer/"><strong>Documentation</strong></a>
   |
-  <a href="https://patrick-douglas.github.io/MTD/getting-started/installation/">Installation</a>
+  <a href="https://patrick-douglas.github.io/MTD-Explorer/getting-started/installation/">Installation</a>
   |
-  <a href="https://patrick-douglas.github.io/MTD/getting-started/quick-start/">Quick start</a>
+  <a href="https://patrick-douglas.github.io/MTD-Explorer/getting-started/quick-start/">Quick start</a>
   |
-  <a href="https://patrick-douglas.github.io/MTD/user-guide/">User guide</a>
+  <a href="https://patrick-douglas.github.io/MTD-Explorer/user-guide/">User guide</a>
   |
-  <a href="https://patrick-douglas.github.io/MTD/reference/">References</a>
+  <a href="https://patrick-douglas.github.io/MTD-Explorer/reference/">References</a>
 </p>
 
 <p align="center">
-  <a href="https://patrick-douglas.github.io/MTD/">
+  <a href="https://patrick-douglas.github.io/MTD-Explorer/">
     <img alt="Documentation" src="https://img.shields.io/badge/docs-MTD%20Explorer-0b3d66">
   </a>
   <a href="https://github.com/patrick-douglas/MTD">
@@ -50,15 +50,15 @@ The original MTD pipeline should be cited when using MTD Explorer.
 
 The full documentation is available here:
 
-**https://patrick-douglas.github.io/MTD/**
+**https://patrick-douglas.github.io/MTD-Explorer/**
 
 Start with:
 
-- [Installation](https://patrick-douglas.github.io/MTD/getting-started/installation/)
-- [Verify installation](https://patrick-douglas.github.io/MTD/getting-started/verify-installation/)
-- [Quick start](https://patrick-douglas.github.io/MTD/getting-started/quick-start/)
-- [User guide](https://patrick-douglas.github.io/MTD/user-guide/)
-- [Academic references](https://patrick-douglas.github.io/MTD/reference/)
+- [Installation](https://patrick-douglas.github.io/MTD-Explorer/getting-started/installation/)
+- [Verify installation](https://patrick-douglas.github.io/MTD-Explorer/getting-started/verify-installation/)
+- [Quick start](https://patrick-douglas.github.io/MTD-Explorer/getting-started/quick-start/)
+- [User guide](https://patrick-douglas.github.io/MTD-Explorer/user-guide/)
+- [Academic references](https://patrick-douglas.github.io/MTD-Explorer/reference/)
 
 ## Main analysis layers
 
@@ -100,21 +100,21 @@ bash MTD_explorer.sh --help
 
 For installation and database setup, use the documentation:
 
-https://patrick-douglas.github.io/MTD/getting-started/installation/
+https://patrick-douglas.github.io/MTD-Explorer/getting-started/installation/
 
 ## Output documentation
 
 The documentation includes dedicated pages for major output folders:
 
-- [Output files](https://patrick-douglas.github.io/MTD/user-guide/output-files/)
-- [Taxonomic exploratory outputs](https://patrick-douglas.github.io/MTD/user-guide/taxonomic-exploratory-outputs/)
-- [Taxonomic visualizations](https://patrick-douglas.github.io/MTD/user-guide/taxonomic-visualizations/)
-- [Host expression outputs](https://patrick-douglas.github.io/MTD/user-guide/host-expression-outputs/)
-- [Microbiome comparison outputs](https://patrick-douglas.github.io/MTD/user-guide/microbiome-comparison-outputs/)
-- [Functional profiling outputs](https://patrick-douglas.github.io/MTD/user-guide/functional-profiling-outputs/)
-- [ssGSEA outputs](https://patrick-douglas.github.io/MTD/user-guide/ssgsea-outputs/)
-- [HAllA integration outputs](https://patrick-douglas.github.io/MTD/user-guide/halla-integration-outputs/)
-- [Methods and reproducibility outputs](https://patrick-douglas.github.io/MTD/user-guide/methods-reproducibility-outputs/)
+- [Output files](https://patrick-douglas.github.io/MTD-Explorer/user-guide/output-files/)
+- [Taxonomic exploratory outputs](https://patrick-douglas.github.io/MTD-Explorer/user-guide/taxonomic-exploratory-outputs/)
+- [Taxonomic visualizations](https://patrick-douglas.github.io/MTD-Explorer/user-guide/taxonomic-visualizations/)
+- [Host expression outputs](https://patrick-douglas.github.io/MTD-Explorer/user-guide/host-expression-outputs/)
+- [Microbiome comparison outputs](https://patrick-douglas.github.io/MTD-Explorer/user-guide/microbiome-comparison-outputs/)
+- [Functional profiling outputs](https://patrick-douglas.github.io/MTD-Explorer/user-guide/functional-profiling-outputs/)
+- [ssGSEA outputs](https://patrick-douglas.github.io/MTD-Explorer/user-guide/ssgsea-outputs/)
+- [HAllA integration outputs](https://patrick-douglas.github.io/MTD-Explorer/user-guide/halla-integration-outputs/)
+- [Methods and reproducibility outputs](https://patrick-douglas.github.io/MTD-Explorer/user-guide/methods-reproducibility-outputs/)
 
 ## Citation
 
@@ -126,7 +126,7 @@ If you use MTD Explorer, cite the original MTD publication:
 
 Also cite the individual tools and databases used in your analysis. See:
 
-https://patrick-douglas.github.io/MTD/reference/
+https://patrick-douglas.github.io/MTD-Explorer/reference/
 
 In particular, if GNU Parallel is used in work leading to publication, check
 the recommended citation with:

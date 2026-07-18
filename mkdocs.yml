@@ -96,7 +96,6 @@ nav:
 
   - Reference:
       - Academic references: reference/index.md
-      - Command-line interface: reference/command-line.md
 
   - Troubleshooting:
       - Common problems: troubleshooting/index.md
