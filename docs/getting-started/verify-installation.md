@@ -12,12 +12,10 @@ MTD_check_installation.sh
 
 !!! important
 
-```
-Finishing `Install.sh` does not by itself guarantee that every
-environment, package, index, and reference database is ready for use.
+    Finishing `Install.sh` does not by itself guarantee that every
+    environment, package, index, and reference database is ready for use.
 
-Run the installation checker before analyzing a real dataset.
-```
+    Run the installation checker before analyzing a real dataset.
 
 ## Display the checker help
 
@@ -56,11 +54,11 @@ full
 
 MTD Explorer provides three verification levels.
 
-| Mode    | Description                                                                                                                 |
-| ------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `quick` | Checks directory structure, package inventories, command availability, and script syntax                                    |
-| `full`  | Performs all quick checks and additionally tests R package loading and inspects HISAT2, BLAST, HUMAnN, and Kraken resources |
-| `deep`  | Performs all full checks and additionally runs small Kraken2 classifications and validates all cached gzip files            |
+| Mode | Description |
+|---|---|
+| `quick` | Checks directory structure, package inventories, command availability, and script syntax |
+| `full` | Performs all quick checks and additionally tests R package loading and inspects HISAT2, BLAST, HUMAnN, and Kraken resources |
+| `deep` | Performs all full checks and additionally runs small Kraken2 classifications and validates all cached gzip files |
 
 ### Quick mode
 
@@ -72,11 +70,11 @@ bash MTD_check_installation.sh --mode quick
 
 This mode is useful after:
 
-* updating scripts;
-* changing file permissions;
-* modifying software environments;
-* transferring an existing installation;
-* checking whether the expected commands are available.
+- updating scripts;
+- changing file permissions;
+- modifying software environments;
+- transferring an existing installation;
+- checking whether the expected commands are available.
 
 ### Full mode
 
@@ -110,34 +108,32 @@ installation cache.
 
 !!! note "Deep verification"
 
-```
-Deep mode may take considerably longer than quick or full mode,
-particularly when the installation cache contains many large
-compressed files.
+    Deep mode may take considerably longer than quick or full mode,
+    particularly when the installation cache contains many large
+    compressed files.
 
-It is especially useful after:
+    It is especially useful after:
 
-- a clean installation;
-- an interrupted database download;
-- moving the cache to another disk;
-- installing MTD Explorer on another computer;
-- suspected cache corruption.
-```
+    - a clean installation;
+    - an interrupted database download;
+    - moving the cache to another disk;
+    - installing MTD Explorer on another computer;
+    - suspected cache corruption.
 
 ## Checker options
 
-| Option                | Argument | Description                                                        |
-| --------------------- | -------- | ------------------------------------------------------------------ |
-| `-m`, `--mtd-dir`     | `PATH`   | MTD Explorer installation directory                                |
-| `-p`, `--conda-path`  | `PATH`   | Conda installation directory                                       |
-| `-o`, `--offline-dir` | `PATH`   | Persistent installation cache                                      |
-| `-r`, `--read-length` | `INT`    | Bracken read length; default: `75`                                 |
-| `--mode`              | `MODE`   | Verification mode: `quick`, `full`, or `deep`                      |
-| `--report-dir`        | `PATH`   | Directory where verification reports are written                   |
-| `--strict`            | —        | Return status `2` when warnings exist but no failures are detected |
-| `--keep-temp`         | —        | Preserve temporary test files inside the report directory          |
-| `-h`, `--help`        | —        | Display the checker help and exit                                  |
-| `--version`           | —        | Display the checker version and exit                               |
+| Option | Argument | Description |
+|---|---|---|
+| `-m`, `--mtd-dir` | `PATH` | MTD Explorer installation directory |
+| `-p`, `--conda-path` | `PATH` | Conda installation directory |
+| `-o`, `--offline-dir` | `PATH` | Persistent installation cache |
+| `-r`, `--read-length` | `INT` | Bracken read length; default: `75` |
+| `--mode` | `MODE` | Verification mode: `quick`, `full`, or `deep` |
+| `--report-dir` | `PATH` | Directory where verification reports are written |
+| `--strict` | — | Return status `2` when warnings exist but no failures are detected |
+| `--keep-temp` | — | Preserve temporary test files inside the report directory |
+| `-h`, `--help` | — | Display the checker help and exit |
+| `--version` | — | Display the checker version and exit |
 
 ## Automatic path detection
 
@@ -192,10 +188,10 @@ bash MTD_check_installation.sh \
 
 An explicit cache path is particularly useful when:
 
-* the cache was moved;
-* the installation directory was copied from another computer;
-* more than one cache is available;
-* `offlineCachePath` is missing or outdated.
+- the cache was moved;
+- the installation directory was copied from another computer;
+- more than one cache is available;
+- `offlineCachePath` is missing or outdated.
 
 ## Complete explicit command
 
@@ -257,11 +253,11 @@ bash MTD_check_installation.sh \
 
 Using a dedicated report directory is recommended when:
 
-* testing a clean installation;
-* comparing different computers;
-* preparing benchmark records;
-* reporting an installation problem;
-* preserving results from multiple checker runs.
+- testing a clean installation;
+- comparing different computers;
+- preparing benchmark records;
+- reporting an installation problem;
+- preserving results from multiple checker runs.
 
 A timestamped report directory can be created with:
 
@@ -301,11 +297,11 @@ bash MTD_check_installation.sh \
 
 Strict mode is useful for:
 
-* automated validation;
-* continuous integration;
-* installation benchmarking;
-* detecting warnings in shell scripts;
-* requiring a completely clean verification report.
+- automated validation;
+- continuous integration;
+- installation benchmarking;
+- detecting warnings in shell scripts;
+- requiring a completely clean verification report.
 
 The exit status can be inspected immediately after the checker finishes:
 
@@ -315,17 +311,7 @@ echo $?
 
 ## Recommended validation workflow
 
-After a clean installation, the following sequence is recommended.
-
-### Step 1: Quick structural check
-
-```bash
-bash MTD_check_installation.sh \
-  --mode quick \
-  --report-dir ./MTD_check_quick
-```
-
-### Step 2: Full functional check
+After installation, run the default full verification:
 
 ```bash
 bash MTD_check_installation.sh \
@@ -333,7 +319,19 @@ bash MTD_check_installation.sh \
   --report-dir ./MTD_check_full
 ```
 
-### Step 3: Deep cache and Kraken2 check
+For most users, `full` mode is the recommended post-installation check.
+
+Use `quick` mode when you only need a fast structural check after editing
+scripts, changing permissions, or moving an existing installation:
+
+```bash
+bash MTD_check_installation.sh \
+  --mode quick \
+  --report-dir ./MTD_check_quick
+```
+
+Use `deep` mode after clean installations, interrupted downloads, cache
+transfers, or suspected cache corruption:
 
 ```bash
 bash MTD_check_installation.sh \
@@ -341,13 +339,8 @@ bash MTD_check_installation.sh \
   --report-dir ./MTD_check_deep
 ```
 
-Running the three modes separately makes it easier to identify whether a
-problem involves:
-
-* directory structure or syntax;
-* software environments or packages;
-* reference databases or compressed cache files;
-* Kraken2 database functionality.
+This avoids running the most expensive checks unnecessarily while still
+providing a clear escalation path for debugging.
 
 ## Save the terminal output
 
@@ -373,9 +366,9 @@ bash MTD_check_installation.sh \
 
 The checker reports conditions using statuses such as:
 
-| Status | Meaning                                                           |
-| ------ | ----------------------------------------------------------------- |
-| `PASS` | The component was found and passed the corresponding check        |
+| Status | Meaning |
+|---|---|
+| `PASS` | The component was found and passed the corresponding check |
 | `WARN` | The component may be usable, but the condition requires attention |
 | `FAIL` | A required component is missing, invalid, incomplete, or unusable |
 
@@ -385,29 +378,40 @@ A failure should be resolved before using MTD Explorer.
 
 !!! warning "Do not evaluate only the final line"
 
-```
-Review the complete checker output and generated reports.
+    Review the complete checker output and generated reports.
 
-An installation can contain several valid components while still
-having an incomplete environment, database, index, or reference file.
-```
+    An installation can contain several valid components while still
+    having an incomplete environment, database, index, or reference file.
+
+## Reporting installation problems
+
+If the installation checker reports a `FAIL`, or if a `WARN` remains unclear
+after reviewing this documentation, please open an issue in the MTD Explorer
+GitHub repository:
+
+[Open a GitHub issue](https://github.com/patrick-douglas/MTD/issues)
+
+When opening an issue, include the information listed below whenever possible.
+This makes it easier to reproduce the problem and identify whether it is
+related to the installer, Conda environments, reference databases, file paths,
+or local system configuration.
 
 ## Information to preserve
 
 When reporting an installation problem, preserve:
 
-* the complete installer log;
-* the checker terminal output;
-* the checker report directory;
-* temporary test files when relevant;
-* the MTD Explorer Git commit;
-* the current Git working-tree state;
-* operating-system information;
-* hardware information;
-* the Conda installation path;
-* the persistent cache path;
-* the Bracken read length;
-* the verification mode used.
+- the complete installer log;
+- the checker terminal output;
+- the checker report directory;
+- temporary test files when relevant;
+- the MTD Explorer Git commit;
+- the current Git working-tree state;
+- operating-system information;
+- hardware information;
+- the Conda installation path;
+- the persistent cache path;
+- the Bracken read length;
+- the verification mode used.
 
 Record the current commit with:
 
@@ -435,4 +439,3 @@ df -h
 
 After the required checks pass, continue to the
 [Quick start guide](quick-start.md).
-

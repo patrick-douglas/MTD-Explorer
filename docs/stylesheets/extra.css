@@ -1,0 +1,14 @@
+
+/* Embedded Krona HTML viewer */
+.krona-frame {
+  width: 100%;
+  height: 760px;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.4rem;
+  background: white;
+}
+
+.krona-frame-wrapper {
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+}

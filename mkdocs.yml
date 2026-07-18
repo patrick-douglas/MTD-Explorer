@@ -10,7 +10,7 @@ repo_name: patrick-douglas/MTD
 
 repo_url: https://github.com/patrick-douglas/MTD
 
-edit_uri: edit/docs/installation-guide/docs/
+edit_uri: edit/main/docs/
 
 theme:
   name: material
@@ -81,8 +81,21 @@ nav:
 
   - User guide:
       - Overview: user-guide/index.md
+      - Input files: user-guide/input-files.md
+      - Analysis modes: user-guide/analysis-modes.md
+      - Command-line reference: user-guide/command-line.md
+      - Output files: user-guide/output-files.md
+      - Taxonomic exploratory outputs: user-guide/taxonomic-exploratory-outputs.md
+      - Taxonomic visualizations: user-guide/taxonomic-visualizations.md
+      - Host expression outputs: user-guide/host-expression-outputs.md
+      - Microbiome comparison outputs: user-guide/microbiome-comparison-outputs.md
+      - Functional profiling outputs: user-guide/functional-profiling-outputs.md
+      - ssGSEA outputs: user-guide/ssgsea-outputs.md
+      - HAllA integration outputs: user-guide/halla-integration-outputs.md
+      - Methods and reproducibility outputs: user-guide/methods-reproducibility-outputs.md
 
   - Reference:
+      - Academic references: reference/index.md
       - Command-line interface: reference/command-line.md
 
   - Troubleshooting:
