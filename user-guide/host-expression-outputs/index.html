@@ -1,0 +1,2352 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Joint host transcriptome and microbiome analysis from RNA-seq data">
+      
+      
+        <meta name="author" content="Patrick Douglas Correa Pereira">
+      
+      
+        <link rel="canonical" href="https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/user-guide/host-expression-outputs/">
+      
+      
+        <link rel="prev" href="../taxonomic-visualizations/">
+      
+      
+        <link rel="next" href="../microbiome-comparison-outputs/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Host expression outputs - MTD Explorer</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/brand.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#host-expression-outputs" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="MTD Explorer" class="md-header__button md-logo" aria-label="MTD Explorer" data-md-component="logo">
+      
+  <img src="../../assets/images/mtd-explorer-mark.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            MTD Explorer
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Host expression outputs
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer-Explorer-Explorer" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    patrick-douglas/MTD-Explorer-Explorer
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/requirements/" class="md-tabs__link">
+          
+  
+  
+  Getting started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  User guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reference/" class="md-tabs__link">
+          
+  
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../troubleshooting/" class="md-tabs__link">
+          
+  
+  
+  Troubleshooting
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="MTD Explorer" class="md-nav__button md-logo" aria-label="MTD Explorer" data-md-component="logo">
+      
+  <img src="../../assets/images/mtd-explorer-mark.svg" alt="logo">
+
+    </a>
+    MTD Explorer
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer-Explorer-Explorer" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    patrick-douglas/MTD-Explorer-Explorer
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System requirements
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/verify-installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Verify installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../input-files/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Input files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analysis-modes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analysis modes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command-line/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command-line reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../output-files/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Output files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../taxonomic-exploratory-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Taxonomic exploratory outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../taxonomic-visualizations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Taxonomic visualizations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Host expression outputs
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Host expression outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#where-these-outputs-are-stored" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where these outputs are stored
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#main-host-expression-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Main host expression files
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#host-count-matrices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Host count matrices
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#normalized-and-transformed-matrices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Normalized and transformed matrices
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#differential-expression-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Differential expression table
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pca-plots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PCA plots
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PCA plots">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#main-pca-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Main PCA view
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-pca-variants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additional PCA variants
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-interpret-pca" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to interpret PCA
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#host-expression-heatmaps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Host expression heatmaps
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Host expression heatmaps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#heatmap-thumbnail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Heatmap thumbnail
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#full-heatmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full heatmap
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#differential-expression-summary-bar-plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Differential expression summary bar plot
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Differential expression summary bar plot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bar-plot-preview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bar plot preview
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#full-bar-plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full bar plot
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#volcano-plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Volcano plot
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gene-annotation-cache-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gene annotation cache files
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#functional-enrichment-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Functional enrichment outputs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Functional enrichment outputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#go-biological-theme-dotplot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GO biological theme dotplot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-go-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additional GO outputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-kegg-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additional KEGG outputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-comparison-enrichment-folders" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-comparison enrichment folders
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-interpret-enrichment-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to interpret enrichment outputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#host-expression-matrix-qc-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Host expression matrix QC outputs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommended-inspection-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended inspection order
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-these-outputs-can-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What these outputs can support
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-not-to-conclude" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-outputs-may-be-missing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When outputs may be missing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related pages
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../microbiome-comparison-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Microbiome comparison outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../functional-profiling-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Functional profiling outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssgsea-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ssGSEA outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../halla-integration-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HAllA integration outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../methods-reproducibility-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Methods and reproducibility outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Academic references
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Troubleshooting
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Common problems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#where-these-outputs-are-stored" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where these outputs are stored
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#main-host-expression-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Main host expression files
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#host-count-matrices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Host count matrices
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#normalized-and-transformed-matrices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Normalized and transformed matrices
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#differential-expression-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Differential expression table
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pca-plots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PCA plots
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PCA plots">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#main-pca-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Main PCA view
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-pca-variants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additional PCA variants
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-interpret-pca" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to interpret PCA
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#host-expression-heatmaps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Host expression heatmaps
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Host expression heatmaps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#heatmap-thumbnail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Heatmap thumbnail
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#full-heatmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full heatmap
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#differential-expression-summary-bar-plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Differential expression summary bar plot
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Differential expression summary bar plot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bar-plot-preview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bar plot preview
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#full-bar-plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full bar plot
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#volcano-plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Volcano plot
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gene-annotation-cache-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gene annotation cache files
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#functional-enrichment-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Functional enrichment outputs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Functional enrichment outputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#go-biological-theme-dotplot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GO biological theme dotplot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-go-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additional GO outputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-kegg-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additional KEGG outputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-comparison-enrichment-folders" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-comparison enrichment folders
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-interpret-enrichment-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to interpret enrichment outputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#host-expression-matrix-qc-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Host expression matrix QC outputs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommended-inspection-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended inspection order
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-these-outputs-can-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What these outputs can support
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-not-to-conclude" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-outputs-may-be-missing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When outputs may be missing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related pages
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="host-expression-outputs">Host expression outputs<a class="headerlink" href="#host-expression-outputs" title="Permanent link">&para;</a></h1>
+<p>This page describes the main host gene-expression outputs generated by
+<a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer">MTD Explorer</a>.</p>
+<p>These outputs are produced when the workflow runs in comparison mode and host
+gene counts are available.</p>
+<p>The host expression block includes count matrices, normalized matrices,
+principal component analysis plots, heatmaps, differential-expression tables,
+volcano plots, and downstream functional interpretation outputs.</p>
+<h2 id="where-these-outputs-are-stored">Where these outputs are stored<a class="headerlink" href="#where-these-outputs-are-stored" title="Permanent link">&para;</a></h2>
+<p>The main host expression comparison outputs are stored in:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Host_DEG/
+</code></pre></div>
+<p>Pairwise comparison-specific outputs are stored inside subdirectories such as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Host_DEG/Liver_vs_Telencephalon/
+</code></pre></div>
+<p>The exact comparison folder name depends on the group names in the samplesheet.</p>
+<p>For example, if the comparison is liver versus telencephalon, the output folder
+may be:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Host_DEG/Liver_vs_Telencephalon/
+</code></pre></div>
+<h2 id="main-host-expression-files">Main host expression files<a class="headerlink" href="#main-host-expression-files" title="Permanent link">&para;</a></h2>
+<p>A typical host expression output block contains files such as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>host_counts.txt
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Host_DEG/host_counts_DEG.csv
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>Host_DEG/host_counts_normalized.csv
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>Host_DEG/host_counts_normalized_transformed.csv
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>Host_DEG/host_counts_TPM.csv
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>Host_DEG/heatmap.pdf
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>Host_DEG/heatmap_thumbnail.pdf
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>Host_DEG/PCA.pdf
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>Host_DEG/PCA_label.pdf
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>Host_DEG/PCA_color.pdf
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>Host_DEG/PCA_label_color.pdf
+</code></pre></div>
+<p>For each comparison, <a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer">MTD Explorer</a> may also generate files such
+as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Host_DEG/Liver_vs_Telencephalon/host_counts_Liver_vs_Telencephalon.csv
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Host_DEG/Liver_vs_Telencephalon/host_counts_Liver_vs_Telencephalon_gene_symbols_table.csv
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Host_DEG/Liver_vs_Telencephalon/Barplot_Liver_vs_Telencephalon.pdf
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>Host_DEG/Liver_vs_Telencephalon/host_counts_Liver_vs_Telencephalon_volcano.pdf
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>Host_DEG/Liver_vs_Telencephalon/host_counts_Liver_vs_Telencephalon.EV.volcano.log
+</code></pre></div>
+<h2 id="host-count-matrices">Host count matrices<a class="headerlink" href="#host-count-matrices" title="Permanent link">&para;</a></h2>
+<p>The initial host count matrix is usually:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>host_counts.txt
+</code></pre></div>
+<p>This file contains host gene-level counts generated after host read alignment
+and gene counting.</p>
+<p>Depending on the selected host-processing mode, host reads may be aligned using
+<a href="https://daehwankimlab.github.io/hisat2/">HISAT2</a> or <a href="https://ncbi.github.io/magicblast/">Magic-BLAST</a>, and counted with
+<a href="https://subread.sourceforge.net/featureCounts.html">featureCounts</a>.</p>
+<h2 id="normalized-and-transformed-matrices">Normalized and transformed matrices<a class="headerlink" href="#normalized-and-transformed-matrices" title="Permanent link">&para;</a></h2>
+<p>The <code>Host_DEG/</code> directory usually contains processed host expression matrices:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Host_DEG/host_counts_normalized.csv
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>Host_DEG/host_counts_normalized_transformed.csv
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>Host_DEG/host_counts_TPM.csv
+</code></pre></div>
+<p>These files are useful for downstream interpretation and visualization.</p>
+<p>The <code>host_counts_TPM.csv</code> file is also used by later host functional-analysis
+steps, including <a href="https://gsea-msigdb.github.io/ssGSEA-gpmodule/v10/">ssGSEA</a>.</p>
+<h2 id="differential-expression-table">Differential expression table<a class="headerlink" href="#differential-expression-table" title="Permanent link">&para;</a></h2>
+<p>The main differential expression table is usually:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Host_DEG/host_counts_DEG.csv
+</code></pre></div>
+<p>For each pairwise comparison, <a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer">MTD Explorer</a> also writes a
+comparison-specific table, for example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Host_DEG/Liver_vs_Telencephalon/host_counts_Liver_vs_Telencephalon.csv
+</code></pre></div>
+<p>This table contains the differential expression results for the selected
+contrast.</p>
+<p>A gene-symbol-enhanced table may also be generated:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Host_DEG/Liver_vs_Telencephalon/host_counts_Liver_vs_Telencephalon_gene_symbols_table.csv
+</code></pre></div>
+<p>Use the comparison-specific table when inspecting genes associated with a
+specific contrast.</p>
+<p>Use the global <code>host_counts_DEG.csv</code> table when checking the full host DEG
+summary generated for the run.</p>
+<h2 id="pca-plots">PCA plots<a class="headerlink" href="#pca-plots" title="Permanent link">&para;</a></h2>
+<p><a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer">MTD Explorer</a> generates principal component analysis plots to
+summarize global host expression variation among samples.</p>
+<p>The main PCA files are:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>Host_DEG/PCA.pdf
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>Host_DEG/PCA_label.pdf
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>Host_DEG/PCA_color.pdf
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>Host_DEG/PCA_label_color.pdf
+</code></pre></div>
+<h3 id="main-pca-view">Main PCA view<a class="headerlink" href="#main-pca-view" title="Permanent link">&para;</a></h3>
+<p><img alt="Host DEG PCA colored by group" src="../../assets/images/user-guide/host-expression/host-deg-pca-color.png" /></p>
+<p>For documentation purposes, the main figure shown on this page is the
+group-colored PCA plot.</p>
+<p>This version is usually the clearest one for quickly checking whether samples
+separate according to the biological groups defined in the samplesheet.</p>
+<p>Samples that cluster close together have more similar global host expression
+profiles.</p>
+<p>Samples that separate strongly along the main principal components tend to have
+larger global expression differences.</p>
+<h3 id="additional-pca-variants">Additional PCA variants<a class="headerlink" href="#additional-pca-variants" title="Permanent link">&para;</a></h3>
+<p>Other PCA versions may also be generated:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>Host_DEG/PCA.pdf
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>Host_DEG/PCA_label.pdf
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>Host_DEG/PCA_label_color.pdf
+</code></pre></div>
+<p>The <code>PCA_label_color.pdf</code> file is especially useful when you need to identify
+individual samples or inspect possible outliers in more detail.</p>
+<h3 id="how-to-interpret-pca">How to interpret PCA<a class="headerlink" href="#how-to-interpret-pca" title="Permanent link">&para;</a></h3>
+<p>PCA is an exploratory visualization.</p>
+<p>It can suggest whether the main source of expression variation matches the
+experimental design.</p>
+<p>However, PCA separation alone does not prove differential expression.</p>
+<p>Always interpret PCA together with sample metadata, count depth,
+differential-expression tables, and biological context.</p>
+<h2 id="host-expression-heatmaps">Host expression heatmaps<a class="headerlink" href="#host-expression-heatmaps" title="Permanent link">&para;</a></h2>
+<p>The main heatmap files are usually:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>Host_DEG/heatmap.pdf
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>Host_DEG/heatmap_thumbnail.pdf
+</code></pre></div>
+<h3 id="heatmap-thumbnail">Heatmap thumbnail<a class="headerlink" href="#heatmap-thumbnail" title="Permanent link">&para;</a></h3>
+<p><img alt="Host DEG heatmap thumbnail" src="../../assets/images/user-guide/host-expression/host-deg-heatmap-thumbnail.png" /></p>
+<p>For documentation purposes, the thumbnail heatmap is shown on this page because
+the full heatmap can be too large for comfortable inline viewing.</p>
+<p>The thumbnail provides a compact overview of sample clustering, gene
+clustering, and broad host expression structure.</p>
+<h3 id="full-heatmap">Full heatmap<a class="headerlink" href="#full-heatmap" title="Permanent link">&para;</a></h3>
+<p>The complete heatmap is usually available in:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>Host_DEG/heatmap.pdf
+</code></pre></div>
+<p>Use the full heatmap when you need to inspect the expression structure in more
+detail, especially for larger gene sets or when row labels are important.</p>
+<h2 id="differential-expression-summary-bar-plot">Differential expression summary bar plot<a class="headerlink" href="#differential-expression-summary-bar-plot" title="Permanent link">&para;</a></h2>
+<p>The comparison-specific bar plot is usually stored as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>Host_DEG/Liver_vs_Telencephalon/Barplot_Liver_vs_Telencephalon.pdf
+</code></pre></div>
+<h3 id="bar-plot-preview">Bar plot preview<a class="headerlink" href="#bar-plot-preview" title="Permanent link">&para;</a></h3>
+<p><img alt="Host DEG bar plot preview" src="../../assets/images/user-guide/host-expression/host-deg-barplot-preview.png" /></p>
+<p>For documentation purposes, a cropped preview of the upper part of the bar plot
+is shown on this page.</p>
+<p>This makes the figure easier to view inline while still providing a quick
+overview of the differential expression summary.</p>
+<h3 id="full-bar-plot">Full bar plot<a class="headerlink" href="#full-bar-plot" title="Permanent link">&para;</a></h3>
+<p>The complete figure is usually available in:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>Host_DEG/Liver_vs_Telencephalon/Barplot_Liver_vs_Telencephalon.pdf
+</code></pre></div>
+<p>Use the full bar plot when you need to inspect all plotted categories in
+detail.</p>
+<p>This plot is useful for quickly checking the direction and scale of host
+transcriptional differences between groups.</p>
+<h2 id="volcano-plot">Volcano plot<a class="headerlink" href="#volcano-plot" title="Permanent link">&para;</a></h2>
+<p><a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer">MTD Explorer</a> generates an enhanced volcano plot for each host
+differential-expression comparison using <a href="https://bioconductor.org/packages/EnhancedVolcano/">EnhancedVolcano</a>.</p>
+<p>For a comparison such as liver versus telencephalon, the enhanced volcano plot
+is usually stored as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>Host_DEG/Liver_vs_Telencephalon/host_counts_Liver_vs_Telencephalon_volcano.pdf
+</code></pre></div>
+<p><img alt="Host DEG EnhancedVolcano plot" src="../../assets/images/user-guide/host-expression/host-deg-enhancedvolcano.png" /></p>
+<p>The volcano plot summarizes the differential expression results by combining
+effect size and statistical support.</p>
+<p>In general:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>Genes farther left or right have larger expression differences.
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>Genes higher on the plot have stronger statistical support.
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>Highlighted or labeled genes are useful candidates for closer inspection.
+</code></pre></div>
+<p>The corresponding log file is usually:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>Host_DEG/Liver_vs_Telencephalon/host_counts_Liver_vs_Telencephalon.EV.volcano.log
+</code></pre></div>
+<p>Use this log file if the enhanced volcano plot is missing, if gene labels do
+not appear as expected, or if the plotting step produced warnings.</p>
+<p>Some runs may also contain a standard volcano plot, such as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>
+</code></pre></div>
+<p>The standard volcano plot is retained as an output file, but the enhanced
+volcano plot is usually clearer for documentation and interpretation.</p>
+<h2 id="gene-annotation-cache-files">Gene annotation cache files<a class="headerlink" href="#gene-annotation-cache-files" title="Permanent link">&para;</a></h2>
+<p><a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer">MTD Explorer</a> may generate host gene annotation cache files in:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>Host_DEG/
+</code></pre></div>
+<p>Common files include:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>Host_DEG/gene_ID_cache.csv
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>Host_DEG/GID_to_ENTREZ_taxid_59463.tsv
+</code></pre></div>
+<p>These files help map host gene identifiers to gene symbols, Entrez IDs, gene
+descriptions, and functional annotation terms.</p>
+<p>They are especially useful when working with non-model organisms or custom host
+annotation packages.</p>
+<h2 id="functional-enrichment-outputs">Functional enrichment outputs<a class="headerlink" href="#functional-enrichment-outputs" title="Permanent link">&para;</a></h2>
+<p>Host differential expression can be followed by functional interpretation using
+<a href="https://geneontology.org/">Gene Ontology</a> and <a href="https://www.genome.jp/kegg/">KEGG</a> resources.</p>
+<p>These outputs help summarize the biological themes associated with the host
+differential-expression results.</p>
+<h3 id="go-biological-theme-dotplot">GO biological theme dotplot<a class="headerlink" href="#go-biological-theme-dotplot" title="Permanent link">&para;</a></h3>
+<p>The most compact host enrichment summary is usually:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>Host_DEG/biological_theme_comparison_GO_faceted_dotplot_top5.pdf
+</code></pre></div>
+<p>The corresponding source table is usually:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>Host_DEG/biological_theme_comparison_GO_faceted_dotplot_top5_data.csv
+</code></pre></div>
+<p><img alt="Host GO biological theme faceted dotplot top 5" src="../../assets/images/user-guide/host-expression/host-go-faceted-dotplot-top5.png" width="85%" /></p>
+<p>This dotplot summarizes the top host <a href="https://geneontology.org/">Gene Ontology</a> themes
+detected in the comparison.</p>
+<p>It is useful as a compact overview because it avoids displaying the very large
+set of individual enrichment and <a href="https://www.gsea-msigdb.org/gsea/index.jsp">GSEA</a> figures.</p>
+<h3 id="additional-go-outputs">Additional GO outputs<a class="headerlink" href="#additional-go-outputs" title="Permanent link">&para;</a></h3>
+<p>Additional <a href="https://geneontology.org/">Gene Ontology</a> outputs may also be generated in
+<code>Host_DEG/</code>, including:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>Host_DEG/biological_theme_comparison_GO.pdf
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>Host_DEG/biological_theme_comparison_GO_results.csv
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>Host_DEG/biological_theme_comparison_GO_net.pdf
+<a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>Host_DEG/biological_theme_comparison_GO_net_BP.pdf
+<a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a>Host_DEG/biological_theme_comparison_GO_net_BP_RETRY_top10.pdf
+<a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a>Host_DEG/biological_theme_comparison_GO_net_CC.pdf
+<a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a>Host_DEG/biological_theme_comparison_GO_net_CC_RETRY_top10.pdf
+<a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a>Host_DEG/biological_theme_comparison_GO_net_MF.pdf
+<a id="__codelineno-26-9" name="__codelineno-26-9" href="#__codelineno-26-9"></a>Host_DEG/biological_theme_comparison_GO_net_MF_RETRY_top10.pdf
+</code></pre></div>
+<p>These files are useful for detailed inspection, but they can be visually dense.</p>
+<p>For documentation purposes, this page shows only the compact faceted dotplot.</p>
+<h3 id="additional-kegg-outputs">Additional KEGG outputs<a class="headerlink" href="#additional-kegg-outputs" title="Permanent link">&para;</a></h3>
+<p><a href="https://www.genome.jp/kegg/">KEGG</a> pathway-level summaries may also be generated, such as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>Host_DEG/biological_theme_comparison_KEGG_derived_PATHWAY.pdf
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>Host_DEG/biological_theme_comparison_KEGG_derived_PATHWAY_results.csv
+<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>Host_DEG/biological_theme_comparison_KEGG_derived_PATHWAY_net.pdf
+</code></pre></div>
+<p>These outputs are useful for pathway interpretation and should be inspected
+together with the DEG tables and GO results.</p>
+<h3 id="per-comparison-enrichment-folders">Per-comparison enrichment folders<a class="headerlink" href="#per-comparison-enrichment-folders" title="Permanent link">&para;</a></h3>
+<p>Comparison-specific enrichment outputs are usually stored in folders such as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>Host_DEG/Liver_vs_Telencephalon/GO/
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>Host_DEG/Liver_vs_Telencephalon/KEGG/
+</code></pre></div>
+<p>These folders may contain enrichment tables, dot plots, network plots, tree
+plots, upset plots, and per-term <a href="https://www.gsea-msigdb.org/gsea/index.jsp">GSEA</a> figures.</p>
+<p>The <code>GSEA_all/</code> folder can contain many individual term-level plots.</p>
+<p>Those files are best treated as detailed supplementary outputs rather than
+inline documentation figures.</p>
+<h3 id="how-to-interpret-enrichment-outputs">How to interpret enrichment outputs<a class="headerlink" href="#how-to-interpret-enrichment-outputs" title="Permanent link">&para;</a></h3>
+<p>Functional enrichment outputs help answer questions such as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>Which biological processes are overrepresented among host DEGs?
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>Which molecular functions or cellular components are associated with the
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>comparison?
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>Which pathways summarize the strongest host transcriptional differences?
+</code></pre></div>
+<p>Do not interpret enriched terms as direct proof of mechanism.</p>
+<p>Use them as biological summaries that should be checked against the DEG table,
+gene annotations, expression direction, and study design.</p>
+<h2 id="host-expression-matrix-qc-outputs">Host expression matrix QC outputs<a class="headerlink" href="#host-expression-matrix-qc-outputs" title="Permanent link">&para;</a></h2>
+<p>In some runs, <a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer">MTD Explorer</a> may also generate exploratory host
+expression matrix QC outputs under:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>exploratory/host_expression/
+</code></pre></div>
+<p>Typical files may include:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>host_expression_pca.png
+<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>host_expression_top_variable_heatmap.png
+<a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a>host_expression_sample_correlation_heatmap.png
+<a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a>host_expression_detected_features_per_sample.png
+</code></pre></div>
+<p>These outputs are descriptive QC plots for the host count matrix.</p>
+<p>They may be absent in older runs, comparison-only legacy outputs, or runs where
+the host matrix QC step was skipped.</p>
+<h2 id="recommended-inspection-order">Recommended inspection order<a class="headerlink" href="#recommended-inspection-order" title="Permanent link">&para;</a></h2>
+<p>For a host expression comparison, inspect files in this order:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>host_counts.txt
+<a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>Host_DEG/host_counts_TPM.csv
+<a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a>Host_DEG/PCA_color.pdf
+<a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a>Host_DEG/PCA_label_color.pdf
+<a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a>Host_DEG/heatmap.pdf
+<a id="__codelineno-34-6" name="__codelineno-34-6" href="#__codelineno-34-6"></a>Host_DEG/host_counts_DEG.csv
+<a id="__codelineno-34-7" name="__codelineno-34-7" href="#__codelineno-34-7"></a>Host_DEG/Liver_vs_Telencephalon/host_counts_Liver_vs_Telencephalon.csv
+<a id="__codelineno-34-8" name="__codelineno-34-8" href="#__codelineno-34-8"></a>Host_DEG/Liver_vs_Telencephalon/host_counts_Liver_vs_Telencephalon_volcano.pdf
+<a id="__codelineno-34-9" name="__codelineno-34-9" href="#__codelineno-34-9"></a>Host_DEG/Liver_vs_Telencephalon/GO/
+<a id="__codelineno-34-10" name="__codelineno-34-10" href="#__codelineno-34-10"></a>Host_DEG/Liver_vs_Telencephalon/KEGG/
+<a id="__codelineno-34-11" name="__codelineno-34-11" href="#__codelineno-34-11"></a>methods/mtd_methods_run_parameters.csv
+</code></pre></div>
+<p>The <code>methods/mtd_methods_run_parameters.csv</code> file is useful because it records
+important run settings, database paths, host ID, alignment mode, gene-counting
+settings, and software versions.</p>
+<h2 id="what-these-outputs-can-support">What these outputs can support<a class="headerlink" href="#what-these-outputs-can-support" title="Permanent link">&para;</a></h2>
+<p>Host expression outputs can help answer questions such as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>Do host samples cluster according to the experimental design?
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>Which host genes differ between groups?
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>Which genes have the largest effect sizes?
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>Which Gene Ontology terms or KEGG pathways are enriched?
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>Are host transcriptional differences consistent with microbiome or functional
+<a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a>profiles?
+</code></pre></div>
+<h2 id="what-not-to-conclude">What not to conclude<a class="headerlink" href="#what-not-to-conclude" title="Permanent link">&para;</a></h2>
+<p>Do not interpret PCA separation as proof of differential expression.</p>
+<p>Do not interpret a volcano plot without checking the underlying table.</p>
+<p>Do not treat gene labels in a figure as the complete list of relevant genes.</p>
+<p>Do not interpret enriched terms as direct proof of mechanism.</p>
+<p>Do not compare host DEG results across runs unless the reference genome,
+annotation, filtering, normalization, and statistical settings are comparable.</p>
+<h2 id="when-outputs-may-be-missing">When outputs may be missing<a class="headerlink" href="#when-outputs-may-be-missing" title="Permanent link">&para;</a></h2>
+<p>Host expression outputs may be absent or incomplete when:</p>
+<ul>
+<li>host reads were not detected;</li>
+<li>host alignment failed;</li>
+<li>gene counting failed;</li>
+<li>the host annotation file was missing or incompatible;</li>
+<li>the samplesheet did not contain valid comparison groups;</li>
+<li>the run was executed in exploratory mode;</li>
+<li>the differential-expression step failed;</li>
+<li>the enhanced volcano step failed but the main pipeline continued;</li>
+<li>too few samples were available for the requested comparison.</li>
+</ul>
+<p>If <code>exploratory/host_expression/</code> is missing but <code>Host_DEG/</code> exists, the run
+still contains host comparison outputs.</p>
+<p>If <code>Host_DEG/</code> is missing, the run likely did not complete the host DEG block
+or was executed without comparison-mode host differential expression.</p>
+<h2 id="related-pages">Related pages<a class="headerlink" href="#related-pages" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../output-files/">Output files</a></li>
+<li><a href="../taxonomic-exploratory-outputs/">Taxonomic exploratory outputs</a></li>
+<li><a href="../taxonomic-visualizations/">Taxonomic visualizations</a></li>
+<li><a href="../command-line/">Command-line reference</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../taxonomic-visualizations/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Taxonomic visualizations">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Taxonomic visualizations
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../microbiome-comparison-outputs/" class="md-footer__link md-footer__link--next" aria-label="Next: Microbiome comparison outputs">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Microbiome comparison outputs
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      MTD Explorer · Open-source RNA-seq and metatranscriptomics workflow
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

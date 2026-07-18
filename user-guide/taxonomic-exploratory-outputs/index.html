@@ -1,0 +1,4270 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Joint host transcriptome and microbiome analysis from RNA-seq data">
+      
+      
+        <meta name="author" content="Patrick Douglas Correa Pereira">
+      
+      
+        <link rel="canonical" href="https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/user-guide/taxonomic-exploratory-outputs/">
+      
+      
+        <link rel="prev" href="../output-files/">
+      
+      
+        <link rel="next" href="../taxonomic-visualizations/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Taxonomic exploratory outputs - MTD Explorer</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/brand.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#taxonomic-exploratory-outputs" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="MTD Explorer" class="md-header__button md-logo" aria-label="MTD Explorer" data-md-component="logo">
+      
+  <img src="../../assets/images/mtd-explorer-mark.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            MTD Explorer
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Taxonomic exploratory outputs
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer-Explorer-Explorer" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    patrick-douglas/MTD-Explorer-Explorer
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/requirements/" class="md-tabs__link">
+          
+  
+  
+  Getting started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  User guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reference/" class="md-tabs__link">
+          
+  
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../troubleshooting/" class="md-tabs__link">
+          
+  
+  
+  Troubleshooting
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="MTD Explorer" class="md-nav__button md-logo" aria-label="MTD Explorer" data-md-component="logo">
+      
+  <img src="../../assets/images/mtd-explorer-mark.svg" alt="logo">
+
+    </a>
+    MTD Explorer
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer-Explorer-Explorer" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    patrick-douglas/MTD-Explorer-Explorer
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System requirements
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/verify-installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Verify installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../input-files/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Input files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analysis-modes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analysis modes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command-line/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command-line reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../output-files/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Output files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Taxonomic exploratory outputs
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Taxonomic exploratory outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#where-these-outputs-are-stored" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where these outputs are stored
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#input-data-used-by-these-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input data used by these outputs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#important-interpretation-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Important interpretation rule
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#read-composition-qc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read composition QC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Read composition QC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read-composition-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read composition flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read-composition-percentage-barplot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read composition percentage barplot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read-composition-outlier-plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read composition outlier plot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stacked-bar-plots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stacked bar plots
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Stacked bar plots">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#absolute-abundance-stacked-bar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Absolute abundance stacked bar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relative-abundance-stacked-bar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relative abundance stacked bar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-interpret-stacked-bar-plots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to interpret stacked bar plots
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#absolute-vs-relative-abundance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Absolute vs relative abundance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#taxonomic-heatmaps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Taxonomic heatmaps
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Taxonomic heatmaps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#absolute-abundance-heatmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Absolute abundance heatmap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relative-abundance-heatmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relative abundance heatmap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-read-the-heatmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to read the heatmap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#absolute-vs-relative-heatmaps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Absolute vs relative heatmaps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prevalence-abundance-landscape" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prevalence-abundance landscape
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prevalence-abundance landscape">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-read-the-plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to read the plot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#detected-microbiome-importance-ranking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detected microbiome importance ranking
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Detected microbiome importance ranking">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-read-the-plot_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to read the plot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-the-score-is-used" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the score is used
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-this-plot-is-useful-for" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What this plot is useful for
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relationship-between-the-two-plots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationship between the two plots
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core-microbiome" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core microbiome
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Core microbiome">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#absolute-core-microbiome" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Absolute core microbiome
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relative-core-microbiome" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relative core microbiome
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-interpret-prevalence-thresholds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to interpret prevalence thresholds
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-this-output-is-useful-for" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What this output is useful for
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#detected-species-pie-by-phylum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detected species pie by phylum
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Detected species pie by phylum">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pie-chart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pie chart
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-read-the-plot_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to read the plot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-this-plot-is-useful-for_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What this plot is useful for
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#important-limitation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Important limitation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#species-overlap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Species overlap
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Species overlap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#venn-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Venn diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#euler-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Euler diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#venn-vs-euler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Venn vs Euler
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-interpret-species-overlap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to interpret species overlap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-this-output-may-be-missing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When this output may be missing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#alpha-diversity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alpha diversity
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Alpha diversity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#faceted-alpha-diversity-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Faceted alpha diversity overview
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#observed-taxa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Observed taxa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shannon-diversity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shannon diversity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#simpson-diversity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Simpson diversity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inverse-simpson-diversity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inverse Simpson diversity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pielou-evenness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pielou evenness
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-interpret-alpha-diversity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to interpret alpha diversity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-this-output-may-be-missing_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When this output may be missing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#beta-diversity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Beta diversity
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Beta diversity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pcoa-ordination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PCoA ordination
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nmds-ordination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NMDS ordination
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pcoa-vs-nmds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PCoA vs NMDS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-interpret-beta-diversity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to interpret beta diversity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-this-output-may-be-missing_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When this output may be missing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#microbiome-abundance-matrix-qc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Microbiome abundance matrix QC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Microbiome abundance matrix QC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pca-of-microbiome-abundance-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PCA of microbiome abundance matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#top-variable-taxa-heatmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Top variable taxa heatmap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sample-correlation-heatmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sample correlation heatmap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detected-features-per-sample" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detected features per sample
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-interpret-this-qc-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to interpret this QC block
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-this-output-may-be-missing_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When this output may be missing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-taxonomic-exploratory-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other taxonomic exploratory outputs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#files-to-inspect-first" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Files to inspect first
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-outputs-may-be-missing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When outputs may be missing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next step
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../taxonomic-visualizations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Taxonomic visualizations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../host-expression-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Host expression outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../microbiome-comparison-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Microbiome comparison outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../functional-profiling-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Functional profiling outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssgsea-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ssGSEA outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../halla-integration-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HAllA integration outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../methods-reproducibility-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Methods and reproducibility outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Academic references
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Troubleshooting
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Common problems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#where-these-outputs-are-stored" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where these outputs are stored
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#input-data-used-by-these-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input data used by these outputs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#important-interpretation-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Important interpretation rule
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#read-composition-qc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read composition QC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Read composition QC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read-composition-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read composition flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read-composition-percentage-barplot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read composition percentage barplot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read-composition-outlier-plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Read composition outlier plot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stacked-bar-plots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stacked bar plots
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Stacked bar plots">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#absolute-abundance-stacked-bar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Absolute abundance stacked bar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relative-abundance-stacked-bar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relative abundance stacked bar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-interpret-stacked-bar-plots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to interpret stacked bar plots
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#absolute-vs-relative-abundance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Absolute vs relative abundance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#taxonomic-heatmaps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Taxonomic heatmaps
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Taxonomic heatmaps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#absolute-abundance-heatmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Absolute abundance heatmap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relative-abundance-heatmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relative abundance heatmap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-read-the-heatmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to read the heatmap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#absolute-vs-relative-heatmaps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Absolute vs relative heatmaps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prevalence-abundance-landscape" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prevalence-abundance landscape
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prevalence-abundance landscape">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-read-the-plot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to read the plot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#detected-microbiome-importance-ranking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detected microbiome importance ranking
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Detected microbiome importance ranking">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-read-the-plot_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to read the plot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-the-score-is-used" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the score is used
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-this-plot-is-useful-for" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What this plot is useful for
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relationship-between-the-two-plots" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationship between the two plots
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core-microbiome" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core microbiome
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Core microbiome">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#absolute-core-microbiome" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Absolute core microbiome
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relative-core-microbiome" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relative core microbiome
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-interpret-prevalence-thresholds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to interpret prevalence thresholds
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-this-output-is-useful-for" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What this output is useful for
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#detected-species-pie-by-phylum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detected species pie by phylum
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Detected species pie by phylum">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pie-chart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pie chart
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-read-the-plot_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to read the plot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-this-plot-is-useful-for_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What this plot is useful for
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#important-limitation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Important limitation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#species-overlap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Species overlap
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Species overlap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#venn-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Venn diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#euler-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Euler diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#venn-vs-euler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Venn vs Euler
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-interpret-species-overlap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to interpret species overlap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-this-output-may-be-missing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When this output may be missing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#alpha-diversity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alpha diversity
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Alpha diversity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#faceted-alpha-diversity-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Faceted alpha diversity overview
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#observed-taxa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Observed taxa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shannon-diversity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shannon diversity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#simpson-diversity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Simpson diversity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inverse-simpson-diversity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inverse Simpson diversity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pielou-evenness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pielou evenness
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-interpret-alpha-diversity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to interpret alpha diversity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-this-output-may-be-missing_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When this output may be missing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#beta-diversity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Beta diversity
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Beta diversity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pcoa-ordination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PCoA ordination
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nmds-ordination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NMDS ordination
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pcoa-vs-nmds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PCoA vs NMDS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-interpret-beta-diversity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to interpret beta diversity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-this-output-may-be-missing_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When this output may be missing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#microbiome-abundance-matrix-qc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Microbiome abundance matrix QC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Microbiome abundance matrix QC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-location_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pca-of-microbiome-abundance-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PCA of microbiome abundance matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#top-variable-taxa-heatmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Top variable taxa heatmap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sample-correlation-heatmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sample correlation heatmap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detected-features-per-sample" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detected features per sample
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-interpret-this-qc-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to interpret this QC block
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-not-to-conclude_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What not to conclude
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-this-output-may-be-missing_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When this output may be missing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other-taxonomic-exploratory-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other taxonomic exploratory outputs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#files-to-inspect-first" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Files to inspect first
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-outputs-may-be-missing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When outputs may be missing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next step
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="taxonomic-exploratory-outputs">Taxonomic exploratory outputs<a class="headerlink" href="#taxonomic-exploratory-outputs" title="Permanent link">&para;</a></h1>
+<p>This page explains the taxonomic exploratory outputs generated by
+<a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer">MTD Explorer</a>.</p>
+<p>These outputs help users inspect taxonomic profiles, identify dominant or
+recurrent taxa, evaluate sample-level patterns, and detect unusual
+classification behavior before formal interpretation.</p>
+<p>They are descriptive outputs. They should not be interpreted as statistical
+tests of differential abundance.</p>
+<h2 id="where-these-outputs-are-stored">Where these outputs are stored<a class="headerlink" href="#where-these-outputs-are-stored" title="Permanent link">&para;</a></h2>
+<p>Taxonomic exploratory outputs are stored in:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>exploratory/taxonomy/
+</code></pre></div>
+<p>The main folders are:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>exploratory/taxonomy/
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>├── heatmap/
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>├── stacked_bar/
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>├── prevalence_abundance/
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>├── detected_microbiome/
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>├── detected_microbiome_extracted_reads/
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>├── core_microbiome/
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>├── species_overlap/
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>├── detected_microbiome_pie/
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>├── alpha_diversity/
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>├── beta_diversity/
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>├── microbiome_abundance_qc/
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>└── logs/
+</code></pre></div>
+<p>Read-composition quality-control outputs are stored under:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>exploratory/pipeline_qc/read_composition/
+</code></pre></div>
+<p>The exact files depend on the analysis mode, selected taxonomic rank, detected
+taxa, and optional flags.</p>
+<h2 id="input-data-used-by-these-outputs">Input data used by these outputs<a class="headerlink" href="#input-data-used-by-these-outputs" title="Permanent link">&para;</a></h2>
+<p>Taxonomic exploratory outputs are generated from the combined
+<a href="https://github.com/jenniferlu717/Bracken">Bracken</a>-derived abundance table produced after
+<a href="https://ccb.jhu.edu/software/kraken2/index.shtml">Kraken2</a> classification.</p>
+<p>By default, the exploratory taxonomic rank is species.</p>
+<p>The main input table is usually:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>temp/bracken_raw_results/bracken_species_all
+</code></pre></div>
+<p>If that file is not available, <a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer">MTD Explorer</a> may use:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>bracken_species_all
+</code></pre></div>
+<h2 id="important-interpretation-rule">Important interpretation rule<a class="headerlink" href="#important-interpretation-rule" title="Permanent link">&para;</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Exploratory outputs are descriptive</p>
+<p>These plots are intended for exploration and quality control.</p>
+<p>They do not prove differential abundance, infection, contamination,
+biological causality, or statistical significance by themselves.</p>
+<p>Use them to guide inspection, generate hypotheses, and identify patterns
+that may require additional testing or validation.</p>
+</div>
+<h2 id="read-composition-qc">Read composition QC<a class="headerlink" href="#read-composition-qc" title="Permanent link">&para;</a></h2>
+<p>Read composition QC should usually be inspected before interpreting the
+taxonomic plots.</p>
+<p>These outputs summarize how reads were distributed after host filtering and
+microbiome classification.</p>
+<p>They help answer questions such as:</p>
+<ul>
+<li>how much of each sample was classified as host;</li>
+<li>how much was classified as microbiome;</li>
+<li>how much remained unclassified;</li>
+<li>whether one or more samples behave very differently from the others.</li>
+</ul>
+<h3 id="output-location">Output location<a class="headerlink" href="#output-location" title="Permanent link">&para;</a></h3>
+<p>Read composition QC outputs are stored under:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>exploratory/pipeline_qc/read_composition/
+</code></pre></div>
+<p>The main PNG files are:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>read_composition_flow_final.png
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>read_composition_percent_barplot_final.png
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>read_composition_outlier_plot_final.png
+</code></pre></div>
+<h3 id="read-composition-flow">Read composition flow<a class="headerlink" href="#read-composition-flow" title="Permanent link">&para;</a></h3>
+<p>This plot summarizes the main read-classification flow across samples.</p>
+<p><img alt="Read composition flow" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-read-composition-flow.png" /></p>
+<p>Use this plot to inspect the broad balance among host-classified reads,
+microbiome-classified reads, and unclassified reads.</p>
+<p>A sample with very different proportions from the rest of the dataset may need
+extra inspection before biological interpretation.</p>
+<h3 id="read-composition-percentage-barplot">Read composition percentage barplot<a class="headerlink" href="#read-composition-percentage-barplot" title="Permanent link">&para;</a></h3>
+<p>This plot shows read-composition percentages per sample.</p>
+<p><img alt="Read composition percentage barplot" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-read-composition-percent-barplot.png" /></p>
+<p>Use this plot to compare samples directly.</p>
+<p>For example, one sample may have much more host signal, much less microbiome
+signal, or a much larger unclassified fraction than the others.</p>
+<p>These patterns can reflect biology, sample quality, sequencing depth, database
+coverage, or technical differences.</p>
+<h3 id="read-composition-outlier-plot">Read composition outlier plot<a class="headerlink" href="#read-composition-outlier-plot" title="Permanent link">&para;</a></h3>
+<p>This plot highlights samples with unusual read-composition behavior.</p>
+<p><img alt="Read composition outlier plot" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-read-composition-outlier-plot.png" /></p>
+<p>Outlier samples are not automatically wrong.</p>
+<p>They should be inspected carefully using the run log, <a href="https://ccb.jhu.edu/software/kraken2/index.shtml">Kraken2</a>
+reports, sample metadata, and quality-control outputs.</p>
+<h3 id="what-not-to-conclude">What not to conclude<a class="headerlink" href="#what-not-to-conclude" title="Permanent link">&para;</a></h3>
+<p>Do not remove a sample only because it appears different in these plots.</p>
+<p>Do not interpret a high microbiome-classified fraction as proof of infection or
+biological association by itself.</p>
+<p>Do not interpret a high unclassified fraction as a pipeline failure without
+checking read quality, database choice, host filtering, and taxonomic reports.</p>
+<p>These plots are quality-control and interpretation aids, not final biological
+evidence.</p>
+<h2 id="stacked-bar-plots">Stacked bar plots<a class="headerlink" href="#stacked-bar-plots" title="Permanent link">&para;</a></h2>
+<p>Stacked bar plots provide a first visual overview of the taxonomic profile of
+each sample.</p>
+<p>They are useful for identifying dominant taxa, comparing broad abundance
+patterns among samples, and detecting samples with unusual taxonomic
+composition.</p>
+<h3 id="output-location_1">Output location<a class="headerlink" href="#output-location_1" title="Permanent link">&para;</a></h3>
+<p>Stacked bar plots are stored under:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>exploratory/taxonomy/stacked_bar/
+</code></pre></div>
+<p>For the default species rank, the main folders are:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>exploratory/taxonomy/stacked_bar/species_absolute/
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>exploratory/taxonomy/stacked_bar/species_relative/
+</code></pre></div>
+<h3 id="absolute-abundance-stacked-bar">Absolute abundance stacked bar<a class="headerlink" href="#absolute-abundance-stacked-bar" title="Permanent link">&para;</a></h3>
+<p>The absolute abundance stacked bar shows the abundance values before converting
+each sample to percentages.</p>
+<p><img alt="Absolute abundance taxonomic stacked bar" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-stacked-bar-absolute.png" /></p>
+<p>Use this plot to inspect whether some samples have much larger taxonomic signal
+than others.</p>
+<p>Large differences in total abundance may reflect biological differences,
+sequencing depth, host-filtering behavior, database composition, or technical
+variation.</p>
+<h3 id="relative-abundance-stacked-bar">Relative abundance stacked bar<a class="headerlink" href="#relative-abundance-stacked-bar" title="Permanent link">&para;</a></h3>
+<p>The relative abundance stacked bar shows the taxonomic composition after
+normalizing each sample to percentages.</p>
+<p><img alt="Relative abundance taxonomic stacked bar" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-stacked-bar-relative.png" /></p>
+<p>Use this plot to compare the proportional composition of samples.</p>
+<p>This can make sample-to-sample composition easier to compare, but it also hides
+differences in total abundance.</p>
+<h3 id="how-to-interpret-stacked-bar-plots">How to interpret stacked bar plots<a class="headerlink" href="#how-to-interpret-stacked-bar-plots" title="Permanent link">&para;</a></h3>
+<p>Each bar represents one sample.</p>
+<p>Each colored segment represents one detected taxon or a grouped category such
+as “Other”, depending on the plotting threshold.</p>
+<p>A taxon occupying a large part of a bar is dominant in that sample.</p>
+<p>A taxon appearing across many bars is recurrent across samples.</p>
+<p>A sample with a very different stacked profile from the others may need closer
+inspection in the <a href="https://ccb.jhu.edu/software/kraken2/index.shtml">Kraken2</a> reports, <a href="https://github.com/jenniferlu717/Bracken">Bracken</a> abundance
+tables, and read-composition QC outputs.</p>
+<h3 id="absolute-vs-relative-abundance">Absolute vs relative abundance<a class="headerlink" href="#absolute-vs-relative-abundance" title="Permanent link">&para;</a></h3>
+<p>Absolute abundance and relative abundance answer different questions.</p>
+<p>Absolute abundance asks:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>How much taxonomic signal was detected for this sample?
+</code></pre></div>
+<p>Relative abundance asks:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>Among the detected taxa in this sample, what proportion belongs to each taxon?
+</code></pre></div>
+<p>Both views are useful.</p>
+<p>A taxon can look dominant in relative abundance even when the total number of
+detected reads is low.</p>
+<p>For that reason, relative abundance plots should be interpreted together with
+absolute abundance plots and read-composition QC.</p>
+<h3 id="what-not-to-conclude_1">What not to conclude<a class="headerlink" href="#what-not-to-conclude_1" title="Permanent link">&para;</a></h3>
+<p>Do not interpret a dominant stacked-bar segment as proof of infection,
+contamination, or biological causality by itself.</p>
+<p>Do not compare relative abundance without checking whether samples have very
+different total read counts or microbiome-classified fractions.</p>
+<p>Do not treat the “Other” category as unimportant automatically. It may contain
+many low-abundance taxa grouped together for readability.</p>
+<h2 id="taxonomic-heatmaps">Taxonomic heatmaps<a class="headerlink" href="#taxonomic-heatmaps" title="Permanent link">&para;</a></h2>
+<p>Taxonomic heatmaps show abundance patterns across samples and taxa.</p>
+<p>They are useful for identifying sample clustering, dominant taxa, taxa shared
+across samples, and samples with unusual abundance profiles.</p>
+<p>MTD Explorer generates these plots using <a href="https://cran.r-project.org/package=pheatmap">pheatmap</a>.</p>
+<h3 id="output-location_2">Output location<a class="headerlink" href="#output-location_2" title="Permanent link">&para;</a></h3>
+<p>Taxonomic heatmaps are stored under:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>exploratory/taxonomy/heatmap/
+</code></pre></div>
+<p>For the default species rank, the main folders are:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>exploratory/taxonomy/heatmap/species_absolute/
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>exploratory/taxonomy/heatmap/species_relative/
+</code></pre></div>
+<h3 id="absolute-abundance-heatmap">Absolute abundance heatmap<a class="headerlink" href="#absolute-abundance-heatmap" title="Permanent link">&para;</a></h3>
+<p>The absolute abundance heatmap shows taxonomic abundance before converting each
+sample to percentages.</p>
+<p><img alt="Absolute abundance taxonomic heatmap" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-heatmap-absolute.png" /></p>
+<p>Use this plot to inspect whether some samples have stronger overall taxonomic
+signal than others.</p>
+<p>A sample with many high-abundance taxa may appear visually different from
+samples with weak or sparse taxonomic signal.</p>
+<h3 id="relative-abundance-heatmap">Relative abundance heatmap<a class="headerlink" href="#relative-abundance-heatmap" title="Permanent link">&para;</a></h3>
+<p>The relative abundance heatmap shows abundance after normalizing each sample to
+relative composition.</p>
+<p><img alt="Relative abundance taxonomic heatmap" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-heatmap-relative.png" /></p>
+<p>Use this plot to compare taxonomic composition among samples after reducing the
+effect of total abundance differences.</p>
+<p>This can make compositional patterns easier to see, but it can also hide
+differences in the total amount of detected microbiome signal.</p>
+<h3 id="how-to-read-the-heatmap">How to read the heatmap<a class="headerlink" href="#how-to-read-the-heatmap" title="Permanent link">&para;</a></h3>
+<p>Each column usually represents one sample.</p>
+<p>Each row represents one detected taxon.</p>
+<p>The color intensity represents abundance.</p>
+<p>Clustering groups together samples or taxa with similar abundance patterns.</p>
+<p>Samples that cluster together have more similar taxonomic profiles according to
+the abundance matrix used for the plot.</p>
+<p>Taxa that cluster together have similar patterns across samples.</p>
+<h3 id="absolute-vs-relative-heatmaps">Absolute vs relative heatmaps<a class="headerlink" href="#absolute-vs-relative-heatmaps" title="Permanent link">&para;</a></h3>
+<p>Absolute and relative heatmaps answer different questions.</p>
+<p>Absolute heatmaps ask:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>Which samples have stronger or weaker detected taxonomic signal?
+</code></pre></div>
+<p>Relative heatmaps ask:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>Do samples have similar taxonomic composition after normalization?
+</code></pre></div>
+<p>Both views are useful.</p>
+<p>A taxon may look dominant in the relative heatmap even if the absolute number
+of classified reads is low.</p>
+<p>For that reason, relative heatmaps should be interpreted together with absolute
+heatmaps, stacked bar plots, and read-composition QC.</p>
+<h3 id="what-not-to-conclude_2">What not to conclude<a class="headerlink" href="#what-not-to-conclude_2" title="Permanent link">&para;</a></h3>
+<p>Do not interpret heatmap clustering as proof of biological group separation by
+itself.</p>
+<p>Do not assume that a cluster is meaningful without checking sample metadata,
+read composition, <a href="https://ccb.jhu.edu/software/kraken2/index.shtml">Kraken2</a> reports, <a href="https://github.com/jenniferlu717/Bracken">Bracken</a> abundance
+tables, and sequencing depth.</p>
+<p>Do not overinterpret low-abundance taxa that appear visually strong after row
+scaling or relative normalization.</p>
+<h2 id="prevalence-abundance-landscape">Prevalence-abundance landscape<a class="headerlink" href="#prevalence-abundance-landscape" title="Permanent link">&para;</a></h2>
+<p>The prevalence-abundance landscape summarizes how widespread and abundant each
+detected taxon is across the dataset.</p>
+<p><img alt="Detected species prevalence-abundance landscape" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-prevalence-abundance-landscape.png" /></p>
+<h3 id="output-location_3">Output location<a class="headerlink" href="#output-location_3" title="Permanent link">&para;</a></h3>
+<p>This plot is generated under:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>exploratory/taxonomy/detected_microbiome/
+</code></pre></div>
+<p>For the default species rank and absolute mode, look for:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>exploratory/taxonomy/detected_microbiome/species_absolute_with_samples_distribution/
+</code></pre></div>
+<p>The example image used in this documentation corresponds to:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>detected_microbiome_species_prevalence_abundance_importance_landscape.png
+</code></pre></div>
+<h3 id="how-to-read-the-plot">How to read the plot<a class="headerlink" href="#how-to-read-the-plot" title="Permanent link">&para;</a></h3>
+<p>The x-axis shows prevalence across samples.</p>
+<p>Prevalence answers this question:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>In what percentage of samples was this taxon detected?
+</code></pre></div>
+<p>The y-axis shows mean abundance.</p>
+<p>Mean abundance answers this question:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>How abundant is this taxon on average across the dataset?
+</code></pre></div>
+<p>The point size represents maximum abundance.</p>
+<p>A large point means that the taxon reached high abundance in at least one
+sample.</p>
+<p>The point color represents the exploratory importance score.</p>
+<p>A higher score means that the taxon ranked higher according to the descriptive
+ranking used by <a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer">MTD Explorer</a>.</p>
+<h3 id="common-patterns">Common patterns<a class="headerlink" href="#common-patterns" title="Permanent link">&para;</a></h3>
+<p>Taxa in the upper-right region are usually the most consistent high-abundance
+detections. They appear in many samples and have relatively high average
+abundance.</p>
+<p>Taxa in the upper-left region may be abundant but restricted to a small number
+of samples. These can represent sample-specific signals, rare high-abundance
+events, or possible outlier behavior.</p>
+<p>Taxa in the lower-right region are widespread but low abundance. These may
+represent recurrent low-level detections.</p>
+<p>Taxa in the lower-left region are low prevalence and low abundance. These are
+usually weaker exploratory signals and should be interpreted with extra
+caution.</p>
+<h3 id="what-not-to-conclude_3">What not to conclude<a class="headerlink" href="#what-not-to-conclude_3" title="Permanent link">&para;</a></h3>
+<p>Do not interpret this plot as proof that a taxon is biologically important.</p>
+<p>Do not interpret a high abundance in one sample as evidence of infection,
+contamination, or host association without additional evidence.</p>
+<p>Do not compare groups using this plot alone.</p>
+<h2 id="detected-microbiome-importance-ranking">Detected microbiome importance ranking<a class="headerlink" href="#detected-microbiome-importance-ranking" title="Permanent link">&para;</a></h2>
+<p>The detected microbiome ranking plot shows the top taxa ranked by exploratory
+importance score.</p>
+<p><img alt="Top detected species by exploratory importance score" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-detected-species-importance-score.png" /></p>
+<h3 id="output-location_4">Output location<a class="headerlink" href="#output-location_4" title="Permanent link">&para;</a></h3>
+<p>This plot is generated under:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>exploratory/taxonomy/detected_microbiome/
+</code></pre></div>
+<p>For the default species rank and absolute mode, look for:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>exploratory/taxonomy/detected_microbiome/species_absolute_with_samples_distribution/
+</code></pre></div>
+<p>The example image used in this documentation corresponds to:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>top20_detected_microbiome_species_importance_lollipop.png
+</code></pre></div>
+<h3 id="how-to-read-the-plot_1">How to read the plot<a class="headerlink" href="#how-to-read-the-plot_1" title="Permanent link">&para;</a></h3>
+<p>The x-axis shows the exploratory importance score.</p>
+<p>Higher values indicate taxa that rank higher according to the descriptive
+scoring formula used by <a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer">MTD Explorer</a>.</p>
+<p>The y-axis lists the top detected taxa.</p>
+<p>The point size represents prevalence.</p>
+<p>Larger points indicate taxa detected in a larger percentage of samples.</p>
+<h3 id="how-the-score-is-used">How the score is used<a class="headerlink" href="#how-the-score-is-used" title="Permanent link">&para;</a></h3>
+<p>The score is a descriptive ranking designed to combine taxon-level properties
+such as prevalence and abundance.</p>
+<p>It helps prioritize taxa for inspection.</p>
+<p>It is not a statistical p-value.</p>
+<p>It is not a false-discovery-rate-adjusted result.</p>
+<p>It is not a differential abundance test.</p>
+<h3 id="what-this-plot-is-useful-for">What this plot is useful for<a class="headerlink" href="#what-this-plot-is-useful-for" title="Permanent link">&para;</a></h3>
+<p>This plot is useful for quickly identifying taxa that are:</p>
+<ul>
+<li>detected across many samples;</li>
+<li>abundant in the dataset;</li>
+<li>potentially worth inspecting in the raw reports;</li>
+<li>candidates for downstream validation or discussion.</li>
+</ul>
+<h3 id="what-not-to-conclude_4">What not to conclude<a class="headerlink" href="#what-not-to-conclude_4" title="Permanent link">&para;</a></h3>
+<p>Do not call the top-ranked taxa “significant” based only on this plot.</p>
+<p>Do not treat this score as evidence of infection.</p>
+<p>Do not assume that a taxon is biologically meaningful without checking the
+underlying reads, classification context, database design, sample metadata, and
+study design.</p>
+<h2 id="relationship-between-the-two-plots">Relationship between the two plots<a class="headerlink" href="#relationship-between-the-two-plots" title="Permanent link">&para;</a></h2>
+<p>The prevalence-abundance landscape shows the distribution of detected taxa.</p>
+<p>The importance ranking plot summarizes the highest-ranking taxa.</p>
+<p>Use them together:</p>
+<ol>
+<li>inspect where a taxon appears in the prevalence-abundance landscape;</li>
+<li>check whether it appears in the top ranking;</li>
+<li>inspect the corresponding ranked table;</li>
+<li>review per-sample <a href="https://ccb.jhu.edu/software/kraken2/index.shtml">Kraken2</a> reports when needed;</li>
+<li>interpret results in the context of the database and experimental design.</li>
+</ol>
+<h2 id="core-microbiome">Core microbiome<a class="headerlink" href="#core-microbiome" title="Permanent link">&para;</a></h2>
+<p>Core microbiome outputs summarize which taxa are detected across increasing
+prevalence thresholds.</p>
+<p>They help identify taxa that are recurrent across many samples instead of taxa
+that appear only in one or a few samples.</p>
+<h3 id="output-location_5">Output location<a class="headerlink" href="#output-location_5" title="Permanent link">&para;</a></h3>
+<p>Core microbiome outputs are stored under:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>exploratory/taxonomy/core_microbiome/
+</code></pre></div>
+<p>For the default species rank, the main folders are:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>exploratory/taxonomy/core_microbiome/species_absolute/
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>exploratory/taxonomy/core_microbiome/species_relative/
+</code></pre></div>
+<p>The main PNG files are:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>core_microbiome_species_absolute.png
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>core_microbiome_species_relative.png
+</code></pre></div>
+<h3 id="absolute-core-microbiome">Absolute core microbiome<a class="headerlink" href="#absolute-core-microbiome" title="Permanent link">&para;</a></h3>
+<p>The absolute core microbiome plot uses the absolute abundance table.</p>
+<p><img alt="Absolute core microbiome" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-core-microbiome-absolute.png" /></p>
+<p>Use this plot to inspect how many taxa remain detectable as the prevalence
+threshold becomes stricter.</p>
+<p>A taxon detected at a high prevalence threshold is present in many samples.</p>
+<p>A taxon detected only at low prevalence thresholds is more sample-specific or
+less recurrent.</p>
+<h3 id="relative-core-microbiome">Relative core microbiome<a class="headerlink" href="#relative-core-microbiome" title="Permanent link">&para;</a></h3>
+<p>The relative core microbiome plot uses the relative abundance table.</p>
+<p><img alt="Relative core microbiome" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-core-microbiome-relative.png" /></p>
+<p>Use this plot to inspect recurrent taxa after sample-level abundance
+normalization.</p>
+<p>This view can make recurrent compositional patterns easier to see, but it
+should still be interpreted together with absolute abundance and read
+composition QC.</p>
+<h3 id="how-to-interpret-prevalence-thresholds">How to interpret prevalence thresholds<a class="headerlink" href="#how-to-interpret-prevalence-thresholds" title="Permanent link">&para;</a></h3>
+<p>MTD Explorer uses several prevalence thresholds, such as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>25%
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>50%
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>75%
+<a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>90%
+<a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a>100%
+</code></pre></div>
+<p>A taxon present at the <code>25%</code> threshold was detected in at least one quarter of
+the samples.</p>
+<p>A taxon present at the <code>75%</code> threshold was detected in at least three quarters
+of the samples.</p>
+<p>A taxon present at the <code>100%</code> threshold was detected in all samples.</p>
+<h3 id="what-this-output-is-useful-for">What this output is useful for<a class="headerlink" href="#what-this-output-is-useful-for" title="Permanent link">&para;</a></h3>
+<p>Core microbiome plots are useful for identifying taxa that are:</p>
+<ul>
+<li>recurrent across many samples;</li>
+<li>not driven by a single outlier sample;</li>
+<li>useful candidates for follow-up inspection;</li>
+<li>potentially important for describing the common taxonomic profile of the
+  dataset.</li>
+</ul>
+<h3 id="what-not-to-conclude_5">What not to conclude<a class="headerlink" href="#what-not-to-conclude_5" title="Permanent link">&para;</a></h3>
+<p>Do not interpret core membership as proof that a taxon is biologically
+essential, host-associated, or functionally important.</p>
+<p>Do not assume that taxa absent from the core are irrelevant.</p>
+<p>A taxon may be biologically interesting even if it is detected in only a subset
+of samples, especially in tissue-specific, condition-specific, infection-like,
+or environmental exposure contexts.</p>
+<p>Core microbiome results depend on detection thresholds, sample size, database
+choice, sequencing depth, and filtering behavior.</p>
+<h2 id="detected-species-pie-by-phylum">Detected species pie by phylum<a class="headerlink" href="#detected-species-pie-by-phylum" title="Permanent link">&para;</a></h2>
+<p>The detected species pie chart summarizes detected species according to broader
+taxonomic categories.</p>
+<p>In the default species-level exploratory workflow, this plot is used to show
+which higher-level taxonomic groups contribute most to the detected species
+list.</p>
+<h3 id="output-location_6">Output location<a class="headerlink" href="#output-location_6" title="Permanent link">&para;</a></h3>
+<p>Detected species pie outputs are stored under:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>exploratory/taxonomy/detected_microbiome_pie/
+</code></pre></div>
+<p>For the default species-level workflow, the main folder is:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>exploratory/taxonomy/detected_microbiome_pie/species_by_phylum/
+</code></pre></div>
+<p>The main PNG file is usually:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>detected_species_by_auto_level.png
+</code></pre></div>
+<h3 id="pie-chart">Pie chart<a class="headerlink" href="#pie-chart" title="Permanent link">&para;</a></h3>
+<p><img alt="Detected species pie by phylum" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-detected-species-pie-by-phylum.png" /></p>
+<h3 id="how-to-read-the-plot_2">How to read the plot<a class="headerlink" href="#how-to-read-the-plot_2" title="Permanent link">&para;</a></h3>
+<p>Each slice represents a broader taxonomic category assigned to detected
+species.</p>
+<p>Larger slices indicate that more detected species belong to that category.</p>
+<p>This plot is useful for quickly seeing whether the detected species list is
+dominated by a small number of broad taxonomic groups.</p>
+<h3 id="what-this-plot-is-useful-for_1">What this plot is useful for<a class="headerlink" href="#what-this-plot-is-useful-for_1" title="Permanent link">&para;</a></h3>
+<p>Use this plot to inspect:</p>
+<ul>
+<li>which broad groups dominate the detected species list;</li>
+<li>whether the detected profile is taxonomically diverse or concentrated;</li>
+<li>whether unexpected groups appear among detected species;</li>
+<li>whether the detected species list matches the biological context and database
+  design.</li>
+</ul>
+<h3 id="important-limitation">Important limitation<a class="headerlink" href="#important-limitation" title="Permanent link">&para;</a></h3>
+<p>This plot summarizes the number or contribution of detected species by broad
+category.</p>
+<p>It should not be interpreted as a direct abundance plot unless the figure label
+and source table clearly indicate that abundance weighting was used.</p>
+<p>A large slice can mean that many detected species belong to that group, not
+necessarily that the group has the highest read abundance.</p>
+<h3 id="what-not-to-conclude_6">What not to conclude<a class="headerlink" href="#what-not-to-conclude_6" title="Permanent link">&para;</a></h3>
+<p>Do not interpret a large slice as proof that a broad taxonomic group dominates
+the biological sample.</p>
+<p>Do not treat this plot as evidence of infection, contamination, or host
+association by itself.</p>
+<p>Do not use this plot alone to compare groups.</p>
+<p>For interpretation, check the ranked detected-microbiome table, abundance
+tables, <a href="https://ccb.jhu.edu/software/kraken2/index.shtml">Kraken2</a> reports, <a href="https://github.com/jenniferlu717/Bracken">Bracken</a> outputs, and
+read-composition QC.</p>
+<h2 id="species-overlap">Species overlap<a class="headerlink" href="#species-overlap" title="Permanent link">&para;</a></h2>
+<p>Species overlap plots summarize which detected species are shared between two
+groups and which species are detected only in one group.</p>
+<p>These outputs are generated when the samplesheet contains exactly two groups.</p>
+<h3 id="output-location_7">Output location<a class="headerlink" href="#output-location_7" title="Permanent link">&para;</a></h3>
+<p>Species overlap outputs are stored under:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>exploratory/taxonomy/species_overlap/
+</code></pre></div>
+<p>The generated filenames include the comparison labels and may vary depending on
+the group names in the samplesheet.</p>
+<p>Typical PNG files include:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>*_venn.png
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>*_euler.png
+</code></pre></div>
+<h3 id="venn-diagram">Venn diagram<a class="headerlink" href="#venn-diagram" title="Permanent link">&para;</a></h3>
+<p>The Venn diagram shows the count of detected species shared between groups and
+the count of species detected only in each group.</p>
+<p><img alt="Species overlap Venn diagram" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-species-overlap-venn.png" /></p>
+<p>Use this plot to quickly inspect whether the two groups have mostly shared
+detected species or whether each group has many group-specific detections.</p>
+<h3 id="euler-diagram">Euler diagram<a class="headerlink" href="#euler-diagram" title="Permanent link">&para;</a></h3>
+<p>The Euler diagram shows the same overlap idea, but the circle areas are fitted
+to better represent the relative sizes of the sets.</p>
+<p><img alt="Species overlap Euler diagram" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-species-overlap-euler.png" /></p>
+<p>MTD Explorer generates this plot using <a href="https://cran.r-project.org/package=eulerr">eulerr</a>.</p>
+<p>The Euler diagram can be visually useful, but it may not perfectly represent
+all set relationships when the data are difficult to fit geometrically.</p>
+<h3 id="venn-vs-euler">Venn vs Euler<a class="headerlink" href="#venn-vs-euler" title="Permanent link">&para;</a></h3>
+<p>A Venn diagram prioritizes set structure.</p>
+<p>An Euler diagram tries to make the area of each region more proportional to the
+observed counts.</p>
+<p>For simple two-group species overlap, both plots should tell the same general
+story:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>group 1 only
+<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>shared between groups
+<a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a>group 2 only
+</code></pre></div>
+<h3 id="how-to-interpret-species-overlap">How to interpret species overlap<a class="headerlink" href="#how-to-interpret-species-overlap" title="Permanent link">&para;</a></h3>
+<p>Shared species are detected in both groups.</p>
+<p>Group-specific species are detected in only one group.</p>
+<p>A large shared region suggests that the two groups have many detected taxa in
+common.</p>
+<p>A large group-specific region suggests that one group has many detected taxa
+not observed in the other group.</p>
+<h3 id="what-not-to-conclude_7">What not to conclude<a class="headerlink" href="#what-not-to-conclude_7" title="Permanent link">&para;</a></h3>
+<p>Do not interpret group-specific detection as proof of differential abundance.</p>
+<p>Do not interpret group-specific detection as proof that a species is biologically
+exclusive to that group.</p>
+<p>Do not treat the overlap plot as a statistical test.</p>
+<p>A species can appear group-specific because of sample size, sequencing depth,
+read filtering, abundance threshold, database coverage, sparse detection, or
+technical variation.</p>
+<p>For biological interpretation, inspect the abundance table, read-composition
+QC, <a href="https://ccb.jhu.edu/software/kraken2/index.shtml">Kraken2</a> reports, <a href="https://github.com/jenniferlu717/Bracken">Bracken</a> outputs, and the study
+metadata.</p>
+<h3 id="when-this-output-may-be-missing">When this output may be missing<a class="headerlink" href="#when-this-output-may-be-missing" title="Permanent link">&para;</a></h3>
+<p>Species overlap plots may be absent when:</p>
+<ul>
+<li>the samplesheet has fewer than two groups;</li>
+<li>the samplesheet has more than two groups;</li>
+<li>one or both groups have no detected species after filtering;</li>
+<li>the taxonomic abundance table is missing;</li>
+<li>the plotting step failed but the pipeline continued with a warning.</li>
+</ul>
+<p>Check this folder for logs:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>exploratory/taxonomy/logs/
+</code></pre></div>
+<h2 id="alpha-diversity">Alpha diversity<a class="headerlink" href="#alpha-diversity" title="Permanent link">&para;</a></h2>
+<p>Alpha diversity summarizes taxonomic diversity within each sample.</p>
+<p>These outputs help users compare how rich, even, or diverse the detected
+microbiome profile is across samples or groups.</p>
+<h3 id="output-location_8">Output location<a class="headerlink" href="#output-location_8" title="Permanent link">&para;</a></h3>
+<p>Alpha diversity outputs are stored under:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>exploratory/taxonomy/alpha_diversity/
+</code></pre></div>
+<p>For the default species-rank exploratory workflow, the main folder is:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>exploratory/taxonomy/alpha_diversity/species_relative/
+</code></pre></div>
+<p>The main PNG files are:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>alpha_diversity_species_relative_faceted.png
+<a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>alpha_diversity_species_relative_observed_taxa.png
+<a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>alpha_diversity_species_relative_shannon.png
+<a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a>alpha_diversity_species_relative_simpson.png
+<a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a>alpha_diversity_species_relative_inverse_simpson.png
+<a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a>alpha_diversity_species_relative_pielou_evenness.png
+</code></pre></div>
+<h3 id="faceted-alpha-diversity-overview">Faceted alpha diversity overview<a class="headerlink" href="#faceted-alpha-diversity-overview" title="Permanent link">&para;</a></h3>
+<p>The faceted alpha diversity plot shows multiple diversity metrics together.</p>
+<p><img alt="Alpha diversity faceted overview" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-alpha-diversity-faceted.png" /></p>
+<p>Use this plot as the first overview.</p>
+<p>It helps compare whether the same samples or groups show similar patterns
+across different alpha diversity metrics.</p>
+<h3 id="observed-taxa">Observed taxa<a class="headerlink" href="#observed-taxa" title="Permanent link">&para;</a></h3>
+<p>Observed taxa counts how many taxa were detected in each sample.</p>
+<p><img alt="Observed taxa alpha diversity" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-alpha-diversity-observed-taxa.png" /></p>
+<p>This is a richness measure.</p>
+<p>Higher values indicate that more taxa were detected in that sample.</p>
+<p>Observed taxa is easy to interpret, but it is sensitive to sequencing depth,
+filtering, database coverage, and detection thresholds.</p>
+<h3 id="shannon-diversity">Shannon diversity<a class="headerlink" href="#shannon-diversity" title="Permanent link">&para;</a></h3>
+<p>Shannon diversity combines richness and evenness.</p>
+<p><img alt="Shannon alpha diversity" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-alpha-diversity-shannon.png" /></p>
+<p>Higher Shannon values usually indicate that a sample has more taxa and/or a
+more even distribution among taxa.</p>
+<p>A sample dominated by one taxon can have lower Shannon diversity even if
+several other taxa are present at low abundance.</p>
+<h3 id="simpson-diversity">Simpson diversity<a class="headerlink" href="#simpson-diversity" title="Permanent link">&para;</a></h3>
+<p>Simpson diversity emphasizes dominance.</p>
+<p><img alt="Simpson alpha diversity" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-alpha-diversity-simpson.png" /></p>
+<p>Depending on the exact formulation, Simpson-related metrics can increase or
+decrease with dominance.</p>
+<p>In MTD Explorer, interpret this plot together with the axis label and the
+corresponding output table.</p>
+<h3 id="inverse-simpson-diversity">Inverse Simpson diversity<a class="headerlink" href="#inverse-simpson-diversity" title="Permanent link">&para;</a></h3>
+<p>Inverse Simpson diversity is another dominance-sensitive diversity metric.</p>
+<p><img alt="Inverse Simpson alpha diversity" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-alpha-diversity-inverse-simpson.png" /></p>
+<p>Higher values generally indicate greater diversity, with less dominance by one
+or a few taxa.</p>
+<h3 id="pielou-evenness">Pielou evenness<a class="headerlink" href="#pielou-evenness" title="Permanent link">&para;</a></h3>
+<p>Pielou evenness measures how evenly abundance is distributed among detected
+taxa.</p>
+<p><img alt="Pielou evenness alpha diversity" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-alpha-diversity-pielou-evenness.png" /></p>
+<p>Higher values indicate that detected taxa have more similar abundances.</p>
+<p>Lower values suggest that one or a few taxa dominate the profile.</p>
+<h3 id="how-to-interpret-alpha-diversity">How to interpret alpha diversity<a class="headerlink" href="#how-to-interpret-alpha-diversity" title="Permanent link">&para;</a></h3>
+<p>Alpha diversity answers questions such as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>How many taxa are detected within each sample?
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>Are detected taxa evenly distributed or dominated by a few taxa?
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>Do some samples or groups appear more taxonomically diverse than others?
+</code></pre></div>
+<p>Use alpha diversity together with stacked bar plots, heatmaps,
+read-composition QC, and abundance tables.</p>
+<h3 id="what-not-to-conclude_8">What not to conclude<a class="headerlink" href="#what-not-to-conclude_8" title="Permanent link">&para;</a></h3>
+<p>Do not interpret alpha diversity differences as proof of biological group
+differences without statistical testing and appropriate study design.</p>
+<p>Do not interpret low diversity as poor data quality automatically.</p>
+<p>Do not interpret high diversity as better, healthier, or more biologically
+important by default.</p>
+<p>Alpha diversity can be affected by sequencing depth, host read fraction,
+database choice, taxonomic rank, abundance filtering, contamination, and sparse
+microbial signal.</p>
+<h3 id="when-this-output-may-be-missing_1">When this output may be missing<a class="headerlink" href="#when-this-output-may-be-missing_1" title="Permanent link">&para;</a></h3>
+<p>Alpha diversity outputs may be absent when:</p>
+<ul>
+<li>the abundance table is missing;</li>
+<li>too few taxa are detected;</li>
+<li>too few samples are available;</li>
+<li>the matrix is too sparse;</li>
+<li>the plotting step failed but the pipeline continued with a warning.</li>
+</ul>
+<p>Check this folder for logs:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>exploratory/taxonomy/logs/
+</code></pre></div>
+<h2 id="beta-diversity">Beta diversity<a class="headerlink" href="#beta-diversity" title="Permanent link">&para;</a></h2>
+<p>Beta diversity summarizes differences in taxonomic composition between
+samples.</p>
+<p>While alpha diversity describes diversity within each sample, beta diversity
+asks whether samples have similar or different taxonomic profiles.</p>
+<h3 id="output-location_9">Output location<a class="headerlink" href="#output-location_9" title="Permanent link">&para;</a></h3>
+<p>Beta diversity outputs are stored under:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>exploratory/taxonomy/beta_diversity/
+</code></pre></div>
+<p>For the default species-rank exploratory workflow, the main folder is:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>exploratory/taxonomy/beta_diversity/species_relative/
+</code></pre></div>
+<p>The main PNG files are usually:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a>beta_diversity_species_relative_pcoa_bray.png
+<a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a>beta_diversity_species_relative_nmds_bray.png
+</code></pre></div>
+<p>The default exploratory beta-diversity distance is Bray-Curtis.</p>
+<h3 id="pcoa-ordination">PCoA ordination<a class="headerlink" href="#pcoa-ordination" title="Permanent link">&para;</a></h3>
+<p>Principal coordinates analysis, or PCoA, represents samples in a low-dimensional
+space based on their pairwise taxonomic dissimilarities.</p>
+<p><img alt="Beta diversity PCoA using Bray-Curtis distance" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-beta-diversity-pcoa-bray.png" /></p>
+<p>Samples closer together have more similar taxonomic profiles according to the
+distance matrix used for the plot.</p>
+<p>Samples farther apart have more different taxonomic profiles.</p>
+<p>The axis labels usually indicate how much variation is represented by each
+ordination axis.</p>
+<h3 id="nmds-ordination">NMDS ordination<a class="headerlink" href="#nmds-ordination" title="Permanent link">&para;</a></h3>
+<p>Non-metric multidimensional scaling, or NMDS, is another ordination method used
+to represent sample dissimilarities.</p>
+<p><img alt="Beta diversity NMDS using Bray-Curtis distance" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-beta-diversity-nmds-bray.png" /></p>
+<p>NMDS focuses on preserving the rank order of distances between samples.</p>
+<p>Samples that appear close together have more similar taxonomic profiles than
+samples that appear far apart.</p>
+<h3 id="pcoa-vs-nmds">PCoA vs NMDS<a class="headerlink" href="#pcoa-vs-nmds" title="Permanent link">&para;</a></h3>
+<p>PCoA and NMDS are complementary.</p>
+<p>PCoA provides axes with interpretable explained variation when supported by the
+distance matrix.</p>
+<p>NMDS focuses on preserving relative dissimilarity ranks and can be useful for
+complex ecological abundance data.</p>
+<p>If both plots show similar sample grouping, the pattern is more visually
+consistent.</p>
+<p>If the plots disagree, interpret cautiously and inspect the abundance matrix,
+read composition, sample metadata, and outlier behavior.</p>
+<h3 id="how-to-interpret-beta-diversity">How to interpret beta diversity<a class="headerlink" href="#how-to-interpret-beta-diversity" title="Permanent link">&para;</a></h3>
+<p>Beta diversity helps answer questions such as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a>Do samples have similar taxonomic composition?
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>Are some samples compositionally distinct from the rest?
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a>Do samples from the same group appear closer together than samples from
+<a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a>different groups?
+</code></pre></div>
+<p>These plots are exploratory visualizations.</p>
+<p>They can suggest patterns, but they do not prove statistical separation between
+groups by themselves.</p>
+<h3 id="what-not-to-conclude_9">What not to conclude<a class="headerlink" href="#what-not-to-conclude_9" title="Permanent link">&para;</a></h3>
+<p>Do not interpret visual clustering as proof of biological group separation
+without statistical testing and appropriate study design.</p>
+<p>Do not overinterpret separation driven by one outlier sample.</p>
+<p>Do not assume that distance between samples is caused by biology alone.</p>
+<p>Beta diversity can be affected by sequencing depth, host read fraction,
+database choice, taxonomic rank, abundance filtering, sparse taxa, and
+contamination.</p>
+<h3 id="when-this-output-may-be-missing_2">When this output may be missing<a class="headerlink" href="#when-this-output-may-be-missing_2" title="Permanent link">&para;</a></h3>
+<p>Beta diversity outputs may be absent when:</p>
+<ul>
+<li>the abundance table is missing;</li>
+<li>too few samples are available;</li>
+<li>too few taxa are detected;</li>
+<li>the matrix is too sparse;</li>
+<li>the ordination failed;</li>
+<li>the plotting step failed but the pipeline continued with a warning.</li>
+</ul>
+<p>Check this folder for logs:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a>exploratory/taxonomy/logs/
+</code></pre></div>
+<h2 id="microbiome-abundance-matrix-qc">Microbiome abundance matrix QC<a class="headerlink" href="#microbiome-abundance-matrix-qc" title="Permanent link">&para;</a></h2>
+<p>Microbiome abundance matrix QC summarizes the structure of the taxonomic
+abundance matrix used for exploratory microbiome analysis.</p>
+<p>These outputs help users inspect whether the microbiome matrix contains enough
+signal for interpretation, whether samples cluster unexpectedly, and whether
+some samples have unusually sparse or unusual profiles.</p>
+<h3 id="output-location_10">Output location<a class="headerlink" href="#output-location_10" title="Permanent link">&para;</a></h3>
+<p>Microbiome abundance matrix QC outputs are stored under:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a>exploratory/taxonomy/microbiome_abundance_qc/
+</code></pre></div>
+<p>For the default species-rank exploratory workflow, the main folder is:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a>exploratory/taxonomy/microbiome_abundance_qc/species_relative/
+</code></pre></div>
+<p>The main PNG files are usually:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-50-1" name="__codelineno-50-1" href="#__codelineno-50-1"></a>microbiome_species_pca.png
+<a id="__codelineno-50-2" name="__codelineno-50-2" href="#__codelineno-50-2"></a>microbiome_species_top_variable_heatmap.png
+<a id="__codelineno-50-3" name="__codelineno-50-3" href="#__codelineno-50-3"></a>microbiome_species_sample_correlation_heatmap.png
+<a id="__codelineno-50-4" name="__codelineno-50-4" href="#__codelineno-50-4"></a>microbiome_species_detected_features_per_sample.png
+</code></pre></div>
+<h3 id="pca-of-microbiome-abundance-matrix">PCA of microbiome abundance matrix<a class="headerlink" href="#pca-of-microbiome-abundance-matrix" title="Permanent link">&para;</a></h3>
+<p>The PCA plot summarizes the main axes of variation in the microbiome abundance
+matrix.</p>
+<p><img alt="Microbiome abundance matrix PCA" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-microbiome-matrix-qc-pca.png" /></p>
+<p>Samples that appear close together have more similar abundance profiles
+according to the transformed matrix used for this QC step.</p>
+<p>Samples far from the main cluster may represent biological differences,
+technical variation, low microbiome signal, unusual read composition, or
+outlier behavior.</p>
+<h3 id="top-variable-taxa-heatmap">Top variable taxa heatmap<a class="headerlink" href="#top-variable-taxa-heatmap" title="Permanent link">&para;</a></h3>
+<p>The top variable taxa heatmap shows the taxa with the strongest variation
+across samples.</p>
+<p><img alt="Microbiome top variable taxa heatmap" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-microbiome-matrix-qc-top-variable-heatmap.png" /></p>
+<p>Use this plot to inspect which taxa contribute most strongly to differences
+among samples.</p>
+<p>This heatmap can help identify whether variation is driven by many taxa or by a
+small number of highly variable taxa.</p>
+<h3 id="sample-correlation-heatmap">Sample correlation heatmap<a class="headerlink" href="#sample-correlation-heatmap" title="Permanent link">&para;</a></h3>
+<p>The sample correlation heatmap summarizes similarity among samples based on
+their microbiome abundance profiles.</p>
+<p><img alt="Microbiome sample correlation heatmap" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-microbiome-matrix-qc-sample-correlation-heatmap.png" /></p>
+<p>Samples with high correlation have similar taxonomic abundance profiles.</p>
+<p>Samples with low correlation compared with the rest of the dataset may need
+closer inspection.</p>
+<h3 id="detected-features-per-sample">Detected features per sample<a class="headerlink" href="#detected-features-per-sample" title="Permanent link">&para;</a></h3>
+<p>The detected features plot shows how many taxa or features were detected in
+each sample.</p>
+<p><img alt="Detected microbiome features per sample" src="../../assets/images/user-guide/taxonomic-exploratory/taxonomy-microbiome-matrix-qc-detected-features-per-sample.png" /></p>
+<p>Use this plot to identify samples with unusually few or unusually many detected
+taxa.</p>
+<p>Very low detected-feature counts may indicate low microbiome signal, strong
+host dominance, sparse classification, strict filtering, or database mismatch.</p>
+<h3 id="how-to-interpret-this-qc-block">How to interpret this QC block<a class="headerlink" href="#how-to-interpret-this-qc-block" title="Permanent link">&para;</a></h3>
+<p>This QC block helps answer questions such as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-51-1" name="__codelineno-51-1" href="#__codelineno-51-1"></a>Do samples have enough detected microbiome features for interpretation?
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a>Are some samples unusually sparse?
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-53-1" name="__codelineno-53-1" href="#__codelineno-53-1"></a>Do samples cluster or correlate in a way that matches the study design?
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-54-1" name="__codelineno-54-1" href="#__codelineno-54-1"></a>Is variation driven by many taxa or by a few dominant features?
+</code></pre></div>
+<p>Use these plots together with read-composition QC, stacked bar plots, heatmaps,
+beta diversity, <a href="https://ccb.jhu.edu/software/kraken2/index.shtml">Kraken2</a> reports, and <a href="https://github.com/jenniferlu717/Bracken">Bracken</a> abundance
+tables.</p>
+<h3 id="what-not-to-conclude_10">What not to conclude<a class="headerlink" href="#what-not-to-conclude_10" title="Permanent link">&para;</a></h3>
+<p>Do not interpret PCA separation as proof of biological group separation by
+itself.</p>
+<p>Do not remove a sample only because it appears unusual in one QC plot.</p>
+<p>Do not interpret low detected-feature counts as pipeline failure without
+checking read quality, host filtering, database choice, and taxonomic reports.</p>
+<p>Do not interpret high sample correlation as proof that samples are biologically
+identical.</p>
+<p>These plots are quality-control and exploratory interpretation aids.</p>
+<h3 id="when-this-output-may-be-missing_3">When this output may be missing<a class="headerlink" href="#when-this-output-may-be-missing_3" title="Permanent link">&para;</a></h3>
+<p>Microbiome abundance matrix QC outputs may be absent when:</p>
+<ul>
+<li>the abundance table is missing;</li>
+<li>too few taxa are detected;</li>
+<li>too few samples are available;</li>
+<li>the matrix is too sparse;</li>
+<li>PCA or heatmap generation failed;</li>
+<li>the plotting step failed but the pipeline continued with a warning.</li>
+</ul>
+<p>Check this folder for logs:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-55-1" name="__codelineno-55-1" href="#__codelineno-55-1"></a>exploratory/taxonomy/logs/
+</code></pre></div>
+<h2 id="other-taxonomic-exploratory-outputs">Other taxonomic exploratory outputs<a class="headerlink" href="#other-taxonomic-exploratory-outputs" title="Permanent link">&para;</a></h2>
+<p><a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer">MTD Explorer</a> also generates other taxonomic exploratory outputs
+when the required input data are available.</p>
+<p>These include:</p>
+<table>
+<thead>
+<tr>
+<th>Output folder</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>heatmap/</code></td>
+<td>Taxonomic heatmaps for visualizing abundance patterns and sample clustering</td>
+</tr>
+<tr>
+<td><code>stacked_bar/</code></td>
+<td>Stacked bar plots showing dominant detected taxa across samples</td>
+</tr>
+<tr>
+<td><code>prevalence_abundance/</code></td>
+<td>Prevalence and abundance summaries</td>
+</tr>
+<tr>
+<td><code>core_microbiome/</code></td>
+<td>Taxa detected across prevalence thresholds</td>
+</tr>
+<tr>
+<td><code>species_overlap/</code></td>
+<td>Shared and group-specific detected species, usually for two-group datasets</td>
+</tr>
+<tr>
+<td><code>detected_microbiome_pie/</code></td>
+<td>Detected species summarized by broader taxonomic categories</td>
+</tr>
+<tr>
+<td><code>alpha_diversity/</code></td>
+<td>Within-sample diversity summaries</td>
+</tr>
+<tr>
+<td><code>beta_diversity/</code></td>
+<td>Between-sample taxonomic composition summaries</td>
+</tr>
+<tr>
+<td><code>microbiome_abundance_qc/</code></td>
+<td>Quality-control plots for the abundance matrix</td>
+</tr>
+<tr>
+<td><code>detected_microbiome_extracted_reads/</code></td>
+<td>Optional extracted reads for selected detected taxa</td>
+</tr>
+</tbody>
+</table>
+<p>These outputs will be documented in more detail as additional example figures
+are added.</p>
+<h2 id="files-to-inspect-first">Files to inspect first<a class="headerlink" href="#files-to-inspect-first" title="Permanent link">&para;</a></h2>
+<p>For taxonomic exploratory interpretation, start with:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-56-1" name="__codelineno-56-1" href="#__codelineno-56-1"></a>exploratory/taxonomy/detected_microbiome/
+<a id="__codelineno-56-2" name="__codelineno-56-2" href="#__codelineno-56-2"></a>exploratory/taxonomy/prevalence_abundance/
+<a id="__codelineno-56-3" name="__codelineno-56-3" href="#__codelineno-56-3"></a>exploratory/taxonomy/heatmap/
+<a id="__codelineno-56-4" name="__codelineno-56-4" href="#__codelineno-56-4"></a>exploratory/taxonomy/stacked_bar/
+<a id="__codelineno-56-5" name="__codelineno-56-5" href="#__codelineno-56-5"></a>kraken/kraken_global_read_composition_final.tsv
+<a id="__codelineno-56-6" name="__codelineno-56-6" href="#__codelineno-56-6"></a>kraken/reports_micro_final/
+<a id="__codelineno-56-7" name="__codelineno-56-7" href="#__codelineno-56-7"></a>bracken_species_all
+<a id="__codelineno-56-8" name="__codelineno-56-8" href="#__codelineno-56-8"></a>methods/mtd_methods_run_parameters.csv
+</code></pre></div>
+<p>The <code>methods/mtd_methods_run_parameters.csv</code> file is useful because it records
+the selected database paths, read layout, <a href="https://ccb.jhu.edu/software/kraken2/index.shtml">Kraken2</a> parameters,
+<a href="https://github.com/jenniferlu717/Bracken">Bracken</a> parameters, and software versions.</p>
+<h2 id="when-outputs-may-be-missing">When outputs may be missing<a class="headerlink" href="#when-outputs-may-be-missing" title="Permanent link">&para;</a></h2>
+<p>Some exploratory outputs may be absent when:</p>
+<ul>
+<li>the exploratory figure step was disabled;</li>
+<li>the selected rank has no detected taxa;</li>
+<li>the abundance table is missing;</li>
+<li>the matrix is too sparse;</li>
+<li>the samplesheet is missing or invalid;</li>
+<li>a plotting script failed but the pipeline continued with a warning;</li>
+<li>an output is generated only for a specific number of groups.</li>
+</ul>
+<p>Check this folder for step-specific logs:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-57-1" name="__codelineno-57-1" href="#__codelineno-57-1"></a>exploratory/taxonomy/logs/
+</code></pre></div>
+<h2 id="next-step">Next step<a class="headerlink" href="#next-step" title="Permanent link">&para;</a></h2>
+<p>After reviewing taxonomic exploratory outputs, inspect the broader
+<a href="../output-files/">Output files</a> page or continue to the
+<a href="../command-line/">Command-line reference</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../output-files/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Output files">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Output files
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../taxonomic-visualizations/" class="md-footer__link md-footer__link--next" aria-label="Next: Taxonomic visualizations">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Taxonomic visualizations
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      MTD Explorer · Open-source RNA-seq and metatranscriptomics workflow
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2413 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Joint host transcriptome and microbiome analysis from RNA-seq data">
+      
+      
+        <meta name="author" content="Patrick Douglas Correa Pereira">
+      
+      
+        <link rel="canonical" href="https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/getting-started/quick-start/">
+      
+      
+        <link rel="prev" href="../verify-installation/">
+      
+      
+        <link rel="next" href="../../user-guide/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Quick start - MTD Explorer</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/brand.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#quick-start" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="MTD Explorer" class="md-header__button md-logo" aria-label="MTD Explorer" data-md-component="logo">
+      
+  <img src="../../assets/images/mtd-explorer-mark.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            MTD Explorer
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Quick start
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer-Explorer-Explorer" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    patrick-douglas/MTD-Explorer-Explorer
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../requirements/" class="md-tabs__link">
+          
+  
+  
+  Getting started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user-guide/" class="md-tabs__link">
+          
+  
+  
+  User guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reference/" class="md-tabs__link">
+          
+  
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../troubleshooting/" class="md-tabs__link">
+          
+  
+  
+  Troubleshooting
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="MTD Explorer" class="md-nav__button md-logo" aria-label="MTD Explorer" data-md-component="logo">
+      
+  <img src="../../assets/images/mtd-explorer-mark.svg" alt="logo">
+
+    </a>
+    MTD Explorer
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer-Explorer-Explorer" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    patrick-douglas/MTD-Explorer-Explorer
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System requirements
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../verify-installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Verify installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick start
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#basic-command-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic command structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prepare-the-working-directory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prepare the working directory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prepare-the-samplesheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prepare the samplesheet
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prepare the samplesheet">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hypothetical-samplesheet-preview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hypothetical samplesheet preview
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#samplesheet-columns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Samplesheet columns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fastq-naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FASTQ naming
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="FASTQ naming">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supported-single-end-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported single-end examples
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supported-paired-end-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported paired-end examples
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#single-end-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single-end example
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#paired-end-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paired-end example
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exploratory-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exploratory analysis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparison-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison analysis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automatic-analysis-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automatic analysis mode
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#trimming-and-alignment-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trimming and alignment options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-kraken2-databases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Kraken2 databases
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom Kraken2 databases">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#custom-host-filtering-database" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom host-filtering database
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-microbiome-database" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom microbiome database
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ssgsea-gmt-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ssGSEA GMT selection
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#detected-microbiome-read-extraction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detected microbiome read extraction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-directory-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output directory behavior
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#after-the-run-starts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        After the run starts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next step
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/input-files/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Input files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/analysis-modes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analysis modes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/command-line/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command-line reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/output-files/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Output files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/taxonomic-exploratory-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Taxonomic exploratory outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/taxonomic-visualizations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Taxonomic visualizations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/host-expression-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Host expression outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/microbiome-comparison-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Microbiome comparison outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/functional-profiling-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Functional profiling outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/ssgsea-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ssGSEA outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/halla-integration-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HAllA integration outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/methods-reproducibility-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Methods and reproducibility outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Academic references
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Troubleshooting
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Common problems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#basic-command-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic command structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prepare-the-working-directory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prepare the working directory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prepare-the-samplesheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prepare the samplesheet
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prepare the samplesheet">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hypothetical-samplesheet-preview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hypothetical samplesheet preview
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#samplesheet-columns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Samplesheet columns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fastq-naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FASTQ naming
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="FASTQ naming">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supported-single-end-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported single-end examples
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supported-paired-end-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported paired-end examples
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#single-end-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single-end example
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#paired-end-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paired-end example
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exploratory-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exploratory analysis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparison-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison analysis
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automatic-analysis-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automatic analysis mode
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#trimming-and-alignment-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trimming and alignment options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-kraken2-databases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Kraken2 databases
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom Kraken2 databases">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#custom-host-filtering-database" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom host-filtering database
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-microbiome-database" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom microbiome database
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ssgsea-gmt-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ssGSEA GMT selection
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#detected-microbiome-read-extraction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detected microbiome read extraction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-directory-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output directory behavior
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#after-the-run-starts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        After the run starts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next step
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="quick-start">Quick start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h1>
+<p>This guide shows the minimal steps required to run MTD Explorer after a
+successful installation.</p>
+<p>Before running an analysis, complete:</p>
+<ol>
+<li><a href="../installation/">Installation</a></li>
+<li><a href="../verify-installation/">Installation verification</a></li>
+</ol>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Run MTD Explorer only after the installation checker has completed
+successfully.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>bash<span class="w"> </span>MTD_check_installation.sh<span class="w"> </span>--mode<span class="w"> </span>full
+</code></pre></div>
+</div>
+<h2 id="basic-command-structure">Basic command structure<a class="headerlink" href="#basic-command-structure" title="Permanent link">&para;</a></h2>
+<p>The main MTD Explorer entry point is:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>MTD_explorer.sh
+</code></pre></div>
+<p>The minimal command structure is:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>bash<span class="w"> </span>MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span>--input<span class="w"> </span>samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>--output<span class="w"> </span>MTD_results<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span>--hostid<span class="w"> </span>TAXID
+</code></pre></div>
+<p>Required arguments:</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--input</code>, <code>-i</code></td>
+<td>Path to the samplesheet CSV file</td>
+</tr>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Output directory</td>
+</tr>
+<tr>
+<td><code>--hostid</code>, <code>-h</code></td>
+<td>Host species NCBI Taxonomy ID used for host annotation and downstream analysis</td>
+</tr>
+</tbody>
+</table>
+<p>Display the current help message with:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>bash<span class="w"> </span>MTD_explorer.sh<span class="w"> </span>--help
+</code></pre></div>
+<h2 id="prepare-the-working-directory">Prepare the working directory<a class="headerlink" href="#prepare-the-working-directory" title="Permanent link">&para;</a></h2>
+<p>Create a project directory outside the MTD Explorer source-code folder.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/MTD_projects/test_run
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nb">cd</span><span class="w"> </span>~/MTD_projects/test_run
+</code></pre></div>
+<p>A simple project layout is:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>test_run/
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>├── fastq/
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>│   ├── sample1.fastq.gz
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>│   ├── sample2.fastq.gz
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>│   └── sample3.fastq.gz
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>└── samplesheet.csv
+</code></pre></div>
+<p>For paired-end data:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>test_run/
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>├── fastq/
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>│   ├── sample1_R1.fastq.gz
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>│   ├── sample1_R2.fastq.gz
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>│   ├── sample2_R1.fastq.gz
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>│   ├── sample2_R2.fastq.gz
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>│   ├── sample3_R1.fastq.gz
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>│   └── sample3_R2.fastq.gz
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>└── samplesheet.csv
+</code></pre></div>
+<h2 id="prepare-the-samplesheet">Prepare the samplesheet<a class="headerlink" href="#prepare-the-samplesheet" title="Permanent link">&para;</a></h2>
+<p>The samplesheet tells MTD Explorer which samples should be analyzed, which
+experimental group each sample belongs to, and which group comparisons should
+be performed.</p>
+<p>Example samplesheets are available in the repository:</p>
+<p><a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer/tree/main/examples">Open the examples directory</a></p>
+<p>After cloning the repository, these files are also available locally at:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>~/MTD/examples/
+</code></pre></div>
+<h3 id="hypothetical-samplesheet-preview">Hypothetical samplesheet preview<a class="headerlink" href="#hypothetical-samplesheet-preview" title="Permanent link">&para;</a></h3>
+<p>A comparison samplesheet may look like this:</p>
+<table>
+<thead>
+<tr>
+<th>sample_name</th>
+<th>group</th>
+<th>comparisons</th>
+<th>group1</th>
+<th>vs</th>
+<th>group2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sample1</td>
+<td>Treatment1</td>
+<td></td>
+<td>Treatment1</td>
+<td>vs</td>
+<td>Control</td>
+</tr>
+<tr>
+<td>sample2</td>
+<td>Treatment1</td>
+<td></td>
+<td>Treatment2</td>
+<td>vs</td>
+<td>Control</td>
+</tr>
+<tr>
+<td>sample3</td>
+<td>Treatment1</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sample4</td>
+<td>Treatment2</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sample5</td>
+<td>Treatment2</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sample6</td>
+<td>Treatment2</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sample7</td>
+<td>Treatment2</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sample8</td>
+<td>Control</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sample9</td>
+<td>Control</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>sample10</td>
+<td>Control</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>The same file in CSV format would be:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sample_name,group,comparisons,group1,vs,group2
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>sample1,Treatment1,,Treatment1,vs,Control
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>sample2,Treatment1,,Treatment2,vs,Control
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>sample3,Treatment1,,,,
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>sample4,Treatment2,,,,
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>sample5,Treatment2,,,,
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>sample6,Treatment2,,,,
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>sample7,Treatment2,,,,
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>sample8,Control,,,,
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>sample9,Control,,,,
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>sample10,Control,,,,
+</code></pre></div>
+<h3 id="samplesheet-columns">Samplesheet columns<a class="headerlink" href="#samplesheet-columns" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sample_name</code></td>
+<td>Sample identifier used by MTD Explorer to find the corresponding FASTQ file or FASTQ pair</td>
+</tr>
+<tr>
+<td><code>group</code></td>
+<td>Experimental group assigned to each sample</td>
+</tr>
+<tr>
+<td><code>comparisons</code></td>
+<td>Header used to mark the comparison section of the samplesheet</td>
+</tr>
+<tr>
+<td><code>group1</code></td>
+<td>First group in the comparison</td>
+</tr>
+<tr>
+<td><code>vs</code></td>
+<td>Comparison separator</td>
+</tr>
+<tr>
+<td><code>group2</code></td>
+<td>Second group in the comparison</td>
+</tr>
+</tbody>
+</table>
+<p>In the example above, MTD Explorer will analyze the samples assigned to
+<code>Treatment1</code>, <code>Treatment2</code>, and <code>Control</code>, and perform the following
+comparisons:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Treatment1 vs Control
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>Treatment2 vs Control
+</code></pre></div>
+<p>The group names in the comparison section must match the group names used in
+the <code>group</code> column.</p>
+<div class="admonition important">
+<p class="admonition-title">Sample names and FASTQ files</p>
+<p>The values in the <code>sample_name</code> column must match the FASTQ filenames.</p>
+<p>For example, the sample name:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sample1
+</code></pre></div>
+<p>can match a single-end file such as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>sample1.fastq.gz
+</code></pre></div>
+<p>or a paired-end pair such as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>sample1_R1.fastq.gz
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>sample1_R2.fastq.gz
+</code></pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Use the repository examples as templates</p>
+<p>The <code>examples/</code> directory contains samplesheet files that can be copied
+and adapted for new analyses.</p>
+<p>Before running MTD Explorer, compare your samplesheet with the examples
+provided in the repository.</p>
+</div>
+<h2 id="fastq-naming">FASTQ naming<a class="headerlink" href="#fastq-naming" title="Permanent link">&para;</a></h2>
+<p>MTD Explorer detects the sequencing layout from the FASTQ files.</p>
+<h3 id="supported-single-end-examples">Supported single-end examples<a class="headerlink" href="#supported-single-end-examples" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>sample1.fastq.gz
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>sample1.fq.gz
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>Trimmed_sample1.fastq.gz
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>Trimmed_sample1.fq.gz
+</code></pre></div>
+<h3 id="supported-paired-end-examples">Supported paired-end examples<a class="headerlink" href="#supported-paired-end-examples" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sample1_R1.fastq.gz
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>sample1_R2.fastq.gz
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>sample1_1.fastq.gz
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>sample1_2.fastq.gz
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>sample1_S1_L001_R1_001.fastq.gz
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>sample1_S1_L001_R2_001.fastq.gz
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Do not mix single-end and paired-end samples</p>
+<p>All samples in one MTD Explorer run must use the same read layout.</p>
+<p>Do not mix single-end and paired-end samples in the same samplesheet.</p>
+</div>
+<h2 id="single-end-example">Single-end example<a class="headerlink" href="#single-end-example" title="Permanent link">&para;</a></h2>
+<p>From the project directory:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="nb">cd</span><span class="w"> </span>~/MTD_projects/test_run
+</code></pre></div>
+<p>Run MTD Explorer using automatic read-layout detection:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>bash<span class="w"> </span>~/MTD/MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">  </span>--input<span class="w"> </span>samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="w">  </span>--output<span class="w"> </span>MTD_results_SE<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="w">  </span>--hostid<span class="w"> </span><span class="m">9606</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">  </span>--read-layout<span class="w"> </span>se<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="w">  </span>--threads<span class="w"> </span><span class="m">16</span>
+</code></pre></div>
+<p>In this example:</p>
+<ul>
+<li><code>samplesheet.csv</code> describes the samples and groups;</li>
+<li><code>MTD_results_SE</code> is the output directory;</li>
+<li><code>9606</code> is the NCBI Taxonomy ID for the host species;</li>
+<li><code>--read-layout se</code> forces single-end mode;</li>
+<li><code>--threads 16</code> uses 16 CPU threads.</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If the FASTQ names are standard and all samples use the same layout,
+you can use:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>--read-layout<span class="w"> </span>auto
+</code></pre></div>
+</div>
+<h2 id="paired-end-example">Paired-end example<a class="headerlink" href="#paired-end-example" title="Permanent link">&para;</a></h2>
+<p>For paired-end data, use matching R1 and R2 FASTQ files for each sample.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>bash<span class="w"> </span>~/MTD/MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">  </span>--input<span class="w"> </span>samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="w">  </span>--output<span class="w"> </span>MTD_results_PE<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="w">  </span>--hostid<span class="w"> </span><span class="m">9606</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="w">  </span>--read-layout<span class="w"> </span>pe<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="w">  </span>--threads<span class="w"> </span><span class="m">16</span>
+</code></pre></div>
+<p>MTD Explorer validates paired-end inputs and checks that R1 and R2 are
+resolved for each sample.</p>
+<h2 id="exploratory-analysis">Exploratory analysis<a class="headerlink" href="#exploratory-analysis" title="Permanent link">&para;</a></h2>
+<p>Use exploratory mode when you do not want to run group-comparison or
+DEG-dependent steps.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>bash<span class="w"> </span>~/MTD/MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="w">  </span>--input<span class="w"> </span>samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="w">  </span>--output<span class="w"> </span>MTD_results_exploratory<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="w">  </span>--hostid<span class="w"> </span><span class="m">9606</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="w">  </span>--analysis-mode<span class="w"> </span>exploratory<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="w">  </span>--read-layout<span class="w"> </span>auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="w">  </span>--threads<span class="w"> </span><span class="m">16</span>
+</code></pre></div>
+<p>The aliases below are also accepted:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>--exploratory
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>--no-comparison
+</code></pre></div>
+<p>Exploratory mode is useful for:</p>
+<ul>
+<li>initial data inspection;</li>
+<li>single-group datasets;</li>
+<li>datasets without a valid comparison design;</li>
+<li>checking host expression and microbiome profiles before formal comparison.</li>
+</ul>
+<h2 id="comparison-analysis">Comparison analysis<a class="headerlink" href="#comparison-analysis" title="Permanent link">&para;</a></h2>
+<p>Use comparison mode when the samplesheet contains experimental groups and
+you want MTD Explorer to run group-dependent analysis steps.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>bash<span class="w"> </span>~/MTD/MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="w">  </span>--input<span class="w"> </span>samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="w">  </span>--output<span class="w"> </span>MTD_results_comparison<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="w">  </span>--hostid<span class="w"> </span><span class="m">9606</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a><span class="w">  </span>--analysis-mode<span class="w"> </span>comparison<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a><span class="w">  </span>--read-layout<span class="w"> </span>auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a><span class="w">  </span>--threads<span class="w"> </span><span class="m">16</span>
+</code></pre></div>
+<p>Comparison mode requires a valid group structure in the samplesheet.</p>
+<h2 id="automatic-analysis-mode">Automatic analysis mode<a class="headerlink" href="#automatic-analysis-mode" title="Permanent link">&para;</a></h2>
+<p>The default analysis mode is:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>auto
+</code></pre></div>
+<p>In automatic mode, MTD Explorer decides whether to run comparison or
+exploratory outputs based on the samplesheet structure.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>bash<span class="w"> </span>~/MTD/MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="w">  </span>--input<span class="w"> </span>samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="w">  </span>--output<span class="w"> </span>MTD_results_auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a><span class="w">  </span>--hostid<span class="w"> </span><span class="m">9606</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="w">  </span>--analysis-mode<span class="w"> </span>auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a><span class="w">  </span>--read-layout<span class="w"> </span>auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a><span class="w">  </span>--threads<span class="w"> </span><span class="m">16</span>
+</code></pre></div>
+<h2 id="trimming-and-alignment-options">Trimming and alignment options<a class="headerlink" href="#trimming-and-alignment-options" title="Permanent link">&para;</a></h2>
+<p>By default, MTD Explorer uses <code>fastp</code> for read preprocessing.</p>
+<p>The default trimming profile is conservative. It is designed to remove very
+low-quality terminal bases and problematic sequence features while avoiding
+overly aggressive read loss.</p>
+<div class="admonition note">
+<p class="admonition-title">Trimming strategy</p>
+<p>The default MTD Explorer trimming strategy is based on the rationale
+described by MacManes (2014), who evaluated quality trimming in
+high-throughput mRNA-seq data and showed that overly aggressive trimming
+can negatively affect transcriptome results.</p>
+<p>This is particularly relevant for RNA-seq and metatranscriptomic studies
+involving non-model organisms, where preserving informative reads may be
+important for host alignment, microbial classification, and functional
+profiling.</p>
+<p>Reference:</p>
+<p>MacManes MD. 2014. <em>On the optimal trimming of high-throughput mRNA
+sequence data</em>. Frontiers in Genetics 5:13.
+DOI: <a href="https://doi.org/10.3389/fgene.2014.00013">10.3389/fgene.2014.00013</a></p>
+</div>
+<p>To skip trimming:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>bash<span class="w"> </span>~/MTD/MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="w">  </span>--input<span class="w"> </span>samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="w">  </span>--output<span class="w"> </span>MTD_results_no_trim<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="w">  </span>--hostid<span class="w"> </span><span class="m">9606</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a><span class="w">  </span>--no-trim<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a><span class="w">  </span>--read-layout<span class="w"> </span>auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a><span class="w">  </span>--threads<span class="w"> </span><span class="m">16</span>
+</code></pre></div>
+<p>To use Magic-BLAST instead of HISAT2 for host alignment:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>bash<span class="w"> </span>~/MTD/MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a><span class="w">  </span>--input<span class="w"> </span>samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="w">  </span>--output<span class="w"> </span>MTD_results_blast<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a><span class="w">  </span>--hostid<span class="w"> </span><span class="m">9606</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a><span class="w">  </span>--blast<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a><span class="w">  </span>--read-layout<span class="w"> </span>auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a><span class="w">  </span>--threads<span class="w"> </span><span class="m">16</span>
+</code></pre></div>
+<h2 id="custom-kraken2-databases">Custom Kraken2 databases<a class="headerlink" href="#custom-kraken2-databases" title="Permanent link">&para;</a></h2>
+<p>MTD Explorer can use custom Kraken2 databases for host filtering and
+microbiome classification.</p>
+<h3 id="custom-host-filtering-database">Custom host-filtering database<a class="headerlink" href="#custom-host-filtering-database" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>bash<span class="w"> </span>~/MTD/MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="w">  </span>--input<span class="w"> </span>samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="w">  </span>--output<span class="w"> </span>MTD_results_custom_host_kraken<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="w">  </span>--hostid<span class="w"> </span><span class="m">9606</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a><span class="w">  </span>--kraken-host-db<span class="w"> </span>/path/to/kraken2_host_db<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a><span class="w">  </span>--read-layout<span class="w"> </span>auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a><span class="w">  </span>--threads<span class="w"> </span><span class="m">16</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>--kraken-host-db</code> changes only the Kraken2 host-filtering database.</p>
+<p>It does not replace the host genome, GTF annotation, BLAST/HISAT2
+resources, featureCounts resources, or host downstream annotation
+associated with <code>--hostid</code>.</p>
+</div>
+<h3 id="custom-microbiome-database">Custom microbiome database<a class="headerlink" href="#custom-microbiome-database" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>bash<span class="w"> </span>~/MTD/MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="w">  </span>--input<span class="w"> </span>samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a><span class="w">  </span>--output<span class="w"> </span>MTD_results_custom_micro_db<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="w">  </span>--hostid<span class="w"> </span><span class="m">9606</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a><span class="w">  </span>--kraken-micro-db<span class="w"> </span>/path/to/kraken2_microbiome_db<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a><span class="w">  </span>--read-layout<span class="w"> </span>auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a><span class="w">  </span>--threads<span class="w"> </span><span class="m">16</span>
+</code></pre></div>
+<p>This can be used for targeted microbiome databases, such as a curated
+taxonomic group database.</p>
+<h2 id="ssgsea-gmt-selection">ssGSEA GMT selection<a class="headerlink" href="#ssgsea-gmt-selection" title="Permanent link">&para;</a></h2>
+<p>The <code>--ssgsea-gmt</code> option controls the GMT file used for ssGSEA.</p>
+<p>Available modes:</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>default</code></td>
+<td>Use the legacy MSigDB C2 symbols GMT</td>
+</tr>
+<tr>
+<td><code>auto</code></td>
+<td>Use the master eggNOG/GO GMT generated by <code>Create_custom_host.sh</code> for the selected <code>--hostid</code></td>
+</tr>
+<tr>
+<td><code>FILE</code></td>
+<td>Use a user-provided GMT file</td>
+</tr>
+</tbody>
+</table>
+<p>Example using automatic host-specific GMT selection:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>bash<span class="w"> </span>~/MTD/MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a><span class="w">  </span>--input<span class="w"> </span>samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a><span class="w">  </span>--output<span class="w"> </span>MTD_results_ssgsea_auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a><span class="w">  </span>--hostid<span class="w"> </span><span class="m">9606</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a><span class="w">  </span>--ssgsea-gmt<span class="w"> </span>auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a><span class="w">  </span>--read-layout<span class="w"> </span>auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a><span class="w">  </span>--threads<span class="w"> </span><span class="m">16</span>
+</code></pre></div>
+<h2 id="detected-microbiome-read-extraction">Detected microbiome read extraction<a class="headerlink" href="#detected-microbiome-read-extraction" title="Permanent link">&para;</a></h2>
+<p>Detected microbiome read extraction is disabled by default because it can
+generate many files.</p>
+<p>To enable extraction for the top detected taxa:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>bash<span class="w"> </span>~/MTD/MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="w">  </span>--input<span class="w"> </span>samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a><span class="w">  </span>--output<span class="w"> </span>MTD_results_extract_reads<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a><span class="w">  </span>--hostid<span class="w"> </span><span class="m">9606</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a><span class="w">  </span>--extract-microbiome-reads<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-32-6" name="__codelineno-32-6" href="#__codelineno-32-6"></a><span class="w">  </span>--extract-microbiome-reads-top-n<span class="w"> </span><span class="m">50</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-32-7" name="__codelineno-32-7" href="#__codelineno-32-7"></a><span class="w">  </span>--read-layout<span class="w"> </span>auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-32-8" name="__codelineno-32-8" href="#__codelineno-32-8"></a><span class="w">  </span>--threads<span class="w"> </span><span class="m">16</span>
+</code></pre></div>
+<p>Use:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>--extract-microbiome-reads-top-n<span class="w"> </span><span class="m">0</span>
+</code></pre></div>
+<p>to extract reads for all detected taxa.</p>
+<h2 id="output-directory-behavior">Output directory behavior<a class="headerlink" href="#output-directory-behavior" title="Permanent link">&para;</a></h2>
+<p>If the selected output directory already exists, MTD Explorer asks whether
+it should delete and overwrite the directory.</p>
+<div class="admonition danger">
+<p class="admonition-title">Existing output directory</p>
+<p>Confirming overwrite permanently removes the existing output directory.</p>
+<p>Use a new output directory name when you want to preserve a previous run.</p>
+</div>
+<h2 id="after-the-run-starts">After the run starts<a class="headerlink" href="#after-the-run-starts" title="Permanent link">&para;</a></h2>
+<p>MTD Explorer prints progress messages and writes intermediate files inside
+the selected output directory.</p>
+<p>A successful run creates output sections for host analysis, Kraken2
+classification, Bracken abundance estimation, HUMAnN outputs, functional
+analysis, exploratory outputs, and integration analyses.</p>
+<p>The exact output structure is described in the User Guide.</p>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<p>If MTD Explorer stops with an error:</p>
+<ol>
+<li>copy the complete command used;</li>
+<li>save the terminal output;</li>
+<li>record the current Git commit;</li>
+<li>check whether the FASTQ filenames match the samplesheet;</li>
+<li>check whether the selected <code>--hostid</code> is installed and supported;</li>
+<li>check whether the installation checker passes.</li>
+</ol>
+<p>Record the current commit with:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>git<span class="w"> </span>log<span class="w"> </span>-1<span class="w"> </span>--oneline
+</code></pre></div>
+<p>Run the installation checker again with:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>bash<span class="w"> </span>~/MTD/MTD_check_installation.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a><span class="w">  </span>--mode<span class="w"> </span>full<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a><span class="w">  </span>--report-dir<span class="w"> </span>./MTD_check_after_error
+</code></pre></div>
+<p>If the problem persists, open a GitHub issue:</p>
+<p><a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer/issues">Open a GitHub issue</a></p>
+<h2 id="next-step">Next step<a class="headerlink" href="#next-step" title="Permanent link">&para;</a></h2>
+<p>After completing this quick start, continue to the User Guide for detailed
+information about input files, analysis modes, custom hosts, and output
+interpretation.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../verify-installation/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Verify installation">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Verify installation
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../user-guide/" class="md-footer__link md-footer__link--next" aria-label="Next: Overview">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Overview
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      MTD Explorer · Open-source RNA-seq and metatranscriptomics workflow
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

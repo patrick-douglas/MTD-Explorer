@@ -1,0 +1,2197 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Joint host transcriptome and microbiome analysis from RNA-seq data">
+      
+      
+        <meta name="author" content="Patrick Douglas Correa Pereira">
+      
+      
+        <link rel="canonical" href="https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/user-guide/analysis-modes/">
+      
+      
+        <link rel="prev" href="../input-files/">
+      
+      
+        <link rel="next" href="../command-line/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Analysis modes - MTD Explorer</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/brand.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#analysis-modes" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="MTD Explorer" class="md-header__button md-logo" aria-label="MTD Explorer" data-md-component="logo">
+      
+  <img src="../../assets/images/mtd-explorer-mark.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            MTD Explorer
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Analysis modes
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer-Explorer-Explorer" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    patrick-douglas/MTD-Explorer-Explorer
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/requirements/" class="md-tabs__link">
+          
+  
+  
+  Getting started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  User guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reference/" class="md-tabs__link">
+          
+  
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../troubleshooting/" class="md-tabs__link">
+          
+  
+  
+  Troubleshooting
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="MTD Explorer" class="md-nav__button md-logo" aria-label="MTD Explorer" data-md-component="logo">
+      
+  <img src="../../assets/images/mtd-explorer-mark.svg" alt="logo">
+
+    </a>
+    MTD Explorer
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/patrick-douglas/MTD-Explorer-Explorer-Explorer-Explorer" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    patrick-douglas/MTD-Explorer-Explorer
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System requirements
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/verify-installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Verify installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../input-files/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Input files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analysis modes
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analysis modes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-analysis-mode-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the analysis mode changes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automatic-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automatic mode
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Automatic mode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-to-use-automatic-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to use automatic mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparison-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison mode
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Comparison mode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-to-use-comparison-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to use comparison mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-comparison-samplesheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example comparison samplesheet
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exploratory-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exploratory mode
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exploratory mode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-to-use-exploratory-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to use exploratory mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-exploratory-samplesheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example exploratory samplesheet
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#choosing-the-right-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing the right mode
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-happens-with-single-group-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens with single-group data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-happens-with-two-group-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens with two-group data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-happens-with-more-than-two-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens with more than two groups
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relationship-with-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationship with metadata
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common mistakes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common mistakes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#forcing-comparison-mode-with-one-group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Forcing comparison mode with one group
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inconsistent-group-names" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inconsistent group names
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#confusing-exploratory-mode-with-incomplete-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Confusing exploratory mode with incomplete analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommended-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended workflow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next step
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command-line/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command-line reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../output-files/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Output files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../taxonomic-exploratory-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Taxonomic exploratory outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../taxonomic-visualizations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Taxonomic visualizations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../host-expression-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Host expression outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../microbiome-comparison-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Microbiome comparison outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../functional-profiling-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Functional profiling outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssgsea-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ssGSEA outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../halla-integration-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HAllA integration outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../methods-reproducibility-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Methods and reproducibility outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Academic references
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Troubleshooting
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Common problems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-analysis-mode-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the analysis mode changes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automatic-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automatic mode
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Automatic mode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-to-use-automatic-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to use automatic mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparison-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison mode
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Comparison mode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-to-use-comparison-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to use comparison mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-comparison-samplesheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example comparison samplesheet
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exploratory-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exploratory mode
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exploratory mode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-to-use-exploratory-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to use exploratory mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-exploratory-samplesheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example exploratory samplesheet
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#choosing-the-right-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing the right mode
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-happens-with-single-group-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens with single-group data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-happens-with-two-group-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens with two-group data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-happens-with-more-than-two-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens with more than two groups
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relationship-with-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationship with metadata
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common mistakes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common mistakes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#forcing-comparison-mode-with-one-group" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Forcing comparison mode with one group
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inconsistent-group-names" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inconsistent group names
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#confusing-exploratory-mode-with-incomplete-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Confusing exploratory mode with incomplete analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommended-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended workflow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next step
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="analysis-modes">Analysis modes<a class="headerlink" href="#analysis-modes" title="Permanent link">&para;</a></h1>
+<p>MTD Explorer can run in three analysis modes:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>auto
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>comparison
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>exploratory
+</code></pre></div>
+<p>The analysis mode controls whether MTD Explorer should run group-comparison
+steps or produce only non-comparison exploratory outputs.</p>
+<p>For details about input files and samplesheet formatting, see
+<a href="../input-files/">Input files</a>.</p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Best used when</th>
+<th>Main behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>auto</code></td>
+<td>You want MTD Explorer to decide from the samplesheet</td>
+<td>Uses comparison mode when two or more groups are detected; otherwise uses exploratory mode</td>
+</tr>
+<tr>
+<td><code>comparison</code></td>
+<td>You have experimental groups and want formal group-dependent analyses</td>
+<td>Requires at least two groups and runs comparison-dependent steps</td>
+</tr>
+<tr>
+<td><code>exploratory</code></td>
+<td>You have one group, no valid comparison, or want descriptive outputs only</td>
+<td>Skips DEG-dependent comparison steps and produces non-comparison outputs</td>
+</tr>
+</tbody>
+</table>
+<p>The default mode is:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>--analysis-mode<span class="w"> </span>auto
+</code></pre></div>
+<h2 id="what-the-analysis-mode-changes">What the analysis mode changes<a class="headerlink" href="#what-the-analysis-mode-changes" title="Permanent link">&para;</a></h2>
+<p>The analysis mode affects group-dependent downstream analysis.</p>
+<p>It does not change:</p>
+<ul>
+<li>input FASTQ detection;</li>
+<li>read layout detection;</li>
+<li><a href="https://github.com/OpenGene/fastp">fastp</a> preprocessing;</li>
+<li><a href="https://ccb.jhu.edu/software/kraken2/index.shtml">Kraken2</a> host filtering;</li>
+<li><a href="https://ccb.jhu.edu/software/kraken2/index.shtml">Kraken2</a> microbiome classification;</li>
+<li><a href="https://github.com/jenniferlu717/Bracken">Bracken</a> abundance estimation;</li>
+<li><a href="https://github.com/biobakery/humann">HUMAnN</a> functional profiling;</li>
+<li>the host selected with <code>--hostid</code>;</li>
+<li>custom Kraken2 database selection;</li>
+<li>Bracken read length settings.</li>
+</ul>
+<p>The main difference is whether MTD Explorer should run analyses that depend on
+experimental group comparisons, such as differential abundance or differential
+expression steps using tools such as <a href="https://bioconductor.org/packages/DESeq2/">DESeq2</a>.</p>
+<h2 id="automatic-mode">Automatic mode<a class="headerlink" href="#automatic-mode" title="Permanent link">&para;</a></h2>
+<p>Automatic mode is the default.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>--analysis-mode<span class="w"> </span>auto
+</code></pre></div>
+<p>In this mode, MTD Explorer inspects the <code>group</code> column in the samplesheet.</p>
+<p>If two or more groups are detected, MTD Explorer resolves the run as
+comparison mode.</p>
+<p>If fewer than two groups are detected, MTD Explorer resolves the run as
+exploratory mode.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>bash<span class="w"> </span>~/MTD/MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span>--input<span class="w"> </span>samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>--output<span class="w"> </span>MTD_results_auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>--hostid<span class="w"> </span><span class="m">9606</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span>--analysis-mode<span class="w"> </span>auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span>--read-layout<span class="w"> </span>auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span>--threads<span class="w"> </span><span class="m">16</span>
+</code></pre></div>
+<h3 id="when-to-use-automatic-mode">When to use automatic mode<a class="headerlink" href="#when-to-use-automatic-mode" title="Permanent link">&para;</a></h3>
+<p>Use automatic mode when:</p>
+<ul>
+<li>you want the safest default behavior;</li>
+<li>you are testing a new dataset;</li>
+<li>you are not sure whether the samplesheet contains a valid comparison design;</li>
+<li>you want MTD Explorer to avoid forcing comparison analyses for single-group data.</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>For most users, <code>--analysis-mode auto</code> is the recommended starting point.</p>
+</div>
+<h2 id="comparison-mode">Comparison mode<a class="headerlink" href="#comparison-mode" title="Permanent link">&para;</a></h2>
+<p>Comparison mode is used when the samplesheet contains experimental groups and
+you want MTD Explorer to run group-dependent analysis steps.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>--analysis-mode<span class="w"> </span>comparison
+</code></pre></div>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>bash<span class="w"> </span>~/MTD/MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>--input<span class="w"> </span>samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span>--output<span class="w"> </span>MTD_results_comparison<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span>--hostid<span class="w"> </span><span class="m">9606</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span>--analysis-mode<span class="w"> </span>comparison<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span>--read-layout<span class="w"> </span>auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">  </span>--threads<span class="w"> </span><span class="m">16</span>
+</code></pre></div>
+<p>Comparison mode requires at least two groups in the samplesheet.</p>
+<p>If comparison mode is requested but fewer than two groups are detected, MTD
+Explorer stops with an error.</p>
+<h3 id="when-to-use-comparison-mode">When to use comparison mode<a class="headerlink" href="#when-to-use-comparison-mode" title="Permanent link">&para;</a></h3>
+<p>Use comparison mode when:</p>
+<ul>
+<li>the samplesheet has at least two biological or experimental groups;</li>
+<li>the group labels are correct and consistent;</li>
+<li>you want comparison-dependent host or microbiome outputs;</li>
+<li>you want downstream association analysis with <a href="https://github.com/biobakery/halla">HAllA</a> where appropriate;</li>
+<li>the study design supports biological interpretation of group differences.</li>
+</ul>
+<h3 id="example-comparison-samplesheet">Example comparison samplesheet<a class="headerlink" href="#example-comparison-samplesheet" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sample_name,group,comparisons,group1,vs,group2
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sample1,Treatment,,Treatment,vs,Control
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>sample2,Treatment,,,,
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>sample3,Treatment,,,,
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>sample4,Control,,,,
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>sample5,Control,,,,
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>sample6,Control,,,,
+</code></pre></div>
+<p>In this example, MTD Explorer detects two groups:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Treatment
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>Control
+</code></pre></div>
+<p>and the requested comparison is:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Treatment vs Control
+</code></pre></div>
+<h2 id="exploratory-mode">Exploratory mode<a class="headerlink" href="#exploratory-mode" title="Permanent link">&para;</a></h2>
+<p>Exploratory mode is used when you do not want formal group-comparison analysis.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>--analysis-mode<span class="w"> </span>exploratory
+</code></pre></div>
+<p>The following aliases are also accepted:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>--exploratory
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>--no-comparison
+</code></pre></div>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>bash<span class="w"> </span>~/MTD/MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span>--input<span class="w"> </span>samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">  </span>--output<span class="w"> </span>MTD_results_exploratory<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">  </span>--hostid<span class="w"> </span><span class="m">9606</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">  </span>--analysis-mode<span class="w"> </span>exploratory<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">  </span>--read-layout<span class="w"> </span>auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">  </span>--threads<span class="w"> </span><span class="m">16</span>
+</code></pre></div>
+<p>Equivalent command using the alias:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>bash<span class="w"> </span>~/MTD/MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span>--input<span class="w"> </span>samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">  </span>--output<span class="w"> </span>MTD_results_exploratory<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">  </span>--hostid<span class="w"> </span><span class="m">9606</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">  </span>--no-comparison<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">  </span>--read-layout<span class="w"> </span>auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">  </span>--threads<span class="w"> </span><span class="m">16</span>
+</code></pre></div>
+<h3 id="when-to-use-exploratory-mode">When to use exploratory mode<a class="headerlink" href="#when-to-use-exploratory-mode" title="Permanent link">&para;</a></h3>
+<p>Use exploratory mode when:</p>
+<ul>
+<li>the dataset contains only one group;</li>
+<li>the samplesheet does not contain a valid comparison design;</li>
+<li>you are inspecting a dataset before defining contrasts;</li>
+<li>you want descriptive host, microbiome, functional, or quality-control outputs;</li>
+<li>you want to avoid DEG-dependent steps.</li>
+</ul>
+<p>Exploratory mode is also useful for sparse microbiome or targeted database
+analyses where some samples may have few or no detected taxa.</p>
+<h3 id="example-exploratory-samplesheet">Example exploratory samplesheet<a class="headerlink" href="#example-exploratory-samplesheet" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sample_name,group,comparisons,group1,vs,group2
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>sample1,All,,,,
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>sample2,All,,,,
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>sample3,All,,,,
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>sample4,All,,,,
+</code></pre></div>
+<p>This samplesheet has one group:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>All
+</code></pre></div>
+<p>In automatic mode, MTD Explorer would resolve this run as exploratory.</p>
+<h2 id="choosing-the-right-mode">Choosing the right mode<a class="headerlink" href="#choosing-the-right-mode" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Recommended mode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>First test of a dataset</td>
+<td><code>auto</code></td>
+</tr>
+<tr>
+<td>One-group dataset</td>
+<td><code>exploratory</code></td>
+</tr>
+<tr>
+<td>Dataset with no meaningful biological comparison</td>
+<td><code>exploratory</code></td>
+</tr>
+<tr>
+<td>Dataset with two or more valid groups</td>
+<td><code>comparison</code> or <code>auto</code></td>
+</tr>
+<tr>
+<td>You want MTD Explorer to decide safely</td>
+<td><code>auto</code></td>
+</tr>
+<tr>
+<td>You want to force comparison analysis</td>
+<td><code>comparison</code></td>
+</tr>
+<tr>
+<td>You want to skip DEG-dependent steps</td>
+<td><code>exploratory</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="what-happens-with-single-group-data">What happens with single-group data<a class="headerlink" href="#what-happens-with-single-group-data" title="Permanent link">&para;</a></h2>
+<p>Single-group data should not be forced into comparison mode.</p>
+<p>For example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>sample_name,group,comparisons,group1,vs,group2
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>sample1,Control,,,,
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>sample2,Control,,,,
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>sample3,Control,,,,
+</code></pre></div>
+<p>This dataset has only one group.</p>
+<p>Use:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>--analysis-mode<span class="w"> </span>exploratory
+</code></pre></div>
+<p>or leave the default:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>--analysis-mode<span class="w"> </span>auto
+</code></pre></div>
+<p>In automatic mode, MTD Explorer detects that fewer than two groups are present
+and switches to exploratory behavior.</p>
+<h2 id="what-happens-with-two-group-data">What happens with two-group data<a class="headerlink" href="#what-happens-with-two-group-data" title="Permanent link">&para;</a></h2>
+<p>A two-group samplesheet can be used in comparison mode.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>sample_name,group,comparisons,group1,vs,group2
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>sample1,Treated,,Treated,vs,Control
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>sample2,Treated,,,,
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>sample3,Treated,,,,
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>sample4,Control,,,,
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>sample5,Control,,,,
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>sample6,Control,,,,
+</code></pre></div>
+<p>Use:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>--analysis-mode<span class="w"> </span>comparison
+</code></pre></div>
+<p>or:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>--analysis-mode<span class="w"> </span>auto
+</code></pre></div>
+<p>In automatic mode, MTD Explorer detects two groups and resolves the run as a
+comparison analysis.</p>
+<h2 id="what-happens-with-more-than-two-groups">What happens with more than two groups<a class="headerlink" href="#what-happens-with-more-than-two-groups" title="Permanent link">&para;</a></h2>
+<p>Datasets with more than two groups can still be used, but the samplesheet must
+clearly define the group labels and intended comparisons.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>sample_name,group,comparisons,group1,vs,group2
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>sample1,Treatment1,,Treatment1,vs,Control
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>sample2,Treatment1,,Treatment2,vs,Control
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>sample3,Treatment1,,,,
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>sample4,Treatment2,,,,
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>sample5,Treatment2,,,,
+<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>sample6,Treatment2,,,,
+<a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>sample7,Control,,,,
+<a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a>sample8,Control,,,,
+<a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a>sample9,Control,,,,
+</code></pre></div>
+<p>This design contains three groups:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>Treatment1
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>Treatment2
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>Control
+</code></pre></div>
+<p>and two requested comparisons:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>Treatment1 vs Control
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>Treatment2 vs Control
+</code></pre></div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Group names in the comparison section must match the group names in the
+<code>group</code> column exactly.</p>
+</div>
+<h2 id="relationship-with-metadata">Relationship with metadata<a class="headerlink" href="#relationship-with-metadata" title="Permanent link">&para;</a></h2>
+<p>The analysis mode is controlled by the samplesheet groups, not by the optional
+metadata file.</p>
+<p>The metadata file can provide additional variables for downstream analysis or
+interpretation, but it does not replace the required <code>group</code> column in the
+samplesheet.</p>
+<p>Example using metadata:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>bash<span class="w"> </span>~/MTD/MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="w">  </span>--input<span class="w"> </span>samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="w">  </span>--metadata<span class="w"> </span>metadata.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="w">  </span>--output<span class="w"> </span>MTD_results_with_metadata<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="w">  </span>--hostid<span class="w"> </span><span class="m">9606</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a><span class="w">  </span>--analysis-mode<span class="w"> </span>auto<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a><span class="w">  </span>--threads<span class="w"> </span><span class="m">16</span>
+</code></pre></div>
+<h2 id="common-mistakes">Common mistakes<a class="headerlink" href="#common-mistakes" title="Permanent link">&para;</a></h2>
+<h3 id="forcing-comparison-mode-with-one-group">Forcing comparison mode with one group<a class="headerlink" href="#forcing-comparison-mode-with-one-group" title="Permanent link">&para;</a></h3>
+<p>This will fail:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>bash<span class="w"> </span>~/MTD/MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="w">  </span>--input<span class="w"> </span>one_group_samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="w">  </span>--output<span class="w"> </span>MTD_results<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a><span class="w">  </span>--hostid<span class="w"> </span><span class="m">9606</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="w">  </span>--analysis-mode<span class="w"> </span>comparison
+</code></pre></div>
+<p>Use exploratory mode instead:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>bash<span class="w"> </span>~/MTD/MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="w">  </span>--input<span class="w"> </span>one_group_samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="w">  </span>--output<span class="w"> </span>MTD_results<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="w">  </span>--hostid<span class="w"> </span><span class="m">9606</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a><span class="w">  </span>--analysis-mode<span class="w"> </span>exploratory
+</code></pre></div>
+<h3 id="inconsistent-group-names">Inconsistent group names<a class="headerlink" href="#inconsistent-group-names" title="Permanent link">&para;</a></h3>
+<p>These are treated as different groups:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>Control
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>control
+<a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>CTRL
+<a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>Control_1
+</code></pre></div>
+<p>Use one consistent group name throughout the samplesheet.</p>
+<h3 id="confusing-exploratory-mode-with-incomplete-analysis">Confusing exploratory mode with incomplete analysis<a class="headerlink" href="#confusing-exploratory-mode-with-incomplete-analysis" title="Permanent link">&para;</a></h3>
+<p>Exploratory mode is not a failed or incomplete run.</p>
+<p>It is a deliberate mode for non-comparison analyses. It still performs core
+profiling steps but skips comparison-dependent steps that require a valid group
+contrast.</p>
+<h2 id="recommended-workflow">Recommended workflow<a class="headerlink" href="#recommended-workflow" title="Permanent link">&para;</a></h2>
+<p>For a new dataset, start with:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>--analysis-mode<span class="w"> </span>auto
+</code></pre></div>
+<p>After the first successful run, inspect the outputs and decide whether the
+study design supports formal group comparisons.</p>
+<p>For a single-group dataset, use:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>--analysis-mode<span class="w"> </span>exploratory
+</code></pre></div>
+<p>For a validated two-group or multi-group design, use:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>--analysis-mode<span class="w"> </span>comparison
+</code></pre></div>
+<h2 id="next-step">Next step<a class="headerlink" href="#next-step" title="Permanent link">&para;</a></h2>
+<p>After choosing the analysis mode, review the
+<a href="../command-line/">Command-line reference</a> for all available
+options.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../input-files/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Input files">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Input files
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../command-line/" class="md-footer__link md-footer__link--next" aria-label="Next: Command-line reference">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Command-line reference
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      MTD Explorer · Open-source RNA-seq and metatranscriptomics workflow
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
