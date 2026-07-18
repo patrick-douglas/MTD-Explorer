@@ -77,6 +77,9 @@ bash Create_custom_host.sh \
 
 ## What HostSpecies.csv does
 
+For a searchable list of curated hosts, see [Supported host species](supported-host-species.md).
+
+
 `HostSpecies.csv` is the host reference registry used by MTD Explorer.
 
 It is not just a species list. It also stores the metadata required to resolve
