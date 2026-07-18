@@ -1,83 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/getting-started/installation/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/getting-started/installation/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/getting-started/quick-start/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/getting-started/quick-start/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/getting-started/requirements/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/getting-started/requirements/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/getting-started/verify-installation/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/getting-started/verify-installation/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/reference/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/reference/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/troubleshooting/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/troubleshooting/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/user-guide/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/user-guide/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/user-guide/analysis-modes/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/user-guide/analysis-modes/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/user-guide/command-line/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/user-guide/command-line/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/user-guide/functional-profiling-outputs/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/user-guide/functional-profiling-outputs/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/user-guide/halla-integration-outputs/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/user-guide/halla-integration-outputs/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/user-guide/host-expression-outputs/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/user-guide/host-expression-outputs/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/user-guide/input-files/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/user-guide/input-files/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/user-guide/methods-reproducibility-outputs/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/user-guide/methods-reproducibility-outputs/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/user-guide/microbiome-comparison-outputs/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/user-guide/microbiome-comparison-outputs/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/user-guide/output-files/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/user-guide/output-files/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/user-guide/ssgsea-outputs/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/user-guide/ssgsea-outputs/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/user-guide/taxonomic-exploratory-outputs/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/user-guide/taxonomic-exploratory-outputs/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
     <url>
-         <loc>https://patrick-douglas.github.io/MTD-Explorer-Explorer-Explorer/user-guide/taxonomic-visualizations/</loc>
+         <loc>https://patrick-douglas.github.io/MTD-Explorer/user-guide/taxonomic-visualizations/</loc>
          <lastmod>2026-07-18</lastmod>
     </url>
 </urlset>
