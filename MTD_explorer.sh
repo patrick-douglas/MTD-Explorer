@@ -1898,8 +1898,8 @@ mkdir -p "$heatmap_base" "$stacked_base" "$prevalence_base" "$detected_microbiom
                   --top_n "$pie_top_n" \
                   --auto_min_categories "$pie_auto_min_categories" \
                   --auto_max_categories "$pie_auto_max_categories" \
-                  --auto_target_categories "$pie_auto_target_categories"
-                > "$pie_log" 2>&1
+                  --auto_target_categories "$pie_auto_target_categories" \
+                  > "$pie_log" 2>&1
             then
                 echo "${y}[WARNING] Detected species pie chart failed. Continuing pipeline.${w}"
                 echo "Log:"
