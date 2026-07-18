@@ -6391,7 +6391,38 @@ else
     fi
 
 
-    Rscript "$DIFFERENTIAL_ANALYSIS_DIR/DEG_Anno_Plot.R" "${host_deg_args[@]}"
+R412_RSCRIPT="$condapath/envs/R412/bin/Rscript"
+
+if [[ ! -x "$R412_RSCRIPT" ]]; then
+    die "R412 Rscript not found or not executable: $R412_RSCRIPT"
+fi
+
+echo "${g}[HOST DEG] R environment validation:${w}"
+echo "  Active Conda environment: ${CONDA_DEFAULT_ENV:-none}"
+echo "  Rscript: $R412_RSCRIPT"
+
+if ! "$R412_RSCRIPT" --vanilla -e '
+if (!requireNamespace("DESeq2", quietly = TRUE)) {
+    stop("DESeq2 is not available in the R412 environment.")
+}
+cat(
+    "[OK] DESeq2 ",
+    as.character(packageVersion("DESeq2")),
+    " found at ",
+    find.package("DESeq2"),
+    "\n",
+    sep = ""
+)
+'; then
+    die "R412 validation failed before host DEG analysis."
+fi
+
+if ! "$R412_RSCRIPT" \
+    "$DIFFERENTIAL_ANALYSIS_DIR/DEG_Anno_Plot.R" \
+    "${host_deg_args[@]}"
+then
+    die "Host DEG analysis failed in DEG_Anno_Plot.R."
+fi
 
     # ------------------------------------------------------------
     # Extra DEG volcano plots with EnhancedVolcano
