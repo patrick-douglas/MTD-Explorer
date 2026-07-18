@@ -7,34 +7,70 @@ Use this page as a map of the documentation.
 
 ## Start here
 
-<div class="grid cards" markdown>
+<div class="overview-start-grid">
 
-- **Prepare an analysis**
+  <a class="overview-start-card" href="input-files/">
+    <img
+      class="overview-start-icon"
+      src="../assets/images/user-guide/overview/prepare-analysis.webp"
+      alt=""
+    >
+    <h3>Prepare an analysis</h3>
+    <p>
+      Set up input FASTQ files, samplesheets, metadata, and analysis modes.
+    </p>
+    <div class="overview-start-links">
+      <span>Input files &middot; Analysis modes</span>
+    </div>
+  </a>
 
-    Set up input FASTQ files, samplesheets, metadata, and analysis modes.
+  <a class="overview-start-card" href="command-line/">
+    <img
+      class="overview-start-icon"
+      src="../assets/images/user-guide/overview/command-line.webp"
+      alt=""
+    >
+    <h3>Run from the command line</h3>
+    <p>
+      Review the main options used to control host, microbiome, functional,
+      and integration analyses.
+    </p>
+    <div class="overview-start-links">
+      <span>Command-line reference</span>
+    </div>
+  </a>
 
-    [Input files](input-files.md) · [Analysis modes](analysis-modes.md)
+  <a class="overview-start-card" href="output-files/">
+    <img
+      class="overview-start-icon"
+      src="../assets/images/user-guide/overview/output-folder.webp"
+      alt=""
+    >
+    <h3>Understand the output folder</h3>
+    <p>
+      Learn how the major result folders are organized before opening the
+      detailed output pages.
+    </p>
+    <div class="overview-start-links">
+      <span>Output files</span>
+    </div>
+  </a>
 
-- **Run from the command line**
-
-    Review the main command-line options used to control host, microbiome,
-    functional, and integration analyses.
-
-    [Command-line reference](command-line.md)
-
-- **Understand the output folder**
-
-    Learn how the major result folders are organized before opening the more
-    detailed output pages.
-
-    [Output files](output-files.md)
-
-- **Check reproducibility**
-
-    Inspect run parameters, software paths, database settings, and analysis
-    metadata.
-
-    [Methods and reproducibility outputs](methods-reproducibility-outputs.md)
+  <a class="overview-start-card" href="methods-reproducibility-outputs/">
+    <img
+      class="overview-start-icon"
+      src="../assets/images/user-guide/overview/reproducibility.webp"
+      alt=""
+    >
+    <h3>Check reproducibility</h3>
+    <p>
+      Inspect run parameters, software paths, database settings, and analysis
+      metadata.
+    </p>
+    <div class="overview-start-links">
+      <span>Methods and reproducibility outputs</span>
+    </div>
+  </a>
 
 </div>
 
