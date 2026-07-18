@@ -192,5 +192,5 @@ or the ssGSEA score matrix is too sparse for plotting.
 - [Microbiome comparison outputs](microbiome-comparison-outputs.md)
 - [Command-line reference](command-line.md)
 
-[mtd-explorer]: https://github.com/patrick-douglas/MTD
+[mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer-Explorer
 [ssgsea]: https://gsea-msigdb.github.io/ssGSEA-gpmodule/v10/

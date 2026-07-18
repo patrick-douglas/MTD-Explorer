@@ -294,7 +294,7 @@ citation("vegan")
 citation("ggplot2")
 ```
 
-[mtd-explorer]: https://github.com/patrick-douglas/MTD
+[mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer-Explorer
 [gnu-parallel]: https://www.gnu.org/software/parallel/
 [kraken2]: https://ccb.jhu.edu/software/kraken2/index.shtml
 [bracken]: https://github.com/jenniferlu717/Bracken

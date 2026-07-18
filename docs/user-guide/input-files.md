@@ -446,7 +446,7 @@ After preparing input files, continue to
 [Analysis modes](analysis-modes.md) or review the
 [Command-line reference](command-line.md).
 
-[mtd-explorer]: https://github.com/patrick-douglas/MTD
-[examples]: https://github.com/patrick-douglas/MTD/tree/main/examples
+[mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer-Explorer
+[examples]: https://github.com/patrick-douglas/MTD-Explorer-Explorer/tree/main/examples
 [fastp]: https://github.com/OpenGene/fastp
 [sra-toolkit]: https://github.com/ncbi/sra-tools

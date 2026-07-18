@@ -244,7 +244,7 @@ After reviewing taxonomic visualizations, return to
 [Output files](output-files.md) or continue to the
 [Command-line reference](command-line.md).
 
-[mtd-explorer]: https://github.com/patrick-douglas/MTD
+[mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer-Explorer
 [kraken2]: https://ccb.jhu.edu/software/kraken2/index.shtml
 [bracken]: https://github.com/jenniferlu717/Bracken
 [krona]: https://github.com/marbl/Krona/wiki

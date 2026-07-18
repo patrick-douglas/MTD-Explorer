@@ -178,7 +178,7 @@ design.
 - [Verify installation](../getting-started/verify-installation.md)
 - [Quick start](../getting-started/quick-start.md)
 
-[mtd-explorer]: https://github.com/patrick-douglas/MTD
+[mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer-Explorer
 [krona]: https://github.com/marbl/Krona/wiki
 [graphlan]: https://github.com/biobakery/graphlan
 [humann]: https://github.com/biobakery/humann

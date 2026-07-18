@@ -92,7 +92,7 @@ be performed.
 
 Example samplesheets are available in the repository:
 
-[Open the examples directory](https://github.com/patrick-douglas/MTD/tree/main/examples)
+[Open the examples directory](https://github.com/patrick-douglas/MTD-Explorer-Explorer/tree/main/examples)
 
 After cloning the repository, these files are also available locally at:
 
@@ -535,7 +535,7 @@ bash ~/MTD/MTD_check_installation.sh \
 
 If the problem persists, open a GitHub issue:
 
-[Open a GitHub issue](https://github.com/patrick-douglas/MTD/issues)
+[Open a GitHub issue](https://github.com/patrick-douglas/MTD-Explorer-Explorer/issues)
 
 ## Next step
 
