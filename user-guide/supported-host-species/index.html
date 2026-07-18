@@ -1,0 +1,3019 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Joint host transcriptome and microbiome analysis from RNA-seq data">
+      
+      
+        <meta name="author" content="Patrick Douglas Correa Pereira">
+      
+      
+        <link rel="canonical" href="https://patrick-douglas.github.io/MTD-Explorer/user-guide/supported-host-species/">
+      
+      
+        <link rel="prev" href="../custom-host-references/">
+      
+      
+        <link rel="next" href="../analysis-modes/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Supported host species - MTD Explorer</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/brand.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#supported-host-species" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="MTD Explorer" class="md-header__button md-logo" aria-label="MTD Explorer" data-md-component="logo">
+      
+  <img src="../../assets/images/mtd-explorer-mark.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            MTD Explorer
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Supported host species
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/patrick-douglas/MTD-Explorer" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    patrick-douglas/MTD-Explorer
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/requirements/" class="md-tabs__link">
+          
+  
+  
+  Getting started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  User guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reference/" class="md-tabs__link">
+          
+  
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../troubleshooting/" class="md-tabs__link">
+          
+  
+  
+  Troubleshooting
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="MTD Explorer" class="md-nav__button md-logo" aria-label="MTD Explorer" data-md-component="logo">
+      
+  <img src="../../assets/images/mtd-explorer-mark.svg" alt="logo">
+
+    </a>
+    MTD Explorer
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/patrick-douglas/MTD-Explorer" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    patrick-douglas/MTD-Explorer
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System requirements
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/verify-installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Verify installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../input-files/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Input files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../custom-host-references/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom host references
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Supported host species
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Supported host species
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#main-host-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Main host list
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-use-a-listed-host" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to use a listed host
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#if-a-species-is-not-listed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        If a species is not listed
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kegg-column" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        KEGG column
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analysis-modes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analysis modes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command-line/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command-line reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../output-files/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Output files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../taxonomic-exploratory-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Taxonomic exploratory outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../taxonomic-visualizations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Taxonomic visualizations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../host-expression-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Host expression outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../microbiome-comparison-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Microbiome comparison outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../functional-profiling-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Functional profiling outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssgsea-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ssGSEA outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../halla-integration-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HAllA integration outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../methods-reproducibility-outputs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Methods and reproducibility outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Academic references
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Troubleshooting
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Common problems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#main-host-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Main host list
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-use-a-listed-host" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to use a listed host
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#if-a-species-is-not-listed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        If a species is not listed
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kegg-column" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        KEGG column
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="supported-host-species">Supported host species<a class="headerlink" href="#supported-host-species" title="Permanent link">&para;</a></h1>
+<p>This page is generated from <code>HostSpecies.csv</code>, the curated host registry used by
+<a href="https://github.com/patrick-douglas/MTD-Explorer">MTD Explorer</a>.</p>
+<p><code>HostSpecies.csv</code> tells MTD Explorer which host species can be resolved
+automatically by <code>Create_custom_host.sh</code>, and which genome, annotation, and
+protein reference metadata should be used.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>A species listed here is a curated host entry. For automatic custom-host
+creation, the entry also needs complete reference metadata, especially
+genome FASTA, GTF, protein FASTA, assembly, and reference status fields.</p>
+</div>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Total curated host entries: <strong>201</strong></li>
+<li>Source file: <code>HostSpecies.csv</code></li>
+</ul>
+<p>Reference-status counts:</p>
+<ul>
+<li><code>COMPLETE</code>: 200</li>
+<li><code>COMPLETE_OVERRIDE</code>: 1</li>
+</ul>
+<h2 id="main-host-list">Main host list<a class="headerlink" href="#main-host-list" title="Permanent link">&para;</a></h2>
+<p>Use this table to find the NCBI Taxon ID, scientific name, and common name of a
+host species.</p>
+<table>
+<thead>
+<tr>
+<th>NCBI Taxon ID</th>
+<th>Scientific name</th>
+<th>Common name</th>
+<th>Reference status</th>
+<th>KEGG</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>80966</td>
+<td>Acanthochromis polyacanthus</td>
+<td>Spiny_chromis</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>9646</td>
+<td>Ailuropoda melanoleuca</td>
+<td>Giant_panda</td>
+<td>COMPLETE</td>
+<td>aml</td>
+</tr>
+<tr>
+<td>61819</td>
+<td>Amphilophus citrinellus</td>
+<td>Midas_cichlid</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>80972</td>
+<td>Amphiprion ocellaris</td>
+<td>Clown_anemonefish</td>
+<td>COMPLETE</td>
+<td>aoce</td>
+</tr>
+<tr>
+<td>161767</td>
+<td>Amphiprion percula</td>
+<td>Orange_clownfish</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>64144</td>
+<td>Anabas testudineus</td>
+<td>Climbing_perch</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>8839</td>
+<td>Anas platyrhynchos</td>
+<td>Mallard</td>
+<td>COMPLETE</td>
+<td>apla</td>
+</tr>
+<tr>
+<td>8840</td>
+<td>Anas platyrhynchos platyrhynchos</td>
+<td>Common_mallard</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>28377</td>
+<td>Anolis carolinensis</td>
+<td>Green_anole</td>
+<td>COMPLETE</td>
+<td>acs</td>
+</tr>
+<tr>
+<td>132585</td>
+<td>Anser brachyrhynchus</td>
+<td>Pink_footed_goose</td>
+<td>COMPLETE</td>
+<td>abrc</td>
+</tr>
+<tr>
+<td>37293</td>
+<td>Aotus nancymaae</td>
+<td>Ma_s_night_monkey</td>
+<td>COMPLETE</td>
+<td>anan</td>
+</tr>
+<tr>
+<td>223781</td>
+<td>Aquila chrysaetos chrysaetos</td>
+<td>Golden_eagle</td>
+<td>COMPLETE</td>
+<td>achc</td>
+</tr>
+<tr>
+<td>8154</td>
+<td>Astatotilapia calliptera</td>
+<td>Eastern_happy</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>7994</td>
+<td>Astyanax mexicanus</td>
+<td>Mexican_tetra</td>
+<td>COMPLETE</td>
+<td>amex</td>
+</tr>
+<tr>
+<td>9771</td>
+<td>Balaenoptera musculus</td>
+<td>Blue_whale</td>
+<td>COMPLETE</td>
+<td>bmus</td>
+</tr>
+<tr>
+<td>158456</td>
+<td>Betta splendens</td>
+<td>Siamese_fighting_fish</td>
+<td>COMPLETE</td>
+<td>bspl</td>
+</tr>
+<tr>
+<td>6526</td>
+<td>Biomphalaria glabrata</td>
+<td>Bloodfluke_planorb</td>
+<td>COMPLETE</td>
+<td>bgt</td>
+</tr>
+<tr>
+<td>43346</td>
+<td>Bison bison bison</td>
+<td>American_bison</td>
+<td>COMPLETE</td>
+<td>bbis</td>
+</tr>
+<tr>
+<td>30521</td>
+<td>Bos grunniens</td>
+<td>Domestic_yak</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>30522</td>
+<td>Bos indicus x Bos taurus</td>
+<td>Hybrid_cattle</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>72004</td>
+<td>Bos mutus</td>
+<td>Wild_yak</td>
+<td>COMPLETE</td>
+<td>bom</td>
+</tr>
+<tr>
+<td>9913</td>
+<td>Bos taurus</td>
+<td>Cattle</td>
+<td>COMPLETE</td>
+<td>bta</td>
+</tr>
+<tr>
+<td>6239</td>
+<td>Caenorhabditis elegans</td>
+<td>Nematode</td>
+<td>COMPLETE</td>
+<td>cel</td>
+</tr>
+<tr>
+<td>198806</td>
+<td>Calidris pugnax</td>
+<td>Ruff</td>
+<td>COMPLETE</td>
+<td>narq</td>
+</tr>
+<tr>
+<td>9483</td>
+<td>Callithrix jacchus</td>
+<td>White_tufted_ear_marmoset</td>
+<td>COMPLETE</td>
+<td>cjc</td>
+</tr>
+<tr>
+<td>7868</td>
+<td>Callorhinchus milii</td>
+<td>Elephant_shark</td>
+<td>COMPLETE</td>
+<td>cmk</td>
+</tr>
+<tr>
+<td>9838</td>
+<td>Camelus dromedarius</td>
+<td>Arabian_camel</td>
+<td>COMPLETE</td>
+<td>cdk</td>
+</tr>
+<tr>
+<td>286419</td>
+<td>Canis lupus dingo</td>
+<td>Dingo</td>
+<td>COMPLETE</td>
+<td>clud</td>
+</tr>
+<tr>
+<td>9615</td>
+<td>Canis lupus familiaris</td>
+<td>Dog</td>
+<td>COMPLETE</td>
+<td>cfa</td>
+</tr>
+<tr>
+<td>9925</td>
+<td>Capra hircus</td>
+<td>Goat</td>
+<td>COMPLETE</td>
+<td>chx</td>
+</tr>
+<tr>
+<td>7957</td>
+<td>Carassius auratus</td>
+<td>Goldfish</td>
+<td>COMPLETE</td>
+<td>caua</td>
+</tr>
+<tr>
+<td>1868482</td>
+<td>Carlito syrichta</td>
+<td>Philippine_tarsier</td>
+<td>COMPLETE</td>
+<td>csyr</td>
+</tr>
+<tr>
+<td>51154</td>
+<td>Catagonus wagneri</td>
+<td>Chacoan_peccary</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>10141</td>
+<td>Cavia porcellus</td>
+<td>Domestic_guinea_pig</td>
+<td>COMPLETE</td>
+<td>cpoc</td>
+</tr>
+<tr>
+<td>2715852</td>
+<td>Cebus capucinus imitator</td>
+<td>Panamanian_white_faced_capuchin</td>
+<td>COMPLETE</td>
+<td>cimi</td>
+</tr>
+<tr>
+<td>9531</td>
+<td>Cercocebus atys</td>
+<td>Sooty_mangabey</td>
+<td>COMPLETE</td>
+<td>caty</td>
+</tr>
+<tr>
+<td>84702</td>
+<td>Cervus hanglu yarkandensis</td>
+<td>Yarkand_deer</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>106734</td>
+<td>Chelonoidis abingdonii</td>
+<td>Abingdon_island_giant_tortoise</td>
+<td>COMPLETE</td>
+<td>cabi</td>
+</tr>
+<tr>
+<td>34839</td>
+<td>Chinchilla lanigera</td>
+<td>Long_tailed_chinchilla</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>60711</td>
+<td>Chlorocebus sabaeus</td>
+<td>African_green_monkey</td>
+<td>COMPLETE</td>
+<td>csab</td>
+</tr>
+<tr>
+<td>9358</td>
+<td>Choloepus hoffmanni</td>
+<td>Hoffmann_s_two_fingered_sloth</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>8478</td>
+<td>Chrysemys picta bellii</td>
+<td>Western_painted_turtle</td>
+<td>COMPLETE</td>
+<td>cpic</td>
+</tr>
+<tr>
+<td>7719</td>
+<td>Ciona intestinalis</td>
+<td>Sea_squirt_Ciona_intestinalis</td>
+<td>COMPLETE</td>
+<td>cin</td>
+</tr>
+<tr>
+<td>51511</td>
+<td>Ciona savignyi</td>
+<td>Sea_squirt_Ciona_savignyi</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>7950</td>
+<td>Clupea harengus</td>
+<td>Atlantic_herring</td>
+<td>COMPLETE</td>
+<td>char</td>
+</tr>
+<tr>
+<td>56716</td>
+<td>Cottoperca gobio</td>
+<td>Channel_bull_blenny</td>
+<td>COMPLETE</td>
+<td>cgob</td>
+</tr>
+<tr>
+<td>93934</td>
+<td>Coturnix japonica</td>
+<td>Japanese_quail</td>
+<td>COMPLETE</td>
+<td>cjo</td>
+</tr>
+<tr>
+<td>8502</td>
+<td>Crocodylus porosus</td>
+<td>Australian_saltwater_crocodile</td>
+<td>COMPLETE</td>
+<td>cpoo</td>
+</tr>
+<tr>
+<td>8103</td>
+<td>Cyclopterus lumpus</td>
+<td>Lumpfish</td>
+<td>COMPLETE</td>
+<td>clum</td>
+</tr>
+<tr>
+<td>244447</td>
+<td>Cynoglossus semilaevis</td>
+<td>Tongue_sole</td>
+<td>COMPLETE</td>
+<td>csem</td>
+</tr>
+<tr>
+<td>28743</td>
+<td>Cyprinodon variegatus</td>
+<td>Sheepshead_minnow</td>
+<td>COMPLETE</td>
+<td>cvg</td>
+</tr>
+<tr>
+<td>7962</td>
+<td>Cyprinus carpio</td>
+<td>Common_carp</td>
+<td>COMPLETE</td>
+<td>ccar</td>
+</tr>
+<tr>
+<td>7955</td>
+<td>Danio rerio</td>
+<td>Zebrafish</td>
+<td>COMPLETE</td>
+<td>dre</td>
+</tr>
+<tr>
+<td>9361</td>
+<td>Dasypus novemcinctus</td>
+<td>Nine_banded_armadillo</td>
+<td>COMPLETE</td>
+<td>dnm</td>
+</tr>
+<tr>
+<td>9749</td>
+<td>Delphinapterus leucas</td>
+<td>Beluga_whale</td>
+<td>COMPLETE</td>
+<td>dle</td>
+</tr>
+<tr>
+<td>299321</td>
+<td>Denticeps clupeoides</td>
+<td>Denticle_herring</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>13489</td>
+<td>Dicentrarchus labrax</td>
+<td>European_seabass</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>10020</td>
+<td>Dipodomys ordii</td>
+<td>Ord_s_kangaroo_rat</td>
+<td>COMPLETE</td>
+<td>dord</td>
+</tr>
+<tr>
+<td>7227</td>
+<td>Drosophila melanogaster</td>
+<td>Fruit_fly</td>
+<td>COMPLETE</td>
+<td>dme</td>
+</tr>
+<tr>
+<td>9371</td>
+<td>Echinops telfairi</td>
+<td>Small_Madagascar_hedgehog</td>
+<td>COMPLETE</td>
+<td>etf</td>
+</tr>
+<tr>
+<td>8005</td>
+<td>Electrophorus electricus</td>
+<td>Electric_eel</td>
+<td>COMPLETE</td>
+<td>eee</td>
+</tr>
+<tr>
+<td>7764</td>
+<td>Eptatretus burgeri</td>
+<td>Inshore_hagfish</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>83772</td>
+<td>Equus asinus asinus</td>
+<td>Donkey</td>
+<td>COMPLETE_OVERRIDE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>9796</td>
+<td>Equus caballus</td>
+<td>Horse</td>
+<td>COMPLETE</td>
+<td>ecb</td>
+</tr>
+<tr>
+<td>9365</td>
+<td>Erinaceus europaeus</td>
+<td>Western_European_hedgehog</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>27687</td>
+<td>Erpetoichthys calabaricus</td>
+<td>Reedfish</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>8010</td>
+<td>Esox lucius</td>
+<td>Northern_pike</td>
+<td>COMPLETE</td>
+<td>els</td>
+</tr>
+<tr>
+<td>9685</td>
+<td>Felis catus</td>
+<td>Domestic_cat</td>
+<td>COMPLETE</td>
+<td>fca</td>
+</tr>
+<tr>
+<td>59894</td>
+<td>Ficedula albicollis</td>
+<td>Collared_flycatcher</td>
+<td>COMPLETE</td>
+<td>fab</td>
+</tr>
+<tr>
+<td>8078</td>
+<td>Fundulus heteroclitus</td>
+<td>Mummichog</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>8049</td>
+<td>Gadus morhua</td>
+<td>Atlantic_cod</td>
+<td>COMPLETE</td>
+<td>gmh</td>
+</tr>
+<tr>
+<td>9031</td>
+<td>Gallus gallus</td>
+<td>Chicken</td>
+<td>COMPLETE</td>
+<td>gga</td>
+</tr>
+<tr>
+<td>69293</td>
+<td>Gasterosteus aculeatus</td>
+<td>Three_spined_stickleback</td>
+<td>COMPLETE</td>
+<td>gat</td>
+</tr>
+<tr>
+<td>48883</td>
+<td>Geospiza fortis</td>
+<td>Medium_ground_finch</td>
+<td>COMPLETE</td>
+<td>gfr</td>
+</tr>
+<tr>
+<td>1825980</td>
+<td>Gopherus evgoodei</td>
+<td>Goodes_thornscrub_tortoise</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>9595</td>
+<td>Gorilla gorilla gorilla</td>
+<td>Western_Lowland_Gorilla</td>
+<td>COMPLETE</td>
+<td>ggo</td>
+</tr>
+<tr>
+<td>8153</td>
+<td>Haplochromis burtoni</td>
+<td>Burton_s_mouthbrooder</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>10181</td>
+<td>Heterocephalus glaber</td>
+<td>Naked_mole_rat</td>
+<td>COMPLETE</td>
+<td>hgl</td>
+</tr>
+<tr>
+<td>109280</td>
+<td>Hippocampus comes</td>
+<td>Tiger_tail_seahorse</td>
+<td>COMPLETE</td>
+<td>hcq</td>
+</tr>
+<tr>
+<td>9606</td>
+<td>Homo sapiens</td>
+<td>Human</td>
+<td>COMPLETE</td>
+<td>hsa</td>
+</tr>
+<tr>
+<td>62062</td>
+<td>Hucho hucho</td>
+<td>Huchen</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>7998</td>
+<td>Ictalurus punctatus</td>
+<td>Channel_catfish</td>
+<td>COMPLETE</td>
+<td>ipu</td>
+</tr>
+<tr>
+<td>43179</td>
+<td>Ictidomys tridecemlineatus</td>
+<td>Thirteen_lined_ground_squirrel</td>
+<td>COMPLETE</td>
+<td>iti</td>
+</tr>
+<tr>
+<td>51337</td>
+<td>Jaculus jaculus</td>
+<td>Lesser_Egyptian_jerboa</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>37003</td>
+<td>Kryptolebias marmoratus</td>
+<td>Mangrove_rivulus</td>
+<td>COMPLETE</td>
+<td>kmr</td>
+</tr>
+<tr>
+<td>56723</td>
+<td>Labrus bergylta</td>
+<td>Ballan_wrasse</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>215358</td>
+<td>Larimichthys crocea</td>
+<td>Large_yellow_croaker</td>
+<td>COMPLETE</td>
+<td>lco</td>
+</tr>
+<tr>
+<td>8187</td>
+<td>Lates calcarifer</td>
+<td>Barramundi_perch</td>
+<td>COMPLETE</td>
+<td>lcf</td>
+</tr>
+<tr>
+<td>8630</td>
+<td>Laticauda laticaudata</td>
+<td>Blue_ringed_sea_krait</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>7897</td>
+<td>Latimeria chalumnae</td>
+<td>Coelacanth</td>
+<td>COMPLETE</td>
+<td>lcm</td>
+</tr>
+<tr>
+<td>7918</td>
+<td>Lepisosteus oculatus</td>
+<td>Spotted_gar</td>
+<td>COMPLETE</td>
+<td>loc</td>
+</tr>
+<tr>
+<td>445787</td>
+<td>Leptobrachium leishanense</td>
+<td>Leishan_spiny_toad</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>9785</td>
+<td>Loxodonta africana</td>
+<td>African_savanna_elephant</td>
+<td>COMPLETE</td>
+<td>lav</td>
+</tr>
+<tr>
+<td>9541</td>
+<td>Macaca fascicularis</td>
+<td>Crab_eating_macaque</td>
+<td>COMPLETE</td>
+<td>mcf</td>
+</tr>
+<tr>
+<td>9544</td>
+<td>Macaca mulatta</td>
+<td>Macaque</td>
+<td>COMPLETE</td>
+<td>mcc</td>
+</tr>
+<tr>
+<td>9545</td>
+<td>Macaca nemestrina</td>
+<td>Pig_tailed_macaque</td>
+<td>COMPLETE</td>
+<td>mni</td>
+</tr>
+<tr>
+<td>9568</td>
+<td>Mandrillus leucophaeus</td>
+<td>Drill</td>
+<td>COMPLETE</td>
+<td>mleu</td>
+</tr>
+<tr>
+<td>9994</td>
+<td>Marmota marmota marmota</td>
+<td>Alpine_marmot</td>
+<td>COMPLETE</td>
+<td>mmma</td>
+</tr>
+<tr>
+<td>205130</td>
+<td>Mastacembelus armatus</td>
+<td>Zig_zag_eel</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>106582</td>
+<td>Maylandia zebra</td>
+<td>Zebra_mbuna</td>
+<td>COMPLETE</td>
+<td>mze</td>
+</tr>
+<tr>
+<td>9103</td>
+<td>Meleagris gallopavo</td>
+<td>Turkey</td>
+<td>COMPLETE</td>
+<td>mgp</td>
+</tr>
+<tr>
+<td>10036</td>
+<td>Mesocricetus auratus</td>
+<td>Golden_Hamster</td>
+<td>COMPLETE</td>
+<td>maua</td>
+</tr>
+<tr>
+<td>30608</td>
+<td>Microcebus murinus</td>
+<td>Gray_mouse_lemur</td>
+<td>COMPLETE</td>
+<td>mmur</td>
+</tr>
+<tr>
+<td>79684</td>
+<td>Microtus ochrogaster</td>
+<td>Vole</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>13616</td>
+<td>Monodelphis domestica</td>
+<td>Gray_short_tailed_opossum</td>
+<td>COMPLETE</td>
+<td>mdo</td>
+</tr>
+<tr>
+<td>40151</td>
+<td>Monodon monoceros</td>
+<td>Narwhal</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>68415</td>
+<td>Moschus moschiferus</td>
+<td>Siberian_musk_deer</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>10089</td>
+<td>Mus caroli</td>
+<td>Ryukyu_mouse</td>
+<td>COMPLETE</td>
+<td>mcal</td>
+</tr>
+<tr>
+<td>10090</td>
+<td>Mus musculus</td>
+<td>Mouse</td>
+<td>COMPLETE</td>
+<td>mmu</td>
+</tr>
+<tr>
+<td>10093</td>
+<td>Mus pahari</td>
+<td>Shrew_mouse</td>
+<td>COMPLETE</td>
+<td>mpah</td>
+</tr>
+<tr>
+<td>10103</td>
+<td>Mus spicilegus</td>
+<td>Steppe_mouse</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>10096</td>
+<td>Mus spretus</td>
+<td>Western_wild_mouse</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>9669</td>
+<td>Mustela putorius furo</td>
+<td>Domestic_ferret</td>
+<td>COMPLETE</td>
+<td>mpuf</td>
+</tr>
+<tr>
+<td>59463</td>
+<td>Myotis lucifugus</td>
+<td>Little_brown_bat</td>
+<td>COMPLETE</td>
+<td>mlf</td>
+</tr>
+<tr>
+<td>586833</td>
+<td>Myripristis murdjan</td>
+<td>Pinecone_soldierfish</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>35670</td>
+<td>Naja naja</td>
+<td>Indian_cobra</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>1026970</td>
+<td>Nannospalax galili</td>
+<td>Upper_Galilee_mountains_blind_mole_rat</td>
+<td>COMPLETE</td>
+<td>ngi</td>
+</tr>
+<tr>
+<td>32507</td>
+<td>Neolamprologus brichardi</td>
+<td>Lyretail_cichlid</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>452646</td>
+<td>Neovison vison</td>
+<td>American_mink</td>
+<td>COMPLETE</td>
+<td>nvs</td>
+</tr>
+<tr>
+<td>61853</td>
+<td>Nomascus leucogenys</td>
+<td>Northern_white_cheeked_gibbon</td>
+<td>COMPLETE</td>
+<td>nle</td>
+</tr>
+<tr>
+<td>9315</td>
+<td>Notamacropus eugenii</td>
+<td>Tammar_wallaby</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>8663</td>
+<td>Notechis scutatus</td>
+<td>Mainland_tiger_snake</td>
+<td>COMPLETE</td>
+<td>nss</td>
+</tr>
+<tr>
+<td>105023</td>
+<td>Nothobranchius furzeri</td>
+<td>Turquoise_killifish</td>
+<td>COMPLETE</td>
+<td>nfu</td>
+</tr>
+<tr>
+<td>9978</td>
+<td>Ochotona princeps</td>
+<td>American_pika</td>
+<td>COMPLETE</td>
+<td>opi</td>
+</tr>
+<tr>
+<td>10160</td>
+<td>Octodon degus</td>
+<td>Degu</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>8019</td>
+<td>Oncorhynchus kisutch</td>
+<td>Coho_salmon</td>
+<td>COMPLETE</td>
+<td>oki</td>
+</tr>
+<tr>
+<td>8022</td>
+<td>Oncorhynchus mykiss</td>
+<td>Rainbow_trout</td>
+<td>COMPLETE</td>
+<td>omy</td>
+</tr>
+<tr>
+<td>74940</td>
+<td>Oncorhynchus tshawytscha</td>
+<td>Chinook_salmon</td>
+<td>COMPLETE</td>
+<td>otw</td>
+</tr>
+<tr>
+<td>8128</td>
+<td>Oreochromis niloticus</td>
+<td>Nile_tilapia</td>
+<td>COMPLETE</td>
+<td>onl</td>
+</tr>
+<tr>
+<td>9258</td>
+<td>Ornithorhynchus anatinus</td>
+<td>Platypus</td>
+<td>COMPLETE</td>
+<td>oaa</td>
+</tr>
+<tr>
+<td>9986</td>
+<td>Oryctolagus cuniculus</td>
+<td>Rabbit</td>
+<td>COMPLETE</td>
+<td>ocu</td>
+</tr>
+<tr>
+<td>123683</td>
+<td>Oryzias javanicus</td>
+<td>Javanese_ricefish</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>8090</td>
+<td>Oryzias latipes</td>
+<td>Japanese_medaka_HdrR</td>
+<td>COMPLETE</td>
+<td>ola</td>
+</tr>
+<tr>
+<td>30732</td>
+<td>Oryzias melastigma</td>
+<td>Indian_medaka</td>
+<td>COMPLETE</td>
+<td>oml</td>
+</tr>
+<tr>
+<td>183150</td>
+<td>Oryzias sinensis</td>
+<td>Chinese_medaka</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>30611</td>
+<td>Otolemur garnettii</td>
+<td>Small_eared_galago</td>
+<td>COMPLETE</td>
+<td>oga</td>
+</tr>
+<tr>
+<td>9940</td>
+<td>Ovis aries</td>
+<td>Sheep</td>
+<td>COMPLETE</td>
+<td>oas</td>
+</tr>
+<tr>
+<td>9597</td>
+<td>Pan paniscus</td>
+<td>Bonobo</td>
+<td>COMPLETE</td>
+<td>pps</td>
+</tr>
+<tr>
+<td>9598</td>
+<td>Pan troglodytes</td>
+<td>Chimpanzee</td>
+<td>COMPLETE</td>
+<td>ptr</td>
+</tr>
+<tr>
+<td>9689</td>
+<td>Panthera leo</td>
+<td>Lion</td>
+<td>COMPLETE</td>
+<td>plez</td>
+</tr>
+<tr>
+<td>9691</td>
+<td>Panthera pardus</td>
+<td>Leopard</td>
+<td>COMPLETE</td>
+<td>ppad</td>
+</tr>
+<tr>
+<td>74533</td>
+<td>Panthera tigris altaica</td>
+<td>Tiger</td>
+<td>COMPLETE</td>
+<td>ptg</td>
+</tr>
+<tr>
+<td>9555</td>
+<td>Papio anubis</td>
+<td>Olive_baboon</td>
+<td>COMPLETE</td>
+<td>panu</td>
+</tr>
+<tr>
+<td>1676925</td>
+<td>Paramormyrops kingsleyae</td>
+<td>Paramormyrops_kingsleyae</td>
+<td>COMPLETE</td>
+<td>pki</td>
+</tr>
+<tr>
+<td>9157</td>
+<td>Parus major</td>
+<td>Great_Tit</td>
+<td>COMPLETE</td>
+<td>pmaj</td>
+</tr>
+<tr>
+<td>13735</td>
+<td>Pelodiscus sinensis</td>
+<td>Chinese_softshell_turtle</td>
+<td>COMPLETE</td>
+<td>pss</td>
+</tr>
+<tr>
+<td>230844</td>
+<td>Peromyscus maniculatus bairdii</td>
+<td>Northern_American_deer_mouse</td>
+<td>COMPLETE</td>
+<td>pmav</td>
+</tr>
+<tr>
+<td>7757</td>
+<td>Petromyzon marinus</td>
+<td>Sea_lamprey</td>
+<td>COMPLETE</td>
+<td>pmrn</td>
+</tr>
+<tr>
+<td>38626</td>
+<td>Phascolarctos cinereus</td>
+<td>Koala</td>
+<td>COMPLETE</td>
+<td>pcw</td>
+</tr>
+<tr>
+<td>42100</td>
+<td>Phocoena sinus</td>
+<td>Vaquita</td>
+<td>COMPLETE</td>
+<td>psiu</td>
+</tr>
+<tr>
+<td>9755</td>
+<td>Physeter catodon</td>
+<td>Sperm_whale</td>
+<td>COMPLETE</td>
+<td>pcad</td>
+</tr>
+<tr>
+<td>64176</td>
+<td>Podarcis muralis</td>
+<td>Common_wall_lizard</td>
+<td>COMPLETE</td>
+<td>pmua</td>
+</tr>
+<tr>
+<td>48698</td>
+<td>Poecilia formosa</td>
+<td>Amazon_molly</td>
+<td>COMPLETE</td>
+<td>pfor</td>
+</tr>
+<tr>
+<td>48699</td>
+<td>Poecilia latipinna</td>
+<td>Sailfin_molly</td>
+<td>COMPLETE</td>
+<td>plai</td>
+</tr>
+<tr>
+<td>8081</td>
+<td>Poecilia reticulata</td>
+<td>Guppy</td>
+<td>COMPLETE</td>
+<td>pret</td>
+</tr>
+<tr>
+<td>9601</td>
+<td>Pongo abelii</td>
+<td>Sumatran_orangutan</td>
+<td>COMPLETE</td>
+<td>pon</td>
+</tr>
+<tr>
+<td>9813</td>
+<td>Procavia capensis</td>
+<td>Cape_rock_hyrax</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>1328070</td>
+<td>Prolemur simus</td>
+<td>Greater_bamboo_lemur</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>379532</td>
+<td>Propithecus coquereli</td>
+<td>Coquerel_s_sifaka</td>
+<td>COMPLETE</td>
+<td>pcoq</td>
+</tr>
+<tr>
+<td>8673</td>
+<td>Pseudonaja textilis</td>
+<td>Eastern_brown_snake</td>
+<td>COMPLETE</td>
+<td>ptex</td>
+</tr>
+<tr>
+<td>132908</td>
+<td>Pteropus vampyrus</td>
+<td>Large_flying_fox</td>
+<td>COMPLETE</td>
+<td>pva</td>
+</tr>
+<tr>
+<td>303518</td>
+<td>Pundamilia nyererei</td>
+<td>Makobe_Island_cichlid</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>42514</td>
+<td>Pygocentrus nattereri</td>
+<td>Red_bellied_piranha</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>10116</td>
+<td>Rattus norvegicus</td>
+<td>Norway_rat</td>
+<td>COMPLETE</td>
+<td>rno</td>
+</tr>
+<tr>
+<td>59479</td>
+<td>Rhinolophus ferrumequinum</td>
+<td>Greater_horseshoe_bat</td>
+<td>COMPLETE</td>
+<td>rfq</td>
+</tr>
+<tr>
+<td>61621</td>
+<td>Rhinopithecus bieti</td>
+<td>Black_snub_nosed_monkey</td>
+<td>COMPLETE</td>
+<td>rbb</td>
+</tr>
+<tr>
+<td>61622</td>
+<td>Rhinopithecus roxellana</td>
+<td>Golden_snub_nosed_monkey</td>
+<td>COMPLETE</td>
+<td>rro</td>
+</tr>
+<tr>
+<td>559292</td>
+<td>Saccharomyces cerevisiae</td>
+<td>Baker_s_yeast</td>
+<td>COMPLETE</td>
+<td>sce</td>
+</tr>
+<tr>
+<td>39432</td>
+<td>Saimiri boliviensis boliviensis</td>
+<td>Bolivian_squirrel_monkey</td>
+<td>COMPLETE</td>
+<td>sbq</td>
+</tr>
+<tr>
+<td>8030</td>
+<td>Salmo salar</td>
+<td>Atlantic_salmon</td>
+<td>COMPLETE</td>
+<td>sasa</td>
+</tr>
+<tr>
+<td>8032</td>
+<td>Salmo trutta</td>
+<td>Brown_trout</td>
+<td>COMPLETE</td>
+<td>stru</td>
+</tr>
+<tr>
+<td>96440</td>
+<td>Salvator merianae</td>
+<td>Argentine_black_and_white_tegu</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>283035</td>
+<td>Sander lucioperca</td>
+<td>Pike_perch</td>
+<td>COMPLETE</td>
+<td>sluc</td>
+</tr>
+<tr>
+<td>9305</td>
+<td>Sarcophilus harrisii</td>
+<td>Tasmanian_devil</td>
+<td>COMPLETE</td>
+<td>shr</td>
+</tr>
+<tr>
+<td>55149</td>
+<td>Sciurus vulgaris</td>
+<td>Eurasian_red_squirrel</td>
+<td>COMPLETE</td>
+<td>svul</td>
+</tr>
+<tr>
+<td>113540</td>
+<td>Scleropages formosus</td>
+<td>Asian_bonytongue</td>
+<td>COMPLETE</td>
+<td>sfm</td>
+</tr>
+<tr>
+<td>52904</td>
+<td>Scophthalmus maximus</td>
+<td>Turbot</td>
+<td>COMPLETE</td>
+<td>smau</td>
+</tr>
+<tr>
+<td>9135</td>
+<td>Serinus canaria</td>
+<td>Common_canary</td>
+<td>COMPLETE</td>
+<td>scan</td>
+</tr>
+<tr>
+<td>41447</td>
+<td>Seriola dumerili</td>
+<td>Greater_amberjack</td>
+<td>COMPLETE</td>
+<td>sdu</td>
+</tr>
+<tr>
+<td>1841481</td>
+<td>Seriola lalandi dorsalis</td>
+<td>Yellowtail_amberjack</td>
+<td>COMPLETE</td>
+<td>slal</td>
+</tr>
+<tr>
+<td>75366</td>
+<td>Sinocyclocheilus grahami</td>
+<td>Golden_line_barbel</td>
+<td>COMPLETE</td>
+<td>sgh</td>
+</tr>
+<tr>
+<td>42254</td>
+<td>Sorex araneus</td>
+<td>European_shrew</td>
+<td>COMPLETE</td>
+<td>sara</td>
+</tr>
+<tr>
+<td>8175</td>
+<td>Sparus aurata</td>
+<td>Gilthead_seabream</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>8508</td>
+<td>Sphenodon punctatus</td>
+<td>Tuatara</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>144197</td>
+<td>Stegastes partitus</td>
+<td>Bicolor_damselfish</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>2489341</td>
+<td>Strigops habroptila</td>
+<td>Kakapo</td>
+<td>COMPLETE</td>
+<td>shab</td>
+</tr>
+<tr>
+<td>441894</td>
+<td>Struthio camelus australis</td>
+<td>African_ostrich</td>
+<td>COMPLETE</td>
+<td>scam</td>
+</tr>
+<tr>
+<td>9823</td>
+<td>Sus scrofa</td>
+<td>Pig</td>
+<td>COMPLETE</td>
+<td>ssc</td>
+</tr>
+<tr>
+<td>59729</td>
+<td>Taeniopygia guttata</td>
+<td>Zebra_finch</td>
+<td>COMPLETE</td>
+<td>tgu</td>
+</tr>
+<tr>
+<td>2587831</td>
+<td>Terrapene carolina triunguis</td>
+<td>Three_toed_box_turtle</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>99883</td>
+<td>Tetraodon nigroviridis</td>
+<td>Spotted_green_pufferfish</td>
+<td>COMPLETE</td>
+<td>tng</td>
+</tr>
+<tr>
+<td>37347</td>
+<td>Tupaia belangeri</td>
+<td>Northern_tree_shrew</td>
+<td>COMPLETE</td>
+<td>tup</td>
+</tr>
+<tr>
+<td>9739</td>
+<td>Tursiops truncatus</td>
+<td>Bottlenosed_dolphin</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>9999</td>
+<td>Urocitellus parryii</td>
+<td>Arctic_ground_squirrel</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>9643</td>
+<td>Ursus americanus</td>
+<td>American_black_bear</td>
+<td>COMPLETE</td>
+<td>uar</td>
+</tr>
+<tr>
+<td>29073</td>
+<td>Ursus maritimus</td>
+<td>Polar_bear</td>
+<td>COMPLETE</td>
+<td>umr</td>
+</tr>
+<tr>
+<td>30538</td>
+<td>Vicugna pacos</td>
+<td>Alpaca</td>
+<td>COMPLETE</td>
+<td>vpc</td>
+</tr>
+<tr>
+<td>29139</td>
+<td>Vombatus ursinus</td>
+<td>Common_wombat</td>
+<td>COMPLETE</td>
+<td>—</td>
+</tr>
+<tr>
+<td>9627</td>
+<td>Vulpes vulpes</td>
+<td>Red_fox</td>
+<td>COMPLETE</td>
+<td>vvp</td>
+</tr>
+<tr>
+<td>8364</td>
+<td>Xenopus tropicalis</td>
+<td>Tropical_clawed_frog</td>
+<td>COMPLETE</td>
+<td>xtr</td>
+</tr>
+<tr>
+<td>8083</td>
+<td>Xiphophorus maculatus</td>
+<td>Southern_platyfish</td>
+<td>COMPLETE</td>
+<td>xma</td>
+</tr>
+</tbody>
+</table>
+<h2 id="how-to-use-a-listed-host">How to use a listed host<a class="headerlink" href="#how-to-use-a-listed-host" title="Permanent link">&para;</a></h2>
+<p>If the host appears in this table and has complete reference metadata, create
+the host reference with automatic mode:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">cd</span><span class="w"> </span>~/MTD
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>bash<span class="w"> </span>Create_custom_host.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span>--ncbi-taxon-id<span class="w"> </span>&lt;host_taxon_id&gt;
+</code></pre></div>
+<p>Then run MTD Explorer using the same Taxon ID:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>bash<span class="w"> </span>~/MTD/MTD_explorer.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span>-i<span class="w"> </span>/path/to/samplesheet.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>-o<span class="w"> </span>/path/to/output_directory<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span>-h<span class="w"> </span>&lt;host_taxon_id&gt;
+</code></pre></div>
+<h2 id="if-a-species-is-not-listed">If a species is not listed<a class="headerlink" href="#if-a-species-is-not-listed" title="Permanent link">&para;</a></h2>
+<p>If the host species is not present in <code>HostSpecies.csv</code>, use manual mode and
+provide the genome FASTA, GTF annotation, and protein FASTA directly:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>bash<span class="w"> </span>Create_custom_host.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span>--ncbi-taxon-id<span class="w"> </span>&lt;host_taxon_id&gt;<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>--scientific-name<span class="w"> </span><span class="s2">&quot;Genus species&quot;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span>--genome<span class="w"> </span>/path/to/genome.fa.gz<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span>--gtf-file<span class="w"> </span>/path/to/annotation.gtf.gz<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span>--protein-fasta<span class="w"> </span>/path/to/proteins.fa.gz
+</code></pre></div>
+<p>See <a href="../custom-host-references/">Custom host references</a> for details.</p>
+<h2 id="kegg-column">KEGG column<a class="headerlink" href="#kegg-column" title="Permanent link">&para;</a></h2>
+<p>The KEGG column is useful for checking whether species-specific <a href="https://www.genome.jp/kegg/">KEGG</a>
+mapping may be available.</p>
+<p>A missing KEGG value does not necessarily mean the host cannot be used. It means
+KEGG-specific outputs may be limited. MTD Explorer can still use protein FASTA
+and GTF information to build <a href="http://eggnog-mapper.embl.de/">eggNOG</a> and GO-derived resources, including
+a master GMT for <a href="https://gsea-msigdb.github.io/ssGSEA-gpmodule/v10/">ssGSEA</a>.</p>
+<h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Prefer one genome source and one release for genome FASTA, GTF, and protein
+  FASTA.</li>
+<li>For automatic mode, use the Taxon ID listed in the table.</li>
+<li>For manual mode, use the Taxon ID of the species being analyzed and provide
+  matching reference files.</li>
+<li>If a species uses a reference from another related species, check the
+  reference metadata in <code>HostSpecies.csv</code> before interpreting host results.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../custom-host-references/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Custom host references">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Custom host references
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../analysis-modes/" class="md-footer__link md-footer__link--next" aria-label="Next: Analysis modes">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Analysis modes
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      MTD Explorer · Open-source RNA-seq and metatranscriptomics workflow
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
