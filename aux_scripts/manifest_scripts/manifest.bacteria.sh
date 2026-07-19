@@ -143,10 +143,11 @@ fi
 
 awk -F '\t' '
     /^#/ { next }
+
     ($12 == "Complete Genome" || $12 == "Chromosome") && $20 != "na" {
         ftp_path = $20
+
         sub(/^ftp:/, "https:", ftp_path)
-        sub(/ftp\.ncbi\.nlm\.nih\.gov/, "ftp.ncbi.nih.gov", ftp_path)
         gsub(/\/+$/, "", ftp_path)
 
         n = split(ftp_path, a, "/")
@@ -158,13 +159,9 @@ awk -F '\t' '
             next
         }
 
-        sub(/_genomic\.fna\.gz$/, "", asm)
-        sub(/\.fna\.gz$/, "", asm)
-        sub(/_genomic$/, "", asm)
-
-        if (asm != "") {
-            print ftp_path "/" asm "_genomic.fna.gz"
-        }
+        # Preserve the complete assembly directory name.
+        # Some legitimate assembly names already end in "_genomic".
+        print ftp_path "/" asm "_genomic.fna.gz"
     }
 ' "$tmp_summary" | LC_ALL=C sort -u > "$tmp_manifest"
 
