@@ -146,6 +146,179 @@ load_persistent_installation_cache() {
     echo "------------------------------------------------------------"
 }
 
+# ------------------------------------------------------------
+# Persistent NCBI Ensembl -> Entrez mapping
+# ------------------------------------------------------------
+prepare_ncbi_gid_to_entrez_mapping() {
+    local requested_taxid="$1"
+    local reference_taxid="$2"
+    local gtf_genes="$3"
+    local functional_dir="$4"
+
+    local helper
+    local cache_dir
+    local cache_file
+    local partial_file
+    local output_file
+    local summary_file
+    local legacy_cache
+
+    helper="$MTDIR/aux_scripts/host_reference/build_gid_to_entrez_from_ncbi.py"
+
+    cache_dir="$offline_files_folder/NCBI_gene"
+    cache_file="$cache_dir/gene2ensembl.gz"
+    partial_file="${cache_file}.part"
+
+    output_file="$functional_dir/GID_to_ENTREZ_taxid_${requested_taxid}.tsv"
+    summary_file="$functional_dir/GID_to_ENTREZ_taxid_${requested_taxid}.summary.tsv"
+
+    legacy_cache="$MTDIR/reference_cache/ncbi_gene/gene2ensembl.gz"
+
+    GID_TO_ENTREZ_MAP=""
+    GID_TO_ENTREZ_SUMMARY=""
+    NCBI_GENE2ENSEMBL_CACHE="$cache_file"
+    ENTREZ_REFERENCE_TAXID="$reference_taxid"
+
+    if [[ ! -s "$helper" ]]; then
+        echo "[WARNING] NCBI Ensembl-to-Entrez helper was not found:"
+        echo "  $helper"
+        echo "[WARNING] Official KEGG input mapping will be unavailable."
+        return 0
+    fi
+
+    mkdir -p "$cache_dir" "$functional_dir"
+
+    # Adopt the older local cache when available, avoiding another 274 MB
+    # download after upgrading an existing MTD Explorer installation.
+    if [[ ! -s "$cache_file" && -s "$legacy_cache" ]]; then
+        echo "[NCBI GENE] Importing existing local cache:"
+        echo "  Source:      $legacy_cache"
+        echo "  Destination: $cache_file"
+
+        if ! cp --reflink=auto -f "$legacy_cache" "$cache_file" 2>/dev/null; then
+            cp -f "$legacy_cache" "$cache_file"
+        fi
+    fi
+
+    if [[ -s "$cache_file" ]]; then
+        if gzip -t "$cache_file" >/dev/null 2>&1; then
+            echo "[NCBI GENE] Reusing persistent gene2ensembl cache:"
+            echo "  $cache_file"
+        else
+            echo "[WARNING] Removing corrupt NCBI gene2ensembl cache:"
+            echo "  $cache_file"
+            rm -f "$cache_file"
+        fi
+    fi
+
+    if [[ ! -s "$cache_file" ]]; then
+        echo "[NCBI GENE] Downloading official gene2ensembl.gz"
+        echo "  Destination: $cache_file"
+
+        rm -f "$partial_file"
+
+        if command -v aria2c >/dev/null 2>&1; then
+            if ! aria2c \
+                --continue=true \
+                --max-connection-per-server=8 \
+                --split=8 \
+                --min-split-size=10M \
+                --retry-wait=20 \
+                --max-tries=50 \
+                --timeout=60 \
+                --connect-timeout=30 \
+                --allow-overwrite=true \
+                --auto-file-renaming=false \
+                --dir "$cache_dir" \
+                --out "$(basename "$partial_file")" \
+                "https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2ensembl.gz"
+            then
+                echo "[WARNING] NCBI gene2ensembl download failed."
+                rm -f "$partial_file"
+                return 0
+            fi
+
+        elif command -v curl >/dev/null 2>&1; then
+            if ! curl \
+                --fail \
+                --location \
+                --connect-timeout 30 \
+                --retry 10 \
+                --retry-delay 10 \
+                --retry-connrefused \
+                --output "$partial_file" \
+                "https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2ensembl.gz"
+            then
+                echo "[WARNING] NCBI gene2ensembl download failed."
+                rm -f "$partial_file"
+                return 0
+            fi
+
+        elif command -v wget >/dev/null 2>&1; then
+            if ! wget \
+                --tries=20 \
+                --waitretry=10 \
+                --timeout=60 \
+                --output-document="$partial_file" \
+                "https://ftp.ncbi.nlm.nih.gov/gene/DATA/gene2ensembl.gz"
+            then
+                echo "[WARNING] NCBI gene2ensembl download failed."
+                rm -f "$partial_file"
+                return 0
+            fi
+
+        else
+            echo "[WARNING] aria2c, curl and wget are unavailable."
+            echo "[WARNING] NCBI Ensembl-to-Entrez mapping was skipped."
+            return 0
+        fi
+
+        if ! gzip -t "$partial_file" >/dev/null 2>&1; then
+            echo "[WARNING] Downloaded gene2ensembl.gz failed validation."
+            rm -f "$partial_file"
+            return 0
+        fi
+
+        mv -f "$partial_file" "$cache_file"
+
+        echo "[OK] Persistent NCBI gene2ensembl cache created:"
+        echo "  $cache_file"
+    fi
+
+    echo "============================================================"
+    echo "[NCBI GENE MAPPING]"
+    echo "Requested TaxID: $requested_taxid"
+    echo "Reference TaxID: $reference_taxid"
+    echo "GTF gene list:   $gtf_genes"
+    echo "============================================================"
+
+    if ! conda run \
+        --no-capture-output \
+        -n MTD \
+        python3 "$helper" \
+            --gene2ensembl "$cache_file" \
+            --reference-taxid "$reference_taxid" \
+            --requested-taxid "$requested_taxid" \
+            --gtf-genes "$gtf_genes" \
+            --output "$output_file" \
+            --summary "$summary_file"
+    then
+        echo "[WARNING] No usable NCBI Ensembl-to-Entrez map was created."
+        echo "[WARNING] Host reference creation will continue."
+        echo "[WARNING] Official KEGG enrichment may be unavailable."
+        rm -f "$output_file" "$summary_file"
+        return 0
+    fi
+
+    if [[ -s "$output_file" ]]; then
+        GID_TO_ENTREZ_MAP="$output_file"
+    fi
+
+    if [[ -s "$summary_file" ]]; then
+        GID_TO_ENTREZ_SUMMARY="$summary_file"
+    fi
+}
+
 is_url() {
     case "$1" in
         http://*|https://*|ftp://*)
@@ -1364,6 +1537,18 @@ if [[ ! -s "$MASTER_GMT_BUILDER" ]]; then
 fi
 
 mkdir -p "$FUNCTIONAL_DIR"
+
+REFERENCE_TAXID_FOR_ENTREZ="${CSV_REFERENCE_TAXID:-$customized}"
+
+if [[ -z "$REFERENCE_TAXID_FOR_ENTREZ" ]]; then
+    REFERENCE_TAXID_FOR_ENTREZ="$customized"
+fi
+
+prepare_ncbi_gid_to_entrez_mapping \
+    "$customized" \
+    "$REFERENCE_TAXID_FOR_ENTREZ" \
+    "$ORGDB_GTF_GENES" \
+    "$FUNCTIONAL_DIR"
 
 PERSISTENT_EGGNOG_ANNOT="$FUNCTIONAL_DIR/taxid_${customized}_gold_orgdb.emapper.annotations"
 
