@@ -38,6 +38,13 @@ require_file() {
 # ------------------------------------------------------------
 VALIDATE_PAIRED_FASTQ="${VALIDATE_PAIRED_FASTQ:-1}"
 
+# Extra protection for paired-end trimming.
+# fastp can occasionally produce R1/R2 files with the same number
+# of reads but desynchronized read IDs. When enabled, MTD Explorer
+# validates mate IDs after fastp PE output and retries fastp if needed.
+FASTP_VALIDATE_PAIRED_IDS="${FASTP_VALIDATE_PAIRED_IDS:-1}"
+FASTP_PE_MAX_ATTEMPTS="${FASTP_PE_MAX_ATTEMPTS:-2}"
+
 FASTQ_RECORD_COUNT=0
 
 count_fastq_records() {
@@ -122,6 +129,111 @@ validate_fastq_pair() {
 
     echo "${g}[OK] Paired FASTQ validation:${w} $label"
     echo "  Records per mate: $read1_count"
+}
+
+check_fastq_pair_ids() {
+    local read1="$1"
+    local read2="$2"
+    local label="${3:-paired FASTQ}"
+
+    python3 - "$read1" "$read2" "$label" <<'PY_FASTQ_ID_CHECK'
+import sys
+import gzip
+
+read1, read2, label = sys.argv[1], sys.argv[2], sys.argv[3]
+
+def open_maybe_gz(path):
+    if path.endswith(".gz"):
+        return gzip.open(path, "rt", errors="replace")
+    return open(path, "rt", errors="replace")
+
+def norm_id(header):
+    h = header.strip()
+
+    if h.startswith("@"):
+        h = h[1:]
+
+    # Use the first token. Illumina mate information is often
+    # after a space, e.g. "1:N:0:..." and "2:N:0:...".
+    h = h.split()[0]
+
+    # Remove classic /1 and /2 mate suffixes only.
+    if h.endswith("/1") or h.endswith("/2"):
+        h = h[:-2]
+
+    return h
+
+def read_record(fh):
+    h = fh.readline()
+
+    if not h:
+        return None
+
+    s = fh.readline()
+    p = fh.readline()
+    q = fh.readline()
+
+    if not q:
+        raise RuntimeError("Incomplete FASTQ record near header: " + h.strip())
+
+    return h, s, p, q
+
+pairs_checked = 0
+mismatches = 0
+examples = []
+
+try:
+    with open_maybe_gz(read1) as f1, open_maybe_gz(read2) as f2:
+        while True:
+            rec1 = read_record(f1)
+            rec2 = read_record(f2)
+
+            if rec1 is None and rec2 is None:
+                break
+
+            if rec1 is None or rec2 is None:
+                print("[ERROR] Paired FASTQ files have different record counts.", file=sys.stderr)
+                print("Label:", label, file=sys.stderr)
+                print("R1:", read1, file=sys.stderr)
+                print("R2:", read2, file=sys.stderr)
+                sys.exit(2)
+
+            pairs_checked += 1
+
+            id1 = norm_id(rec1[0])
+            id2 = norm_id(rec2[0])
+
+            if id1 != id2:
+                mismatches += 1
+                if len(examples) < 20:
+                    examples.append((pairs_checked, id1, id2))
+
+except Exception as e:
+    print("[ERROR] Could not validate paired FASTQ IDs.", file=sys.stderr)
+    print("Label:", label, file=sys.stderr)
+    print("R1:", read1, file=sys.stderr)
+    print("R2:", read2, file=sys.stderr)
+    print("Reason:", str(e), file=sys.stderr)
+    sys.exit(2)
+
+if mismatches > 0:
+    print("[ERROR] Paired FASTQ IDs are desynchronized.", file=sys.stderr)
+    print("Label:", label, file=sys.stderr)
+    print("R1:", read1, file=sys.stderr)
+    print("R2:", read2, file=sys.stderr)
+    print("Pairs checked:", pairs_checked, file=sys.stderr)
+    print("ID mismatches:", mismatches, file=sys.stderr)
+    print("[FIRST MISMATCHES]", file=sys.stderr)
+
+    for pos, id1, id2 in examples:
+        print(f"{pos}\tR1={id1}\tR2={id2}", file=sys.stderr)
+
+    sys.exit(1)
+
+print("[OK] Paired FASTQ ID validation:", label)
+print("  Pairs checked:", pairs_checked)
+print("  ID mismatches: 0")
+PY_FASTQ_ID_CHECK
 }
 
 run_cmd() {
@@ -3432,14 +3544,68 @@ else
             echo "JSON:      $fastp_json"
             echo "============================================================"
 
-            if ! fastp \
-                "${fastp_common_args[@]}" \
-                -i "$INPUT_READ1" \
-                -I "$INPUT_READ2" \
-                -o "$out_fq1" \
-                -O "$out_fq2"
-            then
-                die "fastp failed for paired-end sample: $i"
+            if ! [[ "$FASTP_PE_MAX_ATTEMPTS" =~ ^[0-9]+$ ]] || [[ "$FASTP_PE_MAX_ATTEMPTS" -lt 1 ]]; then
+                echo "${y}[WARNING] Invalid FASTP_PE_MAX_ATTEMPTS value:${w} $FASTP_PE_MAX_ATTEMPTS"
+                echo "${y}[WARNING] Using FASTP_PE_MAX_ATTEMPTS=1.${w}"
+                FASTP_PE_MAX_ATTEMPTS=1
+            fi
+
+            fastp_attempt=1
+            fastp_pe_ok=0
+
+            while [[ "$fastp_attempt" -le "$FASTP_PE_MAX_ATTEMPTS" ]]; do
+                echo "------------------------------------------------------------"
+                echo "[FASTP PE ATTEMPT] Sample: $i"
+                echo "Attempt: $fastp_attempt / $FASTP_PE_MAX_ATTEMPTS"
+                echo "Validate paired IDs: $FASTP_VALIDATE_PAIRED_IDS"
+                echo "------------------------------------------------------------"
+
+                rm -f -- "$out_fq1" "$out_fq2" "$fastp_html" "$fastp_json"
+
+                if fastp \
+                    "${fastp_common_args[@]}" \
+                    -i "$INPUT_READ1" \
+                    -I "$INPUT_READ2" \
+                    -o "$out_fq1" \
+                    -O "$out_fq2"
+                then
+                    require_file "$out_fq1" "fastp R1 output for sample $i"
+                    require_file "$out_fq2" "fastp R2 output for sample $i"
+
+                    if [[ "$FASTP_VALIDATE_PAIRED_IDS" == "1" ]]; then
+                        if check_fastq_pair_ids \
+                            "$out_fq1" \
+                            "$out_fq2" \
+                            "fastp PE output for sample $i, attempt $fastp_attempt"
+                        then
+                            fastp_pe_ok=1
+                            break
+                        else
+                            echo "${y}[WARNING] fastp produced desynchronized PE output for sample:${w} $i"
+                            echo "${y}[WARNING] Removing invalid fastp outputs and retrying if attempts remain.${w}"
+                            rm -f -- "$out_fq1" "$out_fq2"
+                        fi
+                    else
+                        fastp_pe_ok=1
+                        break
+                    fi
+                else
+                    echo "${y}[WARNING] fastp failed for paired-end sample:${w} $i"
+                    echo "${y}[WARNING] Retrying if attempts remain.${w}"
+                fi
+
+                fastp_attempt=$(( fastp_attempt + 1 ))
+            done
+
+            if [[ "$fastp_pe_ok" != "1" ]]; then
+                echo "${r}[ERROR] fastp did not produce valid synchronized PE output for sample:${w} $i"
+                echo "Attempts: $FASTP_PE_MAX_ATTEMPTS"
+                echo
+                echo "Possible solutions:"
+                echo "  1. Re-run with --no-trim if the original FASTQs are already synchronized."
+                echo "  2. Re-run this sample with fewer fastp threads."
+                echo "  3. Use an alternative PE trimmer such as Trimmomatic in a future MTD Explorer run."
+                exit 1
             fi
 
             require_file "$out_fq1" "fastp R1 output for sample $i"
