@@ -32,12 +32,23 @@ while (my $file = readdir($dh)) {
     next if $file =~ /^\./;  # skip hidden files/directories
     my $source = "$local_download_dir/$file";
     my $destination = "$new_download_dir/$file";
-    copy($source, $destination) or die "Copy failed: $!";
+    next unless -f $source;
+
+# Skip files that have already been copied completely.
+if (-f $destination && -s $destination == -s $source) {
+    next;
+}
+
+copy($source, $destination)
+    or die "$PROG: Copy failed from $source to $destination: $!\n";
 }
 closedir($dh);
 
 # Update $local_download_dir to the new directory
 $local_download_dir = $new_download_dir;
+
+my $ignored_non_genome = 0;
+my $missing_genomes = 0;
 
 # Manifest hash maps filenames (keys) to taxids (values)
 my %manifest;
@@ -51,17 +62,33 @@ while (<>) {
     next if $ftp_path eq "na";  # Skip if no provided path
 
     my $filename = basename($ftp_path);
-    my $local_path = "$local_download_dir/$filename.gz";
-    
-    if (-e $local_path) {
-        $manifest{$local_path} = $taxid;
-    } else {
-        my $alt_local_path = "$local_download_dir/${filename}_genomic.fna.gz";
-        if (-e $alt_local_path) {
-            $manifest{$alt_local_path} = $taxid;
-        } else {
-            print STDERR "$PROG: Local file $local_path or $alt_local_path not found. Skipping.\n";
-        }
+
+# Ignore malformed or non-assembly FTP entries such as "identical".
+# Valid NCBI assembly directories normally begin with GCF_ or GCA_.
+if ($filename !~ /^GC[AF]_\d+\.\d+/) {
+    $ignored_non_genome++;
+    next;
+}
+
+# Different NCBI assembly names require different local filename forms.
+# In particular, some assembly directory names already end in "_genomic".
+my @candidate_paths = (
+    "$local_download_dir/$filename.gz",
+    "$local_download_dir/$filename.fna.gz",
+    "$local_download_dir/${filename}_genomic.fna.gz",
+);
+
+my ($local_path) = grep { -e $_ } @candidate_paths;
+
+if (defined $local_path) {
+    $manifest{$local_path} = $taxid;
+}
+else {
+    $missing_genomes++;
+
+    print STDERR "$PROG: Valid bacterial genome file not found locally:\n";
+    print STDERR "  $_\n" for @candidate_paths;
+    print STDERR "  Skipping this genome.\n";
     }
 }
 
@@ -71,7 +98,9 @@ print MANIFEST "$_\n" for keys %manifest;
 close MANIFEST;
 
 print STDERR "Manifest verification complete:\n";
-print STDERR "  Found: " . scalar(keys %manifest) . "\n";
+print STDERR "  Found valid genomes: " . scalar(keys %manifest) . "\n";
+print STDERR "  Ignored non-genome entries: $ignored_non_genome\n";
+print STDERR "  Missing valid genome files: $missing_genomes\n";
 #print STDERR "  Not found: " . (58075 - scalar(keys %manifest)) . "\n";
 #print STDERR "  Replaced: 0\n";
 
