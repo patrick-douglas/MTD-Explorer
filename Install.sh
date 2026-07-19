@@ -1467,7 +1467,21 @@ install_halla_dependencies() {
 #    R -e "install.packages('https://cran.r-project.org/src/contrib/00Archive/eva/eva_0.2.6.tar.gz', repos=NULL, type='source')"
     R -e "install.packages('$dir/update_fix/pvr_pkg/eva_0.2.6.tar.gz', repos=NULL, type='source', Ncpus=$threads)"
 
-    conda run -n halla0820 "$dir/update_fix/check_R_pkg.halla0820.sh"
+    run_required_command \
+        "Applying HAllA Matplotlib compatibility patch" \
+        conda run -n halla0820 \
+        python "$dir/update_fix/patch_halla_matplotlib.py"
+
+    run_required_command \
+        "Validating HAllA Matplotlib compatibility patch" \
+        conda run -n halla0820 \
+        python "$dir/update_fix/patch_halla_matplotlib.py" --check
+
+    run_required_command \
+        "Checking R packages in the halla0820 environment" \
+        conda run -n halla0820 \
+        bash "$dir/update_fix/check_R_pkg.halla0820.sh"
+
     safe_conda_deactivate
 }
 
