@@ -5515,6 +5515,115 @@ echo "  $GRAPHLAN_INPUT"
 
 # Remove possible Windows-style carriage returns from the clean GraPhlAn input
 sed -i 's/\r$//' "$GRAPHLAN_INPUT"
+
+# Strictly validate the GraPhlAn input before export2graphlan.
+# The table must contain:
+#   - one taxonomy column
+#   - one numeric abundance column per sample
+#   - the same number of columns in every row
+if ! python - "$GRAPHLAN_INPUT" << 'PY_VALIDATE_GRAPHLAN'
+import csv
+import math
+import sys
+
+path = sys.argv[1]
+
+with open(path, "r", newline="") as handle:
+    rows = list(csv.reader(handle, delimiter="\t"))
+
+if not rows:
+    raise SystemExit("[ERROR] GraPhlAn input table is empty.")
+
+header = rows[0]
+expected_columns = len(header)
+
+if expected_columns < 2:
+    raise SystemExit(
+        "[ERROR] GraPhlAn input must contain taxonomy and sample columns."
+    )
+
+sample_names = header[1:]
+
+if any(not str(name).strip() for name in sample_names):
+    raise SystemExit(
+        "[ERROR] GraPhlAn input contains an empty sample name."
+    )
+
+if len(sample_names) != len(set(sample_names)):
+    raise SystemExit(
+        "[ERROR] GraPhlAn input contains duplicated sample names."
+    )
+
+bad_width = []
+bad_numeric = []
+empty_taxonomy = []
+
+for line_number, row in enumerate(rows[1:], start=2):
+    if len(row) != expected_columns:
+        bad_width.append(
+            (
+                line_number,
+                len(row),
+                row[0] if row else "<empty row>",
+            )
+        )
+        continue
+
+    if not str(row[0]).strip():
+        empty_taxonomy.append(line_number)
+
+    for column_number, value in enumerate(row[1:], start=2):
+        try:
+            number = float(value)
+        except Exception:
+            bad_numeric.append(
+                (line_number, column_number, value)
+            )
+            continue
+
+        if not math.isfinite(number):
+            bad_numeric.append(
+                (line_number, column_number, value)
+            )
+
+if bad_width:
+    print(
+        "[ERROR] GraPhlAn rows with an incorrect number of columns:",
+        file=sys.stderr,
+    )
+    for item in bad_width[:20]:
+        print("  line=%s columns=%s taxon=%r" % item, file=sys.stderr)
+
+if empty_taxonomy:
+    print(
+        "[ERROR] GraPhlAn rows with empty taxonomy:",
+        empty_taxonomy[:20],
+        file=sys.stderr,
+    )
+
+if bad_numeric:
+    print(
+        "[ERROR] GraPhlAn non-numeric abundance values:",
+        file=sys.stderr,
+    )
+    for item in bad_numeric[:20]:
+        print(
+            "  line=%s column=%s value=%r" % item,
+            file=sys.stderr,
+        )
+
+if bad_width or empty_taxonomy or bad_numeric:
+    raise SystemExit(1)
+
+print("[OK] Strict GraPhlAn input validation passed")
+print("  Taxa rows:", len(rows) - 1)
+print("  Samples:", len(sample_names))
+print("  Total columns:", expected_columns)
+PY_VALIDATE_GRAPHLAN
+then
+    die "Invalid GraPhlAn input table: $GRAPHLAN_INPUT"
+fi
+
 echo
 echo "${g}Preview of GraPhlAn input:${w}"
 head -n 5 "$GRAPHLAN_INPUT"
