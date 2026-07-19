@@ -152,6 +152,12 @@ awk -F '\t' '
         n = split(ftp_path, a, "/")
         asm = a[n]
 
+        # Accept only valid NCBI assembly directory names.
+        # This excludes auxiliary entries such as "identical".
+        if (asm !~ /^GC[AF]_[0-9]+\.[0-9]+/) {
+            next
+        }
+
         sub(/_genomic\.fna\.gz$/, "", asm)
         sub(/\.fna\.gz$/, "", asm)
         sub(/_genomic$/, "", asm)
