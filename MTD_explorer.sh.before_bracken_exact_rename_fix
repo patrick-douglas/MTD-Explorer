@@ -5016,44 +5016,9 @@ mkdir -p Report_non-host_bracken_species_normalized
 mv *_bracken_species.txt Report_non-host_bracken_species_normalized
 cd Report_non-host_bracken_species_normalized
 
-echo "${g}Rename Bracken tree-like reports to exact sample names${w}"
-
-# Do not search using *${sample}_* because one sample name may be a
-# substring of another, for example infected_1 and uninfected_1.
-# Instead, derive the sample name from each complete report filename.
-shopt -s nullglob
-bracken_tree_reports=( *_bracken_species.txt )
-
-for source_report in "${bracken_tree_reports[@]}"; do
-    report_name="${source_report##*/}"
-    sample_name="${report_name%_bracken_species.txt}"
-
-    # Support the known report prefixes used by MTD/Bracken.
-    sample_name="${sample_name#Report_non-host_}"
-    sample_name="${sample_name#Report_}"
-
-    if [[ -z "$sample_name" ]]; then
-        echo "${r}[ERROR] Could not derive sample name from Bracken report:${w}"
-        echo "  $source_report"
-        exit 1
-    fi
-
-    echo "  [RENAME] $source_report -> $sample_name"
-    mv -f -- "$source_report" "$sample_name"
-done
-
-shopt -u nullglob
-
-# Confirm that every expected sample now has an exact report filename.
-for sample_name in $lsn; do
-    if [[ ! -e "$sample_name" ]]; then
-        echo "${r}[ERROR] Missing Bracken/Kraken report after exact renaming:${w}"
-        echo "  Sample: $sample_name"
-        echo "  Directory: $(pwd)"
-        echo "  Available files:"
-        ls -lh
-        exit 1
-    fi
+echo "${g}Trim the name of _bracken report files (tree like) to the sample name (eg. DJ01) ${w}"
+for i in $lsn; do
+    mv *${i}_* $i
 done
 
 echo "${g}Converted original _bracken report files (tree like) into .biom file for ANCOMBC and diversity analysis in phyloseq (R) etc. in DEG_Anno_Plot.R ${w}"

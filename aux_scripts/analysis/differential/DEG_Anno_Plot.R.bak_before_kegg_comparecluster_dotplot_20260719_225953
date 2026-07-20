@@ -4042,14 +4042,8 @@ if (!is.null(cgo) && nrow(cgo@compareClusterResult) > 0) {
       mustWork = TRUE
     )
 
-    # HostSpecies.csv is stored in the MTD installation root.
-    # Using args[4] avoids incorrectly treating the directory containing
-    # DEG_Anno_Plot.R as the MTD root.
     mtd_installation_directory <- dirname(
-      normalizePath(
-        args[4],
-        mustWork = TRUE
-      )
+      current_script_path
     )
 
     go_faceted_script <- file.path(
@@ -4057,16 +4051,6 @@ if (!is.null(cgo) && nrow(cgo@compareClusterResult) > 0) {
       "aux_scripts",
       "GO",
       "GO_faceted_dotplot.R"
-    )
-
-    message(
-      "[INFO] MTD installation directory: ",
-      mtd_installation_directory
-    )
-
-    message(
-      "[INFO] Faceted GO dotplot script path: ",
-      go_faceted_script
     )
 
     go_host_deg_directory <- normalizePath(
@@ -5277,203 +5261,46 @@ if (!is.na(ko.db) && nzchar(ko.db)) {
           nrow(ck@compareClusterResult) > 0
         ) {
 
-          official_kegg_result <- as.data.frame(
-            ck@compareClusterResult,
-            stringsAsFactors = FALSE
-          )
-
           write.csv(
-            official_kegg_result,
+            ck@compareClusterResult,
             "biological_theme_comparison_KEGG_official_results.csv",
             row.names = FALSE
           )
 
-          message(
-            "[OK] Official KEGG compareCluster returned terms: ",
-            nrow(official_kegg_result)
+          official_kegg_dotplot <- dotplot(
+            ck,
+            showCategory = nrow(ck@compareClusterResult)
+          ) +
+            theme(
+              axis.text.x = element_text(
+                angle = 45,
+                vjust = 1,
+                hjust = 1
+              )
+            )
+
+          ggsave(
+            "biological_theme_comparison_KEGG_official.pdf",
+            plot = official_kegg_dotplot,
+            limitsize = FALSE,
+            height = max(
+              4,
+              0.54 * nrow(ck@compareClusterResult)
+            ),
+            width = max(
+              7,
+              3 * length(
+                unique(
+                  ck@compareClusterResult$Cluster
+                )
+              )
+            )
           )
 
-          #### BEGIN BLOCK: robust official KEGG compareCluster dotplot ####
-          # enrichplot::dotplot() in the current Bioconductor environment can
-          # fail when the same pathway description occurs in multiple clusters.
-          # Build a faceted ggplot2 figure with an internal unique y-axis key.
-          tryCatch({
-            required_plot_columns <- c(
-              "Cluster", "ID", "Description", "GeneRatio", "Count", "p.adjust"
-            )
-
-            missing_plot_columns <- setdiff(
-              required_plot_columns,
-              colnames(official_kegg_result)
-            )
-
-            if (length(missing_plot_columns) > 0) {
-              stop(
-                "Missing plot columns: ",
-                paste(missing_plot_columns, collapse = ", ")
-              )
-            }
-
-            parse_gene_ratio <- function(x) {
-              vapply(
-                strsplit(as.character(x), "/", fixed = TRUE),
-                function(parts) {
-                  if (length(parts) != 2) return(NA_real_)
-                  a <- suppressWarnings(as.numeric(parts[1]))
-                  b <- suppressWarnings(as.numeric(parts[2]))
-                  if (is.na(a) || is.na(b) || b == 0) return(NA_real_)
-                  a / b
-                },
-                numeric(1)
-              )
-            }
-
-            plot_data <- official_kegg_result
-            plot_data$GeneRatio_numeric <- parse_gene_ratio(plot_data$GeneRatio)
-            plot_data$Count <- suppressWarnings(as.numeric(plot_data$Count))
-            plot_data$p.adjust <- suppressWarnings(as.numeric(plot_data$p.adjust))
-
-            plot_data <- plot_data[
-              !is.na(plot_data$Cluster) & plot_data$Cluster != "" &
-                !is.na(plot_data$Description) & plot_data$Description != "" &
-                !is.na(plot_data$GeneRatio_numeric) &
-                is.finite(plot_data$GeneRatio_numeric) &
-                !is.na(plot_data$Count) & is.finite(plot_data$Count) &
-                !is.na(plot_data$p.adjust) & is.finite(plot_data$p.adjust),
-              ,
-              drop = FALSE
-            ]
-
-            if (nrow(plot_data) == 0) {
-              stop("No complete official KEGG rows were available for plotting.")
-            }
-
-            top_n_per_cluster <- 20L
-            split_data <- split(plot_data, plot_data$Cluster, drop = TRUE)
-            split_data <- lapply(split_data, function(x) {
-              order_columns <- if ("pvalue" %in% colnames(x)) {
-                order(x$p.adjust, x$pvalue, na.last = TRUE)
-              } else {
-                order(x$p.adjust, na.last = TRUE)
-              }
-              head(x[order_columns, , drop = FALSE], top_n_per_cluster)
-            })
-
-            plot_data <- do.call(rbind, split_data)
-            rownames(plot_data) <- NULL
-
-            positive_p <- plot_data$p.adjust[plot_data$p.adjust > 0]
-            min_positive <- if (length(positive_p) > 0) {
-              min(positive_p, na.rm = TRUE)
-            } else {
-              .Machine$double.xmin
-            }
-
-            plot_data$p_adjust_for_plot <- pmax(
-              plot_data$p.adjust,
-              min_positive * 0.1
-            )
-            plot_data$minus_log10_p_adjust <- -log10(plot_data$p_adjust_for_plot)
-            plot_data$Description_display <- stringr::str_trunc(
-              plot_data$Description,
-              60
-            )
-
-            plot_data$plot_key <- paste(
-              plot_data$Cluster,
-              plot_data$ID,
-              seq_len(nrow(plot_data)),
-              sep = "___"
-            )
-            plot_data$plot_key <- factor(
-              plot_data$plot_key,
-              levels = rev(plot_data$plot_key)
-            )
-
-            label_map <- setNames(
-              plot_data$Description_display,
-              as.character(plot_data$plot_key)
-            )
-
-            write.csv(
-              plot_data,
-              "biological_theme_comparison_KEGG_official_plot_data.csv",
-              row.names = FALSE
-            )
-
-            official_kegg_dotplot <- ggplot(
-              plot_data,
-              aes(
-                x = GeneRatio_numeric,
-                y = plot_key,
-                size = Count,
-                color = minus_log10_p_adjust
-              )
-            ) +
-              geom_point(alpha = 0.85) +
-              facet_grid(
-                Cluster ~ .,
-                scales = "free_y",
-                space = "free_y",
-                switch = "y"
-              ) +
-              scale_y_discrete(
-                labels = function(keys) unname(label_map[as.character(keys)])
-              ) +
-              scale_color_gradient(low = "blue", high = "red") +
-              labs(
-                x = "Gene ratio",
-                y = NULL,
-                size = "Gene count",
-                color = expression(-log[10]("adjusted p-value")),
-                title = "Official KEGG pathway enrichment",
-                subtitle = paste0("Top ", top_n_per_cluster, " pathways per cluster")
-              ) +
-              theme_bw() +
-              theme(
-                strip.placement = "outside",
-                strip.text.y.left = element_text(angle = 0, face = "bold"),
-                axis.text.y = element_text(size = 8),
-                plot.title = element_text(hjust = 0.5),
-                plot.subtitle = element_text(hjust = 0.5)
-              )
-
-            plot_height <- max(
-              6,
-              0.32 * nrow(plot_data) +
-                1.2 * length(unique(plot_data$Cluster))
-            )
-
-            ggsave(
-              "biological_theme_comparison_KEGG_official.pdf",
-              plot = official_kegg_dotplot,
-              limitsize = FALSE,
-              height = plot_height,
-              width = 11
-            )
-
-            message(
-              "[OK] Official KEGG compareCluster plot saved: ",
-              "biological_theme_comparison_KEGG_official.pdf"
-            )
-
-          }, error = function(e) {
-            plot_error <- conditionMessage(e)
-            message(
-              "[WARNING] Official KEGG compareCluster enrichment succeeded, ",
-              "but its plot was skipped: ",
-              plot_error
-            )
-            writeLines(
-              c(
-                "Official KEGG compareCluster enrichment succeeded, but its plot failed.",
-                paste0("Result rows saved in CSV: ", nrow(official_kegg_result)),
-                paste0("Plot error: ", plot_error)
-              ),
-              "biological_theme_comparison_KEGG_official_plot_skipped.txt"
-            )
-          })
-          #### END BLOCK: robust official KEGG compareCluster dotplot ####
+          message(
+            "[OK] Official KEGG compareCluster returned terms: ",
+            nrow(ck@compareClusterResult)
+          )
 
         } else {
 

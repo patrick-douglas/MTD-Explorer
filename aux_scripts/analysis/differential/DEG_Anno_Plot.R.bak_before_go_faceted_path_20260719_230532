@@ -4042,14 +4042,8 @@ if (!is.null(cgo) && nrow(cgo@compareClusterResult) > 0) {
       mustWork = TRUE
     )
 
-    # HostSpecies.csv is stored in the MTD installation root.
-    # Using args[4] avoids incorrectly treating the directory containing
-    # DEG_Anno_Plot.R as the MTD root.
     mtd_installation_directory <- dirname(
-      normalizePath(
-        args[4],
-        mustWork = TRUE
-      )
+      current_script_path
     )
 
     go_faceted_script <- file.path(
@@ -4057,16 +4051,6 @@ if (!is.null(cgo) && nrow(cgo@compareClusterResult) > 0) {
       "aux_scripts",
       "GO",
       "GO_faceted_dotplot.R"
-    )
-
-    message(
-      "[INFO] MTD installation directory: ",
-      mtd_installation_directory
-    )
-
-    message(
-      "[INFO] Faceted GO dotplot script path: ",
-      go_faceted_script
     )
 
     go_host_deg_directory <- normalizePath(
