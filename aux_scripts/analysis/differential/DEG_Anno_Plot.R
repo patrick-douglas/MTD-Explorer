@@ -3,6 +3,44 @@
 httr::set_config(httr::config(ssl_verifypeer = FALSE))
 args = commandArgs(trailingOnly=TRUE) # Passing arguments to an R script from bash/shell command lines
 
+# Make the custom OrgDb library visible even when this script is run
+# directly, outside MTD_explorer.sh.
+if (length(args) >= 4) {
+  mtd_root <- dirname(
+    normalizePath(
+      args[4],
+      mustWork = FALSE
+    )
+  )
+
+  custom_r_lib <- file.path(
+    mtd_root,
+    "custom_R_libs"
+  )
+
+  if (dir.exists(custom_r_lib)) {
+    .libPaths(
+      unique(
+        c(
+          custom_r_lib,
+          .libPaths()
+        )
+      )
+    )
+
+    message(
+      "[INFO] Custom R library enabled: ",
+      custom_r_lib
+    )
+  }
+
+  message(
+    "[INFO] Active R library paths: ",
+    paste(.libPaths(), collapse = "; ")
+  )
+}
+
+
 # MTD Explorer helper functions for robust Kraken host summaries
 
 find_host_summary_path <- function(start_dir, max_depth = 6) {
@@ -566,37 +604,300 @@ coldata[,1] <-gsub("-",".",coldata[,1])
 
 ## MaAsLin2 ##
 library("Maaslin2")
-system("mkdir -p MaAsLin2_results")
+
+dir.create(
+  "MaAsLin2_results",
+  showWarnings = FALSE,
+  recursive = TRUE
+)
+
 features <- t(cts)
+
 metadata <- coldata
-rownames(metadata)<-metadata[,1]
-metadata<-subset(metadata,select=-1)
-covar<-toString(shQuote(names(coldata)[2:ncol(coldata)]))
-for (r in 1:length(unique(coldata_vs[,2]))){
-  fit_data <- Maaslin2(features, metadata, paste0('MaAsLin2_results/ref_',unique(coldata_vs[,2])[r]),
-                       fixed_effects = cat(covar, "\n"),
-                       reference = paste0("group,",unique(coldata_vs[,2])[r]),
-                       plot_heatmap = T, plot_scatter = T,
-                       min_abundance = 0.01,  # Valor mais baixo para evitar remoção de features
-                       min_prevalence = 0.1,   # Prevalência mínima baixa para reter mais features
-                       cores=10)
+rownames(metadata) <- as.character(metadata[, 1])
+metadata <- metadata[, -1, drop = FALSE]
+
+# ------------------------------------------------------------
+# MaAsLin2 model construction
+#
+# Repeated-measures identifiers such as animal or subject must
+# not be tested as ordinary fixed effects. They are represented
+# as random intercepts.
+# ------------------------------------------------------------
+
+maaslin_subject_candidates <- c(
+  "animal",
+  "animal_id",
+  "subject",
+  "subject_id",
+  "individual",
+  "individual_id",
+  "participant",
+  "participant_id",
+  "patient",
+  "patient_id",
+  "pair",
+  "pair_id"
+)
+
+maaslin_subject_candidates <- intersect(
+  maaslin_subject_candidates,
+  names(metadata)
+)
+
+# A subject column is useful as a random effect only when
+# identifiers occur in more than one sample.
+maaslin_subject_candidates <- maaslin_subject_candidates[
+  vapply(
+    maaslin_subject_candidates,
+    function(column) {
+      values <- as.character(metadata[[column]])
+      values <- values[
+        !is.na(values) &
+        values != ""
+      ]
+
+      length(unique(values)) > 1 &&
+        anyDuplicated(values) > 0
+    },
+    logical(1)
+  )
+]
+
+maaslin_random_effects <- NULL
+
+if (length(maaslin_subject_candidates) > 0) {
+  maaslin_random_effects <- maaslin_subject_candidates[1]
 }
-if (filename == "host_counts.txt"){ #prepare for gene symbol
-  system("mkdir -p MaAsLin2_results/gene_symbol")
-  DEG<-read.csv(paste0(sub(".tsv$|.txt$","",filename),"_DEG.csv"),header = T)
-  df.DEG<-DEG[!duplicated(DEG$hybrid_name),] #remove duplicate gene symbol
-  df4features <- data.frame(df.DEG$hybrid_name, df.DEG[names(cts)], row.names=1)
-  features.symbol <- t(df4features)
-  for (r in 1:length(unique(coldata_vs[,2]))){
-    fit_data <- Maaslin2(features.symbol, metadata, paste0('MaAsLin2_results/gene_symbol/ref_',unique(coldata_vs[,2])[r]),
-                         fixed_effects = cat(covar, "\n"),
-                         reference = paste0("group,",unique(coldata_vs[,2])[r]),
-                         plot_heatmap = T, plot_scatter = T,
-                         min_abundance = 0.01,  # Valor mais baixo para features simbólicas
-                         min_prevalence = 0.1,   # Prevalência mínima baixa para reter mais
-                         cores=10)
+
+maaslin_fixed_effects <- setdiff(
+  names(metadata),
+  maaslin_random_effects
+)
+
+# Remove constant metadata columns because they cannot be fitted.
+maaslin_fixed_effects <- maaslin_fixed_effects[
+  vapply(
+    maaslin_fixed_effects,
+    function(column) {
+      values <- metadata[[column]]
+
+      length(
+        unique(values[!is.na(values)])
+      ) >= 2
+    },
+    logical(1)
+  )
+]
+
+if (!"group" %in% maaslin_fixed_effects) {
+  stop(
+    "MaAsLin2 requires a non-constant 'group' ",
+    "column in the metadata."
+  )
+}
+
+# Build references for group and any additional categorical
+# fixed effect. Subject identifiers are excluded because they
+# are random effects.
+build_maaslin_reference <- function(group_reference) {
+  references <- paste0(
+    "group,",
+    group_reference
+  )
+
+  other_fixed_effects <- setdiff(
+    maaslin_fixed_effects,
+    "group"
+  )
+
+  for (effect in other_fixed_effects) {
+    values <- metadata[[effect]]
+
+    if (!is.numeric(values)) {
+      effect_levels <- levels(
+        factor(values)
+      )
+
+      if (length(effect_levels) >= 2) {
+        references <- c(
+          references,
+          paste0(
+            effect,
+            ",",
+            effect_levels[1]
+          )
+        )
+      }
+    }
   }
-  write("The number of genes may be less due to the duplicated gene symbols being removed.","MaAsLin2_results/gene_symbol/Readme.txt")
+
+  paste(
+    references,
+    collapse = ";"
+  )
+}
+
+run_mtd_maaslin2 <- function(
+  input_features,
+  output_dir,
+  group_reference
+) {
+  dir.create(
+    output_dir,
+    showWarnings = FALSE,
+    recursive = TRUE
+  )
+
+  reference_value <- build_maaslin_reference(
+    group_reference
+  )
+
+  message(
+    "[MaAsLin2] Fixed effects: ",
+    paste(
+      maaslin_fixed_effects,
+      collapse = ", "
+    )
+  )
+
+  message(
+    "[MaAsLin2] Random effects: ",
+    if (is.null(maaslin_random_effects)) {
+      "none"
+    } else {
+      paste(
+        maaslin_random_effects,
+        collapse = ", "
+      )
+    }
+  )
+
+  message(
+    "[MaAsLin2] Reference: ",
+    reference_value
+  )
+
+  tryCatch(
+    Maaslin2(
+      input_features,
+      metadata,
+      output_dir,
+      fixed_effects = maaslin_fixed_effects,
+      random_effects = maaslin_random_effects,
+      reference = reference_value,
+      plot_heatmap = TRUE,
+      plot_scatter = TRUE,
+      min_abundance = 0.01,
+      min_prevalence = 0.1,
+      cores = 10
+    ),
+    error = function(e) {
+      error_message <- paste0(
+        "MaAsLin2 failed, but the remaining DEG analysis ",
+        "will continue.\n",
+        "Output: ",
+        output_dir,
+        "\nReason: ",
+        conditionMessage(e),
+        "\n"
+      )
+
+      warning(
+        error_message,
+        call. = FALSE
+      )
+
+      writeLines(
+        error_message,
+        file.path(
+          output_dir,
+          "MTD_MaAsLin2_ERROR.txt"
+        )
+      )
+
+      NULL
+    }
+  )
+}
+
+group_references <- unique(
+  as.character(coldata_vs[, 2])
+)
+
+group_references <- group_references[
+  !is.na(group_references) &
+  group_references != ""
+]
+
+for (group_reference in group_references) {
+  fit_data <- run_mtd_maaslin2(
+    input_features = features,
+    output_dir = file.path(
+      "MaAsLin2_results",
+      paste0(
+        "ref_",
+        group_reference
+      )
+    ),
+    group_reference = group_reference
+  )
+}
+
+if (filename == "host_counts.txt") {
+  # Repeat MaAsLin2 using non-duplicated gene symbols.
+  dir.create(
+    "MaAsLin2_results/gene_symbol",
+    showWarnings = FALSE,
+    recursive = TRUE
+  )
+
+  DEG <- read.csv(
+    paste0(
+      sub(
+        ".tsv$|.txt$",
+        "",
+        filename
+      ),
+      "_DEG.csv"
+    ),
+    header = TRUE
+  )
+
+  df.DEG <- DEG[
+    !duplicated(DEG$hybrid_name),
+  ]
+
+  df4features <- data.frame(
+    df.DEG$hybrid_name,
+    df.DEG[names(cts)],
+    row.names = 1
+  )
+
+  features.symbol <- t(df4features)
+
+  for (group_reference in group_references) {
+    fit_data <- run_mtd_maaslin2(
+      input_features = features.symbol,
+      output_dir = file.path(
+        "MaAsLin2_results",
+        "gene_symbol",
+        paste0(
+          "ref_",
+          group_reference
+        )
+      ),
+      group_reference = group_reference
+    )
+  }
+
+  write(
+    paste(
+      "The number of genes may be lower because",
+      "duplicated gene symbols were removed."
+    ),
+    "MaAsLin2_results/gene_symbol/Readme.txt"
+  )
 }
 
 
@@ -1607,22 +1908,99 @@ setwd("../")
 ### Pathway enrichment for host genes ###
 if (filename == "host_counts.txt"){
   setwd("Host_DEG")
-  do.db <- host_sp[host_sp$Taxon_ID==args[3],4] # match host taxID with DO.db database
-print(do.db)
-#do.db <- "myoLuc1.db" # Use myoLuc1.db directly
-  # check if variable is NULL
-  if(is.null(do.db)){
-    print("host species is not supported for pathway enrichment yet")
+
+  if (!"Taxon_ID" %in% names(host_sp)) {
+    stop(
+      "HostSpecies.csv does not contain a Taxon_ID column."
+    )
+  }
+
+  if (!"OrgDb" %in% names(host_sp)) {
+    stop(
+      "HostSpecies.csv does not contain an OrgDb column."
+    )
+  }
+
+  host_taxid <- trimws(
+    as.character(args[3])
+  )
+
+  csv_taxid <- trimws(
+    as.character(host_sp$Taxon_ID)
+  )
+
+  # which() discards NA comparisons instead of returning an
+  # additional NA row in the selected OrgDb vector.
+  host_rows <- which(
+    !is.na(csv_taxid) &
+      csv_taxid != "" &
+      csv_taxid == host_taxid
+  )
+
+  do.db <- unique(
+    trimws(
+      as.character(
+        host_sp$OrgDb[host_rows]
+      )
+    )
+  )
+
+  do.db <- do.db[
+    !is.na(do.db) &
+      do.db != "" &
+      do.db != "-"
+  ]
+
+  if (length(do.db) == 0) {
+    message(
+      "[INFO] No OrgDb package is configured for host TaxID ",
+      host_taxid,
+      ". Host pathway enrichment will be skipped."
+    )
   } else {
-# if package is not installed, install it
-    if (!requireNamespace(do.db, quietly = TRUE))
-    BiocManager::install(do.db)
-    library(clusterProfiler)
-    library(enrichplot)
-    library(ggnewscale)
-    library(do.db, character.only = TRUE)
-    do.db.obj <- get(do.db)
-    library(ggplot2)
+
+    if (length(do.db) > 1) {
+      stop(
+        "Multiple OrgDb packages are configured for TaxID ",
+        host_taxid,
+        ": ",
+        paste(do.db, collapse = ", ")
+      )
+    }
+
+    do.db <- do.db[[1]]
+
+    message(
+      "[INFO] Host OrgDb package: ",
+      do.db
+    )
+
+    message(
+      "[INFO] Active R library paths: ",
+      paste(.libPaths(), collapse = "; ")
+    )
+
+    if (!requireNamespace(do.db, quietly = TRUE)) {
+      stop(
+        "The configured OrgDb package is not visible: ",
+        do.db,
+        "\nActive R library paths: ",
+        paste(.libPaths(), collapse = "; ")
+      )
+    }
+
+    suppressPackageStartupMessages({
+      library(clusterProfiler)
+      library(enrichplot)
+      library(ggnewscale)
+      library(do.db, character.only = TRUE)
+      library(ggplot2)
+    })
+
+    do.db.obj <- get(
+      do.db,
+      envir = asNamespace(do.db)
+    )
     
 #### BEGIN BLOCK: OrgDb keytype auto-detection ####
 get_orgdb_gene_keytype <- function(orgdb) {
