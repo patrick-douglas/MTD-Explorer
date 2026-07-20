@@ -180,10 +180,25 @@ used downstream.
 
 ### clusterProfiler
 
-- Yu, G., Wang, L.-G., Han, Y., & He, Q.-Y. (2012). **clusterProfiler: an R
-  package for comparing biological themes among gene clusters**.
-  *OMICS: A Journal of Integrative Biology*, 16(5), 284–287.
-  https://doi.org/10.1089/omi.2011.0118
+MTD Explorer uses [clusterProfiler][clusterprofiler] for functional enrichment
+analysis of omics data.
+
+Version used in the documented MTD Explorer environment:
+
+```text
+clusterProfiler v4.2.2
+```
+
+Help and documentation:
+
+- [Biomedical Knowledge Mining using GOSemSim and clusterProfiler][clusterprofiler-book]
+
+Recommended citation:
+
+- Wu, T., Hu, E., Xu, S., Chen, M., Guo, P., Dai, Z., Feng, T., Zhou, L.,
+  Tang, W., Zhan, L., Fu, X., Liu, S., Bo, X., & Yu, G. (2021).
+  clusterProfiler 4.0: A universal enrichment tool for interpreting omics data.
+  *The Innovation*, 2(3), 100141.
 
 ### GSEA and ssGSEA
 
@@ -298,3 +313,5 @@ citation("ggplot2")
 [gnu-parallel]: https://www.gnu.org/software/parallel/
 [kraken2]: https://ccb.jhu.edu/software/kraken2/index.shtml
 [bracken]: https://github.com/jenniferlu717/Bracken
+[clusterprofiler]: https://bioconductor.org/packages/clusterProfiler/
+[clusterprofiler-book]: https://yulab-smu.top/biomedical-knowledge-mining-book/
