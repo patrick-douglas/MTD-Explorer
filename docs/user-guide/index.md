@@ -167,6 +167,7 @@ MTD Explorer produces several result layers from the same RNA-seq dataset.
 | Input setup | `samplesheet.txt`, FASTQ files, metadata | [Input files](input-files.md) |
 | Analysis settings | command-line options | [Command-line reference](command-line.md) |
 | Custom host setup | `Create_custom_host.sh`, `HostSpecies.csv` | [Custom host references](custom-host-references.md) |
+| Custom microbiome setup | `Create_custom_micro.sh`, `--kraken-micro-db`, Kraken 2, Bracken | [Custom microbiome references](custom-microbiome-references.md) |
 | Supported hosts | `HostSpecies.csv` | [Supported host species](supported-host-species.md) |
 | Output structure | main output directory | [Output files](output-files.md) |
 | Taxonomic exploration | `exploratory/taxonomy/` | [Taxonomic exploratory outputs](taxonomic-exploratory-outputs.md) |
@@ -185,6 +186,7 @@ MTD Explorer produces several result layers from the same RNA-seq dataset.
 | How do I format my samplesheet? | [Input files](input-files.md) |
 | Should I run comparison or exploratory mode? | [Analysis modes](analysis-modes.md) |
 | How do I create a host reference for my species? | [Custom host references](custom-host-references.md) |
+| How do I create a custom Kraken 2/Bracken microbiome database? | [Custom microbiome references](custom-microbiome-references.md) |
 | Which host Taxon IDs are curated? | [Supported host species](supported-host-species.md) |
 | How do I add a non-model host species? | [Custom host references](custom-host-references.md) |
 | Which command-line option controls trimming, Kraken2, Bracken, or read layout? | [Command-line reference](command-line.md) |

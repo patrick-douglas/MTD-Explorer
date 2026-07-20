@@ -83,6 +83,7 @@ nav:
       - Overview: user-guide/index.md
       - Input files: user-guide/input-files.md
       - Custom host references: user-guide/custom-host-references.md
+      - Custom microbiome references: user-guide/custom-microbiome-references.md
       - Supported host species: user-guide/supported-host-species.md
       - Analysis modes: user-guide/analysis-modes.md
       - Command-line reference: user-guide/command-line.md
