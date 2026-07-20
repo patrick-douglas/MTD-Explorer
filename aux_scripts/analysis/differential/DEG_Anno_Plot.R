@@ -923,21 +923,239 @@ if (filename == "host_counts.txt"){
   write.csv(TPM,file=paste0(sub(".tsv$|.txt$","",filename),"_TPM.csv"),row.names=F)
 }
 
-# filter by log2 <0.5 & >0.5 and p-value <0.05 for all groups
-flt_groups_all<-data.frame()
-for (i in 1:length(grep("pvalue",names(DEG)))){
-  p<-DEG[DEG[,grep("pvalue",names(DEG))[i]]<0.05 &
-            abs(DEG[,grep("log2FoldChange",names(DEG))[i]])>0.5,]
-  flt_groups_all<-rbind(flt_groups_all,p)
+#### BEGIN BLOCK: bounded DEG heatmap selection ####
+#
+# Select genes using adjusted p-values whenever available and cap the
+# number of displayed rows. This avoids multi-hundred-inch PDF files.
+#
+# The limit can be changed without editing the script:
+#   export MTD_HEATMAP_MAX_GENES=200
+
+heatmap_max_genes <- suppressWarnings(
+  as.integer(
+    Sys.getenv(
+      "MTD_HEATMAP_MAX_GENES",
+      "150"
+    )
+  )
+)
+
+if (
+  is.na(heatmap_max_genes) ||
+  heatmap_max_genes < 10
+) {
+  heatmap_max_genes <- 150L
 }
-  # flt_groups<-DEG[DEG[,grep("pvalue",names(DEG))[i]]<0.05 &
-  #                   abs(DEG[,grep("log2FoldChange",names(DEG))[i]])>0.5,]
-  #
-  # flt_groups<-flt_groups[complete.cases(flt_groups),]
-  # flt_groups_all <- DEG[(abs(DEG[,"log2FoldChange.ART_Young_vs_Ctl_Young"]) > 0.5 |
-  #                  abs(DEG[,"log2FoldChange.ART_Old_vs_ART_Young"]) > 0.5) &
-  #                  (DEG[,"pvalue.ART_Young_vs_Ctl_Young"]<0.05 |
-  #                     DEG[,"pvalue.ART_Old_vs_ART_Young"]<0.05),]
+
+heatmap_significant_rows <- list()
+heatmap_ranked_rows <- list()
+
+for (comparison_index in seq_len(nrow(coldata_vs))) {
+
+  group1 <- as.character(
+    coldata_vs$group1[comparison_index]
+  )
+
+  group2 <- as.character(
+    coldata_vs$group2[comparison_index]
+  )
+
+  comparison_name <- paste0(
+    group1,
+    "_vs_",
+    group2
+  )
+
+  adjusted_p_column <- paste0(
+    "padj.",
+    comparison_name
+  )
+
+  raw_p_column <- paste0(
+    "pvalue.",
+    comparison_name
+  )
+
+  fold_change_column <- paste0(
+    "log2FoldChange.",
+    comparison_name
+  )
+
+  if (!fold_change_column %in% names(DEG)) {
+    next
+  }
+
+  if (adjusted_p_column %in% names(DEG)) {
+    p_column <- adjusted_p_column
+  } else if (raw_p_column %in% names(DEG)) {
+    p_column <- raw_p_column
+  } else {
+    next
+  }
+
+  p_values <- suppressWarnings(
+    as.numeric(DEG[[p_column]])
+  )
+
+  fold_changes <- suppressWarnings(
+    as.numeric(DEG[[fold_change_column]])
+  )
+
+  complete_rows <- (
+    !is.na(p_values) &
+      is.finite(p_values) &
+      !is.na(fold_changes) &
+      is.finite(fold_changes)
+  )
+
+  ranked_rows <- DEG[
+    complete_rows,
+    ,
+    drop = FALSE
+  ]
+
+  ranked_rows$.heatmap_p <- p_values[
+    complete_rows
+  ]
+
+  ranked_rows$.heatmap_abs_fc <- abs(
+    fold_changes[complete_rows]
+  )
+
+  heatmap_ranked_rows[[
+    length(heatmap_ranked_rows) + 1L
+  ]] <- ranked_rows
+
+  significant_rows <- (
+    complete_rows &
+      p_values < 0.05 &
+      abs(fold_changes) > 0.5
+  )
+
+  if (any(significant_rows)) {
+
+    selected_rows <- DEG[
+      significant_rows,
+      ,
+      drop = FALSE
+    ]
+
+    selected_rows$.heatmap_p <- p_values[
+      significant_rows
+    ]
+
+    selected_rows$.heatmap_abs_fc <- abs(
+      fold_changes[significant_rows]
+    )
+
+    heatmap_significant_rows[[
+      length(heatmap_significant_rows) + 1L
+    ]] <- selected_rows
+  }
+}
+
+if (length(heatmap_significant_rows) > 0) {
+
+  flt_groups_all <- do.call(
+    rbind,
+    heatmap_significant_rows
+  )
+
+  heatmap_selection_mode <- (
+    "adjusted-p/significance-filtered"
+  )
+
+} else if (length(heatmap_ranked_rows) > 0) {
+
+  flt_groups_all <- do.call(
+    rbind,
+    heatmap_ranked_rows
+  )
+
+  heatmap_selection_mode <- (
+    "top-ranked fallback; no genes passed the heatmap cutoff"
+  )
+
+} else {
+
+  stop(
+    "No complete differential-expression rows were available ",
+    "for the heatmap."
+  )
+}
+
+flt_groups_all <- flt_groups_all[
+  order(
+    flt_groups_all$.heatmap_p,
+    -flt_groups_all$.heatmap_abs_fc,
+    na.last = TRUE
+  ),
+  ,
+  drop = FALSE
+]
+
+heatmap_id_column <- if (
+  "gene_id" %in% names(flt_groups_all)
+) {
+  "gene_id"
+} else if (
+  "Name" %in% names(flt_groups_all)
+) {
+  "Name"
+} else if (
+  "hybrid_name" %in% names(flt_groups_all)
+) {
+  "hybrid_name"
+} else {
+  NULL
+}
+
+if (!is.null(heatmap_id_column)) {
+  flt_groups_all <- flt_groups_all[
+    !duplicated(
+      as.character(
+        flt_groups_all[[heatmap_id_column]]
+      )
+    ),
+    ,
+    drop = FALSE
+  ]
+} else {
+  flt_groups_all <- unique(
+    flt_groups_all
+  )
+}
+
+heatmap_rows_before_limit <- nrow(
+  flt_groups_all
+)
+
+flt_groups_all <- head(
+  flt_groups_all,
+  heatmap_max_genes
+)
+
+flt_groups_all$.heatmap_p <- NULL
+flt_groups_all$.heatmap_abs_fc <- NULL
+
+message(
+  "[HEATMAP] Selection mode: ",
+  heatmap_selection_mode
+)
+
+message(
+  "[HEATMAP] Genes available before limit: ",
+  heatmap_rows_before_limit
+)
+
+message(
+  "[HEATMAP] Genes plotted: ",
+  nrow(flt_groups_all),
+  " (maximum ",
+  heatmap_max_genes,
+  ")"
+)
+#### END BLOCK: bounded DEG heatmap selection ####
 
 #subset the interested columnes
 subset_normtrans<-flt_groups_all[,grep("normtrans|gene_name|gene_id|Name",names(flt_groups_all))]
@@ -1460,6 +1678,40 @@ data.alpha<-estimate_richness(data.adj, measures = c("Observed", "Shannon", "Sim
 }
 
 ## draw volcano and bar plot
+#### BEGIN BLOCK: bounded DEG volcano and barplot ####
+
+deg_volcano_label_per_direction <- suppressWarnings(
+  as.integer(
+    Sys.getenv(
+      "MTD_VOLCANO_LABELS_PER_DIRECTION",
+      "20"
+    )
+  )
+)
+
+if (
+  is.na(deg_volcano_label_per_direction) ||
+  deg_volcano_label_per_direction < 1
+) {
+  deg_volcano_label_per_direction <- 20L
+}
+
+deg_barplot_max_per_direction <- suppressWarnings(
+  as.integer(
+    Sys.getenv(
+      "MTD_DEG_BARPLOT_MAX_PER_DIRECTION",
+      "50"
+    )
+  )
+)
+
+if (
+  is.na(deg_barplot_max_per_direction) ||
+  deg_barplot_max_per_direction < 1
+) {
+  deg_barplot_max_per_direction <- 50L
+}
+
 for (i in 1:nrow(coldata_vs)){
   group1<-coldata_vs$group1[i]
   group2<-coldata_vs$group2[i]
@@ -1503,13 +1755,59 @@ for (i in 1:nrow(coldata_vs)){
     # names(mycolors) <- c("DOWN", "UP", "NO")
     # v3 <- v2 + scale_colour_manual(values = mycolors)
 
-    diffexpressed<-nt4v[nt4v$diffexpressed != "NO",]
-    # select top 20 DEG of FC
-    topFC<-rbind(top_n(diffexpressed,20,log2FoldChange),top_n(diffexpressed,-20,log2FoldChange))
-    topFC$label<-topFC$gene_name
-    topFC<-topFC[!duplicated(topFC$gene_name),]
-    # Create a new column "label" to nt4v, that will contain the name of genes differentially expressed (NA in case they are not)
-    nt4v_label<-merge(nt4v,topFC, all=T)
+    diffexpressed <- nt4v[
+      nt4v$diffexpressed != "NO" &
+        !is.na(nt4v$log2FoldChange) &
+        is.finite(nt4v$log2FoldChange),
+      ,
+      drop = FALSE
+    ]
+
+    topFC_up <- head(
+      diffexpressed[
+        order(
+          diffexpressed$log2FoldChange,
+          decreasing = TRUE
+        ),
+        ,
+        drop = FALSE
+      ],
+      deg_volcano_label_per_direction
+    )
+
+    topFC_down <- head(
+      diffexpressed[
+        order(
+          diffexpressed$log2FoldChange,
+          decreasing = FALSE
+        ),
+        ,
+        drop = FALSE
+      ],
+      deg_volcano_label_per_direction
+    )
+
+    topFC <- unique(
+      rbind(
+        topFC_up,
+        topFC_down
+      )
+    )
+
+    topFC <- topFC[
+      !duplicated(topFC$gene_name),
+      ,
+      drop = FALSE
+    ]
+
+    nt4v_label <- nt4v
+    nt4v_label$label <- NA_character_
+
+    label_rows <- nt4v_label$gene_name %in% topFC$gene_name
+
+    nt4v_label$label[label_rows] <- as.character(
+      nt4v_label$gene_name[label_rows]
+    )
   } else {
     nt4v<-cbind(DEG["Name"],DEG[pvalue_name],
                 DEG[log2FoldChange_name])
@@ -1530,13 +1828,59 @@ for (i in 1:nrow(coldata_vs)){
     # if log2Foldchange < -0.5 and pvalue < 0.05, set as "DOWN"
     nt4v$diffexpressed[nt4v$log2FoldChange< -0.5 & nt4v$pvalue < 0.05] <- "DOWN"
 
-    diffexpressed<-nt4v[nt4v$diffexpressed != "NO",]
-    # select top 20 DEG of FC
-    topFC<-rbind(top_n(diffexpressed,20,log2FoldChange),top_n(diffexpressed,-20,log2FoldChange))
-    topFC$label<-topFC$Name
-    topFC<-topFC[!duplicated(topFC$Name),]
-    # Create a new column "label" to nt4v, that will contain the name of genes differentially expressed (NA in case they are not)
-    nt4v_label<-merge(nt4v,topFC, all=T)
+    diffexpressed <- nt4v[
+      nt4v$diffexpressed != "NO" &
+        !is.na(nt4v$log2FoldChange) &
+        is.finite(nt4v$log2FoldChange),
+      ,
+      drop = FALSE
+    ]
+
+    topFC_up <- head(
+      diffexpressed[
+        order(
+          diffexpressed$log2FoldChange,
+          decreasing = TRUE
+        ),
+        ,
+        drop = FALSE
+      ],
+      deg_volcano_label_per_direction
+    )
+
+    topFC_down <- head(
+      diffexpressed[
+        order(
+          diffexpressed$log2FoldChange,
+          decreasing = FALSE
+        ),
+        ,
+        drop = FALSE
+      ],
+      deg_volcano_label_per_direction
+    )
+
+    topFC <- unique(
+      rbind(
+        topFC_up,
+        topFC_down
+      )
+    )
+
+    topFC <- topFC[
+      !duplicated(topFC$Name),
+      ,
+      drop = FALSE
+    ]
+
+    nt4v_label <- nt4v
+    nt4v_label$label <- NA_character_
+
+    label_rows <- nt4v_label$Name %in% topFC$Name
+
+    nt4v_label$label[label_rows] <- as.character(
+      nt4v_label$Name[label_rows]
+    )
   }
 
 ## Volcano plotting
@@ -1545,7 +1889,11 @@ for (i in 1:nrow(coldata_vs)){
                               col=diffexpressed, label=label)) +
     geom_point(size = 1.5) +
     theme_minimal() +
-    geom_text_repel(size=3, max.overlaps = Inf) +
+    geom_text_repel(
+      size = 3,
+      max.overlaps = Inf,
+      na.rm = TRUE
+    ) +
     scale_color_manual(values=c("blue", "black", "red")) +
     geom_vline(xintercept=c(-0.5, 0.5), col="red", linetype="dashed", linewidth = 0.5) +
     geom_hline(yintercept=-log10(0.05), col="red", linetype="dashed", linewidth = 0.5) +
@@ -1555,7 +1903,59 @@ for (i in 1:nrow(coldata_vs)){
 
   ## bar plotting
   bar <- diffexpressed
-  if (nrow(bar)!=0){
+
+  if (nrow(bar) != 0) {
+
+    bar_up <- head(
+      bar[
+        order(
+          bar$log2FoldChange,
+          decreasing = TRUE
+        ),
+        ,
+        drop = FALSE
+      ],
+      deg_barplot_max_per_direction
+    )
+
+    bar_down <- head(
+      bar[
+        order(
+          bar$log2FoldChange,
+          decreasing = FALSE
+        ),
+        ,
+        drop = FALSE
+      ],
+      deg_barplot_max_per_direction
+    )
+
+    bar <- unique(
+      rbind(
+        bar_up,
+        bar_down
+      )
+    )
+
+    bar <- bar[
+      order(
+        bar$log2FoldChange,
+        decreasing = TRUE
+      ),
+      ,
+      drop = FALSE
+    ]
+
+    message(
+      "[DEG BARPLOT] Significant genes available: ",
+      nrow(diffexpressed),
+      "; genes plotted: ",
+      nrow(bar),
+      " (maximum ",
+      2L * deg_barplot_max_per_direction,
+      ")"
+    )
+
     # sort log2FoldChange top to down
     if (filename == "host_counts.txt"){
       bar$c <- with(bar,reorder(gene_name,log2FoldChange))
@@ -1578,9 +1978,34 @@ for (i in 1:nrow(coldata_vs)){
       theme_bw() +
       scale_y_discrete(breaks=bar[,1],labels=str_trunc(bar[,1],40)) +
       guides(fill = guide_legend(reverse = TRUE)) #reverse the legend to put "Up" in an upper position
-    ggsave(paste0(group1,"_vs_",group2,"/Barplot_",group1,"_vs_",group2,".pdf"),height=0.2*length(bar_plot[["data"]][[1]]),limitsize = FALSE)
+    deg_barplot_height <- max(
+      6,
+      min(
+        30,
+        0.24 * nrow(bar)
+      )
+    )
+
+    ggsave(
+      paste0(
+        group1,
+        "_vs_",
+        group2,
+        "/Barplot_",
+        group1,
+        "_vs_",
+        group2,
+        ".pdf"
+      ),
+      plot = bar_plot,
+      height = deg_barplot_height,
+      width = 10,
+      limitsize = FALSE
+    )
   }
 }
+
+#### END BLOCK: bounded DEG volcano and barplot ####
 
 ## Venn Diagram
 if (length(unique(coldata$group))>=2){
@@ -1877,12 +2302,285 @@ write.table(gph.anno1,paste0(dirname(args[1]),"/graphlan/annot.txt"),
 
 
 # adjust covariance effect
-normtrans_adj <- limma::removeBatchEffect(normtrans, vsd$group)
-if (length(args) == 5){
-  coldata.n<-coldata
-  coldata.n[]<-lapply(coldata.n, as.numeric)
-  normtrans_adj <- limma::removeBatchEffect(normtrans, covariates=coldata.n[,2:ncol(coldata.n)])
+#### BEGIN BLOCK: paired HAllA adjustment ####
+#
+# The experimental group is preserved in the expression matrix.
+# Repeated measurements from the same animal/subject are handled as
+# a categorical blocking factor. Only genuinely numeric metadata
+# columns are passed as continuous covariates.
+#
+# This avoids converting sample names and categorical identifiers
+# with as.numeric(), which previously generated NA values.
+
+normtrans_adj <- normtrans
+
+if (length(args) == 5) {
+
+  halla_metadata <- as.data.frame(
+    coldata,
+    stringsAsFactors = FALSE,
+    check.names = FALSE
+  )
+
+  sample_column <- names(halla_metadata)[1]
+  sample_ids <- as.character(
+    halla_metadata[[sample_column]]
+  )
+
+  rownames(halla_metadata) <- sample_ids
+
+  missing_halla_samples <- setdiff(
+    colnames(normtrans),
+    rownames(halla_metadata)
+  )
+
+  if (length(missing_halla_samples) > 0) {
+    stop(
+      "HAllA metadata is missing samples present in the ",
+      "normalized host matrix: ",
+      paste(missing_halla_samples, collapse = ", ")
+    )
+  }
+
+  halla_metadata <- halla_metadata[
+    colnames(normtrans),
+    ,
+    drop = FALSE
+  ]
+
+  if (!"group" %in% names(halla_metadata)) {
+    stop(
+      "The metadata must contain a group column for ",
+      "HAllA preprocessing."
+    )
+  }
+
+  halla_metadata$group <- factor(
+    halla_metadata$group
+  )
+
+  # Preserve the biological comparison while removing nuisance effects.
+  halla_design <- model.matrix(
+    ~ group,
+    data = halla_metadata
+  )
+
+  subject_candidates <- c(
+    "animal",
+    "animal_id",
+    "subject",
+    "subject_id",
+    "individual",
+    "individual_id",
+    "participant",
+    "participant_id",
+    "patient",
+    "patient_id",
+    "pair",
+    "pair_id"
+  )
+
+  metadata_names_lower <- tolower(
+    names(halla_metadata)
+  )
+
+  subject_indices <- match(
+    subject_candidates,
+    metadata_names_lower,
+    nomatch = 0L
+  )
+
+  subject_indices <- subject_indices[
+    subject_indices > 0L
+  ]
+
+  halla_subject_column <- NULL
+
+  for (subject_index in subject_indices) {
+    candidate_name <- names(halla_metadata)[subject_index]
+
+    candidate_values <- trimws(
+      as.character(
+        halla_metadata[[candidate_name]]
+      )
+    )
+
+    candidate_values <- candidate_values[
+      !is.na(candidate_values) &
+        candidate_values != ""
+    ]
+
+    if (
+      length(unique(candidate_values)) > 1 &&
+      anyDuplicated(candidate_values) > 0
+    ) {
+      halla_subject_column <- candidate_name
+      break
+    }
+  }
+
+  halla_batch <- NULL
+
+  if (!is.null(halla_subject_column)) {
+    halla_batch <- factor(
+      halla_metadata[[halla_subject_column]]
+    )
+  }
+
+  excluded_columns <- c(
+    sample_column,
+    "group",
+    halla_subject_column
+  )
+
+  nuisance_candidates <- setdiff(
+    names(halla_metadata),
+    excluded_columns
+  )
+
+  numeric_covariates <- list()
+  ignored_categorical_covariates <- character()
+
+  for (column_name in nuisance_candidates) {
+
+    values <- halla_metadata[[column_name]]
+
+    if (is.numeric(values) || is.integer(values)) {
+
+      numeric_values <- as.numeric(values)
+
+    } else {
+
+      character_values <- trimws(
+        as.character(values)
+      )
+
+      numeric_values <- suppressWarnings(
+        as.numeric(character_values)
+      )
+
+      conversion_valid <- (
+        is.na(character_values) |
+          character_values == "" |
+          !is.na(numeric_values)
+      )
+
+      if (!all(conversion_valid)) {
+        numeric_values <- NULL
+      }
+    }
+
+    if (!is.null(numeric_values)) {
+
+      nonmissing_values <- numeric_values[
+        !is.na(numeric_values)
+      ]
+
+      if (length(unique(nonmissing_values)) > 1) {
+        numeric_covariates[[column_name]] <- numeric_values
+      }
+
+    } else {
+
+      categorical_values <- as.character(values)
+      categorical_values <- categorical_values[
+        !is.na(categorical_values) &
+          categorical_values != ""
+      ]
+
+      if (length(unique(categorical_values)) > 1) {
+        ignored_categorical_covariates <- c(
+          ignored_categorical_covariates,
+          column_name
+        )
+      }
+    }
+  }
+
+  halla_covariate_matrix <- NULL
+
+  if (length(numeric_covariates) > 0) {
+    halla_covariate_matrix <- as.matrix(
+      as.data.frame(
+        numeric_covariates,
+        check.names = FALSE
+      )
+    )
+  }
+
+  remove_batch_arguments <- list(
+    x = normtrans,
+    design = halla_design
+  )
+
+  if (!is.null(halla_batch)) {
+    remove_batch_arguments$batch <- halla_batch
+  }
+
+  if (!is.null(halla_covariate_matrix)) {
+    remove_batch_arguments$covariates <- halla_covariate_matrix
+  }
+
+  if (
+    !is.null(halla_batch) ||
+    !is.null(halla_covariate_matrix)
+  ) {
+    normtrans_adj <- do.call(
+      limma::removeBatchEffect,
+      remove_batch_arguments
+    )
+  }
+
+  message(
+    "[HAllA] Biological group preserved: group"
+  )
+
+  message(
+    "[HAllA] Repeated-measures block: ",
+    if (is.null(halla_subject_column)) {
+      "none"
+    } else {
+      halla_subject_column
+    }
+  )
+
+  message(
+    "[HAllA] Numeric covariates removed: ",
+    if (length(numeric_covariates) == 0) {
+      "none"
+    } else {
+      paste(
+        names(numeric_covariates),
+        collapse = ", "
+      )
+    }
+  )
+
+  if (length(ignored_categorical_covariates) > 0) {
+    message(
+      "[HAllA] Additional categorical metadata preserved: ",
+      paste(
+        ignored_categorical_covariates,
+        collapse = ", "
+      )
+    )
+  }
+
+} else {
+
+  # Preserve the historical MTD behavior when no extended metadata
+  # file is supplied.
+  normtrans_adj <- limma::removeBatchEffect(
+    normtrans,
+    batch = factor(coldata$group)
+  )
+
+  message(
+    "[HAllA] No extended metadata supplied; ",
+    "the group effect was removed using the historical MTD mode."
+  )
 }
+#### END BLOCK: paired HAllA adjustment ####
 # make a folder for outputs
 dir.create("../halla",recursive = T)
 setwd("../halla")
@@ -2061,6 +2759,148 @@ plots4gsea <- function(edb, data, datax, edb0, genelist, group1, group2) {
 
   dir.create(edb, showWarnings = FALSE, recursive = TRUE)
 
+  #### BEGIN BLOCK: legacy enrichplot compatibility ####
+  #
+  # enrichplot 1.14.x builds cnetplot category-node colours with
+  # aes(color = I(...)). With newer ggplot2/scales combinations,
+  # this AsIs mapping can reach scales::rescale() and fail.
+  #
+  # Convert only these legacy identity-colour mappings into fixed
+  # layer parameters. Numeric fold-change colour mappings remain
+  # untouched.
+
+  fix_legacy_cnetplot_as_is <- function(plot_object) {
+
+    if (
+      is.null(plot_object) ||
+      is.null(plot_object$layers) ||
+      length(plot_object$layers) == 0
+    ) {
+      return(plot_object)
+    }
+
+    fixed_layers <- 0L
+    identity_layer_number <- 0L
+
+    default_identity_colours <- c(
+      "#E5C494",
+      "#B3B3B3"
+    )
+
+    for (layer_index in seq_along(plot_object$layers)) {
+
+      layer <- plot_object$layers[[layer_index]]
+
+      if (
+        is.null(layer$mapping) ||
+        length(layer$mapping) == 0
+      ) {
+        next
+      }
+
+      mapping_names <- names(layer$mapping)
+
+      colour_mapping_name <- intersect(
+        c("colour", "color"),
+        mapping_names
+      )
+
+      if (length(colour_mapping_name) == 0) {
+        next
+      }
+
+      colour_mapping_name <- colour_mapping_name[1]
+
+      mapping_expression <- layer$mapping[[colour_mapping_name]]
+
+      mapping_text <- tryCatch(
+        {
+          rlang::as_label(
+            mapping_expression
+          )
+        },
+        error = function(e) {
+          paste(
+            deparse(mapping_expression),
+            collapse = ""
+          )
+        }
+      )
+
+      is_identity_mapping <- grepl(
+        "I\\s*\\(",
+        mapping_text
+      )
+
+      if (!is_identity_mapping) {
+        next
+      }
+
+      identity_layer_number <- (
+        identity_layer_number + 1L
+      )
+
+      fixed_colour <- default_identity_colours[
+        min(
+          identity_layer_number,
+          length(default_identity_colours)
+        )
+      ]
+
+      if (
+        grepl(
+          "#E5C494",
+          mapping_text,
+          fixed = TRUE
+        )
+      ) {
+        fixed_colour <- "#E5C494"
+      }
+
+      if (
+        grepl(
+          "#B3B3B3",
+          mapping_text,
+          fixed = TRUE
+        )
+      ) {
+        fixed_colour <- "#B3B3B3"
+      }
+
+      # Remove aes(colour = I(...)).
+      layer$mapping[[colour_mapping_name]] <- NULL
+
+      # Add the same colour outside aes().
+      layer$aes_params$colour <- fixed_colour
+
+      plot_object$layers[[layer_index]] <- layer
+
+      fixed_layers <- fixed_layers + 1L
+    }
+
+    message(
+      "[CNETPLOT] Legacy AsIs colour layers repaired: ",
+      fixed_layers
+    )
+
+    plot_object
+  }
+
+  message(
+    "[PLOT COMPAT] enrichplot version: ",
+    as.character(
+      utils::packageVersion("enrichplot")
+    )
+  )
+
+  message(
+    "[PLOT COMPAT] ggplot2 version: ",
+    as.character(
+      utils::packageVersion("ggplot2")
+    )
+  )
+  #### END BLOCK: legacy enrichplot compatibility ####
+
   safe_filename <- function(x, max_chars = 120) {
     x <- as.character(x)
     if (length(x) == 0 || is.na(x) || x == "") {
@@ -2097,7 +2937,111 @@ plots4gsea <- function(edb, data, datax, edb0, genelist, group1, group2) {
     return(invisible(NULL))
   }
 
+#### BEGIN BLOCK: bounded enrichment graphics ####
+
+  sanitize_enrichment_object <- function(object) {
+
+    if (
+      is.null(object) ||
+      !methods::is(object, "S4") ||
+      !"result" %in% methods::slotNames(object)
+    ) {
+      return(object)
+    }
+
+    result_table <- object@result
+
+    for (column_name in names(result_table)) {
+      if (inherits(result_table[[column_name]], "AsIs")) {
+        result_table[[column_name]] <- as.vector(
+          result_table[[column_name]]
+        )
+      }
+    }
+
+    character_columns <- intersect(
+      c(
+        "ID",
+        "Description",
+        "geneID",
+        "core_enrichment",
+        "setSize"
+      ),
+      names(result_table)
+    )
+
+    for (column_name in character_columns) {
+      if (
+        column_name != "setSize"
+      ) {
+        result_table[[column_name]] <- as.character(
+          result_table[[column_name]]
+        )
+      }
+    }
+
+    if (
+      "Description" %in% names(result_table) &&
+      anyDuplicated(result_table$Description) > 0
+    ) {
+      result_table$Description <- make.unique(
+        as.character(
+          result_table$Description
+        ),
+        sep = " | "
+      )
+    }
+
+    object@result <- result_table
+    object
+  }
+
+  data <- sanitize_enrichment_object(data)
+  datax <- sanitize_enrichment_object(datax)
+
+  genelist_names <- names(genelist)
+  genelist <- suppressWarnings(
+    as.numeric(genelist)
+  )
+  names(genelist) <- genelist_names
+
+  genelist <- genelist[
+    !is.na(genelist) &
+      is.finite(genelist) &
+      !is.na(names(genelist)) &
+      names(genelist) != ""
+  ]
+
+  max_plot_terms <- suppressWarnings(
+    as.integer(
+      Sys.getenv(
+        "MTD_ENRICHMENT_MAX_PLOT_TERMS",
+        "30"
+      )
+    )
+  )
+
+  if (
+    is.na(max_plot_terms) ||
+    max_plot_terms < 5
+  ) {
+    max_plot_terms <- 30L
+  }
+
   nres <- nrow(data@result)
+  plot_terms <- min(
+    nres,
+    max_plot_terms
+  )
+
+  message(
+    "[ENRICHMENT PLOTS] Results available: ",
+    nres,
+    "; terms plotted: ",
+    plot_terms
+  )
+
+#### END BLOCK: bounded enrichment graphics ####
 
   ## ----------------------------------------------------------
   ## Top GSEA plots
@@ -2163,7 +3107,7 @@ ggsave(
   ## ----------------------------------------------------------
 
   tryCatch({
-    p.ridge <- ridgeplot(data)
+    p.ridge <- ridgeplot(data, showCategory = plot_terms)
 
     if (nres < 30) {
       ggsave(
@@ -2187,7 +3131,7 @@ ggsave(
   ## ----------------------------------------------------------
 
   tryCatch({
-    p.dot <- dotplot(data) + ggtitle("dotplot for GSEA")
+    p.dot <- dotplot(data, showCategory = plot_terms) + ggtitle("dotplot for GSEA")
 
     ggsave(
       paste0(edb, "/GSEA_", edb0, "_dotplot.pdf"),
@@ -2207,7 +3151,14 @@ ggsave(
     p.net <- cnetplot(
       datax,
       foldChange = genelist,
+      showCategory = plot_terms,
+      node_label = "category",
+      cex_label_category = 0.85,
       cex_label_gene = 0.6
+    )
+
+    p.net <- fix_legacy_cnetplot_as_is(
+      p.net
     )
 
     if (nres < 25) {
@@ -2247,7 +3198,20 @@ ggsave(
 
   if (!is.null(datax2)) {
     tryCatch({
-      p.tree <- treeplot(datax2)
+      tree_cluster_count <- max(
+        1L,
+        min(
+          5L,
+          floor(plot_terms / 2)
+        )
+      )
+
+      p.tree <- treeplot(
+        datax2,
+        showCategory = plot_terms,
+        nCluster = tree_cluster_count,
+        hilight = FALSE
+      )
 
       if (nres < 30) {
         ggsave(
@@ -2275,7 +3239,11 @@ ggsave(
 
   if (!is.null(datax2)) {
     tryCatch({
-      p.emap <- emapplot(datax2, layout = "kk")
+      p.emap <- emapplot(
+        datax2,
+        layout = "kk",
+        showCategory = plot_terms
+      )
 
       if (nres < 25) {
         ggsave(
@@ -2300,7 +3268,11 @@ ggsave(
 
   if (!is.null(datax2)) {
     tryCatch({
-      p.heat <- heatplot(datax2, foldChange = genelist)
+      p.heat <- heatplot(
+        datax2,
+        foldChange = genelist,
+        showCategory = plot_terms
+      )
 
       plot_width <- 8
       if ("core_enrichment" %in% colnames(data@result)) {
@@ -2344,7 +3316,7 @@ ggsave(
         width = 12
       )
 
-      p.upset <- upsetplot(data, n = nres)
+      p.upset <- upsetplot(data, n = plot_terms)
 
     } else {
       pdf(
@@ -2353,7 +3325,7 @@ ggsave(
         width = 16
       )
 
-      p.upset <- upsetplot(data, n = 30)
+      p.upset <- upsetplot(data, n = plot_terms)
     }
 
     print(p.upset)
@@ -2390,6 +3362,21 @@ ggsave(
         min_positive <- min(positive_p, na.rm = TRUE)
         bar$pvalue_for_plot[bar$pvalue_for_plot <= 0] <- min_positive * 0.1
       }
+
+      bar <- bar[
+        order(
+          bar$pvalue_for_plot,
+          -abs(bar$enrichmentScore),
+          na.last = TRUE
+        ),
+        ,
+        drop = FALSE
+      ]
+
+      bar <- head(
+        bar,
+        plot_terms
+      )
 
       bar$c <- with(bar, reorder(Description, -log10(pvalue_for_plot)))
 
@@ -2429,128 +3416,51 @@ ggsave(
   })
 
   ## ----------------------------------------------------------
-  ## All-result plots
+  ## Full result handling
   ## ----------------------------------------------------------
 
-  if (nres > 30) {
-
-    tryCatch({
-      p.ridge.all <- ridgeplot(data, showCategory = nres)
-
-      ggsave(
-        paste0(edb, "/GSEA_", edb0, "_ridgeplots_all.pdf"),
-        plot = p.ridge.all,
-        height = 0.48 * nres,
-        limitsize = FALSE
+  if (nres > max_plot_terms) {
+    writeLines(
+      c(
+        paste0(
+          "The enrichment result contains ",
+          nres,
+          " terms."
+        ),
+        paste0(
+          "Figures were limited to the top ",
+          max_plot_terms,
+          " terms to prevent oversized or unreadable files."
+        ),
+        "The complete results remain available in the CSV tables."
+      ),
+      paste0(
+        edb,
+        "/GSEA_",
+        edb0,
+        "_plot_limit_note.txt"
       )
-    }, error = function(e) {
-      write_plot_skip("ridgeplot_all", e)
-    })
-
-    tryCatch({
-      p.dot.all <- dotplot(data, showCategory = nres) +
-        ggtitle("dotplot for GSEA")
-
-      ggsave(
-        paste0(edb, "/GSEA_", edb0, "_dotplot_all.pdf"),
-        plot = p.dot.all,
-        height = 0.48 * nres,
-        width = 6,
-        limitsize = FALSE
-      )
-    }, error = function(e) {
-      write_plot_skip("dotplot_all", e)
-    })
-
-    tryCatch({
-      p.net.all <- cnetplot(
-        datax,
-        foldChange = genelist,
-        cex_label_gene = 0.6,
-        showCategory = max(1, round(nres / 6))
-      )
-
-      ggsave(
-        paste0(edb, "/GSEA_", edb0, "_net_all.pdf"),
-        plot = p.net.all,
-        limitsize = FALSE
-      )
-    }, error = function(e) {
-      write_plot_skip("net_all", e)
-    })
-
-    if (!is.null(datax2)) {
-
-      tryCatch({
-        nCluster <- round(nres / 6)
-        nCluster <- max(1, min(nCluster, 5))
-
-        p.tree.all <- treeplot(
-          datax2,
-          showCategory = nres,
-          nCluster = nCluster
-        )
-
-        ggsave(
-          paste0(edb, "/GSEA_", edb0, "_tree_all.pdf"),
-          plot = p.tree.all,
-          height = 0.48 * nres,
-          limitsize = FALSE
-        )
-      }, error = function(e) {
-        write_plot_skip("tree_all", e)
-      })
-
-      tryCatch({
-        p.emap.all <- emapplot(
-          datax2,
-          layout = "kk",
-          showCategory = nres
-        )
-
-        ggsave(
-          paste0(edb, "/GSEA_", edb0, "_map_all.pdf"),
-          plot = p.emap.all,
-          scale = nres / 12,
-          limitsize = FALSE
-        )
-      }, error = function(e) {
-        write_plot_skip("map_all", e)
-      })
-
-      tryCatch({
-        p.heat.all <- heatplot(
-          datax2,
-          foldChange = genelist,
-          showCategory = nres
-        )
-
-        plot_width <- 8
-        if ("core_enrichment" %in% colnames(data@result)) {
-          plot_width <- max(
-            8,
-            0.2 * round(max(nchar(data@result$core_enrichment), na.rm = TRUE) / 19)
-          )
-        }
-
-        ggsave(
-          paste0(edb, "/GSEA_", edb0, "_heat_all.pdf"),
-          plot = p.heat.all,
-          height = 1 + 0.3 * nres,
-          width = plot_width,
-          limitsize = FALSE
-        )
-      }, error = function(e) {
-        write_plot_skip("heat_all", e)
-      })
-    }
+    )
   }
 
   invisible(NULL)
 }
 #### BEGIN FUNCTION: pathview.p ####
 # function for KEGG Pathview plots
-pathview.p <- function(kk, ko.db, kegg_gene_list, dir = NULL) {
+pathview.p <- function(
+  kk,
+  ko.db,
+  kegg_gene_list,
+  dir = NULL,
+  max_pathways = suppressWarnings(
+    as.integer(
+      Sys.getenv(
+        "MTD_PATHVIEW_MAX_PATHWAYS",
+        "20"
+      )
+    )
+  )
+) {
   if (is.null(kk) || nrow(kk@result) == 0) {
     write("No enrichment result was found on KEGG.", "No_KEGG_enrichment_result.txt")
     return(invisible(NULL))
@@ -2644,8 +3554,78 @@ pathview.p <- function(kk, ko.db, kegg_gene_list, dir = NULL) {
   # usar IDs numéricos KEGG/Entrez sem prefixo "mlf:".
   names(gene_data) <- sub("^.*:", "", names(gene_data))
 
-  for (g in 1:nrow(kk@result)) {
-    pathway_id <- as.character(kk@result[g, 1])
+  #### BEGIN BLOCK: bounded Pathview pathways ####
+
+  if (
+    is.na(max_pathways) ||
+    max_pathways < 1
+  ) {
+    max_pathways <- 20L
+  }
+
+  pathview_results <- as.data.frame(
+    kk@result,
+    stringsAsFactors = FALSE
+  )
+
+  if ("p.adjust" %in% names(pathview_results)) {
+
+    pathview_order <- order(
+      suppressWarnings(
+        as.numeric(pathview_results$p.adjust)
+      ),
+      na.last = TRUE
+    )
+
+  } else if ("pvalue" %in% names(pathview_results)) {
+
+    pathview_order <- order(
+      suppressWarnings(
+        as.numeric(pathview_results$pvalue)
+      ),
+      na.last = TRUE
+    )
+
+  } else {
+
+    pathview_order <- seq_len(
+      nrow(pathview_results)
+    )
+  }
+
+  pathview_results <- pathview_results[
+    pathview_order,
+    ,
+    drop = FALSE
+  ]
+
+  total_pathview_results <- nrow(
+    pathview_results
+  )
+
+  pathview_results <- head(
+    pathview_results,
+    max_pathways
+  )
+
+  write.csv(
+    pathview_results,
+    "Pathview_selected_pathways.csv",
+    row.names = FALSE
+  )
+
+  message(
+    "[PATHVIEW] Enriched pathways available: ",
+    total_pathview_results,
+    "; pathways selected: ",
+    nrow(pathview_results),
+    " (maximum ",
+    max_pathways,
+    ")"
+  )
+
+  for (g in seq_len(nrow(pathview_results))) {
+    pathway_id <- as.character(pathview_results[g, 1])
     pathway_id <- sub("^path:", "", pathway_id)
     pathway_id <- sub(paste0("^", ko.db), "", pathway_id)
 
