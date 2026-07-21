@@ -37,3 +37,6 @@ condaPath
 # MkDocs local environment and build output
 .venv-docs/
 site/
+Tools/graphlan/src/__pycache__/__init__.cpython-38.pyc
+Tools/graphlan/src/__pycache__/graphlan_lib.cpython-38.pyc
+Tools/graphlan/src/__pycache__/pyphlan.cpython-38.pyc
