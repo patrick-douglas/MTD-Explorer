@@ -2568,16 +2568,14 @@ if (length(args) == 5) {
 
 } else {
 
-  # Preserve the historical MTD behavior when no extended metadata
-  # file is supplied.
-  normtrans_adj <- limma::removeBatchEffect(
-    normtrans,
-    batch = factor(coldata$group)
-  )
+  # Without extended metadata there is no justified batch or
+  # repeated-measures variable to remove. Preserve the transformed
+  # matrix and retain the biological group effect.
+  normtrans_adj <- normtrans
 
   message(
     "[HAllA] No extended metadata supplied; ",
-    "the group effect was removed using the historical MTD mode."
+    "no batch effect was removed and the biological group was preserved."
   )
 }
 #### END BLOCK: paired HAllA adjustment ####
@@ -3193,43 +3191,562 @@ ggsave(
   })
 
   ## ----------------------------------------------------------
-  ## Treeplot
+  ## Term-similarity dendrogram
   ## ----------------------------------------------------------
+  #
+  # enrichplot::treeplot() from the Bioconductor 3.14 environment
+  # can fail inside ggtree::geom_segment2() when combined with the
+  # installed ggplot2 version:
+  #
+  #   'gpar' element 'lwd' must not be length 0
+  #
+  # Build the equivalent term-similarity hierarchy directly from
+  # the pairwise_termsim() matrix. This avoids the incompatible
+  # ggtree drawing layer while preserving the clustering result.
 
   if (!is.null(datax2)) {
     tryCatch({
-      tree_cluster_count <- max(
-        1L,
-        min(
-          5L,
-          floor(plot_terms / 2)
-        )
-      )
 
-      p.tree <- treeplot(
-        datax2,
-        showCategory = plot_terms,
-        nCluster = tree_cluster_count,
-        hilight = FALSE
-      )
-
-      if (nres < 30) {
-        ggsave(
-          paste0(edb, "/GSEA_", edb0, "_tree.pdf"),
-          plot = p.tree,
-          height = 2 + 0.48 * nres,
-          limitsize = FALSE
-        )
-      } else {
-        ggsave(
-          paste0(edb, "/GSEA_", edb0, "_tree.pdf"),
-          plot = p.tree,
-          height = 6,
-          limitsize = FALSE
+      if (
+        !"termsim" %in% methods::slotNames(datax2)
+      ) {
+        stop(
+          "The enrichment object does not contain a termsim slot."
         )
       }
+
+      tree_similarity <- methods::slot(
+        datax2,
+        "termsim"
+      )
+
+      tree_similarity <- as.matrix(
+        tree_similarity
+      )
+
+      if (
+        nrow(tree_similarity) < 2 ||
+        ncol(tree_similarity) < 2
+      ) {
+        stop(
+          "Fewer than two terms were available for clustering."
+        )
+      }
+
+      if (
+        is.null(rownames(tree_similarity)) ||
+        is.null(colnames(tree_similarity))
+      ) {
+        stop(
+          "The term-similarity matrix has no row or column names."
+        )
+      }
+
+      tree_results <- as.data.frame(
+        datax2@result,
+        stringsAsFactors = FALSE,
+        check.names = FALSE
+      )
+
+      if (nrow(tree_results) < 2) {
+        stop(
+          "Fewer than two enrichment results were available."
+        )
+      }
+
+      tree_similarity_names <- rownames(
+        tree_similarity
+      )
+
+      id_matches <- 0L
+      description_matches <- 0L
+
+      if ("ID" %in% names(tree_results)) {
+        id_matches <- sum(
+          as.character(tree_results$ID) %in%
+            tree_similarity_names
+        )
+      }
+
+      if ("Description" %in% names(tree_results)) {
+        description_matches <- sum(
+          as.character(tree_results$Description) %in%
+            tree_similarity_names
+        )
+      }
+
+      if (
+        id_matches == 0L &&
+        description_matches == 0L
+      ) {
+        stop(
+          "Could not match enrichment results to the ",
+          "term-similarity matrix."
+        )
+      }
+
+      tree_key_column <- if (
+        id_matches >= description_matches
+      ) {
+        "ID"
+      } else {
+        "Description"
+      }
+
+      tree_results$.tree_key <- as.character(
+        tree_results[[tree_key_column]]
+      )
+
+      tree_results <- tree_results[
+        !is.na(tree_results$.tree_key) &
+          tree_results$.tree_key != "" &
+          tree_results$.tree_key %in%
+            tree_similarity_names,
+        ,
+        drop = FALSE
+      ]
+
+      if (nrow(tree_results) < 2) {
+        stop(
+          "Fewer than two matched enrichment terms remained."
+        )
+      }
+
+      tree_rank_column <- intersect(
+        c(
+          "p.adjust",
+          "pvalue",
+          "qvalue"
+        ),
+        names(tree_results)
+      )
+
+      if (length(tree_rank_column) > 0) {
+
+        tree_rank_column <- tree_rank_column[1]
+
+        tree_results$.tree_rank <- suppressWarnings(
+          as.numeric(
+            tree_results[[tree_rank_column]]
+          )
+        )
+
+      } else {
+
+        tree_results$.tree_rank <- seq_len(
+          nrow(tree_results)
+        )
+      }
+
+      tree_results$.tree_rank[
+        is.na(tree_results$.tree_rank) |
+          !is.finite(tree_results$.tree_rank)
+      ] <- Inf
+
+      tree_results <- tree_results[
+        order(
+          tree_results$.tree_rank,
+          na.last = TRUE
+        ),
+        ,
+        drop = FALSE
+      ]
+
+      tree_results <- tree_results[
+        !duplicated(tree_results$.tree_key),
+        ,
+        drop = FALSE
+      ]
+
+      tree_results <- head(
+        tree_results,
+        plot_terms
+      )
+
+      selected_tree_keys <- as.character(
+        tree_results$.tree_key
+      )
+
+      selected_tree_keys <- selected_tree_keys[
+        selected_tree_keys %in%
+          rownames(tree_similarity) &
+          selected_tree_keys %in%
+          colnames(tree_similarity)
+      ]
+
+      if (length(selected_tree_keys) < 2) {
+        stop(
+          "Fewer than two terms were available after ",
+          "matching the similarity matrix."
+        )
+      }
+
+      tree_similarity <- tree_similarity[
+        selected_tree_keys,
+        selected_tree_keys,
+        drop = FALSE
+      ]
+
+      storage.mode(tree_similarity) <- "numeric"
+
+      tree_similarity[
+        !is.finite(tree_similarity)
+      ] <- 0
+
+      # Make the matrix symmetrical and constrain similarity values.
+      tree_similarity <- (
+        tree_similarity +
+          t(tree_similarity)
+      ) / 2
+
+      tree_similarity <- pmax(
+        0,
+        pmin(
+          1,
+          tree_similarity
+        )
+      )
+
+      diag(tree_similarity) <- 1
+
+      tree_distance <- stats::as.dist(
+        1 - tree_similarity
+      )
+
+      tree_hclust <- stats::hclust(
+        tree_distance,
+        method = "average"
+      )
+
+      number_of_leaves <- length(
+        tree_hclust$labels
+      )
+
+      # Position of each original leaf after hclust ordering.
+      leaf_x <- numeric(number_of_leaves)
+
+      leaf_x[
+        tree_hclust$order
+      ] <- seq_len(number_of_leaves)
+
+      node_x <- numeric(
+        number_of_leaves - 1L
+      )
+
+      tree_segments <- vector(
+        "list",
+        number_of_leaves - 1L
+      )
+
+      get_tree_node_position <- function(
+        merge_value,
+        current_row
+      ) {
+
+        if (merge_value < 0) {
+
+          leaf_index <- -merge_value
+
+          return(
+            list(
+              x = leaf_x[leaf_index],
+              height = 0
+            )
+          )
+        }
+
+        if (merge_value >= current_row) {
+          stop(
+            "Invalid hclust merge structure."
+          )
+        }
+
+        list(
+          x = node_x[merge_value],
+          height = tree_hclust$height[merge_value]
+        )
+      }
+
+      for (
+        merge_row in seq_len(
+          nrow(tree_hclust$merge)
+        )
+      ) {
+
+        left_node <- get_tree_node_position(
+          tree_hclust$merge[merge_row, 1],
+          merge_row
+        )
+
+        right_node <- get_tree_node_position(
+          tree_hclust$merge[merge_row, 2],
+          merge_row
+        )
+
+        merge_height <- tree_hclust$height[
+          merge_row
+        ]
+
+        node_x[merge_row] <- mean(
+          c(
+            left_node$x,
+            right_node$x
+          )
+        )
+
+        tree_segments[[merge_row]] <- data.frame(
+          x = c(
+            left_node$x,
+            right_node$x,
+            left_node$x
+          ),
+          y = c(
+            left_node$height,
+            right_node$height,
+            merge_height
+          ),
+          xend = c(
+            left_node$x,
+            right_node$x,
+            right_node$x
+          ),
+          yend = c(
+            merge_height,
+            merge_height,
+            merge_height
+          ),
+          stringsAsFactors = FALSE
+        )
+      }
+
+      tree_segments <- do.call(
+        rbind,
+        tree_segments
+      )
+
+      ordered_tree_keys <- tree_hclust$labels[
+        tree_hclust$order
+      ]
+
+      tree_label_table <- tree_results[
+        match(
+          ordered_tree_keys,
+          tree_results$.tree_key
+        ),
+        ,
+        drop = FALSE
+      ]
+
+      if ("Description" %in% names(tree_label_table)) {
+
+        tree_labels <- as.character(
+          tree_label_table$Description
+        )
+
+      } else {
+
+        tree_labels <- ordered_tree_keys
+      }
+
+      tree_labels[
+        is.na(tree_labels) |
+          tree_labels == ""
+      ] <- ordered_tree_keys[
+        is.na(tree_labels) |
+          tree_labels == ""
+      ]
+
+      tree_labels <- make.unique(
+        tree_labels,
+        sep = " | "
+      )
+
+      tree_labels <- stringr::str_wrap(
+        tree_labels,
+        width = 35
+      )
+
+      tree_leaf_data <- data.frame(
+        x = seq_len(number_of_leaves),
+        y = 0,
+        key = ordered_tree_keys,
+        label = tree_labels,
+        stringsAsFactors = FALSE
+      )
+
+      tree_color_column <- intersect(
+        c(
+          "p.adjust",
+          "pvalue",
+          "qvalue"
+        ),
+        names(tree_label_table)
+      )
+
+      if (length(tree_color_column) > 0) {
+
+        tree_color_column <- tree_color_column[1]
+
+        tree_leaf_data$significance <- suppressWarnings(
+          as.numeric(
+            tree_label_table[[tree_color_column]]
+          )
+        )
+
+        positive_tree_p <- tree_leaf_data$significance[
+          !is.na(tree_leaf_data$significance) &
+            tree_leaf_data$significance > 0
+        ]
+
+        minimum_tree_p <- if (
+          length(positive_tree_p) > 0
+        ) {
+          min(
+            positive_tree_p,
+            na.rm = TRUE
+          )
+        } else {
+          .Machine$double.xmin
+        }
+
+        tree_leaf_data$significance <- pmax(
+          tree_leaf_data$significance,
+          minimum_tree_p * 0.1
+        )
+
+        tree_leaf_data$minus_log10_significance <- -log10(
+          tree_leaf_data$significance
+        )
+
+      } else {
+
+        tree_leaf_data$minus_log10_significance <- 1
+      }
+
+      write.csv(
+        tree_leaf_data,
+        paste0(
+          edb,
+          "/GSEA_",
+          edb0,
+          "_tree_selected_terms.csv"
+        ),
+        row.names = FALSE
+      )
+
+      write.csv(
+        tree_similarity,
+        paste0(
+          edb,
+          "/GSEA_",
+          edb0,
+          "_tree_similarity_matrix.csv"
+        ),
+        row.names = TRUE
+      )
+
+      p.tree <- ggplot2::ggplot() +
+        ggplot2::geom_segment(
+          data = tree_segments,
+          ggplot2::aes(
+            x = x,
+            y = y,
+            xend = xend,
+            yend = yend
+          ),
+          linewidth = 0.6,
+          lineend = "round"
+        ) +
+        ggplot2::geom_point(
+          data = tree_leaf_data,
+          ggplot2::aes(
+            x = x,
+            y = y,
+            color = minus_log10_significance
+          ),
+          size = 3
+        ) +
+        ggplot2::scale_x_continuous(
+          breaks = tree_leaf_data$x,
+          labels = tree_leaf_data$label,
+          expand = ggplot2::expansion(
+            mult = c(0.02, 0.02)
+          )
+        ) +
+        ggplot2::scale_color_gradient(
+          low = "blue",
+          high = "red",
+          name = expression(
+            -log[10]("p-value")
+          )
+        ) +
+        ggplot2::labs(
+          x = NULL,
+          y = "1 - term similarity",
+          title = paste0(
+            "Term-similarity tree: ",
+            edb0
+          ),
+          subtitle = paste0(
+            "Average-linkage clustering of ",
+            number_of_leaves,
+            " enriched terms"
+          )
+        ) +
+        ggplot2::theme_bw() +
+        ggplot2::theme(
+          axis.text.x = ggplot2::element_text(
+            angle = 60,
+            hjust = 1,
+            vjust = 1,
+            size = 8
+          ),
+          plot.title = ggplot2::element_text(
+            hjust = 0.5,
+            face = "bold"
+          ),
+          plot.subtitle = ggplot2::element_text(
+            hjust = 0.5
+          ),
+          panel.grid.minor = ggplot2::element_blank()
+        )
+
+      tree_plot_width <- max(
+        12,
+        min(
+          24,
+          0.55 * number_of_leaves
+        )
+      )
+
+      ggsave(
+        paste0(
+          edb,
+          "/GSEA_",
+          edb0,
+          "_tree.pdf"
+        ),
+        plot = p.tree,
+        width = tree_plot_width,
+        height = 8,
+        limitsize = FALSE
+      )
+
+      message(
+        "[TREE] Robust term-similarity dendrogram saved: ",
+        paste0(
+          edb,
+          "/GSEA_",
+          edb0,
+          "_tree.pdf"
+        )
+      )
+
     }, error = function(e) {
-      write_plot_skip("tree", e)
+      write_plot_skip(
+        "tree",
+        e
+      )
     })
   }
 

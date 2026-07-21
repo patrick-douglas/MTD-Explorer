@@ -6122,13 +6122,48 @@ conda activate R412
 if [[ "$NO_COMPARISON" == "1" ]]; then
     echo "${y}[INFO] Exploratory mode: skipping HUMAnN DEG analysis.${w}"
 else
-    Rscript "$DIFFERENTIAL_ANALYSIS_DIR/DEG_Anno_Plot.R" \
-        "$outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_kegg_translated.tsv" \
-        "$samplesheet_file"
+    #### BEGIN BLOCK: metadata-aware HUMAnN DEG calls ####
 
-    Rscript "$DIFFERENTIAL_ANALYSIS_DIR/DEG_Anno_Plot.R" \
-        "$outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_go_translated.tsv" \
-        "$samplesheet_file"
+    humann_deg_inputs=(
+        "$outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_kegg_translated.tsv"
+        "$outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_go_translated.tsv"
+    )
+
+    for humann_deg_input in "${humann_deg_inputs[@]}"; do
+
+        humann_deg_args=(
+            "$humann_deg_input"
+            "$samplesheet_file"
+            "$hostid"
+            "$MTDIR/HostSpecies.csv"
+        )
+
+        if [[ -n "${metadata:-}" ]]; then
+            humann_deg_args+=( "$metadata" )
+        fi
+
+        echo "============================================================"
+        echo "[HUMAnN DEG] Input:"
+        echo "  $humann_deg_input"
+        echo "[HUMAnN DEG] Host TaxID:"
+        echo "  $hostid"
+        echo "[HUMAnN DEG] HostSpecies:"
+        echo "  $MTDIR/HostSpecies.csv"
+        echo "[HUMAnN DEG] Metadata:"
+        echo "  ${metadata:-not supplied}"
+        echo "[HUMAnN DEG] Argument count:"
+        echo "  ${#humann_deg_args[@]}"
+        echo "============================================================"
+
+        if ! Rscript \
+            "$DIFFERENTIAL_ANALYSIS_DIR/DEG_Anno_Plot.R" \
+            "${humann_deg_args[@]}"
+        then
+            die "HUMAnN DEG analysis failed for: $humann_deg_input"
+        fi
+    done
+
+    #### END BLOCK: metadata-aware HUMAnN DEG calls ####
 fi
 
 conda deactivate
@@ -6968,10 +7003,31 @@ run_cmd Rscript "$MTDIR/Tools/ssGSEA2.0/ssgsea-cli.R" \
 
 require_file "$outputdr/ssGSEA/ssgsea-results-scores.gct" "ssGSEA scores"
 
-run_cmd Rscript "$INTEGRATION_ANALYSIS_DIR/for_halla.R" \
-    "$outputdr/ssGSEA/ssgsea-results-scores.gct" \
-    "$samplesheet_file" \
-    $metadata
+#### BEGIN BLOCK: metadata-aware for_halla call ####
+
+for_halla_args=(
+    "$outputdr/ssGSEA/ssgsea-results-scores.gct"
+    "$samplesheet_file"
+)
+
+if [[ -n "${metadata:-}" ]]; then
+    for_halla_args+=( "$metadata" )
+fi
+
+echo "============================================================"
+echo "[FOR_HALLA] ssGSEA scores:"
+echo "  $outputdr/ssGSEA/ssgsea-results-scores.gct"
+echo "[FOR_HALLA] Metadata:"
+echo "  ${metadata:-not supplied}"
+echo "[FOR_HALLA] Argument count:"
+echo "  ${#for_halla_args[@]}"
+echo "============================================================"
+
+run_cmd Rscript \
+    "$INTEGRATION_ANALYSIS_DIR/for_halla.R" \
+    "${for_halla_args[@]}"
+
+#### END BLOCK: metadata-aware for_halla call ####
 
 require_file "$outputdr/halla/Microbiomes.txt" "HAllA microbiome input"
 require_file "$outputdr/halla/Host_gene.txt" "HAllA host gene input"
