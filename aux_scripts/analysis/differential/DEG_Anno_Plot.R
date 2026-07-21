@@ -1209,31 +1209,131 @@ anno_colors<-list(Group=cols)
 
 # draw heat map
 library(pheatmap)
-hp_thumbnail<-pheatmap(transdata, cluster_cols = T, scale="row",
-          annotation_col =Anno_col, annotation_colors=anno_colors,
-          show_rownames=F,cex=1)
-if (nrow(transdata)>100){
-  hp<-pheatmap(transdata, cluster_cols = T, scale="row",
-                         fontsize_row=5, annotation_col =Anno_col,
-               annotation_colors=anno_colors)
-} else {
-  hp<-pheatmap(transdata, cluster_cols = T, scale="row",
-               annotation_col =Anno_col,
-               annotation_colors=anno_colors)
-}
-# hp<-pheatmap(transdata, cluster_cols = T, scale="row",
-#              fontsize_row=5,cex=1, annotation_col =Anno_col, cex=0.9)
 
-# save the plot
-ggsave("heatmap_thumbnail.pdf",plot=hp_thumbnail)
-if (nrow(transdata)>100){
-  ggsave("heatmap.pdf",plot=hp,
-                limitsize = F,
-                height = 0.1*nrow(transdata),
-                width = 0.8*ncol(transdata))
-} else {
-  ggsave("heatmap.pdf",plot=hp,height = 0.2*nrow(transdata))
+#### BEGIN BLOCK: safe small heatmaps ####
+
+if (nrow(transdata) < 1L || ncol(transdata) < 1L) {
+  stop(
+    "The heatmap matrix has no rows or columns after filtering."
+  )
 }
+
+# Hierarchical clustering requires at least two objects.
+heatmap_cluster_rows <- nrow(transdata) >= 2L
+heatmap_cluster_cols <- ncol(transdata) >= 2L
+
+# Row scaling requires variation within each row. Rows with no
+# variation are still valid for display, but cannot be standardized.
+heatmap_row_sd <- apply(
+  transdata,
+  1,
+  stats::sd,
+  na.rm = TRUE
+)
+
+heatmap_scale_mode <- if (
+  length(heatmap_row_sd) > 0L &&
+  all(
+    is.finite(heatmap_row_sd) &
+      heatmap_row_sd > 0
+  )
+) {
+  "row"
+} else {
+  "none"
+}
+
+message(
+  "[HEATMAP] Row clustering: ",
+  heatmap_cluster_rows
+)
+
+message(
+  "[HEATMAP] Column clustering: ",
+  heatmap_cluster_cols
+)
+
+message(
+  "[HEATMAP] Scale mode: ",
+  heatmap_scale_mode
+)
+
+if (!heatmap_cluster_rows) {
+  message(
+    "[HEATMAP] Only one feature was available; ",
+    "row clustering was disabled."
+  )
+}
+
+heatmap_show_thumbnail_rows <- nrow(transdata) <= 50L
+
+hp_thumbnail <- pheatmap(
+  transdata,
+  cluster_rows = heatmap_cluster_rows,
+  cluster_cols = heatmap_cluster_cols,
+  scale = heatmap_scale_mode,
+  annotation_col = Anno_col,
+  annotation_colors = anno_colors,
+  show_rownames = heatmap_show_thumbnail_rows,
+  cex = 1
+)
+
+if (nrow(transdata) > 100L) {
+
+  hp <- pheatmap(
+    transdata,
+    cluster_rows = heatmap_cluster_rows,
+    cluster_cols = heatmap_cluster_cols,
+    scale = heatmap_scale_mode,
+    fontsize_row = 5,
+    annotation_col = Anno_col,
+    annotation_colors = anno_colors
+  )
+
+} else {
+
+  hp <- pheatmap(
+    transdata,
+    cluster_rows = heatmap_cluster_rows,
+    cluster_cols = heatmap_cluster_cols,
+    scale = heatmap_scale_mode,
+    annotation_col = Anno_col,
+    annotation_colors = anno_colors
+  )
+}
+
+heatmap_full_height <- max(
+  3,
+  min(
+    50,
+    0.2 * nrow(transdata)
+  )
+)
+
+heatmap_full_width <- max(
+  7,
+  min(
+    30,
+    0.8 * ncol(transdata)
+  )
+)
+
+ggsave(
+  "heatmap_thumbnail.pdf",
+  plot = hp_thumbnail,
+  width = 7,
+  height = 7
+)
+
+ggsave(
+  "heatmap.pdf",
+  plot = hp,
+  limitsize = FALSE,
+  height = heatmap_full_height,
+  width = heatmap_full_width
+)
+
+#### END BLOCK: safe small heatmaps ####
 ## draw PCA
 if (filename %in%
     c("humann_genefamilies_Abundance_go_translated.tsv",
