@@ -1,0 +1,31 @@
+name: MTD_humann
+
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+
+dependencies:
+  - python=3.10
+  - pip
+  - numpy=1.26.4
+
+  # HUMAnN alignment and optimization tools
+  - bowtie2=2.5.4
+  - diamond=2.0.15
+  - glpk=5.0
+
+  # MetaPhlAn stack
+  - metaphlan=4.1.1
+  - hclust2=1.0.0
+  - simplejson<4
+  - cython
+
+  # HUMAnN 3.9 is installed through PyPI.
+  - pip:
+      - humann==3.9
+
+# Prevent packages installed under ~/.local from leaking
+# into the isolated MTD_humann environment.
+variables:
+  PYTHONNOUSERSITE: "1"

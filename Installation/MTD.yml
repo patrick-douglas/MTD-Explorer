@@ -63,8 +63,7 @@ dependencies:
   - hdf5=1.10.5=nompi_h5b725eb_1114
   - hisat2=2.2.1=he1b5a44_2
   - htslib=1.11=hd3b49d5_1
-#  - humann=3.0.0.alpha.3=pyh9056e2e_0
-  - humann=3.1.1=pyh7cba7a3_1 
+  # HUMAnN is provided by Installation/MTD_humann.yml.
   - icu=67.1=he1b5a44_0
   - idna=2.10=pyh9f0ad1d_0
   - iqtree=2.0.3=h176a8bc_1
@@ -112,8 +111,7 @@ dependencies:
   - make=4.3=hd18ef5c_1
   - mash=2.2.2=ha61e061_2
   - matplotlib-base=3.3.4=py38h0efea84_0
-#  - metaphlan=3.0.7=pyh7b7c402_0
-  - metaphlan=3.1.0=pyhb7b1952_0
+  # MetaPhlAn is provided by Installation/MTD_humann.yml.
   - muscle=3.8.1551=hc9558a2_5
   - ncbi-ngs-sdk=2.10.9=h3e72335_0
   - ncurses=6.2=h58526e2_4

@@ -879,6 +879,162 @@ conda deactivate
 conda activate MTD
 
 # ------------------------------------------------------------
+# Dedicated HUMAnN 3.9 runtime
+# ------------------------------------------------------------
+# HUMAnN and MetaPhlAn are isolated from the legacy MTD environment.
+# The production defaults can be overridden for controlled testing:
+#
+#   MTD_HUMANN_ENV_NAME=MTD_humann_yaml_test
+#   MTD_HUMANN_DB_ROOT=/path/to/ref_database
+# ------------------------------------------------------------
+
+HUMANN_ENV_NAME="${MTD_HUMANN_ENV_NAME:-MTD_humann}"
+HUMANN_ENV_DIR="$condapath/envs/$HUMANN_ENV_NAME"
+
+HUMANN_BIN="$HUMANN_ENV_DIR/bin/humann"
+HUMANN_CONFIG_BIN="$HUMANN_ENV_DIR/bin/humann_config"
+HUMANN_JOIN_TABLES_BIN="$HUMANN_ENV_DIR/bin/humann_join_tables"
+HUMANN_RENORM_TABLE_BIN="$HUMANN_ENV_DIR/bin/humann_renorm_table"
+HUMANN_SPLIT_STRATIFIED_BIN="$HUMANN_ENV_DIR/bin/humann_split_stratified_table"
+HUMANN_REGROUP_TABLE_BIN="$HUMANN_ENV_DIR/bin/humann_regroup_table"
+HUMANN_METAPHLAN_BIN="$HUMANN_ENV_DIR/bin/metaphlan"
+HUMANN_PYTHON_BIN="$HUMANN_ENV_DIR/bin/python"
+
+HUMANN_DB_ROOT="${MTD_HUMANN_DB_ROOT:-$MTDIR/HUMAnN/ref_database}"
+HUMANN_CHOCOPHLAN_DIR="$HUMANN_DB_ROOT/chocophlan"
+HUMANN_UNIREF_DIR="$HUMANN_DB_ROOT/uniref"
+HUMANN_UTILITY_MAPPING_DIR="$HUMANN_DB_ROOT/utility_mapping"
+HUMANN_METAPHLAN_DB_DIR="$HUMANN_DB_ROOT/metaphlan"
+HUMANN_METAPHLAN_INDEX="mpa_vJun23_CHOCOPhlAnSGB_202403"
+
+HUMANN_METAPHLAN_OPTIONS="--bowtie2db $HUMANN_METAPHLAN_DB_DIR --index $HUMANN_METAPHLAN_INDEX --offline"
+
+run_humann_tool() {
+    env \
+        -u PYTHONPATH \
+        -u PYTHONHOME \
+        PYTHONNOUSERSITE=1 \
+        PATH="$HUMANN_ENV_DIR/bin:$PATH" \
+        "$@"
+}
+
+validate_humann_runtime() {
+    local executable=""
+    local required_file=""
+    local humann_version=""
+    local metaphlan_version=""
+    local config_output=""
+    local utility_count=0
+
+    local -a required_executables=(
+        "$HUMANN_BIN"
+        "$HUMANN_CONFIG_BIN"
+        "$HUMANN_JOIN_TABLES_BIN"
+        "$HUMANN_RENORM_TABLE_BIN"
+        "$HUMANN_SPLIT_STRATIFIED_BIN"
+        "$HUMANN_REGROUP_TABLE_BIN"
+        "$HUMANN_METAPHLAN_BIN"
+        "$HUMANN_PYTHON_BIN"
+        "$HUMANN_ENV_DIR/bin/diamond"
+        "$HUMANN_ENV_DIR/bin/bowtie2"
+    )
+
+    for executable in "${required_executables[@]}"; do
+        if [[ ! -x "$executable" ]]; then
+            die "Required MTD_humann executable is missing or not executable: $executable"
+        fi
+    done
+
+    if ! find "$HUMANN_CHOCOPHLAN_DIR" \
+        -type f \
+        -name '*.ffn.gz' \
+        -size +0c \
+        -print -quit 2>/dev/null | grep -q .
+    then
+        die "No usable ChocoPhlAn .ffn.gz files were found: $HUMANN_CHOCOPHLAN_DIR"
+    fi
+
+    require_file \
+        "$HUMANN_UNIREF_DIR/uniref90_201901b_full.dmnd" \
+        "HUMAnN UniRef90 DIAMOND database"
+
+    utility_count="$(
+        find "$HUMANN_UTILITY_MAPPING_DIR" \
+            -type f \
+            -size +0c \
+            2>/dev/null |
+        awk 'END { print NR + 0 }'
+    )"
+
+    if ! [[ "$utility_count" =~ ^[0-9]+$ ]] ||
+       (( utility_count < 10 ))
+    then
+        die "HUMAnN utility-mapping database is incomplete: $HUMANN_UTILITY_MAPPING_DIR"
+    fi
+
+    for required_file in \
+        "$HUMANN_METAPHLAN_DB_DIR/${HUMANN_METAPHLAN_INDEX}.pkl" \
+        "$HUMANN_METAPHLAN_DB_DIR/${HUMANN_METAPHLAN_INDEX}.1.bt2l" \
+        "$HUMANN_METAPHLAN_DB_DIR/${HUMANN_METAPHLAN_INDEX}.2.bt2l" \
+        "$HUMANN_METAPHLAN_DB_DIR/${HUMANN_METAPHLAN_INDEX}.3.bt2l" \
+        "$HUMANN_METAPHLAN_DB_DIR/${HUMANN_METAPHLAN_INDEX}.4.bt2l" \
+        "$HUMANN_METAPHLAN_DB_DIR/${HUMANN_METAPHLAN_INDEX}.rev.1.bt2l" \
+        "$HUMANN_METAPHLAN_DB_DIR/${HUMANN_METAPHLAN_INDEX}.rev.2.bt2l"
+    do
+        require_file "$required_file" "MetaPhlAn database component"
+    done
+
+    if ! run_humann_tool "$HUMANN_PYTHON_BIN" -c \
+        'import os, site, sys, humann, numpy, simplejson; prefix=os.path.realpath(sys.prefix); assert numpy.__version__ == "1.26.4"; assert simplejson.__version__.split(".", 1)[0] == "3"; assert site.ENABLE_USER_SITE is False; assert all("/.local/" not in p for p in sys.path); assert os.path.realpath(humann.__file__).startswith(prefix + os.sep)'
+    then
+        die "MTD_humann Python isolation validation failed."
+    fi
+
+    humann_version="$(
+        run_humann_tool "$HUMANN_BIN" --version 2>&1
+    )"
+
+    if [[ "$humann_version" != *"humann v3.9"* ]]; then
+        die "Unexpected HUMAnN version: $humann_version"
+    fi
+
+    metaphlan_version="$(
+        run_humann_tool "$HUMANN_METAPHLAN_BIN" --version 2>&1
+    )"
+
+    if [[ "$metaphlan_version" != *"MetaPhlAn version 4.1.1"* ]]; then
+        die "Unexpected MetaPhlAn version: $metaphlan_version"
+    fi
+
+    if ! config_output="$(
+        run_humann_tool "$HUMANN_CONFIG_BIN" --print 2>&1
+    )"
+    then
+        die "Could not read the HUMAnN database configuration."
+    fi
+
+    for required_file in \
+        "$HUMANN_CHOCOPHLAN_DIR" \
+        "$HUMANN_UNIREF_DIR" \
+        "$HUMANN_UTILITY_MAPPING_DIR"
+    do
+        if ! grep -Fq "$required_file" <<< "$config_output"; then
+            die "HUMAnN configuration does not contain the expected database path: $required_file"
+        fi
+    done
+
+    echo "${g}[OK] Dedicated HUMAnN runtime validated.${w}"
+    echo "  Environment:       $HUMANN_ENV_NAME"
+    echo "  Environment path:  $HUMANN_ENV_DIR"
+    echo "  HUMAnN:            $humann_version"
+    echo "  MetaPhlAn:         $metaphlan_version"
+    echo "  MetaPhlAn index:   $HUMANN_METAPHLAN_INDEX"
+    echo "  Database root:     $HUMANN_DB_ROOT"
+}
+
+validate_humann_runtime
+
+# ------------------------------------------------------------
 # Input paths
 # ------------------------------------------------------------
 
@@ -1464,6 +1620,34 @@ write_methods_log() {
         csv_row \
             "Functional profiling" \
             "HUMAnN" \
+            "conda_environment" \
+            "$HUMANN_ENV_NAME" \
+            "Dedicated Conda environment used for functional profiling"
+
+        csv_row \
+            "Functional profiling" \
+            "HUMAnN" \
+            "database_root" \
+            "$HUMANN_DB_ROOT" \
+            "Root directory containing ChocoPhlAn, UniRef90, utility mappings, and MetaPhlAn"
+
+        csv_row \
+            "Functional profiling" \
+            "MetaPhlAn" \
+            "database_index" \
+            "$HUMANN_METAPHLAN_INDEX" \
+            "Pinned MetaPhlAn database index used by HUMAnN"
+
+        csv_row \
+            "Functional profiling" \
+            "MetaPhlAn" \
+            "database_directory" \
+            "$HUMANN_METAPHLAN_DB_DIR" \
+            "Directory containing the pinned MetaPhlAn database"
+
+        csv_row \
+            "Functional profiling" \
+            "HUMAnN" \
             "renormalization_units" \
             "relab" \
             "HUMAnN output is renormalized to relative abundance"
@@ -1487,7 +1671,8 @@ write_methods_log() {
         csv_row "Software path" "pigz" "path" "$(get_tool_path pigz)" "Executable path"
         csv_row "Software path" "python" "path" "$(get_tool_path python)" "Executable path"
         csv_row "Software path" "Rscript" "path" "$(get_tool_path Rscript)" "Executable path"
-        csv_row "Software path" "humann" "path" "$(get_tool_path humann)" "Executable path"
+        csv_row "Software path" "humann" "path" "$HUMANN_BIN" "Dedicated MTD_humann executable path"
+        csv_row "Software path" "metaphlan" "path" "$HUMANN_METAPHLAN_BIN" "Dedicated MTD_humann executable path"
         csv_row "Software path" "magicblast" "path" "$(get_tool_path magicblast)" "Executable path"
         csv_row "Software path" "hisat2" "path" "$(get_tool_path hisat2)" "Executable path"
         csv_row "Software path" "featureCounts" "path" "$(get_tool_path featureCounts)" "Executable path"
@@ -1499,7 +1684,8 @@ write_methods_log() {
         csv_row "Software version" "fastp" "version" "$(get_tool_version 'fastp --version')" "Best-effort version capture"
         csv_row "Software version" "python" "version" "$(get_tool_version 'python --version')" "Best-effort version capture"
         csv_row "Software version" "Rscript" "version" "$(get_tool_version 'Rscript --version')" "Best-effort version capture"
-        csv_row "Software version" "humann" "version" "$(get_tool_version 'humann --version')" "Best-effort version capture"
+        csv_row "Software version" "humann" "version" "$(run_humann_tool "$HUMANN_BIN" --version 2>&1 | head -n 1 | sed 's/\r//g')" "Version from dedicated MTD_humann environment"
+        csv_row "Software version" "metaphlan" "version" "$(run_humann_tool "$HUMANN_METAPHLAN_BIN" --version 2>&1 | head -n 1 | sed 's/\r//g')" "Version from dedicated MTD_humann environment"
         csv_row "Software version" "magicblast" "version" "$(get_tool_version 'magicblast -version')" "Best-effort version capture"
         csv_row "Software version" "hisat2" "version" "$(get_tool_version 'hisat2 --version')" "Best-effort version capture"
         csv_row "Software version" "featureCounts" "version" "$(get_tool_version 'featureCounts -v')" "Best-effort version capture"
@@ -6043,10 +6229,12 @@ for i in $lsn; do
     echo "Threads: $threads"
     echo "============================================================"
 
-    if ! humann \
+    if ! run_humann_tool "$HUMANN_BIN" \
         --input "$humann_input" \
         --output "$HUMANN_RESULTS_DIR" \
         --threads "$threads" \
+        --metaphlan "$HUMANN_ENV_DIR/bin" \
+        --metaphlan-options "$HUMANN_METAPHLAN_OPTIONS" \
         --verbose
     then
         die "HUMAnN failed for sample: $i"
@@ -6072,30 +6260,30 @@ cd "$HUMANN_WORK_DIR" || \
 echo "${g}>>>>>>>>>>>>        [60%]"
 
 echo "Join all gene family and pathway abudance files${w}"
-humann_join_tables -i hmn_output/ -o humann_pathabundance.tsv --file_name pathabundance
-humann_join_tables -i hmn_output/ -o humann_genefamilies.tsv --file_name genefamilies
+run_cmd run_humann_tool "$HUMANN_JOIN_TABLES_BIN" -i hmn_output/ -o humann_pathabundance.tsv --file_name pathabundance
+run_cmd run_humann_tool "$HUMANN_JOIN_TABLES_BIN" -i hmn_output/ -o humann_genefamilies.tsv --file_name genefamilies
 
 # #Normalizing RPKs to CPM
 # humann_renorm_table --input humann_pathabundance.tsv --output humann_pathabundance_cpm.tsv --units cpm --update-snames
 # humann_renorm_table --input humann_genefamilies.tsv --output humann_genefamilies_cpm.tsv --units cpm --update-snames
 
 echo "${g}Normalizing RPKs to "relab" (relative abundance)${w}"
-humann_renorm_table --input humann_pathabundance.tsv --output humann_pathabundance_relab.tsv --units relab --update-snames
-humann_renorm_table --input humann_genefamilies.tsv --output humann_genefamilies_relab.tsv --units relab --update-snames
+run_cmd run_humann_tool "$HUMANN_RENORM_TABLE_BIN" --input humann_pathabundance.tsv --output humann_pathabundance_relab.tsv --units relab --update-snames
+run_cmd run_humann_tool "$HUMANN_RENORM_TABLE_BIN" --input humann_genefamilies.tsv --output humann_genefamilies_relab.tsv --units relab --update-snames
 
 echo "${g}Generate stratified tables; This utility will split a table into two files (one stratified and one unstratified). ${w}"
-humann_split_stratified_table --input humann_pathabundance_relab.tsv --output ./
-humann_split_stratified_table --input humann_genefamilies_relab.tsv --output ./
+run_cmd run_humann_tool "$HUMANN_SPLIT_STRATIFIED_BIN" --input humann_pathabundance_relab.tsv --output ./
+run_cmd run_humann_tool "$HUMANN_SPLIT_STRATIFIED_BIN" --input humann_genefamilies_relab.tsv --output ./
     echo "${g}Stratify unnormalized table (for Deseq2)${w}"
-    humann_split_stratified_table --input humann_pathabundance.tsv --output ./
-    humann_split_stratified_table --input humann_genefamilies.tsv --output ./
+    run_cmd run_humann_tool "$HUMANN_SPLIT_STRATIFIED_BIN" --input humann_pathabundance.tsv --output ./
+    run_cmd run_humann_tool "$HUMANN_SPLIT_STRATIFIED_BIN" --input humann_genefamilies.tsv --output ./
 
 echo "${g}Regroup gene familites table into KEGG orthologs and GO terms${w}"
-humann_regroup_table --input humann_genefamilies_relab_stratified.tsv --groups uniref90_ko --output humann_genefamilies_relAbundance_kegg.tsv
-humann_regroup_table --input humann_genefamilies_relab_stratified.tsv --groups uniref90_go --output humann_genefamilies_relAbundance_go.tsv
+run_cmd run_humann_tool "$HUMANN_REGROUP_TABLE_BIN" --input humann_genefamilies_relab_stratified.tsv --groups uniref90_ko --output humann_genefamilies_relAbundance_kegg.tsv
+run_cmd run_humann_tool "$HUMANN_REGROUP_TABLE_BIN" --input humann_genefamilies_relab_stratified.tsv --groups uniref90_go --output humann_genefamilies_relAbundance_go.tsv
     echo "${g}Regroup unnormalized table (for Deseq2${w}"
-    humann_regroup_table --input humann_genefamilies_stratified.tsv --groups uniref90_ko --output humann_genefamilies_Abundance_kegg.tsv
-    humann_regroup_table --input humann_genefamilies_stratified.tsv --groups uniref90_go --output humann_genefamilies_Abundance_go.tsv
+    run_cmd run_humann_tool "$HUMANN_REGROUP_TABLE_BIN" --input humann_genefamilies_stratified.tsv --groups uniref90_ko --output humann_genefamilies_Abundance_kegg.tsv
+    run_cmd run_humann_tool "$HUMANN_REGROUP_TABLE_BIN" --input humann_genefamilies_stratified.tsv --groups uniref90_go --output humann_genefamilies_Abundance_go.tsv
 
 echo "${g}Translate KEGG and GO ID to human readable terms${w}"
 conda deactivate

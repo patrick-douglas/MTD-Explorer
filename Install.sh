@@ -44,6 +44,15 @@ VIRUSHOST_MIRROR_BASE_URL="https://github.com/${VIRUSHOST_MIRROR_REPOSITORY}/rel
 # SHA-256 of the SHA256SUMS asset from the validated mirror release.
 VIRUSHOST_MIRROR_SHA256SUMS_SHA256="a250b2e61d9f9365773205d04d019e0976a778ebd589553f3a0a0e6f159f4bec"
 
+
+# Pinned MetaPhlAn database used by HUMAnN 3.9 / MetaPhlAn 4.1.1.
+HUMANN_METAPHLAN_INDEX="mpa_vJun23_CHOCOPhlAnSGB_202403"
+HUMANN_METAPHLAN_CACHE_DIRNAME="metaphlan_vJun23_202403_archives"
+HUMANN_METAPHLAN_BASE_URL="https://cmprod1.cibio.unitn.it/biobakery4/metaphlan_databases"
+HUMANN_METAPHLAN_BT2_BASE_URL="${HUMANN_METAPHLAN_BASE_URL}/bowtie2_indexes"
+HUMANN_METAPHLAN_MAIN_ARCHIVE_MD5="d985de75a217cd319e721863f68e7d33"
+HUMANN_METAPHLAN_BT2_ARCHIVE_MD5="8caae86b4d2931416cbdbb92f5985cef"
+
 # ------------------------------------------------------------------------------
 # Terminal formatting and messages
 # ------------------------------------------------------------------------------
@@ -664,6 +673,7 @@ retry_until_success() {
 validate_downloaded_cache_file() {
     local downloaded_file="$1"
     local expected_name="$2"
+    local newick_tail=""
 
     if [[ ! -s "$downloaded_file" ]]; then
         log_warning "Downloaded cache file is empty: $downloaded_file"
@@ -674,8 +684,26 @@ validate_downloaded_cache_file() {
         *.tar.gz)
             tar -tzf "$downloaded_file" >/dev/null 2>&1
             ;;
+        *.tar)
+            tar -tf "$downloaded_file" >/dev/null 2>&1
+            ;;
         *.gz)
             gzip -t "$downloaded_file" >/dev/null 2>&1
+            ;;
+        *.bz2)
+            bzip2 -t "$downloaded_file" >/dev/null 2>&1
+            ;;
+        *.md5)
+            grep -Eq \
+                '^[[:xdigit:]]{32}[[:space:]]+\*?[^[:space:]]+$' \
+                "$downloaded_file"
+            ;;
+        *.nwk)
+            newick_tail="$(
+                tail -c 1024 "$downloaded_file" 2>/dev/null |
+                    tr -d '\r\n[:space:]'
+            )"
+            [[ -n "$newick_tail" && "${newick_tail: -1}" == ";" ]]
             ;;
         *)
             return 0
@@ -751,13 +779,21 @@ ensure_cached_file() {
     local destination="$3"
 
     if [[ -s "$destination" ]]; then
-        log_ok "Using cached file: $destination"
-        return 0
-    fi
+        if validate_downloaded_cache_file "$destination" "$destination"; then
+            log_ok "Using validated cached file: $destination"
+            return 0
+        fi
 
-    if [[ -e "$destination" ]]; then
+        log_warning "Cached file failed validation and will be downloaded again:"
+        log_warning "  $destination"
+
+        rm -f -- \
+            "$destination" \
+            "${destination}.part"
+
+    elif [[ -e "$destination" ]]; then
         log_warning "Removing empty cache file: $destination"
-        rm -f "$destination"
+        rm -f -- "$destination"
     fi
 
     if ! retry_until_success \
@@ -765,12 +801,232 @@ ensure_cached_file() {
         download_cache_file_once \
         "$description" \
         "$url" \
-        "$destination"; then
-
+        "$destination"
+    then
         log_error "Could not prepare required cache file:"
         log_error "  $destination"
         exit 1
     fi
+}
+
+download_humann_metaphlan_cache_assets() {
+    local cache_dir="$offline_files_folder/HUMAnN/$HUMANN_METAPHLAN_CACHE_DIRNAME"
+    local index="$HUMANN_METAPHLAN_INDEX"
+
+    ensure_cached_file \
+        "MetaPhlAn vJun23 database archive" \
+        "$HUMANN_METAPHLAN_BASE_URL/${index}.tar" \
+        "$cache_dir/${index}.tar"
+
+    ensure_cached_file \
+        "MetaPhlAn vJun23 database MD5 manifest" \
+        "$HUMANN_METAPHLAN_BASE_URL/${index}.md5" \
+        "$cache_dir/${index}.md5"
+
+    ensure_cached_file \
+        "MetaPhlAn vJun23 Bowtie2 indexes" \
+        "$HUMANN_METAPHLAN_BT2_BASE_URL/${index}_bt2.tar" \
+        "$cache_dir/${index}_bt2.tar"
+
+    ensure_cached_file \
+        "MetaPhlAn vJun23 Bowtie2 MD5 manifest" \
+        "$HUMANN_METAPHLAN_BT2_BASE_URL/${index}_bt2.md5" \
+        "$cache_dir/${index}_bt2.md5"
+
+    ensure_cached_file \
+        "MetaPhlAn vJun23 taxonomy tree" \
+        "$HUMANN_METAPHLAN_BASE_URL/${index}.nwk" \
+        "$cache_dir/${index}.nwk"
+
+    ensure_cached_file \
+        "MetaPhlAn vJun23 marker information" \
+        "$HUMANN_METAPHLAN_BASE_URL/${index}_marker_info.txt.bz2" \
+        "$cache_dir/${index}_marker_info.txt.bz2"
+
+    ensure_cached_file \
+        "MetaPhlAn vJun23 species information" \
+        "$HUMANN_METAPHLAN_BASE_URL/${index}_species.txt.bz2" \
+        "$cache_dir/${index}_species.txt.bz2"
+}
+
+validate_humann_metaphlan_cache() {
+    local cache_dir="$offline_files_folder/HUMAnN/$HUMANN_METAPHLAN_CACHE_DIRNAME"
+    local index="$HUMANN_METAPHLAN_INDEX"
+    local main_archive="$cache_dir/${index}.tar"
+    local bt2_archive="$cache_dir/${index}_bt2.tar"
+    local observed_md5=""
+    local required_file=""
+    local main_listing=""
+    local bt2_listing=""
+    local newick_tail=""
+
+    local -a required_files=(
+        "${index}.tar"
+        "${index}.md5"
+        "${index}_bt2.tar"
+        "${index}_bt2.md5"
+        "${index}.nwk"
+        "${index}_marker_info.txt.bz2"
+        "${index}_species.txt.bz2"
+    )
+
+    local -a required_bt2_files=(
+        "${index}.1.bt2l"
+        "${index}.2.bt2l"
+        "${index}.3.bt2l"
+        "${index}.4.bt2l"
+        "${index}.rev.1.bt2l"
+        "${index}.rev.2.bt2l"
+    )
+
+    for required_file in "${required_files[@]}"; do
+        if [[ ! -s "$cache_dir/$required_file" ]]; then
+            log_warning "Missing or empty MetaPhlAn cache file:"
+            log_warning "  $cache_dir/$required_file"
+            return 1
+        fi
+    done
+
+    observed_md5="$(md5sum "$main_archive" | awk '{print $1}')"
+
+    if [[ "$observed_md5" != "$HUMANN_METAPHLAN_MAIN_ARCHIVE_MD5" ]]; then
+        log_warning "MetaPhlAn database archive MD5 mismatch."
+        log_warning "Expected: $HUMANN_METAPHLAN_MAIN_ARCHIVE_MD5"
+        log_warning "Observed: $observed_md5"
+        return 1
+    fi
+
+    observed_md5="$(md5sum "$bt2_archive" | awk '{print $1}')"
+
+    if [[ "$observed_md5" != "$HUMANN_METAPHLAN_BT2_ARCHIVE_MD5" ]]; then
+        log_warning "MetaPhlAn Bowtie2 archive MD5 mismatch."
+        log_warning "Expected: $HUMANN_METAPHLAN_BT2_ARCHIVE_MD5"
+        log_warning "Observed: $observed_md5"
+        return 1
+    fi
+
+    if ! (
+        cd "$cache_dir" &&
+        md5sum -c "${index}.md5" >/dev/null 2>&1 &&
+        md5sum -c "${index}_bt2.md5" >/dev/null 2>&1
+    ); then
+        log_warning "MetaPhlAn official MD5 manifest validation failed."
+        return 1
+    fi
+
+    if ! bzip2 -t \
+        "$cache_dir/${index}_marker_info.txt.bz2" \
+        >/dev/null 2>&1
+    then
+        log_warning "MetaPhlAn marker information failed bzip2 validation."
+        return 1
+    fi
+
+    if ! bzip2 -t \
+        "$cache_dir/${index}_species.txt.bz2" \
+        >/dev/null 2>&1
+    then
+        log_warning "MetaPhlAn species information failed bzip2 validation."
+        return 1
+    fi
+
+    newick_tail="$(
+        tail -c 1024 "$cache_dir/${index}.nwk" 2>/dev/null |
+            tr -d '\r\n[:space:]'
+    )"
+
+    if [[ -z "$newick_tail" || "${newick_tail: -1}" != ";" ]]; then
+        log_warning "MetaPhlAn taxonomy tree does not end with ';'."
+        return 1
+    fi
+
+    main_listing="$(mktemp)" || return 1
+
+    bt2_listing="$(mktemp)" || {
+        rm -f -- "$main_listing"
+        return 1
+    }
+
+    if ! tar -tf "$main_archive" > "$main_listing"; then
+        rm -f -- "$main_listing" "$bt2_listing"
+        log_warning "Could not read the MetaPhlAn database archive listing."
+        return 1
+    fi
+
+    if ! tar -tf "$bt2_archive" > "$bt2_listing"; then
+        rm -f -- "$main_listing" "$bt2_listing"
+        log_warning "Could not read the MetaPhlAn Bowtie2 archive listing."
+        return 1
+    fi
+
+    if ! grep -Fxq "${index}.pkl" "$main_listing"; then
+        rm -f -- "$main_listing" "$bt2_listing"
+        log_warning "MetaPhlAn archive does not contain ${index}.pkl."
+        return 1
+    fi
+
+    for required_file in "${required_bt2_files[@]}"; do
+        if ! grep -Fxq "$required_file" "$bt2_listing"; then
+            rm -f -- "$main_listing" "$bt2_listing"
+            log_warning "MetaPhlAn Bowtie2 archive is missing: $required_file"
+            return 1
+        fi
+    done
+
+    rm -f -- "$main_listing" "$bt2_listing"
+
+    return 0
+}
+
+prepare_humann_metaphlan_cache() {
+    local cache_dir="$offline_files_folder/HUMAnN/$HUMANN_METAPHLAN_CACHE_DIRNAME"
+    local index="$HUMANN_METAPHLAN_INDEX"
+    local complete_marker="$cache_dir/.metaphlan_vJun23_202403_cache_complete"
+
+    if ! mkdir -p "$cache_dir"; then
+        log_error "Could not create the MetaPhlAn cache directory:"
+        log_error "  $cache_dir"
+        exit 1
+    fi
+
+    download_humann_metaphlan_cache_assets
+
+    log_info "Validating the complete MetaPhlAn vJun23 cache..."
+
+    if ! validate_humann_metaphlan_cache; then
+        log_warning "The MetaPhlAn cache is incomplete or invalid."
+        log_warning "All pinned MetaPhlAn assets will be downloaded again."
+
+        rm -f -- \
+            "$cache_dir/${index}.tar" \
+            "$cache_dir/${index}.md5" \
+            "$cache_dir/${index}_bt2.tar" \
+            "$cache_dir/${index}_bt2.md5" \
+            "$cache_dir/${index}.nwk" \
+            "$cache_dir/${index}_marker_info.txt.bz2" \
+            "$cache_dir/${index}_species.txt.bz2" \
+            "$complete_marker"
+
+        download_humann_metaphlan_cache_assets
+
+        if ! validate_humann_metaphlan_cache; then
+            log_error "MetaPhlAn cache validation failed after re-downloading."
+            exit 1
+        fi
+    fi
+
+    {
+        echo "status=complete"
+        echo "database_index=$index"
+        echo "main_archive_md5=$HUMANN_METAPHLAN_MAIN_ARCHIVE_MD5"
+        echo "bowtie2_archive_md5=$HUMANN_METAPHLAN_BT2_ARCHIVE_MD5"
+        echo "validated_at=$(date --iso-8601=seconds)"
+        echo "archive_directory=$cache_dir"
+    } > "$complete_marker"
+
+    log_ok "MetaPhlAn vJun23 persistent cache is complete and valid."
+    log_info "MetaPhlAn cache:"
+    log_info "  $cache_dir"
 }
 
 prepare_virushost_release_cache() {
@@ -998,7 +1254,7 @@ prepare_installation_cache() {
     fi
 
     prepare_virushost_release_cache
-    
+
     ensure_cached_file \
     "HUMAnN utility mapping database" \
     "https://huttenhower.sph.harvard.edu/humann_data/full_mapping_v201901b.tar.gz" \
@@ -1013,6 +1269,8 @@ prepare_installation_cache() {
         "HUMAnN ChocoPhlAn database" \
         "https://huttenhower.sph.harvard.edu/humann_data/chocophlan/full_chocophlan.v201901_v31.tar.gz" \
         "$offline_files_folder/HUMAnN/full_chocophlan.v201901_v31.tar.gz"
+
+    prepare_humann_metaphlan_cache
 
     log_ok "Persistent installation cache is ready."
 }
@@ -1367,6 +1625,62 @@ install_system_dependencies() {
     log_ok "System dependencies installed successfully."
 }
 
+validate_humann_environment() {
+    local env_name="MTD_humann"
+    local command_name=""
+    local humann_version=""
+    local metaphlan_version=""
+
+    local -a required_commands=(
+        python
+        humann
+        humann_config
+        humann_join_tables
+        humann_renorm_table
+        humann_split_stratified_table
+        humann_regroup_table
+        metaphlan
+        diamond
+        bowtie2
+        glpsol
+        hclust2.py
+    )
+
+    for command_name in "${required_commands[@]}"; do
+        require_env_command "$env_name" "$command_name"
+    done
+
+    run_required_command \
+        "Validating MTD_humann Python isolation and core modules" \
+        conda run -n "$env_name" \
+        python -c \
+        'import os, site, sys, Cython, humann, numpy, pysam, simplejson; prefix=os.path.realpath(os.environ["CONDA_PREFIX"]); assert os.path.realpath(sys.prefix) == prefix; assert numpy.__version__ == "1.26.4"; assert simplejson.__version__.split(".", 1)[0] == "3"; assert site.ENABLE_USER_SITE is False; assert all("/.local/" not in entry for entry in sys.path); modules=(Cython, humann, numpy, pysam, simplejson); assert all(os.path.realpath(module.__file__).startswith(prefix + os.sep) for module in modules); print("MTD_humann Python isolation: OK")'
+
+    humann_version="$(
+        conda run -n "$env_name" humann --version 2>&1
+    )"
+
+    if [[ "$humann_version" != *"humann v3.9"* ]]; then
+        log_error "Unexpected HUMAnN version in $env_name:"
+        log_error "  $humann_version"
+        exit 1
+    fi
+
+    metaphlan_version="$(
+        conda run -n "$env_name" metaphlan --version 2>&1
+    )"
+
+    if [[ "$metaphlan_version" != *"MetaPhlAn version 4.1.1"* ]]; then
+        log_error "Unexpected MetaPhlAn version in $env_name:"
+        log_error "  $metaphlan_version"
+        exit 1
+    fi
+
+    log_ok "Dedicated MTD_humann environment passed validation."
+    log_info "  $humann_version"
+    log_info "  $metaphlan_version"
+}
+
 create_conda_environments() {
     safe_conda_deactivate
 
@@ -1377,6 +1691,13 @@ create_conda_environments() {
     run_required_command \
         "Creating MTD environment" \
         conda env create -f "$dir/Installation/MTD.yml"
+
+
+    run_required_command \
+        "Creating dedicated MTD_humann environment" \
+        conda env create -f "$dir/Installation/MTD_humann.yml"
+
+    validate_humann_environment
 
     run_required_command \
         "Updating MTD environment with R additions" \
@@ -1433,7 +1754,6 @@ create_conda_environments() {
 
     require_env_command MTD kraken2-build
     require_env_command MTD bracken-build
-    require_env_command MTD humann
     require_env_command MTD hisat2-build
     require_env_command MTD makeblastdb
 }
@@ -1985,40 +2305,267 @@ build_bracken_database() {
     fi
 }
 
+validate_installed_humann_databases() {
+    local humann_dir="$1"
+    local chocophlan_dir="$humann_dir/chocophlan"
+    local uniref_dir="$humann_dir/uniref"
+    local utility_dir="$humann_dir/utility_mapping"
+    local metaphlan_dir="$humann_dir/metaphlan"
+    local index="$HUMANN_METAPHLAN_INDEX"
+    local required_file=""
+    local utility_count=0
+
+    if ! find "$chocophlan_dir" \
+        -type f \
+        -name '*.ffn.gz' \
+        -size +0c \
+        -print -quit 2>/dev/null | grep -q .
+    then
+        log_warning "No usable ChocoPhlAn .ffn.gz files were found:"
+        log_warning "  $chocophlan_dir"
+        return 1
+    fi
+
+    if [[ ! -s "$uniref_dir/uniref90_201901b_full.dmnd" ]]; then
+        log_warning "The HUMAnN UniRef90 DIAMOND database is missing or empty:"
+        log_warning "  $uniref_dir/uniref90_201901b_full.dmnd"
+        return 1
+    fi
+
+    utility_count="$(
+        find "$utility_dir" \
+            -type f \
+            -size +0c \
+            2>/dev/null | awk 'END { print NR + 0 }'
+    )"
+
+    if ! [[ "$utility_count" =~ ^[0-9]+$ ]] ||
+       (( utility_count < 10 ))
+    then
+        log_warning "The HUMAnN utility-mapping installation is incomplete:"
+        log_warning "  $utility_dir"
+        log_warning "Non-empty files detected: ${utility_count:-invalid}"
+        return 1
+    fi
+
+    for required_file in \
+        "$metaphlan_dir/${index}.pkl" \
+        "$metaphlan_dir/${index}.1.bt2l" \
+        "$metaphlan_dir/${index}.2.bt2l" \
+        "$metaphlan_dir/${index}.3.bt2l" \
+        "$metaphlan_dir/${index}.4.bt2l" \
+        "$metaphlan_dir/${index}.rev.1.bt2l" \
+        "$metaphlan_dir/${index}.rev.2.bt2l" \
+        "$metaphlan_dir/${index}.nwk" \
+        "$metaphlan_dir/${index}_marker_info.txt.bz2" \
+        "$metaphlan_dir/${index}_species.txt.bz2"
+    do
+        if [[ ! -s "$required_file" ]]; then
+            log_warning "Required MetaPhlAn database file is missing or empty:"
+            log_warning "  $required_file"
+            return 1
+        fi
+    done
+
+    if ! bzip2 -t \
+        "$metaphlan_dir/${index}_marker_info.txt.bz2" \
+        >/dev/null 2>&1
+    then
+        log_warning "Installed MetaPhlAn marker information is invalid."
+        return 1
+    fi
+
+    if ! bzip2 -t \
+        "$metaphlan_dir/${index}_species.txt.bz2" \
+        >/dev/null 2>&1
+    then
+        log_warning "Installed MetaPhlAn species information is invalid."
+        return 1
+    fi
+
+    return 0
+}
+
+configure_humann_database_paths() {
+    local humann_dir="$1"
+    local env_name="MTD_humann"
+    local config_output=""
+    local expected_path=""
+
+    run_required_command \
+        "Configuring the HUMAnN nucleotide database" \
+        conda run -n "$env_name" \
+        humann_config --update database_folders nucleotide \
+        "$humann_dir/chocophlan"
+
+    run_required_command \
+        "Configuring the HUMAnN protein database" \
+        conda run -n "$env_name" \
+        humann_config --update database_folders protein \
+        "$humann_dir/uniref"
+
+    run_required_command \
+        "Configuring the HUMAnN utility-mapping database" \
+        conda run -n "$env_name" \
+        humann_config --update database_folders utility_mapping \
+        "$humann_dir/utility_mapping"
+
+    config_output="$(
+        conda run -n "$env_name" humann_config --print 2>&1
+    )"
+
+    for expected_path in \
+        "$humann_dir/chocophlan" \
+        "$humann_dir/uniref" \
+        "$humann_dir/utility_mapping"
+    do
+        if ! grep -Fq "$expected_path" <<< "$config_output"; then
+            log_error "HUMAnN configuration does not contain the expected path:"
+            log_error "  $expected_path"
+            log_error "Current HUMAnN configuration:"
+            printf '%s\n' "$config_output" >&2
+            exit 1
+        fi
+    done
+
+    log_ok "HUMAnN database paths were configured in MTD_humann."
+}
+
 install_humann_databases() {
     local humann_dir="$dir/HUMAnN/ref_database"
+    local chocophlan_dir="$humann_dir/chocophlan"
+    local uniref_dir="$humann_dir/uniref"
+    local utility_dir="$humann_dir/utility_mapping"
+    local metaphlan_dir="$humann_dir/metaphlan"
+    local cache_dir="$offline_files_folder/HUMAnN"
+    local metaphlan_cache="$cache_dir/$HUMANN_METAPHLAN_CACHE_DIRNAME"
+    local index="$HUMANN_METAPHLAN_INDEX"
+    local complete_marker="$humann_dir/.mtd_humann_databases_complete"
+    local installed_is_valid=0
 
-    mkdir -p "$humann_dir/chocophlan"
-    mkdir -p "$humann_dir/uniref"
-    mkdir -p "$humann_dir/utility_mapping"
+    validate_humann_environment
 
-    copy_required_file \
-        "$offline_files_folder/HUMAnN/full_chocophlan.v201901_v31.tar.gz" \
-        "$humann_dir/full_chocophlan.v201901_v31.tar.gz"
+    if [[ -f "$complete_marker" ]] &&
+       validate_installed_humann_databases "$humann_dir"
+    then
+        installed_is_valid=1
+        log_ok "Using the existing validated HUMAnN and MetaPhlAn databases."
+        log_info "  $humann_dir"
+    fi
 
-    copy_required_file \
-        "$offline_files_folder/HUMAnN/uniref90_annotated_v201901b_full.tar.gz" \
-        "$humann_dir/uniref90_annotated_v201901b_full.tar.gz"
+    if (( installed_is_valid == 0 )); then
+        log_info "Installing HUMAnN and MetaPhlAn databases from the persistent cache..."
 
-    copy_required_file \
-        "$offline_files_folder/HUMAnN/full_mapping_v201901b.tar.gz" \
-        "$humann_dir/full_mapping_v201901b.tar.gz"
+        if ! validate_humann_metaphlan_cache; then
+            log_error "The persistent MetaPhlAn cache failed validation."
+            exit 1
+        fi
 
-    tar xzvf \
-        "$humann_dir/full_chocophlan.v201901_v31.tar.gz" \
-        -C "$humann_dir/chocophlan/"
+        for required_file in \
+            "$cache_dir/full_chocophlan.v201901_v31.tar.gz" \
+            "$cache_dir/uniref90_annotated_v201901b_full.tar.gz" \
+            "$cache_dir/full_mapping_v201901b.tar.gz" \
+            "$metaphlan_cache/${index}.tar" \
+            "$metaphlan_cache/${index}_bt2.tar" \
+            "$metaphlan_cache/${index}.nwk" \
+            "$metaphlan_cache/${index}_marker_info.txt.bz2" \
+            "$metaphlan_cache/${index}_species.txt.bz2"
+        do
+            if [[ ! -s "$required_file" ]]; then
+                log_error "Required HUMAnN/MetaPhlAn cache file is missing or empty:"
+                log_error "  $required_file"
+                exit 1
+            fi
+        done
 
-    tar xzvf \
-        "$humann_dir/uniref90_annotated_v201901b_full.tar.gz" \
-        -C "$humann_dir/uniref/"
+        rm -rf -- "$humann_dir"
 
-    tar xzvf \
-        "$humann_dir/full_mapping_v201901b.tar.gz" \
-        -C "$humann_dir/utility_mapping/"
+        if ! mkdir -p \
+            "$chocophlan_dir" \
+            "$uniref_dir" \
+            "$utility_dir" \
+            "$metaphlan_dir"
+        then
+            log_error "Could not create the HUMAnN database directories:"
+            log_error "  $humann_dir"
+            exit 1
+        fi
 
-    humann_config --update database_folders nucleotide "$humann_dir/chocophlan"
-    humann_config --update database_folders protein "$humann_dir/uniref"
-    humann_config --update database_folders utility_mapping "$humann_dir/utility_mapping"
+        run_required_command \
+            "Extracting the HUMAnN ChocoPhlAn database" \
+            tar -xzf \
+            "$cache_dir/full_chocophlan.v201901_v31.tar.gz" \
+            -C "$chocophlan_dir"
+
+        run_required_command \
+            "Extracting the HUMAnN UniRef90 database" \
+            tar -xzf \
+            "$cache_dir/uniref90_annotated_v201901b_full.tar.gz" \
+            -C "$uniref_dir"
+
+        run_required_command \
+            "Extracting the HUMAnN utility-mapping database" \
+            tar -xzf \
+            "$cache_dir/full_mapping_v201901b.tar.gz" \
+            -C "$utility_dir"
+
+        run_required_command \
+            "Extracting the MetaPhlAn database metadata" \
+            tar -xf \
+            "$metaphlan_cache/${index}.tar" \
+            -C "$metaphlan_dir"
+
+        run_required_command \
+            "Extracting the MetaPhlAn Bowtie2 indexes" \
+            tar -xf \
+            "$metaphlan_cache/${index}_bt2.tar" \
+            -C "$metaphlan_dir"
+
+        copy_required_file \
+            "$metaphlan_cache/${index}.nwk" \
+            "$metaphlan_dir/${index}.nwk"
+
+        copy_required_file \
+            "$metaphlan_cache/${index}_marker_info.txt.bz2" \
+            "$metaphlan_dir/${index}_marker_info.txt.bz2"
+
+        copy_required_file \
+            "$metaphlan_cache/${index}_species.txt.bz2" \
+            "$metaphlan_dir/${index}_species.txt.bz2"
+
+        if ! validate_installed_humann_databases "$humann_dir"; then
+            log_error "The installed HUMAnN/MetaPhlAn databases failed validation."
+            exit 1
+        fi
+
+        {
+            echo "status=complete"
+            echo "humann_environment=MTD_humann"
+            echo "humann_version=3.9"
+            echo "metaphlan_version=4.1.1"
+            echo "metaphlan_index=$index"
+            echo "nucleotide_database=$chocophlan_dir"
+            echo "protein_database=$uniref_dir"
+            echo "utility_mapping_database=$utility_dir"
+            echo "metaphlan_database=$metaphlan_dir"
+            echo "installed_at=$(date --iso-8601=seconds)"
+        } > "$complete_marker"
+
+        log_ok "HUMAnN and MetaPhlAn databases were installed and validated."
+    fi
+
+    configure_humann_database_paths "$humann_dir"
+
+    if ! validate_installed_humann_databases "$humann_dir"; then
+        log_error "Final HUMAnN/MetaPhlAn database validation failed."
+        exit 1
+    fi
+
+    log_ok "HUMAnN 3.9 database installation is ready."
+    log_info "HUMAnN database root:"
+    log_info "  $humann_dir"
+    log_info "MetaPhlAn database index:"
+    log_info "  $HUMANN_METAPHLAN_INDEX"
 }
 
 install_r412_and_annotation_packages() {
