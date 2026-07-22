@@ -1,4 +1,4 @@
-# MTD installation benchmark suite
+# MTD Explorer installation benchmark suite
 
 This package contains three scripts:
 
@@ -15,10 +15,10 @@ This package contains three scripts:
 3. `MTD_benchmark_merge.py`  
    Combines runs from multiple machines into article-ready TSV tables.
 
-## 1. Place the scripts in the MTD repository
+## 1. Place the scripts in the MTD Explorer repository
 
 ```bash
-cd ~/MTD
+cd ~/MTD-Explorer
 cp /path/to/MTD_benchmark_suite/* .
 chmod +x \
     benchmark/MTD_benchmark_install.sh \
@@ -55,7 +55,7 @@ bash ./benchmark/MTD_benchmark_install.sh \
     --output-root "$HOME/MTD_benchmarks" \
     --watch-path "$HOME/miniconda3" \
     --watch-path "/media/me/MTD_install_cache" \
-    --watch-path "$HOME/MTD" \
+    --watch-path "$HOME/MTD-Explorer" \
     -- \
     bash ./Install_profiled.sh \
         -o "/media/me/MTD_install_cache"
@@ -70,7 +70,7 @@ bash ./benchmark/MTD_benchmark_install.sh \
     --output-root "$HOME/MTD_benchmarks" \
     --watch-path "$HOME/miniconda3" \
     --watch-path "/path/to/MTD_install_cache" \
-    --watch-path "$HOME/MTD" \
+    --watch-path "$HOME/MTD-Explorer" \
     -- \
     bash ./Install_profiled.sh \
         -o "/path/to/MTD_install_cache"

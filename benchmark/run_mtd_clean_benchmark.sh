@@ -70,7 +70,10 @@ MACHINE_SAFE="${MACHINE_SAFE##_}"
 MACHINE_SAFE="${MACHINE_SAFE%%_}"
 [[ -n "$MACHINE_SAFE" ]] || die "Machine name does not contain usable characters."
 
-MTD_DIR="$HOME/MTD"
+REPO_NAME="MTD-Explorer"
+REPO_URL="https://github.com/patrick-douglas/MTD-Explorer.git"
+
+MTD_DIR="$HOME/$REPO_NAME"
 CONDA_DIR="$HOME/miniconda3"
 BENCHMARK_ROOT="$HOME/MTD_benchmarks"
 SCRIPT_PATH="$(readlink -f "$0")"
@@ -111,7 +114,7 @@ fi
 BENCHMARK_LABEL="${MACHINE_SAFE}_${CACHE_MODE}_cache_auto_tos_r1"
 
 STAGING_ROOT="$(mktemp -d "$HOME/.mtd_clone_staging.XXXXXX")"
-STAGED_REPO="$STAGING_ROOT/MTD"
+STAGED_REPO="$STAGING_ROOT/$REPO_NAME"
 STAGED_BENCHMARK_DIR="$STAGED_REPO/$BENCHMARK_SUBDIR"
 
 cleanup_staging() {
@@ -122,7 +125,7 @@ cleanup_staging() {
 trap cleanup_staging EXIT
 
 printf '%s\n' "============================================================"
-printf '%s\n' "MTD CLEAN BENCHMARK PRECHECK"
+printf '%s\n' "MTD EXPLORER CLEAN BENCHMARK PRECHECK"
 printf '%-18s %s\n' "Machine:" "$MACHINE_NAME"
 printf '%-18s %s\n' "Safe label:" "$MACHINE_SAFE"
 printf '%-18s %s\n' "Cache:" "$CACHE"
@@ -133,7 +136,7 @@ du -sh "$CACHE" 2>/dev/null || true
 
 echo
 printf '[INFO] Cloning the current repository into a temporary staging area...\n'
-git clone --depth 1 https://github.com/patrick-douglas/MTD.git "$STAGED_REPO"
+git clone --depth 1 "$REPO_URL" "$STAGED_REPO"
 
 INSTALLER="$STAGED_REPO/Install.sh"
 [[ -s "$INSTALLER" ]] || die "Cloned Install.sh is missing or empty."
