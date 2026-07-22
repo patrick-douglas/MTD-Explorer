@@ -1336,53 +1336,185 @@ else
 fi
 
 # ------------------------------------------------------------
-# Add Kraken taxid while preserving original FASTA headers
+# Separate clean alignment FASTA from Kraken2-tagged FASTA
+# ------------------------------------------------------------
+# genome_${customized}.fa:
+#   Clean sequence identifiers matching the reference GTF.
+#   Used by HISAT2, Magic-BLAST and functional annotation.
+#
+# genome_${customized}.kraken.fa:
+#   Same sequences with kraken:taxid|TAXID| prefixes.
+#   Used only when adding sequences to the Kraken2 database.
 # ------------------------------------------------------------
 
-echo "Adding Kraken taxid ${taxid} to FASTA headers..."
-echo "Appending organism name: $species_from_taxid"
-echo "Original FASTA headers will be preserved."
+clean_fa="genome_${customized}.fa"
+kraken_fa="genome_${customized}.kraken.fa"
+taxid="${customized}"
+host_csv="${MTDIR}/HostSpecies.csv"
 
-tmp=$(mktemp)
-
-awk -v taxid="$taxid" -v organism="$species_from_taxid" '
-  /^>/ {
-    h = $0
-
-    # Remove initial ">"
-    sub(/^>/, "", h)
-
-    # Remove old Kraken taxid prefix if present
-    sub(/^kraken:taxid\|[0-9]+\|/, "", h)
-
-    # Remove previous organism tag at the end, if present
-    sub(/[[:space:]]+\[organism=[^]]+\][[:space:]]*$/, "", h)
-
-    print ">kraken:taxid|" taxid "|" h " [organism=" organism "]"
-    next
-  }
-
-  { print }
-' "$fa" > "$tmp" && mv "$tmp" "$fa"
-
-# ------------------------------------------------------------
-# Validate result
-# ------------------------------------------------------------
-
-total_headers=$(grep -c '^>' "$fa")
-tagged_headers=$(grep -c "^>kraken:taxid|${taxid}|" "$fa")
-
-echo "Total FASTA headers: $total_headers"
-echo "Headers with Kraken taxid ${taxid}: $tagged_headers"
-
-if [[ "$total_headers" -ne "$tagged_headers" ]]; then
-    echo "ERROR: Not all FASTA headers received the Kraken taxid."
+if [[ ! -s "$clean_fa" ]]; then
+    echo "ERROR: Clean host FASTA was not found or is empty:"
+    echo "  $clean_fa"
     exit 1
 fi
 
-echo "Done."
+if [[ -z "${MTDIR:-}" ]]; then
+    echo "ERROR: MTDIR variable is not defined."
+    exit 1
+fi
 
-echo "Header modification complete."
+if [[ ! -s "$host_csv" ]]; then
+    echo "ERROR: Host species CSV not found or empty:"
+    echo "  $host_csv"
+    exit 1
+fi
+
+species_from_taxid=$(
+    awk -F',' -v id="$taxid" '
+        NR == 1 {
+            for (i = 1; i <= NF; i++) {
+                gsub(//, "", $i)
+                if ($i == "Taxon_ID") tax_col = i
+                if ($i == "Scientific_name") sci_col = i
+            }
+            if (!tax_col || !sci_col) exit 2
+            next
+        }
+        {
+            gsub(//, "", $0)
+            tax_id = $tax_col
+            sci_name = $sci_col
+            gsub(/^[ 	]+|[ 	]+$/, "", tax_id)
+            gsub(/^[ 	]+|[ 	]+$/, "", sci_name)
+            if (tax_id == id) {
+                print sci_name
+                exit
+            }
+        }
+    ' "$host_csv"
+)
+
+awk_status=$?
+
+if [[ "$awk_status" -eq 2 ]]; then
+    echo "ERROR: Could not find Taxon_ID and Scientific_name columns in:"
+    echo "  $host_csv"
+    exit 1
+fi
+
+if [[ -z "$species_from_taxid" ]]; then
+    echo "WARNING: TaxID ${taxid} was not found in:"
+    echo "  $host_csv"
+
+    if [[ -n "${species_name:-}" ]]; then
+        species_from_taxid="$species_name"
+        echo "Using existing species_name variable: $species_from_taxid"
+    else
+        species_from_taxid="TaxID_${taxid}"
+        echo "Using fallback name: $species_from_taxid"
+    fi
+else
+    echo "Detected scientific name from HostSpecies.csv:"
+    echo "  TaxID ${taxid} -> ${species_from_taxid}"
+fi
+
+echo "Preparing clean host FASTA for HISAT2, Magic-BLAST and annotation..."
+
+clean_tmp="$(mktemp)"
+
+if ! awk '
+    /^>/ {
+        header = $0
+        sub(/^>/, "", header)
+        sub(/^kraken:taxid\|[0-9]+\|/, "", header)
+        sub(/[[:space:]]+\[organism=[^]]+\][[:space:]]*$/, "", header)
+        print ">" header
+        next
+    }
+    {
+        print
+    }
+' "$clean_fa" > "$clean_tmp"
+then
+    rm -f -- "$clean_tmp"
+    echo "ERROR: Could not normalize the clean host FASTA."
+    exit 1
+fi
+
+if [[ ! -s "$clean_tmp" ]]; then
+    rm -f -- "$clean_tmp"
+    echo "ERROR: Normalized clean FASTA is empty."
+    exit 1
+fi
+
+mv -f -- "$clean_tmp" "$clean_fa"
+
+clean_headers="$(grep -c '^>' "$clean_fa")"
+clean_tagged_headers="$(grep -c '^>kraken:taxid|' "$clean_fa" || true)"
+
+if [[ "$clean_headers" -lt 1 ]]; then
+    echo "ERROR: Clean FASTA contains no sequence headers."
+    exit 1
+fi
+
+if [[ "$clean_tagged_headers" -ne 0 ]]; then
+    echo "ERROR: Kraken taxid prefixes remain in the clean FASTA."
+    exit 1
+fi
+
+echo "Creating Kraken2-only FASTA with TaxID ${taxid}..."
+echo "Appending organism name: $species_from_taxid"
+
+kraken_tmp="$(mktemp)"
+
+if ! awk -v taxid="$taxid" -v organism="$species_from_taxid" '
+    /^>/ {
+        header = $0
+        sub(/^>/, "", header)
+        sub(/^kraken:taxid\|[0-9]+\|/, "", header)
+        sub(/[[:space:]]+\[organism=[^]]+\][[:space:]]*$/, "", header)
+        print ">kraken:taxid|" taxid "|" header \
+              " [organism=" organism "]"
+        next
+    }
+    {
+        print
+    }
+' "$clean_fa" > "$kraken_tmp"
+then
+    rm -f -- "$kraken_tmp"
+    echo "ERROR: Could not create the Kraken2-tagged FASTA."
+    exit 1
+fi
+
+if [[ ! -s "$kraken_tmp" ]]; then
+    rm -f -- "$kraken_tmp"
+    echo "ERROR: Kraken2-tagged FASTA is empty."
+    exit 1
+fi
+
+mv -f -- "$kraken_tmp" "$kraken_fa"
+
+kraken_headers="$(grep -c '^>' "$kraken_fa")"
+kraken_tagged_headers="$(
+    grep -c "^>kraken:taxid|${taxid}|" "$kraken_fa" || true
+)"
+
+echo "Clean FASTA headers:        $clean_headers"
+echo "Kraken2 FASTA headers:      $kraken_headers"
+echo "Kraken2 headers with TaxID: $kraken_tagged_headers"
+
+if [[ "$clean_headers" -ne "$kraken_headers" ]]; then
+    echo "ERROR: Clean and Kraken2 FASTAs have different sequence counts."
+    exit 1
+fi
+
+if [[ "$kraken_headers" -ne "$kraken_tagged_headers" ]]; then
+    echo "ERROR: Not all Kraken2 FASTA headers received the requested TaxID."
+    exit 1
+fi
+
+echo "[OK] Clean and Kraken2 FASTAs were separated successfully."
 rm -rf $MTDIR/blastdb_$customized
 mkdir -p $MTDIR/blastdb_$customized
 #cp genome_${customized}.fa $MTDIR/blastdb_$customized 
@@ -1392,7 +1524,10 @@ cd ..
 # This avoids re-downloading huge accession2taxid files for every custom host.
 prepare_kraken_taxonomy_for_db     "$MTDIR"     "$DBNAME"     "$threads"     "$KRAKEN_TAXONOMY_CACHE"     "$REBUILD_KRAKEN_TAXONOMY_CACHE"     "$USE_KRAKEN_TAXONOMY_CACHE"
 
-kraken2-build --add-to-library $DBNAME/genome_${customized}.fa --threads $threads --db $DBNAME
+kraken2-build \
+    --add-to-library "$DBNAME/genome_${customized}.kraken.fa" \
+    --threads "$threads" \
+    --db "$DBNAME"
 kraken2-build --build --threads $threads --db $DBNAME
 # download host GTF
 #wget -c $gtf -P ref_${customized} -O ref_${customized}.gtf.gz
@@ -1406,6 +1541,112 @@ if ! prepare_cached_gtf_gz \
     "$gtf" \
     "$MTDIR/ref_${customized}/ref_${customized}.gtf.gz"; then
 
+    exit 1
+fi
+
+# ------------------------------------------------------------
+# Validate clean FASTA and GTF contig compatibility
+# ------------------------------------------------------------
+# featureCounts requires exact equality between the alignment reference
+# names and the first column of the GTF.
+# ------------------------------------------------------------
+
+echo "[INFO] Validating clean FASTA and GTF contig names..."
+
+if ! python3 - \
+    "$MTDIR/$DBNAME/genome_${customized}.fa" \
+    "$MTDIR/ref_${customized}/ref_${customized}.gtf.gz" \
+    "$customized" <<'PY_VALIDATE_HOST_CONTIGS'
+import gzip
+import sys
+from pathlib import Path
+
+fasta_path = Path(sys.argv[1])
+gtf_path = Path(sys.argv[2])
+taxid = sys.argv[3]
+
+
+def fasta_ids(path):
+    identifiers = set()
+    with path.open("rt", encoding="utf-8", errors="replace") as handle:
+        for line in handle:
+            if line.startswith(">"):
+                identifier = line[1:].split(None, 1)[0].strip()
+                if identifier:
+                    identifiers.add(identifier)
+    return identifiers
+
+
+def gtf_ids(path):
+    identifiers = set()
+    with gzip.open(path, "rt", encoding="utf-8", errors="replace") as handle:
+        for line in handle:
+            if not line or line.startswith("#"):
+                continue
+            fields = line.rstrip("\n").split("\t")
+            if fields and fields[0]:
+                identifiers.add(fields[0])
+    return identifiers
+
+
+fasta = fasta_ids(fasta_path)
+gtf = gtf_ids(gtf_path)
+
+if not fasta:
+    raise SystemExit(
+        f"[ERROR] No FASTA sequence identifiers were found: {fasta_path}"
+    )
+
+if not gtf:
+    raise SystemExit(
+        f"[ERROR] No GTF contig identifiers were found: {gtf_path}"
+    )
+
+prefixed = sorted(
+    identifier
+    for identifier in fasta
+    if identifier.startswith("kraken:taxid|")
+)
+
+if prefixed:
+    print(
+        "[ERROR] Clean FASTA still contains Kraken taxid prefixes.",
+        file=sys.stderr,
+    )
+    for identifier in prefixed[:20]:
+        print(f"  {identifier}", file=sys.stderr)
+    raise SystemExit(1)
+
+missing_from_fasta = sorted(gtf - fasta)
+shared = fasta & gtf
+
+print(f"[OK] Host TaxID:             {taxid}")
+print(f"[OK] Clean FASTA identifiers: {len(fasta)}")
+print(f"[OK] GTF contig identifiers:  {len(gtf)}")
+print(f"[OK] Shared identifiers:      {len(shared)}")
+
+if missing_from_fasta:
+    print(
+        "[ERROR] GTF contigs absent from the clean FASTA:",
+        file=sys.stderr,
+    )
+    for identifier in missing_from_fasta[:20]:
+        print(f"  {identifier}", file=sys.stderr)
+    print(
+        f"[ERROR] Missing GTF contigs: {len(missing_from_fasta)}",
+        file=sys.stderr,
+    )
+    raise SystemExit(1)
+
+if not shared:
+    raise SystemExit(
+        "[ERROR] FASTA and GTF do not share any contig identifiers."
+    )
+
+print("[OK] Clean FASTA and GTF contig names are compatible.")
+PY_VALIDATE_HOST_CONTIGS
+then
+    echo "[ERROR] Clean host FASTA and GTF compatibility validation failed."
     exit 1
 fi
 
@@ -1427,7 +1668,26 @@ if [[ ! -s "../$DBNAME/genome_${customized}.fa" ]]; then
     exit 1
 fi
 cp ../$DBNAME/genome_${customized}.fa genome.fa
-hisat2-build -p $threads --exon genome.exon --ss genome.ss genome.fa genome_tran
+hisat2-build \
+    -p "$threads" \
+    --exon genome.exon \
+    --ss genome.ss \
+    genome.fa \
+    genome_tran
+
+if command -v hisat2-inspect >/dev/null 2>&1; then
+    if hisat2-inspect -n genome_tran |
+        grep -q '^kraken:taxid|'
+    then
+        echo "[ERROR] HISAT2 index contains Kraken-prefixed sequence names."
+        echo "[ERROR] The index must be rebuilt from the clean FASTA."
+        exit 1
+    fi
+
+    echo "[OK] HISAT2 index contains clean sequence identifiers."
+else
+    echo "[WARNING] hisat2-inspect was not found; index-name validation skipped."
+fi
 cd ..
 
 echo "Creating blast databases for custom reference $customized"
