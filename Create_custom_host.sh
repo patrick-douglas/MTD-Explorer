@@ -75,6 +75,63 @@ prepend_unique_path_var() {
         export "$var_name=$new_path:$cleaned"
     fi
 }
+
+# ------------------------------------------------------------
+# MTD dedicated Kraken2 host-builder runtime
+# ------------------------------------------------------------
+KRAKEN2_ENV_NAME="${MTD_KRAKEN2_ENV_NAME:-MTD_kraken2}"
+KRAKEN2_ENV_DIR=""
+KRAKEN2_BIN=""
+KRAKEN2_BUILD_BIN=""
+KRAKEN2_INSPECT_BIN=""
+KRAKEN2_VERSION=""
+
+validate_dedicated_kraken_runtime() {
+    KRAKEN2_ENV_DIR="$condapath/envs/$KRAKEN2_ENV_NAME"
+    KRAKEN2_BIN="$KRAKEN2_ENV_DIR/bin/kraken2"
+    KRAKEN2_BUILD_BIN="$KRAKEN2_ENV_DIR/bin/kraken2-build"
+    KRAKEN2_INSPECT_BIN="$KRAKEN2_ENV_DIR/bin/kraken2-inspect"
+
+    local required
+    for required in "$KRAKEN2_BIN" "$KRAKEN2_BUILD_BIN" "$KRAKEN2_INSPECT_BIN"; do
+        if [[ ! -x "$required" ]]; then
+            echo "[ERROR] Dedicated Kraken2 executable was not found:"
+            echo "  $required"
+            echo "[ERROR] Run Install.sh to create $KRAKEN2_ENV_NAME."
+            exit 1
+        fi
+    done
+
+    KRAKEN2_VERSION="$("$KRAKEN2_BIN" --version 2>/dev/null | awk 'NR == 1 { print $3 }')"
+    if [[ "$KRAKEN2_VERSION" != "2.17.1" ]]; then
+        echo "[ERROR] Unexpected Kraken2 version."
+        echo "  Expected: 2.17.1"
+        echo "  Observed: ${KRAKEN2_VERSION:-unknown}"
+        echo "  Binary:   $KRAKEN2_BIN"
+        exit 1
+    fi
+
+    echo "------------------------------------------------------------"
+    echo "[KRAKEN2] Dedicated host-builder runtime"
+    echo "[KRAKEN2] Environment: $KRAKEN2_ENV_NAME"
+    echo "[KRAKEN2] Version:     $KRAKEN2_VERSION"
+    echo "[KRAKEN2] Build:       $KRAKEN2_BUILD_BIN"
+    echo "[KRAKEN2] Inspect:     $KRAKEN2_INSPECT_BIN"
+    echo "------------------------------------------------------------"
+}
+
+run_with_kraken2_runtime() {
+    env PATH="$KRAKEN2_ENV_DIR/bin:$PATH" "$@"
+}
+
+run_kraken2_build() {
+    run_with_kraken2_runtime "$KRAKEN2_BUILD_BIN" "$@"
+}
+
+run_kraken2_inspect() {
+    run_with_kraken2_runtime "$KRAKEN2_INSPECT_BIN" "$@"
+}
+
 # ------------------------------------------------------------
 # Persistent installation cache
 # ------------------------------------------------------------
@@ -1122,7 +1179,7 @@ prepare_kraken_taxonomy_for_db() {
 
     if [[ "$use_cache" != "1" ]]; then
         echo "[KRAKEN-CACHE] Shared cache disabled. Downloading taxonomy directly into: $dbname"
-        "$mtdir/aux_scripts/Kraken2/download_kraken2_taxonomy_https.sh" --db "$dbname" --threads "$threads"
+        run_with_kraken2_runtime "$mtdir/aux_scripts/Kraken2/download_kraken2_taxonomy_https.sh" --db "$dbname" --threads "$threads"
         return
     fi
 
@@ -1146,7 +1203,7 @@ prepare_kraken_taxonomy_for_db() {
         echo "[KRAKEN-CACHE] Shared taxonomy cache missing/incomplete. Creating it once."
         rm -rf --one-file-system "$cache_dir"
         mkdir -p "$cache_dir"
-        "$mtdir/aux_scripts/Kraken2/download_kraken2_taxonomy_https.sh" --db "$cache_dir" --threads "$threads"
+        run_with_kraken2_runtime "$mtdir/aux_scripts/Kraken2/download_kraken2_taxonomy_https.sh" --db "$cache_dir" --threads "$threads"
     fi
 
     if ! validate_kraken_taxonomy_dir "$cache_taxdir"; then
@@ -1180,6 +1237,7 @@ fi
 condapath=$(head -n 1 $MTDIR/condaPath)
 # Load Conda
 source "$condapath/etc/profile.d/conda.sh"
+validate_dedicated_kraken_runtime
 
 # ------------------------------------------------------------
 # Validate dedicated OrgDb environment
@@ -1373,7 +1431,8 @@ species_from_taxid=$(
     awk -F',' -v id="$taxid" '
         NR == 1 {
             for (i = 1; i <= NF; i++) {
-                gsub(//, "", $i)
+                gsub(/
+/, "", $i)
                 if ($i == "Taxon_ID") tax_col = i
                 if ($i == "Scientific_name") sci_col = i
             }
@@ -1381,7 +1440,8 @@ species_from_taxid=$(
             next
         }
         {
-            gsub(//, "", $0)
+            gsub(/
+/, "", $0)
             tax_id = $tax_col
             sci_name = $sci_col
             gsub(/^[ 	]+|[ 	]+$/, "", tax_id)
@@ -1524,11 +1584,38 @@ cd ..
 # This avoids re-downloading huge accession2taxid files for every custom host.
 prepare_kraken_taxonomy_for_db     "$MTDIR"     "$DBNAME"     "$threads"     "$KRAKEN_TAXONOMY_CACHE"     "$REBUILD_KRAKEN_TAXONOMY_CACHE"     "$USE_KRAKEN_TAXONOMY_CACHE"
 
-kraken2-build \
+run_kraken2_build \
     --add-to-library "$DBNAME/genome_${customized}.kraken.fa" \
     --threads "$threads" \
     --db "$DBNAME"
-kraken2-build --build --threads $threads --db $DBNAME
+
+run_kraken2_build \
+    --build \
+    --threads "$threads" \
+    --db "$DBNAME"
+
+for required_db_file in hash.k2d opts.k2d taxo.k2d; do
+    if [[ ! -s "$DBNAME/$required_db_file" ]]; then
+        echo "[ERROR] Custom host Kraken2 database is incomplete:"
+        echo "  $DBNAME/$required_db_file"
+        exit 1
+    fi
+done
+
+HOST_KRAKEN_INSPECT="$DBNAME/kraken2_inspect_summary.txt"
+
+if ! run_kraken2_inspect \
+    --db "$DBNAME" \
+    --skip-counts \
+    > "$HOST_KRAKEN_INSPECT"; then
+
+    echo "[ERROR] Kraken2 2.17.1 could not inspect the custom host database."
+    echo "  Database: $DBNAME"
+    exit 1
+fi
+
+echo "[OK] Custom host Kraken2 database validated with version $KRAKEN2_VERSION."
+echo "[OK] Inspect summary: $HOST_KRAKEN_INSPECT"
 # download host GTF
 #wget -c $gtf -P ref_${customized} -O ref_${customized}.gtf.gz
 echo "[INFO] Preparing GTF annotation from cache:"

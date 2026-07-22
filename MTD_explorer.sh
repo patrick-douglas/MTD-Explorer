@@ -895,6 +895,10 @@ KRAKEN2_BIN="$KRAKEN2_ENV_DIR/bin/kraken2"
 KRAKEN2_INSPECT_BIN="$KRAKEN2_ENV_DIR/bin/kraken2-inspect"
 KRAKEN2_EXPECTED_VERSION="2.17.1"
 
+BRACKEN_BIN="$KRAKEN2_ENV_DIR/bin/bracken"
+BRACKEN_BUILD_BIN="$KRAKEN2_ENV_DIR/bin/bracken-build"
+BRACKEN_EXPECTED_PACKAGE_VERSION="3.1p1"
+
 if [[ ! -d "$KRAKEN2_ENV_DIR" ]]; then
     die "Dedicated Kraken2 environment was not found: $KRAKEN2_ENV_DIR
 Run Install.sh to create the $KRAKEN2_ENV_NAME environment."
@@ -922,6 +926,45 @@ Observed: ${KRAKEN2_VERSION:-unknown}
 Executable: $KRAKEN2_BIN"
 fi
 
+if [[ ! -x "$BRACKEN_BIN" ]]; then
+    die "Bracken executable was not found or is not executable:
+$BRACKEN_BIN"
+fi
+
+if [[ ! -x "$BRACKEN_BUILD_BIN" ]]; then
+    die "bracken-build was not found or is not executable:
+$BRACKEN_BUILD_BIN"
+fi
+
+# The Bioconda package is versioned as 3.1p1, but the upstream
+# bracken executable distributed by that package still prints the
+# stale banner "Bracken v3.0.1". Validate the installed Conda package
+# version and retain the CLI banner only as supplementary metadata.
+BRACKEN_PACKAGE_VERSION="$(
+    conda list \
+        --name "$KRAKEN2_ENV_NAME" \
+        bracken \
+        2>/dev/null |
+    awk '$1 == "bracken" {
+        print $2
+        exit
+    }'
+)"
+
+BRACKEN_CLI_VERSION="$(
+    "$BRACKEN_BIN" -v 2>&1 |
+        head -n 1 |
+        sed 's/\r//g'
+)"
+
+if [[ "$BRACKEN_PACKAGE_VERSION" != "$BRACKEN_EXPECTED_PACKAGE_VERSION" ]]; then
+    die "Unexpected Bracken Conda package version in $KRAKEN2_ENV_NAME.
+Expected package: $BRACKEN_EXPECTED_PACKAGE_VERSION
+Observed package: ${BRACKEN_PACKAGE_VERSION:-unknown}
+CLI banner: ${BRACKEN_CLI_VERSION:-unknown}
+Executable: $BRACKEN_BIN"
+fi
+
 # A Bash function takes precedence over PATH, so later Conda
 # activations cannot silently switch classification back to the
 # legacy Kraken2 installation.
@@ -937,6 +980,11 @@ echo "${g}[INFO] Kraken2 runtime:${w}"
 echo " Environment: $KRAKEN2_ENV_NAME"
 echo " Version:     $KRAKEN2_VERSION"
 echo " Executable:  $KRAKEN2_BIN"
+echo "${g}[INFO] Bracken runtime:${w}"
+echo " Environment:     $KRAKEN2_ENV_NAME"
+echo " Conda package:   $BRACKEN_PACKAGE_VERSION"
+echo " CLI banner:      $BRACKEN_CLI_VERSION"
+echo " Executable:      $BRACKEN_BIN"
 
 
 # ------------------------------------------------------------
@@ -1726,8 +1774,8 @@ write_methods_log() {
         csv_row "Key outputs" "HAllA" "microbiome_input" "$outputdr/halla/Microbiomes.txt" "Microbiome matrix used by HAllA"
 
         # Software paths
-        csv_row "Software path" "kraken2" "path" "$(get_tool_path kraken2)" "Executable path"
-        csv_row "Software path" "bracken" "path" "$(get_tool_path bracken)" "Executable path"
+        csv_row "Software path" "kraken2" "path" "$KRAKEN2_BIN" "Dedicated MTD_kraken2 executable path"
+        csv_row "Software path" "bracken" "path" "$BRACKEN_BIN" "Dedicated MTD_kraken2 executable path"
         csv_row "Software path" "fastp" "path" "$(get_tool_path fastp)" "Executable path"
         csv_row "Software path" "pigz" "path" "$(get_tool_path pigz)" "Executable path"
         csv_row "Software path" "python" "path" "$(get_tool_path python)" "Executable path"
@@ -1740,8 +1788,9 @@ write_methods_log() {
         csv_row "Software path" "samtools" "path" "$(get_tool_path samtools)" "Executable path"
 
         # Software versions, best effort
-        csv_row "Software version" "kraken2" "version" "$(get_tool_version 'kraken2 --version')" "Best-effort version capture"
-        csv_row "Software version" "bracken" "version" "$(get_tool_version 'bracken -v')" "Best-effort version capture"
+        csv_row "Software version" "kraken2" "version" "$KRAKEN2_VERSION" "Validated dedicated runtime version"
+        csv_row "Software version" "bracken" "conda_package_version" "$BRACKEN_PACKAGE_VERSION" "Validated dedicated Conda package version"
+        csv_row "Software version" "bracken" "cli_banner" "$BRACKEN_CLI_VERSION" "Upstream executable banner; may be stale relative to the package version"
         csv_row "Software version" "fastp" "version" "$(get_tool_version 'fastp --version')" "Best-effort version capture"
         csv_row "Software version" "python" "version" "$(get_tool_version 'python --version')" "Best-effort version capture"
         csv_row "Software version" "Rscript" "version" "$(get_tool_version 'Rscript --version')" "Best-effort version capture"
@@ -5203,7 +5252,7 @@ if [[ ! -s "$BRACKEN_DIST" ]]; then
     echo
     echo "You probably need to build the Bracken distribution file for read length ${read_len}."
     echo "Example command:"
-    echo "  bracken-build -d \"$DB_micro\" -t \"$threads\" -k 35 -l \"$read_len\""
+    echo "  $BRACKEN_BUILD_BIN -d \"$DB_micro\" -t \"$threads\" -k 35 -l \"$read_len\""
     echo
     exit 1
 fi
@@ -5229,21 +5278,21 @@ for i in $lsn; do
         exit 1
     fi
 
-    bracken -d "$DB_micro" \
+    "$BRACKEN_BIN" -d "$DB_micro" \
         -i "Report_non-host_${i}.txt" \
         -o "Report_$i.phylum.bracken" \
         -r "$read_len" \
         -l P \
         -t "$BRACKEN_THRESHOLD"
 
-    bracken -d "$DB_micro" \
+    "$BRACKEN_BIN" -d "$DB_micro" \
         -i "Report_non-host_${i}.txt" \
         -o "Report_$i.genus.bracken" \
         -r "$read_len" \
         -l G \
         -t "$BRACKEN_THRESHOLD"
 
-    bracken -d "$DB_micro" \
+    "$BRACKEN_BIN" -d "$DB_micro" \
         -i "Report_non-host_${i}.txt" \
         -o "Report_$i.species.bracken" \
         -r "$read_len" \

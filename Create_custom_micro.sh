@@ -27,6 +27,20 @@ OUTPUT_ROOT="$SCRIPT_DIR"
 DB_NAME=""
 DB_PATH=""
 
+# ------------------------------------------------------------
+# MTD dedicated Kraken2/Bracken builder runtime
+# ------------------------------------------------------------
+KRAKEN2_ENV_NAME="${MTD_KRAKEN2_ENV_NAME:-MTD_kraken2}"
+CONDA_ROOT="${MTD_CONDA_ROOT:-}"
+KRAKEN2_ENV_DIR=""
+KRAKEN2_BIN=""
+KRAKEN2_BUILD_BIN=""
+KRAKEN2_INSPECT_BIN=""
+BRACKEN_BUILD_BIN=""
+KRAKEN2_VERSION=""
+BRACKEN_PACKAGE_VERSION=""
+KRAKEN2_RUNTIME_READY=0
+
 THREADS="${THREADS:-}"
 if [[ -z "$THREADS" ]]; then
   if command -v nproc >/dev/null 2>&1; then
@@ -411,25 +425,90 @@ PY
 )"
 }
 
-check_dependencies() {
-  local missing=0
 
-  for cmd in kraken2-build python3; do
-    if ! command -v "$cmd" >/dev/null 2>&1; then
-      warn "Missing command: $cmd"
-      missing=1
+resolve_dedicated_kraken_runtime() {
+  if [[ "$KRAKEN2_RUNTIME_READY" == "1" ]]; then
+    return 0
+  fi
+
+  if [[ -z "$CONDA_ROOT" && -s "$SCRIPT_DIR/condaPath" ]]; then
+    IFS= read -r CONDA_ROOT < "$SCRIPT_DIR/condaPath"
+    CONDA_ROOT="${CONDA_ROOT%$'\r'}"
+  fi
+
+  if [[ -z "$CONDA_ROOT" ]]; then
+    CONDA_ROOT="$HOME/miniconda3"
+  fi
+
+  KRAKEN2_ENV_DIR="$CONDA_ROOT/envs/$KRAKEN2_ENV_NAME"
+  KRAKEN2_BIN="$KRAKEN2_ENV_DIR/bin/kraken2"
+  KRAKEN2_BUILD_BIN="$KRAKEN2_ENV_DIR/bin/kraken2-build"
+  KRAKEN2_INSPECT_BIN="$KRAKEN2_ENV_DIR/bin/kraken2-inspect"
+  BRACKEN_BUILD_BIN="$KRAKEN2_ENV_DIR/bin/bracken-build"
+
+  local required
+  for required in "$KRAKEN2_BIN" "$KRAKEN2_BUILD_BIN" "$KRAKEN2_INSPECT_BIN"; do
+    if [[ ! -x "$required" ]]; then
+      fail "Dedicated Kraken2 executable not found: $required"
+      return 1
     fi
   done
 
+  KRAKEN2_VERSION="$("$KRAKEN2_BIN" --version 2>/dev/null | awk 'NR == 1 { print $3 }')"
+  if [[ "$KRAKEN2_VERSION" != "2.17.1" ]]; then
+    fail "Expected Kraken2 2.17.1, observed: ${KRAKEN2_VERSION:-unknown}"
+    return 1
+  fi
+
   if [[ "$BUILD_BRACKEN" == "1" ]]; then
-    if ! command -v bracken-build >/dev/null 2>&1; then
-      warn "Missing command: bracken-build"
-      missing=1
+    if [[ ! -x "$BRACKEN_BUILD_BIN" ]]; then
+      fail "Dedicated bracken-build not found: $BRACKEN_BUILD_BIN"
+      return 1
+    fi
+
+    BRACKEN_PACKAGE_VERSION="$(find "$KRAKEN2_ENV_DIR/conda-meta" -maxdepth 1 -type f -name 'bracken-3.1p1-*.json' -printf '3.1p1\n' -quit 2>/dev/null)"
+    if [[ "$BRACKEN_PACKAGE_VERSION" != "3.1p1" ]]; then
+      fail "Expected Bracken Conda package 3.1p1 in $KRAKEN2_ENV_DIR"
+      return 1
     fi
   fi
 
+  KRAKEN2_RUNTIME_READY=1
+  log "Dedicated Kraken2 runtime:"
+  log "  environment: $KRAKEN2_ENV_NAME"
+  log "  Kraken2:    $KRAKEN2_VERSION"
+  log "  build:      $KRAKEN2_BUILD_BIN"
+  log "  inspect:    $KRAKEN2_INSPECT_BIN"
+  if [[ "$BUILD_BRACKEN" == "1" ]]; then
+    log "  Bracken:    $BRACKEN_PACKAGE_VERSION"
+    log "  build:      $BRACKEN_BUILD_BIN"
+  fi
+}
+
+run_kraken2_build() {
+  env PATH="$KRAKEN2_ENV_DIR/bin:$PATH" "$KRAKEN2_BUILD_BIN" "$@"
+}
+
+run_kraken2_inspect() {
+  env PATH="$KRAKEN2_ENV_DIR/bin:$PATH" "$KRAKEN2_INSPECT_BIN" "$@"
+}
+
+run_bracken_build() {
+  env PATH="$KRAKEN2_ENV_DIR/bin:$PATH" "$BRACKEN_BUILD_BIN" "$@"
+}
+
+check_dependencies() {
+  local missing=0
+
+  resolve_dedicated_kraken_runtime || return 1
+
+  if ! command -v python3 >/dev/null 2>&1; then
+    warn "Missing command: python3"
+    missing=1
+  fi
+
   if [[ "$missing" == "1" ]]; then
-    fail "Missing required commands. Activate the MTD environment or install dependencies."
+    fail "Missing required commands."
     return 1
   fi
 }
@@ -540,7 +619,7 @@ PY
 
     log "Adding custom FASTA:"
     log "  $fasta"
-    kraken2-build --add-to-library "$fasta" --db "$DB_PATH"
+    run_kraken2_build --add-to-library "$fasta" --db "$DB_PATH"
     local status=$?
     if [[ "$status" != "0" ]]; then
       fail "kraken2-build --add-to-library failed for: $fasta"
@@ -592,7 +671,7 @@ PY
 
     log "Adding prepared FASTA:"
     log "  $prepared"
-    kraken2-build --add-to-library "$prepared" --db "$DB_PATH"
+    run_kraken2_build --add-to-library "$prepared" --db "$DB_PATH"
     local add_status=$?
     if [[ "$add_status" != "0" ]]; then
       fail "kraken2-build --add-to-library failed for prepared FASTA: $prepared"
@@ -613,8 +692,8 @@ download_taxonomy() {
   fi
 
   log "Downloading NCBI taxonomy:"
-  log "  kraken2-build ${args[*]}"
-  kraken2-build "${args[@]}"
+  log "  $KRAKEN2_BUILD_BIN ${args[*]}"
+  run_kraken2_build "${args[@]}"
   local status=$?
   if [[ "$status" != "0" ]]; then
     fail "Taxonomy download failed."
@@ -632,8 +711,8 @@ download_libraries() {
     fi
 
     log "Downloading Kraken 2 library: $lib"
-    log "  kraken2-build ${args[*]}"
-    kraken2-build "${args[@]}"
+    log "  $KRAKEN2_BUILD_BIN ${args[*]}"
+    run_kraken2_build "${args[@]}"
     local status=$?
     if [[ "$status" != "0" ]]; then
       fail "Library download failed: $lib"
@@ -658,8 +737,8 @@ build_kraken_db() {
   )
 
   log "Building Kraken 2 database:"
-  log "  kraken2-build ${args[*]}"
-  kraken2-build "${args[@]}"
+  log "  $KRAKEN2_BUILD_BIN ${args[*]}"
+  run_kraken2_build "${args[@]}"
   local status=$?
   if [[ "$status" != "0" ]]; then
     fail "Kraken 2 database build failed."
@@ -673,14 +752,9 @@ build_bracken_db() {
     return 0
   fi
 
-  if ! command -v bracken-build >/dev/null 2>&1; then
-    fail "bracken-build not found."
-    return 1
-  fi
-
   log "Building Bracken database:"
-  log "  bracken-build -d $DB_PATH -t $THREADS -k $KMER_LEN -l $BRACKEN_READ_LEN"
-  bracken-build \
+  log "  $BRACKEN_BUILD_BIN -d $DB_PATH -t $THREADS -k $KMER_LEN -l $BRACKEN_READ_LEN"
+  run_bracken_build \
     -d "$DB_PATH" \
     -t "$THREADS" \
     -k "$KMER_LEN" \
@@ -770,9 +844,9 @@ validate_database() {
     fi
   fi
 
-  if command -v kraken2-inspect >/dev/null 2>&1 && [[ -s "$DB_PATH/hash.k2d" ]]; then
+  if [[ -x "$KRAKEN2_INSPECT_BIN" && -s "$DB_PATH/hash.k2d" ]]; then
     log "kraken2-inspect preview:"
-    kraken2-inspect --db "$DB_PATH" | head -20
+    run_kraken2_inspect --db "$DB_PATH" | head -20
   else
     warn "kraken2-inspect unavailable or database hash missing; skipping taxonomy preview."
   fi
@@ -805,6 +879,7 @@ main() {
   done
 
   resolve_db_path || return 1
+  resolve_dedicated_kraken_runtime || return 1
 
   echo "============================================================"
   echo "Create_custom_micro.sh"

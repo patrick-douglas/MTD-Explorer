@@ -35,9 +35,14 @@ KRAKEN_AUX_DIR="$dir/aux_scripts/Kraken2"
 KRAKEN_ENV_NAME="MTD_kraken2"
 KRAKEN_ENV_FILE="$dir/Installation/MTD_kraken2.yml"
 KRAKEN_ENV_PREFIX=""
+KRAKEN2_BIN=""
+KRAKEN2_BUILD_BIN=""
+KRAKEN2_INSPECT_BIN=""
+K2_BIN=""
+BRACKEN_BIN=""
+BRACKEN_BUILD_BIN=""
 
 KRAKEN_ENV_LIBEXEC=""
-KRAKEN_PKG_LIBEXEC=""
 kraken_build_opts=()
 ORIGINAL_CHANNEL_PRIORITY=""
 KRAKEN_TAXONOMY_CACHE=""
@@ -307,8 +312,14 @@ validate_arguments() {
 }
 
 configure_paths_and_options() {
-    KRAKEN_ENV_LIBEXEC="$condapath/envs/MTD/libexec"
-    KRAKEN_PKG_LIBEXEC="$condapath/pkgs/kraken2-2.1.2-pl5262h7d875b9_0/libexec"
+    KRAKEN_ENV_PREFIX="$condapath/envs/$KRAKEN_ENV_NAME"
+    KRAKEN2_BIN="$KRAKEN_ENV_PREFIX/bin/kraken2"
+    KRAKEN2_BUILD_BIN="$KRAKEN_ENV_PREFIX/bin/kraken2-build"
+    KRAKEN2_INSPECT_BIN="$KRAKEN_ENV_PREFIX/bin/kraken2-inspect"
+    K2_BIN="$KRAKEN_ENV_PREFIX/bin/k2"
+    BRACKEN_BIN="$KRAKEN_ENV_PREFIX/bin/bracken"
+    BRACKEN_BUILD_BIN="$KRAKEN_ENV_PREFIX/bin/bracken-build"
+    KRAKEN_ENV_LIBEXEC=""
     KRAKEN_TAXONOMY_CACHE="$offline_files_folder/Kraken2_taxonomy_cache"
 
     kraken_build_opts=()
@@ -589,9 +600,17 @@ ensure_kraken2_environment() {
     local previous_env="${CONDA_DEFAULT_ENV:-}"
     local environment_changed=0
     local installed_version=""
+    local bracken_package_version=""
+    local bracken_cli_version=""
     local k2mask_path=""
 
     KRAKEN_ENV_PREFIX="$condapath/envs/$KRAKEN_ENV_NAME"
+    KRAKEN2_BIN="$KRAKEN_ENV_PREFIX/bin/kraken2"
+    KRAKEN2_BUILD_BIN="$KRAKEN_ENV_PREFIX/bin/kraken2-build"
+    KRAKEN2_INSPECT_BIN="$KRAKEN_ENV_PREFIX/bin/kraken2-inspect"
+    K2_BIN="$KRAKEN_ENV_PREFIX/bin/k2"
+    BRACKEN_BIN="$KRAKEN_ENV_PREFIX/bin/bracken"
+    BRACKEN_BUILD_BIN="$KRAKEN_ENV_PREFIX/bin/bracken-build"
 
     if [[ ! -f "$KRAKEN_ENV_FILE" ]]; then
         log_error "Kraken2 environment definition was not found:"
@@ -618,7 +637,11 @@ ensure_kraken2_environment() {
     fi
 
     if [[ "$installed_version" == "2.17.1" ]] &&
-       [[ -x "$KRAKEN_ENV_PREFIX/bin/k2" ]]; then
+       [[ -x "$KRAKEN2_BUILD_BIN" ]] &&
+       [[ -x "$KRAKEN2_INSPECT_BIN" ]] &&
+       [[ -x "$K2_BIN" ]] &&
+       [[ -x "$BRACKEN_BIN" ]] &&
+       [[ -x "$BRACKEN_BUILD_BIN" ]]; then
         log_ok "Kraken2 environment already available: $KRAKEN_ENV_NAME"
     else
         safe_conda_deactivate
@@ -641,7 +664,10 @@ ensure_kraken2_environment() {
 
     require_env_command "$KRAKEN_ENV_NAME" kraken2
     require_env_command "$KRAKEN_ENV_NAME" kraken2-build
+    require_env_command "$KRAKEN_ENV_NAME" kraken2-inspect
     require_env_command "$KRAKEN_ENV_NAME" k2
+    require_env_command "$KRAKEN_ENV_NAME" bracken
+    require_env_command "$KRAKEN_ENV_NAME" bracken-build
 
     installed_version="$(
         "$KRAKEN_ENV_PREFIX/bin/kraken2" --version 2>/dev/null |
@@ -652,6 +678,34 @@ ensure_kraken2_environment() {
         log_error "Unexpected Kraken2 version in $KRAKEN_ENV_NAME."
         log_error "Expected: 2.17.1"
         log_error "Observed: ${installed_version:-unknown}"
+        exit 1
+    fi
+
+    # Bioconda package 3.1p1 currently carries an upstream
+    # executable banner that still reports Bracken v3.0.1.
+    # Validate the Conda package metadata instead of that stale banner.
+    bracken_package_version="$(
+        conda list \
+            --name "$KRAKEN_ENV_NAME" \
+            bracken \
+            2>/dev/null |
+        awk '$1 == "bracken" {
+            print $2
+            exit
+        }'
+    )"
+
+    bracken_cli_version="$(
+        "$KRAKEN_ENV_PREFIX/bin/bracken" -v 2>&1 |
+            head -n 1 |
+            sed 's/\r//g'
+    )"
+
+    if [[ "$bracken_package_version" != "3.1p1" ]]; then
+        log_error "Unexpected Bracken Conda package version in $KRAKEN_ENV_NAME."
+        log_error "Expected package: 3.1p1"
+        log_error "Observed package: ${bracken_package_version:-unknown}"
+        log_error "CLI banner: ${bracken_cli_version:-unknown}"
         exit 1
     fi
 
@@ -671,8 +725,19 @@ ensure_kraken2_environment() {
         exit 1
     fi
 
+    KRAKEN_ENV_LIBEXEC="$(dirname "$k2mask_path")"
+
+    if [[ ! -d "$KRAKEN_ENV_LIBEXEC" ]]; then
+        log_error "Could not resolve the Kraken2 2.17.1 libexec directory."
+        log_error "Resolved path: $KRAKEN_ENV_LIBEXEC"
+        exit 1
+    fi
+
     log_ok "Validated Kraken2 version: $installed_version"
+    log_ok "Validated Bracken package: $bracken_package_version"
+    log_ok "Bracken CLI banner: $bracken_cli_version"
     log_ok "Found k2mask: $k2mask_path"
+    log_ok "Dedicated Kraken2 libexec: $KRAKEN_ENV_LIBEXEC"
 
     # Preserve whichever environment the installer was using before
     # creating or updating MTD_kraken2.
@@ -692,6 +757,37 @@ ensure_kraken2_environment() {
                 ;;
         esac
     fi
+}
+
+
+# MTD dedicated Kraken2/Bracken builder runtime wrappers.
+# Prefixing PATH is important because bracken-build and Kraken2 helper
+# scripts launch companion programs internally.
+run_kraken2_build() {
+    if [[ ! -x "$KRAKEN2_BUILD_BIN" ]]; then
+        ensure_kraken2_environment
+    fi
+
+    env PATH="$KRAKEN_ENV_PREFIX/bin:$PATH" \
+        "$KRAKEN2_BUILD_BIN" "$@"
+}
+
+run_kraken2_inspect() {
+    if [[ ! -x "$KRAKEN2_INSPECT_BIN" ]]; then
+        ensure_kraken2_environment
+    fi
+
+    env PATH="$KRAKEN_ENV_PREFIX/bin:$PATH" \
+        "$KRAKEN2_INSPECT_BIN" "$@"
+}
+
+run_bracken_build() {
+    if [[ ! -x "$BRACKEN_BUILD_BIN" ]]; then
+        ensure_kraken2_environment
+    fi
+
+    env PATH="$KRAKEN_ENV_PREFIX/bin:$PATH" \
+        "$BRACKEN_BUILD_BIN" "$@"
 }
 
 copy_required_file() {
@@ -1401,7 +1497,7 @@ download_kraken2_library_until_success() {
 
     if ! retry_until_success \
         "Kraken2 library '$library' for database '$database'" \
-        kraken2-build \
+        run_kraken2_build \
         "$@" \
         --download-library "$library" \
         --threads "$threads" \
@@ -1483,7 +1579,11 @@ download_shared_kraken2_taxonomy_once() {
 
     log_info "Downloading the shared NCBI taxonomy cache..."
 
-    if ! "$downloader" \
+    ensure_kraken2_environment
+
+    if ! env \
+        PATH="$KRAKEN_ENV_PREFIX/bin:$PATH" \
+        "$downloader" \
         --download-taxonomy \
         --threads "$threads" \
         --db "$KRAKEN_TAXONOMY_CACHE"; then
@@ -1582,7 +1682,7 @@ install_shared_kraken2_taxonomy() {
 build_kraken2_database() {
     local database="$1"
 
-    kraken2-build \
+    run_kraken2_build \
         --build \
         --threads "$threads" \
         --db "$database" \
@@ -1635,15 +1735,8 @@ install_kraken_helper() {
     copy_required_file "$source_file" "$KRAKEN_ENV_LIBEXEC/$target_name"
     chmod +x "$KRAKEN_ENV_LIBEXEC/$target_name"
 
-    # Preserve the original package-cache patch when that exact Kraken2 package
-    # directory exists. The active environment copy above is the required one.
-    if [[ -d "$KRAKEN_PKG_LIBEXEC" ]]; then
-        cp -f "$source_file" "$KRAKEN_PKG_LIBEXEC/$target_name"
-        chmod +x "$KRAKEN_PKG_LIBEXEC/$target_name"
-    else
-        log_warning "Kraken2 package-cache libexec not found; skipped optional copy:"
-        log_warning "  $KRAKEN_PKG_LIBEXEC"
-    fi
+    log_ok "Installed Kraken2 helper in the dedicated 2.17.1 runtime:"
+    log_ok "  $KRAKEN_ENV_LIBEXEC/$target_name"
 }
 
 restore_default_rsync_helper() {
@@ -1871,8 +1964,7 @@ create_conda_environments() {
         "Checking ssGSEA GO resolver syntax" \
         python3 -m py_compile "$dir/aux_scripts/ssGSEA/resolve_ssgsea_go_terms.py"
 
-    require_env_command MTD kraken2-build
-    require_env_command MTD bracken-build
+    ensure_kraken2_environment
     require_env_command MTD hisat2-build
     require_env_command MTD makeblastdb
 }
@@ -1937,7 +2029,7 @@ install_mtd_extra_tools() {
         "Installing eggNOG-mapper and DIAMOND in MTD" \
         conda install -n MTD -y -c conda-forge -c bioconda eggnog-mapper diamond
 
-    require_env_command MTD kraken2-build
+    ensure_kraken2_environment
 }
 
 prepare_virome_files() {
@@ -2311,7 +2403,7 @@ add_local_plasmid_library() {
 
     retry_until_success \
         "Kraken2 plasmid library for database '$database'" \
-        kraken2-build \
+        run_kraken2_build \
         --download-library plasmid \
         --threads "$threads" \
         --db "$database" ||
@@ -2389,7 +2481,7 @@ build_microbiome_kraken_database() {
 
     run_required_command \
     "Adding the nonredundant viral collection to Kraken2" \
-    kraken2-build \
+    run_kraken2_build \
     --add-to-library "$viral_library" \
     --threads "$threads" \
     --db "$database"
@@ -2411,12 +2503,12 @@ build_bracken_database() {
     local database="$dir/kraken2DB_micro"
 
     if [[ -z "$kmer" ]]; then
-        bracken-build \
+        run_bracken_build \
             -d "$database" \
             -t "$threads" \
             -l "$read_len"
     else
-        bracken-build \
+        run_bracken_build \
             -d "$database" \
             -t "$threads" \
             -l "$read_len" \

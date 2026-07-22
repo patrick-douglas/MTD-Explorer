@@ -290,6 +290,71 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+
+# ============================================================
+# MTD dedicated Kraken2/Bracken builder runtime
+# ============================================================
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+MTD_ROOT="$(cd -- "$SCRIPT_DIR/../.." && pwd -P)"
+KRAKEN2_ENV_NAME="${MTD_KRAKEN2_ENV_NAME:-MTD_kraken2}"
+CONDA_ROOT="${MTD_CONDA_ROOT:-}"
+KRAKEN2_ENV_DIR=""
+KRAKEN2_BIN=""
+KRAKEN2_BUILD_BIN=""
+KRAKEN2_INSPECT_BIN=""
+BRACKEN_BUILD_BIN=""
+KRAKEN2_VERSION=""
+BRACKEN_PACKAGE_VERSION=""
+
+resolve_dedicated_kraken_runtime() {
+    if [[ -z "$CONDA_ROOT" && -s "$MTD_ROOT/condaPath" ]]; then
+        IFS= read -r CONDA_ROOT < "$MTD_ROOT/condaPath"
+        CONDA_ROOT="${CONDA_ROOT%$'\r'}"
+    fi
+    [[ -n "$CONDA_ROOT" ]] || CONDA_ROOT="$HOME/miniconda3"
+
+    KRAKEN2_ENV_DIR="$CONDA_ROOT/envs/$KRAKEN2_ENV_NAME"
+    KRAKEN2_BIN="$KRAKEN2_ENV_DIR/bin/kraken2"
+    KRAKEN2_BUILD_BIN="$KRAKEN2_ENV_DIR/bin/kraken2-build"
+    KRAKEN2_INSPECT_BIN="$KRAKEN2_ENV_DIR/bin/kraken2-inspect"
+    BRACKEN_BUILD_BIN="$KRAKEN2_ENV_DIR/bin/bracken-build"
+
+    local required
+    for required in "$KRAKEN2_BIN" "$KRAKEN2_BUILD_BIN" "$KRAKEN2_INSPECT_BIN"; do
+        if [[ ! -x "$required" ]]; then
+            err "Dedicated Kraken2 executable not found: $required"
+            exit 1
+        fi
+    done
+
+    KRAKEN2_VERSION="$("$KRAKEN2_BIN" --version 2>/dev/null | awk 'NR == 1 { print $3 }')"
+    if [[ "$KRAKEN2_VERSION" != "2.17.1" ]]; then
+        err "Expected Kraken2 2.17.1; observed: ${KRAKEN2_VERSION:-unknown}"
+        exit 1
+    fi
+
+    if [[ "$BUILD_BRACKEN" -eq 1 ]]; then
+        [[ -x "$BRACKEN_BUILD_BIN" ]] || { err "Dedicated bracken-build not found: $BRACKEN_BUILD_BIN"; exit 1; }
+        BRACKEN_PACKAGE_VERSION="$(find "$KRAKEN2_ENV_DIR/conda-meta" -maxdepth 1 -type f -name 'bracken-3.1p1-*.json' -printf '3.1p1\n' -quit 2>/dev/null)"
+        if [[ "$BRACKEN_PACKAGE_VERSION" != "3.1p1" ]]; then
+            err "Expected Bracken Conda package 3.1p1 in $KRAKEN2_ENV_DIR"
+            exit 1
+        fi
+    fi
+}
+
+run_kraken2_build() {
+    env PATH="$KRAKEN2_ENV_DIR/bin:$PATH" "$KRAKEN2_BUILD_BIN" "$@"
+}
+
+run_kraken2_inspect() {
+    env PATH="$KRAKEN2_ENV_DIR/bin:$PATH" "$KRAKEN2_INSPECT_BIN" "$@"
+}
+
+run_bracken_build() {
+    env PATH="$KRAKEN2_ENV_DIR/bin:$PATH" "$BRACKEN_BUILD_BIN" "$@"
+}
+
 # ============================================================
 # Basic checks
 # ============================================================
@@ -305,17 +370,7 @@ if [[ ! -s "$GENOME_INFO" ]]; then
     exit 1
 fi
 
-if ! command -v kraken2-build >/dev/null 2>&1; then
-    err "kraken2-build not found in PATH."
-    echo "Activate your Kraken2/MTD environment first."
-    echo "Example:"
-    echo "  conda activate MTD"
-    exit 1
-fi
-
-if ! command -v kraken2-inspect >/dev/null 2>&1; then
-    warn "kraken2-inspect not found in PATH. Build can continue, but inspect will be skipped."
-fi
+resolve_dedicated_kraken_runtime
 
 if ! [[ "$THREADS" =~ ^[0-9]+$ ]]; then
     err "--threads must be an integer. Got: $THREADS"
@@ -341,15 +396,6 @@ if ! [[ "$BRACKEN_KMER_LEN" =~ ^[0-9]+$ ]] || [[ "$BRACKEN_KMER_LEN" -lt 1 ]]; t
     exit 1
 fi
 
-if [[ "$BUILD_BRACKEN" -eq 1 ]]; then
-    if ! command -v bracken-build >/dev/null 2>&1; then
-        err "bracken-build not found in PATH."
-        echo "Activate your MTD/Kraken2/Bracken environment first."
-        echo "Example:"
-        echo "  conda activate MTD"
-        exit 1
-    fi
-fi
 mkdir -p "$OUTDIR"
 
 # ============================================================
@@ -400,6 +446,12 @@ echo "${BOLD}Output dir:${RESET}       $OUTDIR"
 echo "${BOLD}DB name:${RESET}          $DB_NAME"
 echo "${BOLD}DB dir:${RESET}           $DB_DIR"
 echo "${BOLD}Threads:${RESET}          $THREADS"
+echo "${BOLD}Kraken2 runtime:${RESET}   $KRAKEN2_VERSION"
+echo "${BOLD}Kraken2 build:${RESET}     $KRAKEN2_BUILD_BIN"
+if [[ "$BUILD_BRACKEN" -eq 1 ]]; then
+    echo "${BOLD}Bracken package:${RESET}  $BRACKEN_PACKAGE_VERSION"
+    echo "${BOLD}Bracken build:${RESET}    $BRACKEN_BUILD_BIN"
+fi
 echo "${BOLD}Taxids:${RESET}           ${GREEN}${BOLD}${taxid_list}${RESET}"
 echo "${BOLD}Min length:${RESET}       $MIN_LEN"
 echo "${BOLD}Offline taxonomy:${RESET} ${KRAKEN_OFFLINE:-none}"
@@ -622,7 +674,7 @@ else
     info "No --kraken_offline provided."
     info "Downloading taxonomy using kraken2-build --download-taxonomy --use-ftp"
 
-    kraken2-build --download-taxonomy --use-ftp --db "$DB_DIR" \
+    run_kraken2_build --download-taxonomy --use-ftp --db "$DB_DIR" \
         > "$LOG_DIR/download_taxonomy.log" 2>&1
 fi
 
@@ -731,7 +783,7 @@ while IFS=$'\t' read -r taxid original_fasta prepared_fasta; do
     echo "      ${DIM}Original:${RESET} $original_fasta"
     echo "      ${DIM}Prepared:${RESET} $prepared_fasta"
 
-    kraken2-build \
+    run_kraken2_build \
         --add-to-library "$prepared_fasta" \
         --db "$DB_DIR" \
         > "$LOG_DIR/add_${taxid}_$(basename "$prepared_fasta").log" 2>&1
@@ -759,7 +811,7 @@ fi
 
 step "[STEP] Building Kraken2 DB"
 
-kraken2-build \
+run_kraken2_build \
     --build \
     --threads "$THREADS" \
     --db "$DB_DIR" \
@@ -784,7 +836,7 @@ if [[ "$BUILD_BRACKEN" -eq 1 ]]; then
     if [[ -s "$BRACKEN_DIST" ]]; then
         ok "Bracken distribution file already exists: $BRACKEN_DIST"
     else
-        bracken-build \
+        run_bracken_build \
             -d "$DB_DIR" \
             -t "$THREADS" \
             -k "$BRACKEN_KMER_LEN" \
@@ -813,29 +865,25 @@ fi
 
 step "[STEP] Inspecting database"
 
-if command -v kraken2-inspect >/dev/null 2>&1; then
-    kraken2-inspect --db "$DB_DIR" > "$LOG_DIR/kraken2_inspect.txt" || true
+run_kraken2_inspect --db "$DB_DIR" > "$LOG_DIR/kraken2_inspect.txt"
 
-    ok "kraken2-inspect output saved to: $LOG_DIR/kraken2_inspect.txt"
+ok "kraken2-inspect output saved to: $LOG_DIR/kraken2_inspect.txt"
 
-    echo
-    info "Taxids/species found in inspect:"
+echo
+info "Taxids/species found in inspect:"
 
-    while IFS=$'\t' read -r taxid status scientific_name fasta; do
-        [[ "$taxid" == "taxid" ]] && continue
+while IFS=$'\t' read -r taxid status scientific_name fasta; do
+    [[ "$taxid" == "taxid" ]] && continue
 
-        pretty_taxid="$(taxid_fmt "$taxid")"
-        pretty_species="$(species_name_fmt "$scientific_name")"
+    pretty_taxid="$(taxid_fmt "$taxid")"
+    pretty_species="$(species_name_fmt "$scientific_name")"
 
-        echo "${BLUE}${BOLD}------------------------------------------------------------${RESET}"
-        echo "${BOLD}TaxID:${RESET} $pretty_taxid"
-        echo "${BOLD}Name:${RESET}  $pretty_species"
+    echo "${BLUE}${BOLD}------------------------------------------------------------${RESET}"
+    echo "${BOLD}TaxID:${RESET} $pretty_taxid"
+    echo "${BOLD}Name:${RESET}  $pretty_species"
 
-        grep -w "$taxid" "$LOG_DIR/kraken2_inspect.txt" | head || true
-    done < "$tax_check"
-else
-    warn "kraken2-inspect not available. Skipping inspect."
-fi
+    grep -w "$taxid" "$LOG_DIR/kraken2_inspect.txt" | head || true
+done < "$tax_check"
 
 # ============================================================
 # Final message
