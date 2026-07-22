@@ -30,6 +30,12 @@ dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 MANIFEST_SCRIPTS_DIR="$dir/aux_scripts/manifest_scripts"
 KRAKEN_AUX_DIR="$dir/aux_scripts/Kraken2"
 
+# Kraken2 2.17.1 is isolated from the legacy MTD environment so its
+# modern dependencies do not disturb the frozen MTD software stack.
+KRAKEN_ENV_NAME="MTD_kraken2"
+KRAKEN_ENV_FILE="$dir/Installation/MTD_kraken2.yml"
+KRAKEN_ENV_PREFIX=""
+
 KRAKEN_ENV_LIBEXEC=""
 KRAKEN_PKG_LIBEXEC=""
 kraken_build_opts=()
@@ -577,6 +583,115 @@ require_env_command() {
     fi
 
     log_ok "Found '$command_name' in Conda environment '$env_name'."
+}
+
+ensure_kraken2_environment() {
+    local previous_env="${CONDA_DEFAULT_ENV:-}"
+    local environment_changed=0
+    local installed_version=""
+    local k2mask_path=""
+
+    KRAKEN_ENV_PREFIX="$condapath/envs/$KRAKEN_ENV_NAME"
+
+    if [[ ! -f "$KRAKEN_ENV_FILE" ]]; then
+        log_error "Kraken2 environment definition was not found:"
+        log_error " $KRAKEN_ENV_FILE"
+        exit 1
+    fi
+
+    if ! command -v conda >/dev/null 2>&1; then
+        if [[ ! -f "$condapath/etc/profile.d/conda.sh" ]]; then
+            log_error "Conda initialization script was not found:"
+            log_error " $condapath/etc/profile.d/conda.sh"
+            exit 1
+        fi
+
+        # shellcheck disable=SC1090
+        source "$condapath/etc/profile.d/conda.sh"
+    fi
+
+    if [[ -x "$KRAKEN_ENV_PREFIX/bin/kraken2" ]]; then
+        installed_version="$(
+            "$KRAKEN_ENV_PREFIX/bin/kraken2" --version 2>/dev/null |
+                awk 'NR == 1 {print $3}'
+        )"
+    fi
+
+    if [[ "$installed_version" == "2.17.1" ]] &&
+       [[ -x "$KRAKEN_ENV_PREFIX/bin/k2" ]]; then
+        log_ok "Kraken2 environment already available: $KRAKEN_ENV_NAME"
+    else
+        safe_conda_deactivate
+        environment_changed=1
+
+        if [[ -d "$KRAKEN_ENV_PREFIX" ]]; then
+            run_required_command \
+                "Updating the dedicated Kraken2 environment..." \
+                conda env update \
+                    --name "$KRAKEN_ENV_NAME" \
+                    --file "$KRAKEN_ENV_FILE" \
+                    --prune
+        else
+            run_required_command \
+                "Creating the dedicated Kraken2 environment..." \
+                conda env create \
+                    --file "$KRAKEN_ENV_FILE"
+        fi
+    fi
+
+    require_env_command "$KRAKEN_ENV_NAME" kraken2
+    require_env_command "$KRAKEN_ENV_NAME" kraken2-build
+    require_env_command "$KRAKEN_ENV_NAME" k2
+
+    installed_version="$(
+        "$KRAKEN_ENV_PREFIX/bin/kraken2" --version 2>/dev/null |
+            awk 'NR == 1 {print $3}'
+    )"
+
+    if [[ "$installed_version" != "2.17.1" ]]; then
+        log_error "Unexpected Kraken2 version in $KRAKEN_ENV_NAME."
+        log_error "Expected: 2.17.1"
+        log_error "Observed: ${installed_version:-unknown}"
+        exit 1
+    fi
+
+    k2mask_path="$(
+        find "$KRAKEN_ENV_PREFIX" \
+            -type f \
+            -name k2mask \
+            -perm -u+x \
+            -print \
+            2>/dev/null |
+            head -n 1
+    )"
+
+    if [[ -z "$k2mask_path" ]]; then
+        log_error "k2mask was not found in the Kraken2 environment:"
+        log_error " $KRAKEN_ENV_PREFIX"
+        exit 1
+    fi
+
+    log_ok "Validated Kraken2 version: $installed_version"
+    log_ok "Found k2mask: $k2mask_path"
+
+    # Preserve whichever environment the installer was using before
+    # creating or updating MTD_kraken2.
+    if (( environment_changed )); then
+        case "$previous_env" in
+            "")
+                safe_conda_deactivate
+                ;;
+            base)
+                conda activate base || {
+                    log_error "Could not reactivate the Conda base environment."
+                    exit 1
+                }
+                ;;
+            *)
+                activate_required_env "$previous_env"
+                ;;
+        esac
+    fi
 }
 
 copy_required_file() {
@@ -1504,6 +1619,10 @@ validate_built_kraken2_database() {
     log_ok "  $database"
 }
 install_kraken_helper() {
+    # Ensure the modern, isolated Kraken2 installation exists before
+    # any Kraken helper scripts or database-building commands are used.
+    ensure_kraken2_environment
+
     local source_file="$1"
     local target_name="$2"
 
