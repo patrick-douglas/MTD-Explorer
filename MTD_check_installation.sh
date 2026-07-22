@@ -2,7 +2,7 @@
 
 # ==============================================================================
 # MTD Explorer installation checker
-# Version: 2026.07.22-r9.2
+# Version: 2026.07.22-r9.3
 #
 # Aligned with the installer architecture in which:
 #   - only the shared microbiome Kraken2 database is installed by default;
@@ -15,7 +15,7 @@
 
 set -uo pipefail
 
-CHECKER_VERSION="2026.07.22-r9.2"
+CHECKER_VERSION="2026.07.22-r9.3"
 
 MTD_DIR="$HOME/MTD"
 CONDA_PATH=""
@@ -919,6 +919,7 @@ archive_integrity() {
 # MTD CHECKER R9: dedicated HUMAnN and custom-host validation
 # MTD CHECKER R9.1: repository-wide layout audit
 # MTD CHECKER R9.2: interpreter-aware syntax validation
+# MTD CHECKER R9.3: curated viral reference contract
 # ==============================================================================
 
 run_humann_isolated() {
@@ -1289,6 +1290,458 @@ check_installed_custom_hosts() {
     for taxid in "${taxids[@]}"; do
         check_custom_host_reference "$taxid"
     done
+}
+
+# ==============================================================================
+# MTD CHECKER R9.3: curated viral reference contract
+# ==============================================================================
+
+viral_summary_metric() {
+    local summary_file="$1"
+    local metric="$2"
+
+    awk -F $'\t' -v wanted="$metric" '
+        $1 == wanted {
+            print $2
+            exit
+        }
+    ' "$summary_file" 2>/dev/null
+}
+
+check_curated_viral_installer_contract() {
+    local installer="$MTD_DIR/Install.sh"
+    local required_marker=""
+
+    if [[ ! -s "$installer" ]]; then
+        record FAIL "Viral contract" "Install.sh" \
+            "missing or empty: $installer"
+        return
+    fi
+
+    for required_marker in \
+        prepare_virushost_release_cache \
+        Ref_genomes/MTD_virus/official_current \
+        viral_genomes_combined_nonredundant.fna \
+        viral_genomes_combined_nonredundant.summary.tsv \
+        viral_genomes_combined_nonredundant.details.tsv \
+        records_without_taxid \
+        records_without_accession
+    do
+        if grep -Fq "$required_marker" "$installer"; then
+            record PASS "Viral contract" \
+                "Install.sh marker: $required_marker" \
+                "current curated viral workflow detected"
+        else
+            record FAIL "Viral contract" \
+                "Install.sh marker: $required_marker" \
+                "required marker is absent"
+        fi
+    done
+
+    if grep -Fq 'viruses4kraken.fa' "$installer"; then
+        record FAIL "Viral contract" "legacy installer FASTA" \
+            "Install.sh still references viruses4kraken.fa"
+    else
+        record PASS "Viral contract" "legacy installer FASTA removed" \
+            "Install.sh does not reference viruses4kraken.fa"
+    fi
+
+    if grep -Fq \
+        'VIRUSHOST_MIRROR_SHA256SUMS_SHA256=' \
+        "$installer"
+    then
+        record PASS "Viral contract" \
+            "pinned Virus-Host checksum manifest" \
+            "checksum-of-manifest constant is present"
+    else
+        record FAIL "Viral contract" \
+            "pinned Virus-Host checksum manifest" \
+            "constant is absent from Install.sh"
+    fi
+}
+
+check_curated_viral_reference_cache() {
+    local release_dir=""
+    local viral_dir=""
+    local viral_download_dir=""
+    local final_fasta=""
+    local final_summary=""
+    local final_details=""
+    local old_root_fasta=""
+    local old_release_fasta=""
+    local required_file=""
+    local summary_records_seen=""
+    local summary_records_written=""
+    local summary_without_taxid=""
+    local summary_without_accession=""
+    local observed_manifest_hash=""
+    local details_header=""
+    local expected_details_header=""
+    local tmp=""
+    local header_limit=10000
+    local expected_count=0
+    local local_count=0
+    local stale_marker=""
+
+    check_curated_viral_installer_contract
+
+    old_root_fasta="$MTD_DIR/viruses4kraken.fa"
+
+    if [[ -e "$old_root_fasta" ]]; then
+        record WARN "Viral legacy" "viruses4kraken.fa" \
+            "obsolete file is still present but is no longer consumed: $old_root_fasta"
+    else
+        record SKIP "Viral legacy" "viruses4kraken.fa" \
+            "obsolete root-level FASTA is correctly absent"
+    fi
+
+    if [[ -z "$OFFLINE_DIR" ]]; then
+        record SKIP "Viral cache" "curated reference stack" \
+            "persistent cache path was not detected"
+        return
+    fi
+
+    release_dir="$OFFLINE_DIR/Ref_genomes/MTD_virus/official_current"
+    viral_dir="$OFFLINE_DIR/Kraken2DB_micro/library/viral"
+    viral_download_dir="$viral_dir/all"
+
+    final_fasta="$viral_dir/viral_genomes_combined_nonredundant.fna"
+    final_summary="$viral_dir/viral_genomes_combined_nonredundant.summary.tsv"
+    final_details="$viral_dir/viral_genomes_combined_nonredundant.details.tsv"
+
+    old_release_fasta="$OFFLINE_DIR/Ref_genomes/MTD_virus/virushostdb.genomic.fna.gz"
+    stale_marker="$viral_dir/all_viral_genomes.fna.STALE"
+
+    if [[ -e "$old_release_fasta" ]]; then
+        record WARN "Viral legacy" "old Virus-Host DB cache path" \
+            "obsolete location remains; current release is under official_current/: $old_release_fasta"
+    else
+        record SKIP "Viral legacy" "old Virus-Host DB cache path" \
+            "obsolete cache location is correctly absent"
+    fi
+
+    check_required_dir "Viral cache" \
+        "pinned Virus-Host DB release" \
+        "$release_dir"
+
+    check_required_dir "Viral cache" \
+        "RefSeq viral genome directory" \
+        "$viral_download_dir"
+
+    # Immutable mirrored release and provenance.
+    for required_file in \
+        virushostdb.genomic.fna.gz \
+        non-segmented_virus_list.tsv \
+        segmented_virus_list.tsv \
+        dbrel.txt \
+        SHA256SUMS \
+        MIRROR_METADATA.tsv
+    do
+        check_required_file "Virus-Host DB" \
+            "official_current/$required_file" \
+            "$release_dir/$required_file"
+    done
+
+    if [[ -s "$release_dir/SHA256SUMS" ]]; then
+        observed_manifest_hash="$(
+            sha256sum "$release_dir/SHA256SUMS" 2>/dev/null |
+                awk '{print $1}'
+        )"
+
+        if [[ "$observed_manifest_hash" == \
+              "a250b2e61d9f9365773205d04d019e0976a778ebd589553f3a0a0e6f159f4bec" ]]
+        then
+            record PASS "Virus-Host DB" \
+                "SHA256SUMS manifest identity" \
+                "$observed_manifest_hash"
+        else
+            record FAIL "Virus-Host DB" \
+                "SHA256SUMS manifest identity" \
+                "expected=a250b2e61d9f9365773205d04d019e0976a778ebd589553f3a0a0e6f159f4bec; observed=${observed_manifest_hash:-unavailable}"
+        fi
+    fi
+
+    if [[ -s "$release_dir/virushostdb.genomic.fna.gz" ]]; then
+        tmp="$TMP_WORK/virushost_gzip_r9_3.txt"
+
+        if capture_command "$tmp" \
+            gzip -t "$release_dir/virushostdb.genomic.fna.gz"
+        then
+            record PASS "Virus-Host DB" "compressed FASTA integrity" \
+                "gzip stream is valid"
+        else
+            record FAIL "Virus-Host DB" "compressed FASTA integrity" \
+                "$(compact_output "$tmp" 20)"
+        fi
+    fi
+
+    if [[ "$MODE" != "quick" && -s "$release_dir/SHA256SUMS" ]]; then
+        tmp="$TMP_WORK/virushost_checksums_r9_3.txt"
+
+        if capture_command "$tmp" \
+            bash -c '
+                cd "$1" &&
+                sha256sum -c SHA256SUMS
+            ' _ "$release_dir"
+        then
+            record PASS "Virus-Host DB" \
+                "mirrored release checksums" \
+                "$(compact_output "$tmp" 12)"
+        else
+            record FAIL "Virus-Host DB" \
+                "mirrored release checksums" \
+                "$(compact_output "$tmp" 30)"
+        fi
+    fi
+
+    # Derived release files and accession mappings.
+    if [[ "$MODE" != "quick" ]]; then
+        for required_file in \
+            virushostdb.genomic.fna \
+            virushostdb_accession2taxid.tsv \
+            virushostdb_accession_conflicts.tsv
+        do
+            check_required_file "Virus-Host DB" \
+                "derived/$required_file" \
+                "$release_dir/$required_file"
+        done
+    fi
+
+    # RefSeq viral synchronization products.
+    # all_viral_genomes.fna is an intermediate RefSeq aggregate, not the final
+    # Kraken2 input.
+    for required_file in \
+        assembly_summary_viral.txt \
+        manifest_viral.list.txt \
+        manifest_viral.names.txt \
+        all_viral_genomes.fna
+    do
+        check_required_file "RefSeq viral cache" \
+            "$required_file" \
+            "$viral_dir/$required_file"
+    done
+
+    if [[ "$MODE" != "quick" ]]; then
+        for required_file in \
+            integrity_viral.stat.tsv \
+            all_viral_genomes.source_state.tsv \
+            all_viral_genomes.output_state.tsv \
+            refseq_viral_accession2taxid.tsv \
+            refseq_viral_accession_conflicts.tsv
+        do
+            check_required_file "RefSeq viral cache" \
+                "$required_file" \
+                "$viral_dir/$required_file"
+        done
+
+        check_required_file "RefSeq viral cache" \
+            "copied manifest.virus.sh" \
+            "$OFFLINE_DIR/Kraken2DB_micro/library/manifest.virus.sh"
+    fi
+
+    if [[ -e "$stale_marker" ]]; then
+        if [[ "$MODE" == "quick" ]]; then
+            record WARN "RefSeq viral cache" \
+                "collection completeness marker" \
+                "partial/stale marker exists: $stale_marker"
+        else
+            record FAIL "RefSeq viral cache" \
+                "collection completeness marker" \
+                "installer requires a complete collection but stale marker exists: $stale_marker"
+        fi
+    else
+        record PASS "RefSeq viral cache" \
+            "collection completeness marker" \
+            "no stale marker detected"
+    fi
+
+    if [[ -s "$viral_dir/manifest_viral.names.txt" &&
+          -d "$viral_download_dir" ]]
+    then
+        expected_count="$(
+            awk 'NF {n++} END {print n+0}' \
+                "$viral_dir/manifest_viral.names.txt"
+        )"
+
+        local_count="$(
+            find "$viral_download_dir" \
+                -maxdepth 1 \
+                -type f \
+                -name '*.gz' \
+                -size +0c \
+                2>/dev/null |
+            awk 'END {print NR + 0}'
+        )"
+
+        if (( expected_count > 0 && local_count == expected_count )); then
+            record PASS "RefSeq viral cache" \
+                "catalog/local completeness" \
+                "$local_count local genome(s); $expected_count expected"
+        else
+            record FAIL "RefSeq viral cache" \
+                "catalog/local completeness" \
+                "$local_count local genome(s); $expected_count expected"
+        fi
+    fi
+
+    # Final curated collection consumed by kraken2-build.
+    check_required_file "Curated viral library" \
+        "nonredundant taxid-aware FASTA" \
+        "$final_fasta"
+
+    check_required_file "Curated viral library" \
+        "deduplication summary" \
+        "$final_summary"
+
+    check_required_file "Curated viral library" \
+        "deduplication details" \
+        "$final_details"
+
+    if [[ -s "$final_summary" ]]; then
+        summary_records_seen="$(
+            viral_summary_metric "$final_summary" records_seen
+        )"
+        summary_records_written="$(
+            viral_summary_metric "$final_summary" records_written
+        )"
+        summary_without_taxid="$(
+            viral_summary_metric "$final_summary" records_without_taxid
+        )"
+        summary_without_accession="$(
+            viral_summary_metric "$final_summary" records_without_accession
+        )"
+
+        if [[ "$summary_records_seen" =~ ^[0-9]+$ &&
+              "$summary_records_written" =~ ^[0-9]+$ &&
+              "$summary_without_taxid" =~ ^[0-9]+$ &&
+              "$summary_without_accession" =~ ^[0-9]+$ ]]
+        then
+            record PASS "Curated viral library" \
+                "summary schema and numeric metrics" \
+                "records_seen=$summary_records_seen; records_written=$summary_records_written"
+        else
+            record FAIL "Curated viral library" \
+                "summary schema and numeric metrics" \
+                "one or more required metrics are absent or non-numeric"
+        fi
+
+        if [[ "$summary_records_written" =~ ^[0-9]+$ ]] &&
+           (( summary_records_written > 0 ))
+        then
+            record PASS "Curated viral library" \
+                "records written" \
+                "$summary_records_written sequence record(s)"
+        else
+            record FAIL "Curated viral library" \
+                "records written" \
+                "expected a positive records_written metric"
+        fi
+
+        if [[ "$summary_records_seen" =~ ^[0-9]+$ &&
+              "$summary_records_written" =~ ^[0-9]+$ ]] &&
+           (( summary_records_seen >= summary_records_written ))
+        then
+            record PASS "Curated viral library" \
+                "summary count relationship" \
+                "records_seen >= records_written"
+        else
+            record FAIL "Curated viral library" \
+                "summary count relationship" \
+                "invalid or inconsistent records_seen/records_written values"
+        fi
+
+        if [[ "$summary_without_taxid" == "0" ]]; then
+            record PASS "Curated viral library" \
+                "records without TaxID" \
+                "0"
+        else
+            record FAIL "Curated viral library" \
+                "records without TaxID" \
+                "${summary_without_taxid:-metric missing}"
+        fi
+
+        if [[ "$summary_without_accession" == "0" ]]; then
+            record PASS "Curated viral library" \
+                "records without accession" \
+                "0"
+        else
+            record FAIL "Curated viral library" \
+                "records without accession" \
+                "${summary_without_accession:-metric missing}"
+        fi
+    fi
+
+    if [[ -s "$final_details" ]]; then
+        details_header="$(
+            head -n 1 "$final_details" 2>/dev/null || true
+        )"
+
+        expected_details_header="$(
+            printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' \
+                source status length accession taxid canonical_sha256 \
+                header matched_source matched_accession matched_taxid \
+                matched_header
+        )"
+
+        if [[ "$details_header" == "$expected_details_header" ]]; then
+            record PASS "Curated viral library" \
+                "details table schema" \
+                "expected 11-column header detected"
+        else
+            record FAIL "Curated viral library" \
+                "details table schema" \
+                "unexpected header: ${details_header:-empty}"
+        fi
+    fi
+
+    if [[ -s "$final_fasta" ]]; then
+        if [[ "$MODE" == "deep" ]]; then
+            header_limit=0
+        else
+            header_limit=10000
+        fi
+
+        tmp="$TMP_WORK/viral_final_headers_r9_3.txt"
+
+        if capture_command "$tmp" \
+            awk -v limit="$header_limit" '
+                /^>/ {
+                    headers++
+
+                    if ($0 !~ /^>kraken:taxid\|[1-9][0-9]*\|/) {
+                        bad++
+                    }
+
+                    if (limit > 0 && headers >= limit) {
+                        exit
+                    }
+                }
+
+                END {
+                    print "headers_checked=" (headers + 0)
+                    print "invalid_headers=" (bad + 0)
+
+                    if (headers == 0 || bad > 0) {
+                        exit 1
+                    }
+                }
+            ' "$final_fasta"
+        then
+            if (( header_limit == 0 )); then
+                record PASS "Curated viral library" \
+                    "all FASTA headers carry TaxIDs" \
+                    "$(compact_output "$tmp" 4)"
+            else
+                record PASS "Curated viral library" \
+                    "sampled FASTA headers carry TaxIDs" \
+                    "$(compact_output "$tmp" 4)"
+            fi
+        else
+            record FAIL "Curated viral library" \
+                "FASTA TaxID header validation" \
+                "$(compact_output "$tmp" 20)"
+        fi
+    fi
 }
 
 init_colors
@@ -2109,8 +2562,9 @@ for library in bacteria archaea protozoa fungi plasmid UniVec_Core; do
     check_library "$MICRO_DB" "$library"
 done
 
-check_required_file "Kraken DB" "custom viral FASTA" \
-    "$MTD_DIR/viruses4kraken.fa"
+# The previous viruses4kraken.fa root-level artifact was replaced by the
+# persistent, taxid-aware nonredundant viral collection. Its absence is not
+# an installation failure; the current contract is validated below.
 
 if [[ "$MODE" != "quick" && conda_available && -d "$MICRO_DB" ]]; then
     inspect_tmp="$TMP_WORK/kraken_inspect_microbiome.txt"
@@ -2358,9 +2812,7 @@ fi
 # ==============================================================================
 
 if [[ -n "$OFFLINE_DIR" ]]; then
-    check_required_file "Installation cache" \
-        "Ref_genomes/MTD_virus/virushostdb.genomic.fna.gz" \
-        "$OFFLINE_DIR/Ref_genomes/MTD_virus/virushostdb.genomic.fna.gz"
+    check_curated_viral_reference_cache
 
     for humann_archive in \
         full_mapping_v201901b.tar.gz \
@@ -2484,9 +2936,8 @@ if [[ -n "$OFFLINE_DIR" ]]; then
     check_taxonomy_dir "Kraken taxonomy" "shared-cache" "$TAX_CACHE/taxonomy"
 
     if [[ "$MODE" == "deep" ]]; then
-        archive_integrity \
-            "Ref_genomes/MTD_virus/virushostdb.genomic.fna.gz" \
-            "$OFFLINE_DIR/Ref_genomes/MTD_virus/virushostdb.genomic.fna.gz"
+        # Virus-Host integrity is validated by the r9.3 curated stack.
+        :
 
         archive_integrity \
             "HUMAnN/full_mapping_v201901b.tar.gz" \
