@@ -2,7 +2,7 @@
 
 # ==============================================================================
 # MTD Explorer installation checker
-# Version: 2026.07.11-r8
+# Version: 2026.07.22-r9.2
 #
 # Aligned with the installer architecture in which:
 #   - only the shared microbiome Kraken2 database is installed by default;
@@ -15,7 +15,7 @@
 
 set -uo pipefail
 
-CHECKER_VERSION="2026.07.11-r8.1"
+CHECKER_VERSION="2026.07.22-r9.2"
 
 MTD_DIR="$HOME/MTD"
 CONDA_PATH=""
@@ -25,6 +25,7 @@ MODE="full"
 REPORT_DIR=""
 STRICT=0
 KEEP_TEMP=0
+HOST_TAXID=""
 
 PASS_COUNT=0
 WARN_COUNT=0
@@ -62,6 +63,9 @@ Options:
 
   -r, --read-length N  Bracken read length
                        Default: 75
+
+  --hostid TAXID       Check one installed custom-host reference
+                       Default: automatically detect numeric host references
 
   --mode MODE          quick, full, or deep
                        quick: essential runtime and database checks
@@ -110,6 +114,15 @@ while [[ $# -gt 0 ]]; do
             READ_LEN="$2"
             shift 2
             ;;
+        --hostid)
+            [[ $# -ge 2 ]] || { echo "ERROR: --hostid requires a value." >&2; exit 2; }
+            HOST_TAXID="$2"
+            shift 2
+            ;;
+        --hostid=*)
+            HOST_TAXID="${1#*=}"
+            shift
+            ;;
         --mode)
             [[ $# -ge 2 ]] || { echo "ERROR: --mode requires a value." >&2; exit 2; }
             MODE="$2"
@@ -154,6 +167,13 @@ esac
 
 if ! [[ "$READ_LEN" =~ ^[1-9][0-9]*$ ]]; then
     printf 'ERROR: --read-length must be a positive integer.\n' >&2
+    exit 2
+fi
+
+if [[ -n "$HOST_TAXID" ]] &&
+   ! [[ "$HOST_TAXID" =~ ^[1-9][0-9]*$ ]]
+then
+    printf 'ERROR: --hostid must be a positive NCBI Taxonomy ID.\n' >&2
     exit 2
 fi
 
@@ -389,19 +409,26 @@ check_python_syntax() {
     local label="$1"
     local path="$2"
     local tmp="$TMP_WORK/python_$(basename "$path").txt"
+    local pycache_root="$TMP_WORK/python_bytecode"
 
     if [[ ! -f "$path" ]]; then
         record FAIL "Installer source" "compile: $label" "missing: $path"
         return
     fi
 
-    if capture_command "$tmp" python3 -m py_compile "$path"; then
-        record PASS "Installer source" "compile: $label" "$(compact_output "$tmp")"
+    mkdir -p "$pycache_root"
+
+    if capture_command "$tmp" \
+        env PYTHONPYCACHEPREFIX="$pycache_root" \
+        python3 -m py_compile "$path"
+    then
+        record PASS "Installer source" "compile: $label" \
+            "syntax valid; bytecode kept under report temporary directory"
     else
-        record FAIL "Installer source" "compile: $label" "$(compact_output "$tmp" 20)"
+        record FAIL "Installer source" "compile: $label" \
+            "$(compact_output "$tmp" 20)"
     fi
 }
-
 conda_available() {
     [[ -x "$CONDA_PATH/bin/conda" ]]
 }
@@ -857,6 +884,23 @@ archive_integrity() {
                     "$(compact_output "$tmp" 20)"
             fi
             ;;
+        *.tar)
+            if capture_command "$tmp" tar -tf "$path"; then
+                record PASS "Installation cache" "archive integrity: $label" \
+                    "$(compact_output "$tmp" 4)"
+            else
+                record FAIL "Installation cache" "archive integrity: $label" \
+                    "$(compact_output "$tmp" 20)"
+            fi
+            ;;
+        *.bz2)
+            if capture_command "$tmp" bzip2 -t "$path"; then
+                record PASS "Installation cache" "bzip2 integrity: $label" "valid"
+            else
+                record FAIL "Installation cache" "bzip2 integrity: $label" \
+                    "$(compact_output "$tmp" 20)"
+            fi
+            ;;
         *.gz)
             if capture_command "$tmp" gzip -t "$path"; then
                 record PASS "Installation cache" "gzip integrity: $label" "valid"
@@ -865,7 +909,386 @@ archive_integrity() {
                     "$(compact_output "$tmp" 20)"
             fi
             ;;
+        *)
+            record SKIP "Installation cache" "archive integrity: $label" \
+                "unsupported extension: $path"
+            ;;
     esac
+}
+# ==============================================================================
+# MTD CHECKER R9: dedicated HUMAnN and custom-host validation
+# MTD CHECKER R9.1: repository-wide layout audit
+# MTD CHECKER R9.2: interpreter-aware syntax validation
+# ==============================================================================
+
+run_humann_isolated() {
+    local prefix="$CONDA_PATH/envs/MTD_humann"
+
+    env \
+        -u PYTHONPATH \
+        -u PYTHONHOME \
+        PYTHONNOUSERSITE=1 \
+        PATH="$prefix/bin:$PATH" \
+        "$@"
+}
+
+check_humann_runtime() {
+    local prefix="$CONDA_PATH/envs/MTD_humann"
+    local tmp=""
+    local command_name=""
+    local -a required_commands=(
+        python
+        humann
+        humann_config
+        humann_test
+        humann_join_tables
+        humann_renorm_table
+        humann_split_stratified_table
+        humann_regroup_table
+        metaphlan
+        diamond
+        bowtie2
+        glpsol
+        hclust2.py
+    )
+
+    if ! env_exists MTD_humann; then
+        record FAIL "HUMAnN runtime" "dedicated environment" \
+            "missing: $prefix"
+        return
+    fi
+
+    for command_name in "${required_commands[@]}"; do
+        if [[ -x "$prefix/bin/$command_name" ]]; then
+            record PASS "Tools/MTD_humann" "$command_name" \
+                "$prefix/bin/$command_name"
+        else
+            record FAIL "Tools/MTD_humann" "$command_name" \
+                "missing or not executable: $prefix/bin/$command_name"
+        fi
+    done
+
+    tmp="$TMP_WORK/humann39_version.txt"
+    if capture_command "$tmp" run_humann_isolated \
+        "$prefix/bin/humann" --version &&
+       grep -Fq 'humann v3.9' "$tmp"
+    then
+        record PASS "Versions/MTD_humann" "HUMAnN" \
+            "$(compact_output "$tmp" 4)"
+    else
+        record FAIL "Versions/MTD_humann" "HUMAnN" \
+            "expected humann v3.9; observed: $(compact_output "$tmp" 8)"
+    fi
+
+    tmp="$TMP_WORK/metaphlan411_version.txt"
+    if capture_command "$tmp" run_humann_isolated \
+        "$prefix/bin/metaphlan" --version &&
+       grep -Fq 'MetaPhlAn version 4.1.1' "$tmp"
+    then
+        record PASS "Versions/MTD_humann" "MetaPhlAn" \
+            "$(compact_output "$tmp" 4)"
+    else
+        record FAIL "Versions/MTD_humann" "MetaPhlAn" \
+            "expected 4.1.1; observed: $(compact_output "$tmp" 8)"
+    fi
+
+    tmp="$TMP_WORK/humann_diamond_version.txt"
+    if capture_command "$tmp" run_humann_isolated \
+        "$prefix/bin/diamond" version &&
+       grep -Fq '2.0.15' "$tmp"
+    then
+        record PASS "Versions/MTD_humann" "DIAMOND" \
+            "$(compact_output "$tmp" 4)"
+    else
+        record FAIL "Versions/MTD_humann" "DIAMOND" \
+            "expected 2.0.15; observed: $(compact_output "$tmp" 8)"
+    fi
+
+    tmp="$TMP_WORK/humann_bowtie2_version.txt"
+    if capture_command "$tmp" run_humann_isolated \
+        "$prefix/bin/bowtie2" --version &&
+       grep -Fq 'version 2.5.4' "$tmp"
+    then
+        record PASS "Versions/MTD_humann" "Bowtie2" \
+            "$(compact_output "$tmp" 4)"
+    else
+        record FAIL "Versions/MTD_humann" "Bowtie2" \
+            "expected 2.5.4; observed: $(compact_output "$tmp" 8)"
+    fi
+
+    tmp="$TMP_WORK/humann_python_isolation.txt"
+    if capture_command "$tmp" run_humann_isolated \
+        "$prefix/bin/python" - "$prefix" <<'PY_HUMANN_ISOLATION'
+import os
+import site
+import sys
+from pathlib import Path
+
+import Cython
+import humann
+import numpy
+import pysam
+import simplejson
+
+expected = Path(sys.argv[1]).resolve()
+observed = Path(sys.prefix).resolve()
+
+assert observed == expected, (observed, expected)
+assert sys.version_info[:2] == (3, 10), sys.version
+assert numpy.__version__ == "1.26.4", numpy.__version__
+assert simplejson.__version__.split(".", 1)[0] == "3", simplejson.__version__
+assert site.ENABLE_USER_SITE is False, site.ENABLE_USER_SITE
+assert all("/.local/" not in entry for entry in sys.path), sys.path
+
+for module in (Cython, humann, numpy, pysam, simplejson):
+    module_path = Path(module.__file__).resolve()
+    assert str(module_path).startswith(str(expected) + os.sep), module_path
+
+print("Python", sys.version.split()[0])
+print("NumPy", numpy.__version__)
+print("simplejson", simplejson.__version__)
+print("user-site disabled and module paths isolated")
+PY_HUMANN_ISOLATION
+    then
+        record PASS "Python/MTD_humann" "isolation and pinned modules" \
+            "$(compact_output "$tmp" 8)"
+    else
+        record FAIL "Python/MTD_humann" "isolation and pinned modules" \
+            "$(compact_output "$tmp" 20)"
+    fi
+}
+
+check_custom_host_reference() {
+    local taxid="$1"
+    local db="$MTD_DIR/kraken2DB_${taxid}"
+    local clean_fasta="$db/genome_${taxid}.fa"
+    local kraken_fasta="$db/genome_${taxid}.kraken.fa"
+    local gtf="$MTD_DIR/ref_${taxid}/ref_${taxid}.gtf.gz"
+    local hisat_prefix="$MTD_DIR/hisat2_index_${taxid}/genome_tran"
+    local inspect_bin="$CONDA_PATH/envs/MTD/bin/hisat2-inspect"
+    local extension=""
+    local part=""
+    local clean_headers=0
+    local clean_tagged=0
+    local kraken_headers=0
+    local kraken_tagged=0
+    local tmp=""
+
+    check_kraken_core "$db" "host $taxid"
+    check_required_file "Host $taxid" "clean alignment FASTA" "$clean_fasta"
+    check_required_file "Host $taxid" "Kraken2-only FASTA" "$kraken_fasta"
+    check_required_file "Host $taxid" "GTF annotation" "$gtf"
+
+    if [[ -s "$clean_fasta" ]]; then
+        clean_headers="$(grep -c '^>' "$clean_fasta" 2>/dev/null || true)"
+        clean_tagged="$(grep -c '^>kraken:taxid|' "$clean_fasta" 2>/dev/null || true)"
+
+        if (( clean_headers > 0 && clean_tagged == 0 )); then
+            record PASS "Host $taxid" "clean FASTA identifiers" \
+                "$clean_headers headers; no Kraken prefix"
+        else
+            record FAIL "Host $taxid" "clean FASTA identifiers" \
+                "headers=$clean_headers; Kraken-prefixed=$clean_tagged"
+        fi
+    fi
+
+    if [[ -s "$kraken_fasta" ]]; then
+        kraken_headers="$(grep -c '^>' "$kraken_fasta" 2>/dev/null || true)"
+        kraken_tagged="$(
+            grep -c "^>kraken:taxid|${taxid}|" \
+                "$kraken_fasta" 2>/dev/null || true
+        )"
+
+        if (( kraken_headers > 0 && kraken_headers == kraken_tagged )); then
+            record PASS "Host $taxid" "Kraken FASTA identifiers" \
+                "$kraken_tagged/$kraken_headers headers use TaxID $taxid"
+        else
+            record FAIL "Host $taxid" "Kraken FASTA identifiers" \
+                "matching=$kraken_tagged; total=$kraken_headers"
+        fi
+    fi
+
+    if (( clean_headers > 0 && kraken_headers > 0 )); then
+        if (( clean_headers == kraken_headers )); then
+            record PASS "Host $taxid" "clean/Kraken FASTA sequence count" \
+                "$clean_headers sequences in each FASTA"
+        else
+            record FAIL "Host $taxid" "clean/Kraken FASTA sequence count" \
+                "clean=$clean_headers; Kraken=$kraken_headers"
+        fi
+    fi
+
+    if [[ -s "${hisat_prefix}.1.ht2" ]]; then
+        extension="ht2"
+    elif [[ -s "${hisat_prefix}.1.ht2l" ]]; then
+        extension="ht2l"
+    fi
+
+    if [[ -n "$extension" ]]; then
+        for part in 1 2 3 4 5 6 7 8; do
+            check_required_file "Host $taxid" \
+                "HISAT2 genome_tran.$part.$extension" \
+                "${hisat_prefix}.${part}.${extension}"
+        done
+    else
+        record FAIL "Host $taxid" "HISAT2 genome_tran index" \
+            "no .ht2 or .ht2l index detected: $hisat_prefix"
+    fi
+
+    if [[ "$MODE" != "quick" && -s "$clean_fasta" && -s "$gtf" ]]; then
+        tmp="$TMP_WORK/host_${taxid}_fasta_gtf.txt"
+
+        if capture_command "$tmp" python3 - \
+            "$clean_fasta" "$gtf" <<'PY_FASTA_GTF'
+import gzip
+import sys
+from pathlib import Path
+
+fasta_path = Path(sys.argv[1])
+gtf_path = Path(sys.argv[2])
+
+fasta_ids = set()
+with fasta_path.open("rt", encoding="utf-8", errors="replace") as handle:
+    for line in handle:
+        if line.startswith(">"):
+            identifier = line[1:].split(None, 1)[0].strip()
+            if identifier:
+                fasta_ids.add(identifier)
+
+gtf_ids = set()
+with gzip.open(gtf_path, "rt", encoding="utf-8", errors="replace") as handle:
+    for line in handle:
+        if not line or line.startswith("#"):
+            continue
+        fields = line.rstrip("\n").split("\t")
+        if fields and fields[0]:
+            gtf_ids.add(fields[0])
+
+assert fasta_ids, "no FASTA identifiers"
+assert gtf_ids, "no GTF contig identifiers"
+assert not any(x.startswith("kraken:taxid|") for x in fasta_ids)
+
+missing = sorted(gtf_ids - fasta_ids)
+if missing:
+    print("GTF contigs absent from FASTA:", len(missing))
+    for item in missing[:20]:
+        print(item)
+    raise SystemExit(1)
+
+print("clean FASTA identifiers:", len(fasta_ids))
+print("GTF contigs:", len(gtf_ids))
+print("shared contigs:", len(fasta_ids & gtf_ids))
+PY_FASTA_GTF
+        then
+            record PASS "Host $taxid" "clean FASTA/GTF compatibility" \
+                "$(compact_output "$tmp" 8)"
+        else
+            record FAIL "Host $taxid" "clean FASTA/GTF compatibility" \
+                "$(compact_output "$tmp" 20)"
+        fi
+    fi
+
+    if [[ "$MODE" != "quick" && -x "$inspect_bin" && -n "$extension" ]]; then
+        tmp="$TMP_WORK/host_${taxid}_hisat2_names.txt"
+
+        if capture_command "$tmp" "$inspect_bin" -n "$hisat_prefix"; then
+            if grep -q '^kraken:taxid|' "$tmp"; then
+                record FAIL "Host $taxid" "HISAT2 clean identifiers" \
+                    "Kraken prefixes remain in the HISAT2 index"
+            else
+                record PASS "Host $taxid" "HISAT2 clean identifiers" \
+                    "no Kraken prefix detected"
+            fi
+
+            if [[ -s "$gtf" ]]; then
+                local compare_tmp="$TMP_WORK/host_${taxid}_hisat2_gtf.txt"
+
+                if capture_command "$compare_tmp" python3 - \
+                    "$tmp" "$gtf" <<'PY_HISAT_GTF'
+import gzip
+import sys
+from pathlib import Path
+
+index_path = Path(sys.argv[1])
+gtf_path = Path(sys.argv[2])
+
+index_ids = {
+    line.strip()
+    for line in index_path.read_text(
+        encoding="utf-8", errors="replace"
+    ).splitlines()
+    if line.strip()
+}
+
+gtf_ids = set()
+with gzip.open(gtf_path, "rt", encoding="utf-8", errors="replace") as handle:
+    for line in handle:
+        if not line or line.startswith("#"):
+            continue
+        fields = line.rstrip("\n").split("\t")
+        if fields and fields[0]:
+            gtf_ids.add(fields[0])
+
+missing = sorted(gtf_ids - index_ids)
+if missing:
+    print("GTF contigs absent from HISAT2 index:", len(missing))
+    for item in missing[:20]:
+        print(item)
+    raise SystemExit(1)
+
+print("HISAT2 identifiers:", len(index_ids))
+print("GTF contigs:", len(gtf_ids))
+print("shared contigs:", len(index_ids & gtf_ids))
+PY_HISAT_GTF
+                then
+                    record PASS "Host $taxid" "HISAT2/GTF compatibility" \
+                        "$(compact_output "$compare_tmp" 8)"
+                else
+                    record FAIL "Host $taxid" "HISAT2/GTF compatibility" \
+                        "$(compact_output "$compare_tmp" 20)"
+                fi
+            fi
+        else
+            record FAIL "Host $taxid" "HISAT2 index inspection" \
+                "$(compact_output "$tmp" 20)"
+        fi
+    elif [[ "$MODE" != "quick" && ! -x "$inspect_bin" ]]; then
+        record FAIL "Host $taxid" "hisat2-inspect" \
+            "missing or not executable: $inspect_bin"
+    fi
+}
+
+check_installed_custom_hosts() {
+    local -a taxids=()
+    local db=""
+    local taxid=""
+
+    if [[ -n "$HOST_TAXID" ]]; then
+        taxids=("$HOST_TAXID")
+    else
+        while IFS= read -r db; do
+            taxid="${db##*/kraken2DB_}"
+            if [[ "$taxid" =~ ^[1-9][0-9]*$ ]]; then
+                taxids+=("$taxid")
+            fi
+        done < <(
+            find "$MTD_DIR" \
+                -maxdepth 1 \
+                -type d \
+                -name 'kraken2DB_[0-9]*' \
+                -print 2>/dev/null | sort
+        )
+    fi
+
+    if (( ${#taxids[@]} == 0 )); then
+        record SKIP "Custom hosts" "installed references" \
+            "no numeric custom-host directory detected"
+        return
+    fi
+
+    for taxid in "${taxids[@]}"; do
+        check_custom_host_reference "$taxid"
+    done
 }
 
 init_colors
@@ -878,6 +1301,7 @@ echo "Conda path    : $CONDA_PATH"
 echo "Cache path    : ${OFFLINE_DIR:-not detected}"
 echo "Mode          : $MODE"
 echo "Bracken length: $READ_LEN"
+echo "Host TaxID    : ${HOST_TAXID:-auto-detect}"
 echo "Report folder : $REPORT_DIR"
 echo "============================================================"
 
@@ -923,7 +1347,7 @@ fi
 
 for command_name in \
     bash awk sed grep find xargs gzip gunzip tar wget curl rsync pigz unpigz \
-    perl python3 sha256sum timeout pkg-config aria2c parallel
+    perl python3 sha256sum md5sum bzip2 timeout pkg-config aria2c parallel
 do
     check_command "$command_name"
 done
@@ -940,7 +1364,10 @@ if [[ -s "$INSTALL_SH" ]]; then
     for function_name in \
         parse_arguments validate_arguments ensure_sudo_credentials run_as_root \
         prepare_installation_cache prepare_shared_kraken2_taxonomy \
-        install_shared_kraken2_taxonomy build_kraken2_database
+        install_shared_kraken2_taxonomy build_kraken2_database \
+        prepare_humann_metaphlan_cache validate_humann_metaphlan_cache \
+        validate_humann_environment validate_installed_humann_databases \
+        configure_humann_database_paths install_humann_databases
     do
         if grep -Eq "^[[:space:]]*${function_name}[[:space:]]*\\(\\)" "$INSTALL_SH"; then
             record PASS "Installer contract" "function: $function_name" \
@@ -1088,75 +1515,464 @@ else
 fi
 
 # ==============================================================================
-# Source/configuration files
+# Repository layout and source/configuration files
+# ==============================================================================
+# This contract follows the current MTD Explorer tree. It distinguishes:
+#   1. required runtime/source directories;
+#   2. critical files consumed by the installer and pipeline;
+#   3. optional documentation/development directories;
+#   4. every file tracked by Git, when a checkout is available.
+#
+# The single-cell workflow is discontinued and is intentionally excluded from
+# required runtime checks even if legacy files remain in the repository.
 # ==============================================================================
 
 if [[ "$MODE" != "quick" ]]; then
-    for source_file in \
-        Installation/MTD_fastp.yml \
-        Installation/MTD.yml \
-        Installation/MTD_R_additions.yml \
-        Installation/py2.yml \
-        Installation/halla0820.yml \
-        Installation/R412.yml \
-        Installation/pip.requirements \
-        Installation/M33262_SIVMM239.fa \
-        Installation/download_genomic_library.sh \
-        Installation/download_genomic_library_plasmid.sh \
-        Installation/rsync_from_ncbi.pl \
-        Installation/rsync_from_ncbi_archaea.pl \
-        Installation/rsync_from_ncbi_bacteria.pl \
-        manifest.virus.sh \
-        manifest.bacteria.sh \
-        manifest.archea.sh \
-        manifest.plasmid.sh \
-        aux_scripts/Kraken2/kraken2-build-download-taxonomy \
-        Create_custom_host.sh \
-        HostSpecies.csv \
-        aux_scripts/orgdb/build_gold_orgdb_from_gtf_eggnog.R \
-        aux_scripts/orgdb/install_gold_orgdb_from_hostspecies.sh \
-        aux_scripts/orgdb/make_gene_representative_fasta.py
-    do
-        check_required_file "Installer source" "$source_file" "$MTD_DIR/$source_file"
+    required_repo_dirs=(
+        Installation
+        Tools
+        Tools/KrakenTools
+        Tools/export2graphlan
+        Tools/graphlan
+        Tools/ssGSEA2.0
+        Tools/ssGSEA2.0/db/msigdb
+        aux_scripts
+        aux_scripts/EV
+        aux_scripts/GO
+        aux_scripts/Heatmaper
+        aux_scripts/Kraken2
+        aux_scripts/analysis
+        aux_scripts/analysis/differential
+        aux_scripts/analysis/humann
+        aux_scripts/analysis/integration
+        aux_scripts/exploratory
+        aux_scripts/host_reference
+        aux_scripts/manifest_scripts
+        aux_scripts/orgdb
+        aux_scripts/ssGSEA
+        update_fix
+        update_fix/pvr_pkg
+    )
+
+    for repo_dir in "${required_repo_dirs[@]}"; do
+        check_required_dir \
+            "Repository layout" \
+            "$repo_dir" \
+            "$MTD_DIR/$repo_dir"
     done
 
-    for shell_script in \
-        Install.sh \
-        manifest.virus.sh \
-        manifest.bacteria.sh \
-        manifest.archea.sh \
-        manifest.plasmid.sh \
-        Create_custom_host.sh \
-        aux_scripts/orgdb/install_gold_orgdb_from_hostspecies.sh \
-        update_fix/Install.R.packages.MTD.sh \
-        update_fix/check_R_pkg.MTD.sh \
-        update_fix/Install.R.packages.R412_optimized.sh \
-        update_fix/check_R_pkg.R412.sh \
-        update_fix/check_R_pkg.halla0820.sh
-    do
-        if [[ -f "$MTD_DIR/$shell_script" ]]; then
-            check_shell_syntax "$shell_script" "$MTD_DIR/$shell_script"
+    optional_repo_dirs=(
+        Tutorial
+        benchmark
+        docs
+        examples
+        old_scripts_files
+        test
+    )
+
+    for repo_dir in "${optional_repo_dirs[@]}"; do
+        if [[ -d "$MTD_DIR/$repo_dir" ]]; then
+            record PASS "Repository extras" "$repo_dir" \
+                "$MTD_DIR/$repo_dir"
+        else
+            record SKIP "Repository extras" "$repo_dir" \
+                "optional documentation/development directory not installed"
         fi
     done
 
-    for perl_script in \
-        Installation/rsync_from_ncbi.pl \
-        Installation/rsync_from_ncbi_archaea.pl \
+    if [[ -d "$MTD_DIR/aux_scripts/analysis/single_cell" ]]; then
+        record SKIP "Repository scope" "single-cell analysis" \
+            "legacy directory present but intentionally excluded from MTD Explorer scope"
+    else
+        record SKIP "Repository scope" "single-cell analysis" \
+            "discontinued and not required"
+    fi
+
+    # -------------------------------------------------------------------------
+    # Core scripts and configuration.
+    # -------------------------------------------------------------------------
+    required_source_files=(
+        Install.sh
+        MTD_explorer.sh
+        MTD_check_installation.sh
+        Create_custom_host.sh
+        Create_custom_micro.sh
+        HostSpecies.csv
+        conta_ls.txt
+
+        Installation/M33262_SIVMM239.fa
+        Installation/MTD.yml
+        Installation/MTD_R_additions.yml
+        Installation/MTD_fastp.yml
+        Installation/MTD_humann.yml
+        Installation/MTD_orgdb.yml
+        Installation/R412.yml
+        Installation/R_packages_installation.R
+        Installation/check_MTD_orgdb.R
+        Installation/check_R_packages_installation.R
+        Installation/download_genomic_library.sh
+        Installation/download_genomic_library_plasmid.sh
+        Installation/halla0820.yml
+        Installation/hisat2_extract_exons.py
+        Installation/hisat2_extract_splice_sites.py
+        Installation/pip.requirements
+        Installation/py2.yml
+        Installation/repair_R_packages_installation.R
+        Installation/rsync_from_ncbi.pl
+        Installation/rsync_from_ncbi_2.pl
+        Installation/rsync_from_ncbi_archaea.pl
         Installation/rsync_from_ncbi_bacteria.pl
-    do
+        Installation/rsync_from_ncbi_offline.pl
+
+        aux_scripts/manifest_scripts/manifest.sh
+        aux_scripts/manifest_scripts/manifest.virus.sh
+        aux_scripts/manifest_scripts/manifest.bacteria.sh
+        aux_scripts/manifest_scripts/manifest.archea.sh
+        aux_scripts/manifest_scripts/manifest.plasmid.sh
+
+        aux_scripts/Kraken2/build_multi_genome_kraken2_db.sh
+        aux_scripts/Kraken2/build_nonredundant_viral_fasta.py
+        aux_scripts/Kraken2/build_refseq_viral_taxid_map.py
+        aux_scripts/Kraken2/build_virushost_taxid_map.py
+        aux_scripts/Kraken2/check_virushost_mirror_status.sh
+        aux_scripts/Kraken2/download_kraken2_taxonomy_https.sh
+        aux_scripts/Kraken2/download_ncbi_taxon_genomes_manifest.sh
+        aux_scripts/Kraken2/download_ncbi_taxons_from_file.sh
+        aux_scripts/Kraken2/kraken2-build-download-taxonomy
+        aux_scripts/Kraken2/update_virushost_mirror.sh
+
+        aux_scripts/host_reference/build_gid_to_entrez_from_ncbi.py
+        aux_scripts/host_reference/ensure_hostspecies_entry.py
+        aux_scripts/host_reference/resolve_host_reference_from_csv.py
+
+        aux_scripts/orgdb/build_all_hostspecies_orgdb.sh
+        aux_scripts/orgdb/build_curated_hostspecies_csv.py
+        aux_scripts/orgdb/build_gold_orgdb_from_gtf_eggnog.R
+        aux_scripts/orgdb/create_annotation_package.R
+        aux_scripts/orgdb/host_reference_overrides.tsv
+        aux_scripts/orgdb/install_gold_orgdb_from_hostspecies.sh
+        aux_scripts/orgdb/make_gene_representative_fasta.py
+        aux_scripts/orgdb/update_hostspecies_common_kegg.py
+
+        aux_scripts/ssGSEA/build_master_gmt_from_eggnog.py
+        aux_scripts/ssGSEA/filter_master_gmt_for_host_gct.py
+        aux_scripts/ssGSEA/make_custom_ssgsea_gmt_from_taxid_auto.sh
+        aux_scripts/ssGSEA/plot_ssgsea_results.R
+        aux_scripts/ssGSEA/resolve_ssgsea_go_terms.py
+
+        aux_scripts/analysis/differential/DEG_Anno_Plot.R
+        aux_scripts/analysis/differential/Normalization_afbr.R
+        aux_scripts/analysis/differential/venn_diagram.R
+        aux_scripts/analysis/humann/goterms.txt
+        aux_scripts/analysis/humann/humann_ID_translation.R
+        aux_scripts/analysis/humann/humann_ID_translation_adjusted.R
+        aux_scripts/analysis/humann/koterms.txt
+        aux_scripts/analysis/integration/for_halla.R
+        aux_scripts/analysis/integration/gct_making.R
+        aux_scripts/analysis/integration/generate_halla_heatmap.py
+        aux_scripts/analysis/integration/kmeans_clustering.py
+        aux_scripts/analysis/integration/pls_da_analysis.py
+
+        aux_scripts/exploratory/MTD.find_target_taxa.py
+        aux_scripts/exploratory/MTD.taxonomic_pheatmap.R
+        aux_scripts/exploratory/MTD.taxonomic_stacked_bar.R
+        aux_scripts/exploratory/MTD_detected_species_pie_by_phylum.R
+        aux_scripts/exploratory/MTD_exploratory_alpha_diversity.R
+        aux_scripts/exploratory/MTD_exploratory_beta_diversity.R
+        aux_scripts/exploratory/MTD_exploratory_core_microbiome.R
+        aux_scripts/exploratory/MTD_exploratory_detected_microbiome_rank.R
+        aux_scripts/exploratory/MTD_exploratory_matrix_qc.R
+        aux_scripts/exploratory/MTD_exploratory_prevalence_abundance.R
+        aux_scripts/exploratory/MTD_exploratory_read_composition_qc.R
+        aux_scripts/exploratory/MTD_extract_reads_by_detected_microbiome.py
+        aux_scripts/exploratory/MTD_species_overlap_venn_euler.R
+
+        aux_scripts/EV/EV.volcano.R
+        aux_scripts/GO/GO_faceted_dotplot.R
+        aux_scripts/Heatmaper/bracken_to_heatmap.R
+
+        Tools/combine_bracken_outputs.py
+        Tools/KrakenTools/combine_kreports.py
+        Tools/KrakenTools/combine_mpa.py
+        Tools/KrakenTools/extract_kraken_reads.py
+        Tools/KrakenTools/filter_bracken.out.py
+        Tools/KrakenTools/fix_unmapped.py
+        Tools/KrakenTools/kreport2krona.py
+        Tools/KrakenTools/kreport2mpa.py
+        Tools/KrakenTools/make_kreport.py
+        Tools/KrakenTools/make_ktaxonomy.py
+        Tools/export2graphlan/export2graphlan.py
+        Tools/graphlan/graphlan.py
+        Tools/graphlan/graphlan_annotate.py
+        Tools/graphlan/verify_and_correct_annotations.py
+        Tools/ssGSEA2.0/config.yaml
+        Tools/ssGSEA2.0/db/msigdb/c2.all.v7.5.1.symbols.gmt
+        Tools/ssGSEA2.0/ssgsea-cli.R
+
+        update_fix/Install.R.AnnotPackages.base.sh
+        update_fix/Install.R.packages.MTD.sh
+        update_fix/Install.R.packages.R412.sh
+        update_fix/Install.R.packages.R412_optimized.sh
+        update_fix/check_R_pkg.MTD.sh
+        update_fix/check_R_pkg.R412.sh
+        update_fix/check_R_pkg.halla0820.sh
+        update_fix/hclust2.py
+        update_fix/patch_halla_matplotlib.py
+        update_fix/verify_NCBI_makeOrgPackageFromNCBI.sh
+    )
+
+    for source_file in "${required_source_files[@]}"; do
+        check_required_file \
+            "Repository source" \
+            "$source_file" \
+            "$MTD_DIR/$source_file"
+    done
+
+    # The manual GO replacement table is an optional override. The runtime has
+    # built-in and QuickGO fallbacks when it is absent.
+    if [[ -s "$MTD_DIR/aux_scripts/ssGSEA/go_replacement_manual_map.tsv" ]]; then
+        record PASS "Repository source" \
+            "aux_scripts/ssGSEA/go_replacement_manual_map.tsv" \
+            "optional manual GO replacement map is available"
+    else
+        record SKIP "Repository source" \
+            "aux_scripts/ssGSEA/go_replacement_manual_map.tsv" \
+            "optional; resolver falls back to built-in/QuickGO mappings"
+    fi
+
+    # -------------------------------------------------------------------------
+    # Syntax checks at their current paths.
+    # -------------------------------------------------------------------------
+    shell_scripts=(
+        Install.sh
+        MTD_explorer.sh
+        MTD_check_installation.sh
+        Create_custom_host.sh
+        Create_custom_micro.sh
+        Installation/download_genomic_library.sh
+        Installation/download_genomic_library_plasmid.sh
+        aux_scripts/manifest_scripts/manifest.sh
+        aux_scripts/manifest_scripts/manifest.virus.sh
+        aux_scripts/manifest_scripts/manifest.bacteria.sh
+        aux_scripts/manifest_scripts/manifest.archea.sh
+        aux_scripts/manifest_scripts/manifest.plasmid.sh
+        aux_scripts/Kraken2/build_multi_genome_kraken2_db.sh
+        aux_scripts/Kraken2/check_virushost_mirror_status.sh
+        aux_scripts/Kraken2/download_kraken2_taxonomy_https.sh
+        aux_scripts/Kraken2/download_ncbi_taxon_genomes_manifest.sh
+        aux_scripts/Kraken2/download_ncbi_taxons_from_file.sh
+        aux_scripts/Kraken2/update_virushost_mirror.sh
+        aux_scripts/orgdb/build_all_hostspecies_orgdb.sh
+        aux_scripts/orgdb/install_gold_orgdb_from_hostspecies.sh
+        aux_scripts/ssGSEA/make_custom_ssgsea_gmt_from_taxid_auto.sh
+        update_fix/Install.R.AnnotPackages.base.sh
+        update_fix/Install.R.packages.MTD.sh
+        update_fix/Install.R.packages.R412.sh
+        update_fix/Install.R.packages.R412_optimized.sh
+        update_fix/check_R_pkg.MTD.sh
+        update_fix/check_R_pkg.R412.sh
+        update_fix/check_R_pkg.halla0820.sh
+        update_fix/verify_NCBI_makeOrgPackageFromNCBI.sh
+    )
+
+    for shell_script in "${shell_scripts[@]}"; do
+        check_shell_syntax "$shell_script" "$MTD_DIR/$shell_script"
+    done
+
+    # This Kraken2 helper intentionally has no .pl extension. Its shebang is
+    # the source of truth for syntax validation.
+    extensionless_script="aux_scripts/Kraken2/kraken2-build-download-taxonomy"
+    extensionless_path="$MTD_DIR/$extensionless_script"
+
+    if [[ ! -f "$extensionless_path" ]]; then
+        record FAIL "Installer source" \
+            "syntax by shebang: $extensionless_script" \
+            "missing: $extensionless_path"
+    else
+        extensionless_shebang="$(
+            head -n 1 "$extensionless_path" 2>/dev/null || true
+        )"
+
+        case "$extensionless_shebang" in
+            *perl*)
+                check_perl_syntax \
+                    "$extensionless_script" \
+                    "$extensionless_path"
+                ;;
+            *bash*|*"/sh"*|*" sh")
+                check_shell_syntax \
+                    "$extensionless_script" \
+                    "$extensionless_path"
+                ;;
+            *python*)
+                check_python_syntax \
+                    "$extensionless_script" \
+                    "$extensionless_path"
+                ;;
+            *)
+                record FAIL "Installer source" \
+                    "syntax by shebang: $extensionless_script" \
+                    "unsupported or missing shebang: ${extensionless_shebang:-<empty>}"
+                ;;
+        esac
+    fi
+
+    perl_scripts=(
+        Installation/rsync_from_ncbi.pl
+        Installation/rsync_from_ncbi_2.pl
+        Installation/rsync_from_ncbi_archaea.pl
+        Installation/rsync_from_ncbi_bacteria.pl
+        Installation/rsync_from_ncbi_offline.pl
+    )
+
+    for perl_script in "${perl_scripts[@]}"; do
         check_perl_syntax "$perl_script" "$MTD_DIR/$perl_script"
     done
 
-    for python_script in \
-        Installation/hisat2_extract_exons.py \
-        Installation/hisat2_extract_splice_sites.py \
-        aux_scripts/ssGSEA/resolve_ssgsea_go_terms.py \
+    # Project-owned Python 3 scripts. Vendored legacy Python utilities are
+    # checked for presence above and exercised through their runtime workflows.
+    python_scripts=(
+        Installation/hisat2_extract_exons.py
+        Installation/hisat2_extract_splice_sites.py
+        aux_scripts/Kraken2/build_nonredundant_viral_fasta.py
+        aux_scripts/Kraken2/build_refseq_viral_taxid_map.py
+        aux_scripts/Kraken2/build_virushost_taxid_map.py
+        aux_scripts/host_reference/build_gid_to_entrez_from_ncbi.py
+        aux_scripts/host_reference/ensure_hostspecies_entry.py
+        aux_scripts/host_reference/resolve_host_reference_from_csv.py
+        aux_scripts/orgdb/build_curated_hostspecies_csv.py
         aux_scripts/orgdb/make_gene_representative_fasta.py
+        aux_scripts/orgdb/update_hostspecies_common_kegg.py
+        aux_scripts/ssGSEA/build_master_gmt_from_eggnog.py
+        aux_scripts/ssGSEA/filter_master_gmt_for_host_gct.py
+        aux_scripts/ssGSEA/resolve_ssgsea_go_terms.py
+        aux_scripts/analysis/integration/generate_halla_heatmap.py
+        aux_scripts/analysis/integration/kmeans_clustering.py
+        aux_scripts/analysis/integration/pls_da_analysis.py
+        aux_scripts/exploratory/MTD.find_target_taxa.py
+        aux_scripts/exploratory/MTD_extract_reads_by_detected_microbiome.py
+        Tools/combine_bracken_outputs.py
+        update_fix/patch_halla_matplotlib.py
+    )
+
+    for python_script in "${python_scripts[@]}"; do
+        check_python_syntax "$python_script" "$MTD_DIR/$python_script"
+    done
+
+    # -------------------------------------------------------------------------
+    # Static contracts between current core scripts and the current tree.
+    # -------------------------------------------------------------------------
+    if grep -Fq 'MANIFEST_SCRIPTS_DIR="$dir/aux_scripts/manifest_scripts"' \
+        "$MTD_DIR/Install.sh"
+    then
+        record PASS "Source path contract" "manifest directory" \
+            "Install.sh uses aux_scripts/manifest_scripts"
+    else
+        record FAIL "Source path contract" "manifest directory" \
+            "Install.sh does not declare the current manifest directory"
+    fi
+
+    if grep -Fq 'KRAKEN_AUX_DIR="$dir/aux_scripts/Kraken2"' \
+        "$MTD_DIR/Install.sh"
+    then
+        record PASS "Source path contract" "Kraken2 helper directory" \
+            "Install.sh uses aux_scripts/Kraken2"
+    else
+        record FAIL "Source path contract" "Kraken2 helper directory" \
+            "Install.sh does not declare the current Kraken2 helper directory"
+    fi
+
+    if grep -Fq 'ANALYSIS_SCRIPTS_DIR="$MTDIR/aux_scripts/analysis"' \
+        "$MTD_DIR/MTD_explorer.sh"
+    then
+        record PASS "Source path contract" "analysis script directory" \
+            "MTD_explorer.sh uses aux_scripts/analysis"
+    else
+        record FAIL "Source path contract" "analysis script directory" \
+            "MTD_explorer.sh does not declare aux_scripts/analysis"
+    fi
+
+    for active_runtime_path in \
+        Tools/KrakenTools/extract_kraken_reads.py \
+        Tools/KrakenTools/kreport2krona.py \
+        Tools/KrakenTools/kreport2mpa.py \
+        Tools/KrakenTools/combine_mpa.py \
+        Tools/combine_bracken_outputs.py \
+        Tools/export2graphlan/export2graphlan.py \
+        Tools/graphlan/verify_and_correct_annotations.py \
+        Tools/graphlan/graphlan_annotate.py \
+        Tools/graphlan/graphlan.py \
+        Tools/ssGSEA2.0/ssgsea-cli.R \
+        Tools/ssGSEA2.0/config.yaml \
+        Tools/ssGSEA2.0/db/msigdb/c2.all.v7.5.1.symbols.gmt
     do
-        if [[ -f "$MTD_DIR/$python_script" ]]; then
-            check_python_syntax "$python_script" "$MTD_DIR/$python_script"
+        if grep -Fq "$active_runtime_path" "$MTD_DIR/MTD_explorer.sh"; then
+            record PASS "Runtime path contract" "$active_runtime_path" \
+                "referenced by MTD_explorer.sh"
+        else
+            record FAIL "Runtime path contract" "$active_runtime_path" \
+                "expected runtime reference not found in MTD_explorer.sh"
         fi
     done
+
+    # -------------------------------------------------------------------------
+    # Full tracked-tree audit. This automatically follows future committed
+    # renames and checks every tracked path, including docs and tests, without
+    # hard-coding them as runtime requirements.
+    # -------------------------------------------------------------------------
+    if command -v git >/dev/null 2>&1 &&
+       git -C "$MTD_DIR" rev-parse --is-inside-work-tree \
+           >/dev/null 2>&1
+    then
+        tracked_list="$TMP_WORK/git_tracked_files.txt"
+        missing_list="$TMP_WORK/git_missing_tracked_files.txt"
+
+        git -C "$MTD_DIR" ls-files > "$tracked_list"
+        : > "$missing_list"
+
+        tracked_count=0
+        while IFS= read -r tracked_file; do
+            [[ -n "$tracked_file" ]] || continue
+            tracked_count=$((tracked_count + 1))
+
+            if [[ ! -e "$MTD_DIR/$tracked_file" &&
+                  ! -L "$MTD_DIR/$tracked_file" ]]
+            then
+                printf '%s
+' "$tracked_file" >> "$missing_list"
+            fi
+        done < "$tracked_list"
+
+        missing_count="$(wc -l < "$missing_list" | tr -d '[:space:]')"
+
+        if [[ "$missing_count" -eq 0 ]]; then
+            record PASS "Git repository" "tracked-file tree" \
+                "$tracked_count tracked paths are present"
+        else
+            record FAIL "Git repository" "tracked-file tree" \
+                "$missing_count tracked path(s) missing; see $missing_list"
+        fi
+
+        for top_level in \
+            Installation Tools aux_scripts update_fix docs benchmark examples test
+        do
+            top_count="$((
+                $(awk -F/ -v top="$top_level" '$1 == top {n++} END {print n+0}' \
+                    "$tracked_list")
+            ))"
+
+            if (( top_count > 0 )); then
+                record PASS "Git tree inventory" "$top_level" \
+                    "$top_count tracked file(s)"
+            else
+                record SKIP "Git tree inventory" "$top_level" \
+                    "no tracked files in this checkout"
+            fi
+        done
+    else
+        record SKIP "Git repository" "tracked-file tree" \
+            ".git metadata unavailable; explicit runtime/source contract was used"
+    fi
 fi
 
 # ==============================================================================
@@ -1164,7 +1980,7 @@ fi
 # ==============================================================================
 
 if conda_available; then
-    for env_name in base MTD_fastp MTD py2 halla0820 R412; do
+    for env_name in base MTD_fastp MTD MTD_humann py2 halla0820 R412; do
         check_conda_env "$env_name"
     done
 
@@ -1177,7 +1993,6 @@ if conda_available; then
     check_env_version MTD kraken2 2.1.2
     check_env_version MTD bracken 2.6.0
     check_env_version MTD hisat2 2.2.1
-    check_env_version MTD humann 3.1.1
     check_env_version py2 python 2.7
     check_env_version halla0820 python 3.10
     check_env_version halla0820 r-base 4.1.2
@@ -1190,12 +2005,14 @@ if conda_available; then
     for command_name in \
         python R Rscript fastp kraken2 kraken2-build kraken2-inspect \
         bracken bracken-build hisat2 hisat2-build bowtie2 samtools \
-        featureCounts makeblastdb blastdbcmd blastn magicblast humann \
-        humann_config metaphlan diamond emapper.py datasets STAR \
+        featureCounts makeblastdb blastdbcmd blastn magicblast diamond \
+        emapper.py datasets STAR \
         rsem-calculate-expression nextflow parallel
     do
         check_env_command MTD "$command_name"
     done
+
+    check_humann_runtime
 
     for command_name in python hclust2.py; do
         check_env_command py2 "$command_name"
@@ -1217,6 +2034,7 @@ if conda_available; then
 
     if [[ "$MODE" != "quick" ]]; then
         check_python_imports MTD Bio biom numpy pandas scipy sklearn yaml rpy2
+        check_python_imports MTD_humann Cython humann numpy pysam simplejson
         check_python_imports py2 numpy pandas scipy matplotlib hclust2 biom
         check_python_imports halla0820 halla rpy2 numpy pandas scipy sklearn jinja2
 
@@ -1323,6 +2141,12 @@ record SKIP "Host indexes" "predefined HISAT2/BLAST indexes" \
     "created later by the custom-host workflow when requested"
 
 # ==============================================================================
+# Installed custom-host references
+# ==============================================================================
+
+check_installed_custom_hosts
+
+# ==============================================================================
 # Bracken
 # ==============================================================================
 
@@ -1333,68 +2157,139 @@ check_required_file "Bracken DB" "database.kraken" \
     "$MICRO_DB/database.kraken"
 
 # ==============================================================================
-# HUMAnN
+# HUMAnN 3.9 / MetaPhlAn 4.1.1 dedicated database stack
 # ==============================================================================
 
 HUMANN_ROOT="$MTD_DIR/HUMAnN/ref_database"
 CHOCO_DIR="$HUMANN_ROOT/chocophlan"
 UNIREF_DIR="$HUMANN_ROOT/uniref"
 MAPPING_DIR="$HUMANN_ROOT/utility_mapping"
+METAPHLAN_DIR="$HUMANN_ROOT/metaphlan"
+METAPHLAN_INDEX="mpa_vJun23_CHOCOPhlAnSGB_202403"
+HUMANN_ENV_PREFIX="$CONDA_PATH/envs/MTD_humann"
 
 check_required_dir "HUMAnN" "ChocoPhlAn directory" "$CHOCO_DIR"
 check_required_dir "HUMAnN" "UniRef directory" "$UNIREF_DIR"
 check_required_dir "HUMAnN" "utility mapping directory" "$MAPPING_DIR"
+check_required_dir "MetaPhlAn" "database directory" "$METAPHLAN_DIR"
+check_required_file "HUMAnN" "installation completion marker" \
+    "$HUMANN_ROOT/.mtd_humann_databases_complete"
 
 choco_count="$(
-    find "$CHOCO_DIR" -type f -name '*.ffn.gz' -size +0c 2>/dev/null | wc -l
+    find "$CHOCO_DIR" \
+        -type f \
+        -name '*.ffn.gz' \
+        -size +0c \
+        2>/dev/null | awk 'END {print NR + 0}'
 )"
+
 if (( choco_count > 0 )); then
     record PASS "HUMAnN" "ChocoPhlAn files" "$choco_count file(s)"
 else
     record FAIL "HUMAnN" "ChocoPhlAn files" "none found"
 fi
 
-uniref_count="$(
-    find "$UNIREF_DIR" -type f \
-        \( -name '*.dmnd' -o -name '*.faa' -o -name '*.faa.gz' \) \
-        -size +0c 2>/dev/null | wc -l
-)"
-if (( uniref_count > 0 )); then
-    record PASS "HUMAnN" "UniRef database files" "$uniref_count candidate file(s)"
-else
-    record FAIL "HUMAnN" "UniRef database files" "no .dmnd/.faa files found"
-fi
+check_required_file "HUMAnN" "UniRef90 DIAMOND database" \
+    "$UNIREF_DIR/uniref90_201901b_full.dmnd"
 
 mapping_count="$(
-    find "$MAPPING_DIR" -type f -size +0c 2>/dev/null | wc -l
+    find "$MAPPING_DIR" -type f -size +0c 2>/dev/null |
+        awk 'END {print NR + 0}'
 )"
-if (( mapping_count > 0 )); then
-    record PASS "HUMAnN" "utility mapping files" "$mapping_count file(s)"
+
+if (( mapping_count >= 10 )); then
+    record PASS "HUMAnN" "utility mapping files" \
+        "$mapping_count non-empty file(s)"
 else
-    record FAIL "HUMAnN" "utility mapping files" "none found"
+    record FAIL "HUMAnN" "utility mapping files" \
+        "$mapping_count file(s); expected at least 10"
 fi
 
-if conda_available && env_exists MTD; then
-    humann_tmp="$TMP_WORK/humann_config.txt"
-    if capture_command "$humann_tmp" "$CONDA_PATH/bin/conda" run -n MTD \
-        humann_config; then
-        humann_ok=1
-        for expected_path in "$CHOCO_DIR" "$UNIREF_DIR" "$MAPPING_DIR"; do
-            if ! grep -Fq "$expected_path" "$humann_tmp"; then
-                humann_ok=0
+check_required_file "HUMAnN" "UniRef90 to KO mapping" \
+    "$MAPPING_DIR/map_ko_uniref90.txt.gz"
+check_required_file "HUMAnN" "UniRef90 to GO mapping" \
+    "$MAPPING_DIR/map_go_uniref90.txt.gz"
+
+for metaphlan_file in \
+    "${METAPHLAN_INDEX}.pkl" \
+    "${METAPHLAN_INDEX}.1.bt2l" \
+    "${METAPHLAN_INDEX}.2.bt2l" \
+    "${METAPHLAN_INDEX}.3.bt2l" \
+    "${METAPHLAN_INDEX}.4.bt2l" \
+    "${METAPHLAN_INDEX}.rev.1.bt2l" \
+    "${METAPHLAN_INDEX}.rev.2.bt2l" \
+    "${METAPHLAN_INDEX}.nwk" \
+    "${METAPHLAN_INDEX}_marker_info.txt.bz2" \
+    "${METAPHLAN_INDEX}_species.txt.bz2"
+do
+    check_required_file "MetaPhlAn" "$metaphlan_file" \
+        "$METAPHLAN_DIR/$metaphlan_file"
+done
+
+if [[ "$MODE" != "quick" ]]; then
+    for bz2_file in \
+        "${METAPHLAN_INDEX}_marker_info.txt.bz2" \
+        "${METAPHLAN_INDEX}_species.txt.bz2"
+    do
+        bz2_tmp="$TMP_WORK/installed_${bz2_file}.txt"
+        if capture_command "$bz2_tmp" bzip2 -t "$METAPHLAN_DIR/$bz2_file"; then
+            record PASS "MetaPhlAn" "installed bzip2 integrity: $bz2_file" "valid"
+        else
+            record FAIL "MetaPhlAn" "installed bzip2 integrity: $bz2_file" \
+                "$(compact_output "$bz2_tmp" 20)"
+        fi
+    done
+fi
+
+if env_exists MTD_humann; then
+    humann_config_tmp="$TMP_WORK/humann_config_r9.txt"
+
+    if capture_command "$humann_config_tmp" run_humann_isolated \
+        "$HUMANN_ENV_PREFIX/bin/humann_config" --print
+    then
+        humann_config_ok=1
+
+        for expected_path in \
+            "$CHOCO_DIR" \
+            "$UNIREF_DIR" \
+            "$MAPPING_DIR"
+        do
+            if ! grep -Fq "$expected_path" "$humann_config_tmp"; then
+                humann_config_ok=0
             fi
         done
 
-        if (( humann_ok == 1 )); then
+        if (( humann_config_ok == 1 )); then
             record PASS "HUMAnN" "configured database paths" \
                 "all paths point inside $HUMANN_ROOT"
         else
             record FAIL "HUMAnN" "configured database paths" \
-                "one or more expected paths are absent from humann_config"
+                "one or more expected paths are absent: $(compact_output "$humann_config_tmp" 20)"
         fi
     else
         record FAIL "HUMAnN" "configured database paths" \
-            "$(compact_output "$humann_tmp" 20)"
+            "$(compact_output "$humann_config_tmp" 20)"
+    fi
+fi
+
+if [[ "$MODE" == "deep" && -x "$HUMANN_ENV_PREFIX/bin/humann_test" ]]; then
+    humann_test_tmp="$TMP_WORK/humann_test_r9.txt"
+
+    if capture_command "$humann_test_tmp" timeout 300 env \
+        -u PYTHONPATH \
+        -u PYTHONHOME \
+        PYTHONNOUSERSITE=1 \
+        PATH="$HUMANN_ENV_PREFIX/bin:$PATH" \
+        "$HUMANN_ENV_PREFIX/bin/humann_test" &&
+       grep -Eq '^Ran [0-9]+ tests' "$humann_test_tmp" &&
+       grep -Eq '^OK$' "$humann_test_tmp"
+    then
+        record PASS "HUMAnN" "unit test suite" \
+            "$(grep -E '^Ran [0-9]+ tests|^OK$' "$humann_test_tmp" | tr '
+' ' ')"
+    else
+        record FAIL "HUMAnN" "unit test suite" \
+            "$(compact_output "$humann_test_tmp" 30)"
     fi
 fi
 
@@ -1476,6 +2371,96 @@ if [[ -n "$OFFLINE_DIR" ]]; then
             "HUMAnN/$humann_archive" \
             "$OFFLINE_DIR/HUMAnN/$humann_archive"
     done
+
+
+    METAPHLAN_CACHE_INDEX="mpa_vJun23_CHOCOPhlAnSGB_202403"
+    METAPHLAN_CACHE_DIR="$OFFLINE_DIR/HUMAnN/metaphlan_vJun23_202403_archives"
+
+    for metaphlan_cache_file in \
+        "${METAPHLAN_CACHE_INDEX}.tar" \
+        "${METAPHLAN_CACHE_INDEX}.md5" \
+        "${METAPHLAN_CACHE_INDEX}_bt2.tar" \
+        "${METAPHLAN_CACHE_INDEX}_bt2.md5" \
+        "${METAPHLAN_CACHE_INDEX}.nwk" \
+        "${METAPHLAN_CACHE_INDEX}_marker_info.txt.bz2" \
+        "${METAPHLAN_CACHE_INDEX}_species.txt.bz2"
+    do
+        check_required_file "Installation cache" \
+            "MetaPhlAn/$metaphlan_cache_file" \
+            "$METAPHLAN_CACHE_DIR/$metaphlan_cache_file"
+    done
+
+    check_required_file "Installation cache" \
+        "MetaPhlAn completion marker" \
+        "$METAPHLAN_CACHE_DIR/.metaphlan_vJun23_202403_cache_complete"
+
+    if [[ "$MODE" != "quick" && \
+          -s "$METAPHLAN_CACHE_DIR/${METAPHLAN_CACHE_INDEX}.nwk" ]]
+    then
+        metaphlan_newick_tail="$(
+            tail -c 1024 \
+                "$METAPHLAN_CACHE_DIR/${METAPHLAN_CACHE_INDEX}.nwk" \
+                2>/dev/null | tr -d '\r\n[:space:]'
+        )"
+
+        if [[ -n "$metaphlan_newick_tail" && \
+              "${metaphlan_newick_tail: -1}" == ";" ]]
+        then
+            record PASS "Installation cache" "MetaPhlAn taxonomy tree" \
+                "Newick terminator detected"
+        else
+            record FAIL "Installation cache" "MetaPhlAn taxonomy tree" \
+                "file does not end with ';'"
+        fi
+    fi
+
+    if [[ "$MODE" == "deep" ]]; then
+        archive_integrity "MetaPhlAn main archive" \
+            "$METAPHLAN_CACHE_DIR/${METAPHLAN_CACHE_INDEX}.tar"
+        archive_integrity "MetaPhlAn Bowtie2 archive" \
+            "$METAPHLAN_CACHE_DIR/${METAPHLAN_CACHE_INDEX}_bt2.tar"
+        archive_integrity "MetaPhlAn marker information" \
+            "$METAPHLAN_CACHE_DIR/${METAPHLAN_CACHE_INDEX}_marker_info.txt.bz2"
+        archive_integrity "MetaPhlAn species information" \
+            "$METAPHLAN_CACHE_DIR/${METAPHLAN_CACHE_INDEX}_species.txt.bz2"
+
+        main_md5="$(
+            md5sum "$METAPHLAN_CACHE_DIR/${METAPHLAN_CACHE_INDEX}.tar" \
+                2>/dev/null | awk '{print $1}'
+        )"
+        bt2_md5="$(
+            md5sum "$METAPHLAN_CACHE_DIR/${METAPHLAN_CACHE_INDEX}_bt2.tar" \
+                2>/dev/null | awk '{print $1}'
+        )"
+
+        if [[ "$main_md5" == "d985de75a217cd319e721863f68e7d33" ]]; then
+            record PASS "Installation cache" "MetaPhlAn main archive MD5" \
+                "$main_md5"
+        else
+            record FAIL "Installation cache" "MetaPhlAn main archive MD5" \
+                "observed=${main_md5:-unavailable}"
+        fi
+
+        if [[ "$bt2_md5" == "8caae86b4d2931416cbdbb92f5985cef" ]]; then
+            record PASS "Installation cache" "MetaPhlAn Bowtie2 archive MD5" \
+                "$bt2_md5"
+        else
+            record FAIL "Installation cache" "MetaPhlAn Bowtie2 archive MD5" \
+                "observed=${bt2_md5:-unavailable}"
+        fi
+
+        if (
+            cd "$METAPHLAN_CACHE_DIR" &&
+            md5sum -c "${METAPHLAN_CACHE_INDEX}.md5" >/dev/null 2>&1 &&
+            md5sum -c "${METAPHLAN_CACHE_INDEX}_bt2.md5" >/dev/null 2>&1
+        ); then
+            record PASS "Installation cache" "MetaPhlAn official MD5 manifests" \
+                "both manifests validated"
+        else
+            record FAIL "Installation cache" "MetaPhlAn official MD5 manifests" \
+                "one or both manifests failed"
+        fi
+    fi
 
     check_required_dir "Installation cache" "Kraken2 viral cache" \
         "$OFFLINE_DIR/Kraken2DB_micro/library/viral"
@@ -1594,6 +2579,7 @@ fi
     echo "MTD:         $MTD_DIR"
     echo "Conda:       $CONDA_PATH"
     echo "Mode:        $MODE"
+    echo "Host TaxID:  ${HOST_TAXID:-auto-detect}"
     echo "Cache:       ${OFFLINE_DIR:-not detected}"
     echo "Checks:      $TOTAL_COUNT"
     echo "PASS:        $PASS_COUNT"
