@@ -879,6 +879,67 @@ conda deactivate
 conda activate MTD
 
 # ------------------------------------------------------------
+# Dedicated Kraken2 2.17.1 runtime
+# ------------------------------------------------------------
+# Kraken2 is isolated from the legacy MTD environment because
+# modern Kraken2 releases require newer low-level dependencies.
+#
+# Calls to "kraken2" in this Bash process are redirected to the
+# isolated executable. The complete MTD_kraken2 bin directory is
+# deliberately not added to PATH, preventing unrelated programs
+# from replacing the versions expected by the main MTD environment.
+# ------------------------------------------------------------
+KRAKEN2_ENV_NAME="${MTD_KRAKEN2_ENV_NAME:-MTD_kraken2}"
+KRAKEN2_ENV_DIR="$condapath/envs/$KRAKEN2_ENV_NAME"
+KRAKEN2_BIN="$KRAKEN2_ENV_DIR/bin/kraken2"
+KRAKEN2_INSPECT_BIN="$KRAKEN2_ENV_DIR/bin/kraken2-inspect"
+KRAKEN2_EXPECTED_VERSION="2.17.1"
+
+if [[ ! -d "$KRAKEN2_ENV_DIR" ]]; then
+    die "Dedicated Kraken2 environment was not found: $KRAKEN2_ENV_DIR
+Run Install.sh to create the $KRAKEN2_ENV_NAME environment."
+fi
+
+if [[ ! -x "$KRAKEN2_BIN" ]]; then
+    die "Kraken2 executable was not found or is not executable:
+$KRAKEN2_BIN"
+fi
+
+if [[ ! -x "$KRAKEN2_INSPECT_BIN" ]]; then
+    die "kraken2-inspect was not found or is not executable:
+$KRAKEN2_INSPECT_BIN"
+fi
+
+KRAKEN2_VERSION="$(
+    "$KRAKEN2_BIN" --version 2>/dev/null |
+        awk 'NR == 1 { print $3 }'
+)"
+
+if [[ "$KRAKEN2_VERSION" != "$KRAKEN2_EXPECTED_VERSION" ]]; then
+    die "Unexpected Kraken2 version in $KRAKEN2_ENV_NAME.
+Expected: $KRAKEN2_EXPECTED_VERSION
+Observed: ${KRAKEN2_VERSION:-unknown}
+Executable: $KRAKEN2_BIN"
+fi
+
+# A Bash function takes precedence over PATH, so later Conda
+# activations cannot silently switch classification back to the
+# legacy Kraken2 installation.
+kraken2() {
+    "$KRAKEN2_BIN" "$@"
+}
+
+# Preserve the wrapper in Bash subprocesses, when applicable.
+export KRAKEN2_BIN
+export -f kraken2
+
+echo "${g}[INFO] Kraken2 runtime:${w}"
+echo " Environment: $KRAKEN2_ENV_NAME"
+echo " Version:     $KRAKEN2_VERSION"
+echo " Executable:  $KRAKEN2_BIN"
+
+
+# ------------------------------------------------------------
 # Dedicated HUMAnN 3.9 runtime
 # ------------------------------------------------------------
 # HUMAnN and MetaPhlAn are isolated from the legacy MTD environment.
