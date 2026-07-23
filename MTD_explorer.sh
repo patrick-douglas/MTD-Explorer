@@ -2327,69 +2327,101 @@ mkdir -p "$heatmap_base" "$stacked_base" "$prevalence_base" "$detected_microbiom
 
 
     # ------------------------------------------------------------
-    # 3D) Species overlap Venn/Euler between two groups
+    # 3D) Species overlap Venn/Euler across all groups
     # ------------------------------------------------------------
 
     if [[ "$tax_rank" == "species" && -s "$species_overlap_script" ]]; then
 
         local species_overlap_out="$species_overlap_base"
         local species_overlap_log="$log_dir/MTD.species_overlap_venn_euler.${tax_rank}.log"
+        local species_overlap_prefix="$species_overlap_out/species_overlap_all_groups"
 
         mkdir -p "$species_overlap_out"
 
-        # Detect group names from samplesheet column 2.
+        # Count and display all non-empty groups from samplesheet column 2.
         local overlap_groups
-        overlap_groups=$(awk -F',' '
-            NR > 1 {
-                g=$2
-                gsub(/^[ \t\r\n]+|[ \t\r\n]+$/, "", g)
-                if (g != "") groups[g]=1
-            }
-            END {
-                for (g in groups) print g
-            }
-        ' "$samplesheet_file" | sort)
+        overlap_groups="$(
+            awk -F',' '
+                NR > 1 {
+                    group_name = $2
+                    gsub(/^[ \t\r\n]+|[ \t\r\n]+$/, "", group_name)
+
+                    if (group_name != "") {
+                        groups[group_name] = 1
+                    }
+                }
+
+                END {
+                    for (group_name in groups) {
+                        print group_name
+                    }
+                }
+            ' "$samplesheet_file" |
+            sort
+        )"
 
         local overlap_group_count
-        overlap_group_count=$(printf "%s\n" "$overlap_groups" | awk 'NF > 0 {n++} END {print n+0}')
+        overlap_group_count="$(
+            printf '%s\n' "$overlap_groups" |
+            awk '
+                NF > 0 {
+                    count++
+                }
 
-        if [[ "$overlap_group_count" -ne 2 ]]; then
-            echo "${y}[INFO] Species Venn/Euler requires exactly 2 groups. Skipping overlap plot.${w}"
-            echo "Detected groups:"
-            printf "%s\n" "$overlap_groups"
+                END {
+                    print count + 0
+                }
+            '
+        )"
+
+        if [[ "$overlap_group_count" -lt 2 ]]; then
+            echo "${y}[INFO] Species Venn/Euler requires at least 2 groups.${w}"
+            echo "${y}[INFO] Detected groups: $overlap_group_count${w}"
+            echo "${y}[INFO] Skipping species overlap plots.${w}"
+
         else
-            local group1
-            local group2
-
-            group1=$(printf "%s\n" "$overlap_groups" | sed -n '1p')
-            group2=$(printf "%s\n" "$overlap_groups" | sed -n '2p')
-
             echo "------------------------------------------------------------"
-            echo "[RUN] Species overlap Venn/Euler"
-            echo "Input:  $tax_input"
-            echo "Group1: $group1"
-            echo "Group2: $group2"
-            echo "Output: $species_overlap_out"
+            echo "[RUN] Species overlap Venn/Euler across all groups"
+            echo "Input:        $tax_input"
+            echo "Samplesheet:  $samplesheet_file"
+            echo "Group count:  $overlap_group_count"
+            echo "Groups:"
+            printf '  %s\n' $overlap_groups
+            echo "Output prefix:"
+            echo "  $species_overlap_prefix"
+            echo "Conda environment: MTD_fastp"
             echo "------------------------------------------------------------"
 
-            if ! conda run --no-capture-output -n MTD_fastp -- \
-            Rscript "$species_overlap_script" \
-                --input "$tax_input" \
-                --samplesheet "$samplesheet_file" \
-                --group1 "$group1" \
-                --group2 "$group2" \
-                --title "Total species detected" \
-                --output_prefix "$species_overlap_out/${group1}_vs_${group2}_species_overlap" \
-                --write_lists \
-                > "$species_overlap_log" 2>&1
+            if ! conda run \
+                --no-capture-output \
+                -n MTD_fastp \
+                -- \
+                Rscript "$species_overlap_script" \
+                    --input "$tax_input" \
+                    --samplesheet "$samplesheet_file" \
+                    --title "Total species detected by group" \
+                    --output_prefix "$species_overlap_prefix" \
+                    --plot_type both \
+                    --write_lists \
+                    --no_install \
+                    > "$species_overlap_log" 2>&1
             then
-                echo "${y}[WARNING] Species Venn/Euler failed. Continuing pipeline.${w}"
+                echo "${y}[WARNING] Multi-group species Venn/Euler failed. Continuing pipeline.${w}"
                 echo "Log:"
                 echo "  $species_overlap_log"
-                tail -n 40 "$species_overlap_log" || true
+                tail -n 60 "$species_overlap_log" || true
             else
-                echo "${g}[OK] Species Venn/Euler generated:${w}"
+                echo "${g}[OK] Multi-group species Venn/Euler generated:${w}"
                 echo "  $species_overlap_out"
+                echo
+                echo "[INFO] Expected primary outputs:"
+                echo "  ${species_overlap_prefix}_venn.png"
+                echo "  ${species_overlap_prefix}_venn.pdf"
+                echo "  ${species_overlap_prefix}_venn.svg"
+                echo "  ${species_overlap_prefix}_euler.png"
+                echo "  ${species_overlap_prefix}_euler.pdf"
+                echo "  ${species_overlap_prefix}_euler.svg"
+                echo "  ${species_overlap_prefix}_summary.tsv"
             fi
         fi
 
@@ -2398,6 +2430,7 @@ mkdir -p "$heatmap_base" "$stacked_base" "$prevalence_base" "$detected_microbiom
         echo "Reason: tax_rank=$tax_rank or script not found:"
         echo "  $species_overlap_script"
     fi
+
     # ------------------------------------------------------------
     # 4) Core microbiome
     # ------------------------------------------------------------
@@ -6422,46 +6455,151 @@ if [[ "$NO_COMPARISON" == "1" ]]; then
 else
     #### BEGIN BLOCK: metadata-aware HUMAnN DEG calls ####
 
-    humann_deg_inputs=(
-        "$outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_kegg_translated.tsv"
-        "$outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_go_translated.tsv"
+HUMANN_FEATURE_OVERLAP_SCRIPT="$DIFFERENTIAL_ANALYSIS_DIR/MTD_humann_feature_overlap_venn.R"
+
+# The version 3 overlap script supports Euler diagrams with
+# two or more groups and calculates all higher-order intersections.
+humann_overlap_plot_type="both"
+
+humann_deg_inputs=(
+    "$outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_kegg_translated.tsv"
+    "$outputdr/hmn_genefamily_abundance_files/humann_genefamilies_Abundance_go_translated.tsv"
+)
+
+for humann_deg_input in "${humann_deg_inputs[@]}"; do
+    humann_deg_basename="$(basename "$humann_deg_input")"
+
+    case "$humann_deg_basename" in
+        humann_genefamilies_Abundance_kegg_translated.tsv)
+            humann_feature_type="KEGG"
+            humann_feature_dir="$outputdr/hmn_genefamily_abundance_files/Nonhost_hmn_DEG/KEGG"
+            ;;
+        humann_genefamilies_Abundance_go_translated.tsv)
+            humann_feature_type="GO"
+            humann_feature_dir="$outputdr/hmn_genefamily_abundance_files/Nonhost_hmn_DEG/GO"
+            ;;
+        *)
+            die "Unsupported HUMAnN DEG input: $humann_deg_input"
+            ;;
+    esac
+
+    humann_deg_args=(
+        "$humann_deg_input"
+        "$samplesheet_file"
+        "$hostid"
+        "$MTDIR/HostSpecies.csv"
     )
 
-    for humann_deg_input in "${humann_deg_inputs[@]}"; do
+    if [[ -n "${metadata:-}" ]]; then
+        humann_deg_args+=( "$metadata" )
+    fi
 
-        humann_deg_args=(
-            "$humann_deg_input"
-            "$samplesheet_file"
-            "$hostid"
-            "$MTDIR/HostSpecies.csv"
-        )
+    echo "============================================================"
+    echo "[HUMAnN DEG] Input:"
+    echo " $humann_deg_input"
+    echo "[HUMAnN DEG] Feature type:"
+    echo " $humann_feature_type"
+    echo "[HUMAnN DEG] Host TaxID:"
+    echo " $hostid"
+    echo "[HUMAnN DEG] HostSpecies:"
+    echo " $MTDIR/HostSpecies.csv"
+    echo "[HUMAnN DEG] Metadata:"
+    echo " ${metadata:-not supplied}"
+    echo "[HUMAnN DEG] Argument count:"
+    echo " ${#humann_deg_args[@]}"
+    echo "============================================================"
 
-        if [[ -n "${metadata:-}" ]]; then
-            humann_deg_args+=( "$metadata" )
+    if ! Rscript \
+        "$DIFFERENTIAL_ANALYSIS_DIR/DEG_Anno_Plot.R" \
+        "${humann_deg_args[@]}"
+    then
+        die "HUMAnN DEG analysis failed for: $humann_deg_input"
+    fi
+
+    #### BEGIN BLOCK: HUMAnN feature overlap Venn/Euler ####
+
+    humann_deg_csv="$humann_feature_dir/${humann_deg_basename%.tsv}_DEG.csv"
+    humann_venn_pdf="$humann_feature_dir/venn_diagramm.pdf"
+    humann_euler_pdf="$humann_feature_dir/euler_diagramm.pdf"
+    humann_overlap_log="$humann_feature_dir/MTD_humann_feature_overlap_venn_euler.log"
+
+    echo "------------------------------------------------------------"
+    echo "[HUMAnN FEATURE OVERLAP]"
+    echo "Feature type: $humann_feature_type"
+    echo "DEG matrix: $humann_deg_csv"
+    echo "Samplesheet: $samplesheet_file"
+    echo "Plot type: $humann_overlap_plot_type"
+    echo "Venn PDF: $humann_venn_pdf"
+
+    if [[ "$humann_overlap_plot_type" == "both" ]]; then
+        echo "Euler PDF: $humann_euler_pdf"
+    else
+        echo "Euler PDF: skipped because the comparison does not have exactly 2 groups"
+    fi
+
+    echo "Log: $humann_overlap_log"
+    echo "Conda environment: MTD_fastp"
+    echo "------------------------------------------------------------"
+
+    if [[ ! -s "$HUMANN_FEATURE_OVERLAP_SCRIPT" ]]; then
+        echo "${y}[WARNING] HUMAnN feature-overlap script was not found.${w}"
+        echo "${y}[WARNING] Skipping Venn/Euler PDF generation.${w}"
+        echo "Expected:"
+        echo " $HUMANN_FEATURE_OVERLAP_SCRIPT"
+
+    elif [[ ! -s "$humann_deg_csv" ]]; then
+        echo "${y}[WARNING] HUMAnN normalized DEG matrix was not found.${w}"
+        echo "${y}[WARNING] Skipping Venn/Euler PDF generation.${w}"
+        echo "Expected:"
+        echo " $humann_deg_csv"
+
+    elif ! conda run \
+        --no-capture-output \
+        -n MTD_fastp \
+        -- \
+        Rscript "$HUMANN_FEATURE_OVERLAP_SCRIPT" \
+            --input "$humann_deg_csv" \
+            --samplesheet "$samplesheet_file" \
+            --feature_type "$humann_feature_type" \
+            --plot_type "$humann_overlap_plot_type" \
+            --output "$humann_venn_pdf" \
+            --euler_output "$humann_euler_pdf" \
+            --write_summary \
+            --write_lists \
+            > "$humann_overlap_log" 2>&1
+    then
+        echo "${y}[WARNING] HUMAnN feature-overlap plotting failed.${w}"
+        echo "${y}[WARNING] The pipeline will continue because DEG completed successfully.${w}"
+        echo "Feature type: $humann_feature_type"
+        echo "Log:"
+        echo " $humann_overlap_log"
+        tail -n 40 "$humann_overlap_log" || true
+
+    else
+        if [[ -s "$humann_venn_pdf" ]]; then
+            echo "${g}[OK] HUMAnN Venn PDF generated:${w}"
+            echo " $humann_venn_pdf"
+        else
+            echo "${y}[WARNING] Venn command finished but the PDF was not found:${w}"
+            echo " $humann_venn_pdf"
         fi
 
-        echo "============================================================"
-        echo "[HUMAnN DEG] Input:"
-        echo "  $humann_deg_input"
-        echo "[HUMAnN DEG] Host TaxID:"
-        echo "  $hostid"
-        echo "[HUMAnN DEG] HostSpecies:"
-        echo "  $MTDIR/HostSpecies.csv"
-        echo "[HUMAnN DEG] Metadata:"
-        echo "  ${metadata:-not supplied}"
-        echo "[HUMAnN DEG] Argument count:"
-        echo "  ${#humann_deg_args[@]}"
-        echo "============================================================"
-
-        if ! Rscript \
-            "$DIFFERENTIAL_ANALYSIS_DIR/DEG_Anno_Plot.R" \
-            "${humann_deg_args[@]}"
-        then
-            die "HUMAnN DEG analysis failed for: $humann_deg_input"
+        if [[ "$humann_overlap_plot_type" == "both" ]]; then
+            if [[ -s "$humann_euler_pdf" ]]; then
+                echo "${g}[OK] HUMAnN Euler PDF generated:${w}"
+                echo " $humann_euler_pdf"
+            else
+                echo "${y}[WARNING] Euler command finished but the PDF was not found:${w}"
+                echo " $humann_euler_pdf"
+            fi
         fi
-    done
+    fi
 
-    #### END BLOCK: metadata-aware HUMAnN DEG calls ####
+    #### END BLOCK: HUMAnN feature overlap Venn/Euler ####
+
+done
+
+#### END BLOCK: metadata-aware HUMAnN DEG calls ####
 fi
 
 conda deactivate
