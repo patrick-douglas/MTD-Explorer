@@ -27,7 +27,7 @@ set -euo pipefail
 offline_files_folder="/media/me/4TB_BACKUP_LBN/Compressed/MTD"
 metadata_dir="$offline_files_folder/Kraken2DB_micro/library/bacteria"
 new_download_dir="$metadata_dir/all"
-home_download_dir="$HOME/MTD/kraken2DB_micro/library/bacteria/all"
+home_download_dir="$HOME/MTD-Explorer/kraken2DB_micro/library/bacteria/all"
 
 FULL_GZIP_CHECK="${FULL_GZIP_CHECK:-0}"
 GZIP_CHECK_JOBS="${GZIP_CHECK_JOBS:-4}"

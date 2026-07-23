@@ -10,7 +10,7 @@ offline_files_folder="/media/me/4TB_BACKUP_LBN/Compressed/MTD"
 LIBRARY="archaea"
 
 new_download_dir="$offline_files_folder/Kraken2DB_micro/library/$LIBRARY/all"
-home_download_dir="$HOME/MTD/kraken2DB_micro/library/$LIBRARY/all"
+home_download_dir="$HOME/MTD-Explorer/kraken2DB_micro/library/$LIBRARY/all"
 
 mkdir -p "$new_download_dir"
 mkdir -p "$home_download_dir"
