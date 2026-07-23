@@ -12,6 +12,8 @@ use strict;
 use warnings;
 use File::Basename;
 use File::Copy;
+use Cwd qw(getcwd);
+use File::Path qw(make_path);
 use Getopt::Std;
 use List::Util qw/max/;
 
@@ -21,10 +23,10 @@ my $PROG = basename $0;
 my $local_download_dir = "/media/me/4TB_BACKUP_LBN/Compressed/MTD/Kraken2DB_micro/library/bacteria/all/";
 
 # Specify the new directory where you want to copy the files
-my $new_download_dir = "$ENV{HOME}/MTD/kraken2DB_micro/library/bacteria/all";
+my $new_download_dir = getcwd() . "/all";
 
 # Create the new directory if it doesn't exist
-mkdir $new_download_dir unless -d $new_download_dir;
+make_path($new_download_dir) unless -d $new_download_dir;
 
 # Copy all files from the original directory to the new directory
 opendir(my $dh, $local_download_dir) || die "Can't opendir $local_download_dir: $!";

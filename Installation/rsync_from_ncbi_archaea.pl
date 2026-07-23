@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use File::Basename;
 use File::Copy;
+use Cwd qw(getcwd);
+use File::Path qw(make_path);
 use Getopt::Std;
 use List::Util qw/max/;
 
@@ -13,9 +15,9 @@ my $PROG = basename $0;
 my $local_download_dir = "/media/me/4TB_BACKUP_LBN/Compressed/MTD/Kraken2DB_micro/library/archaea/all/";
 
 # Folder where Kraken2 will read/copy the files
-my $new_download_dir = "$ENV{HOME}/MTD/kraken2DB_micro/library/archaea/all";
+my $new_download_dir = getcwd() . "/all";
 
-mkdir $new_download_dir unless -d $new_download_dir;
+make_path($new_download_dir) unless -d $new_download_dir;
 
 opendir(my $dh, $local_download_dir) || die "Can't opendir $local_download_dir: $!";
 while (my $file = readdir($dh)) {
