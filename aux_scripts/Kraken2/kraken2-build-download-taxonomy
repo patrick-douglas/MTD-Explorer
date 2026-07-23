@@ -7,9 +7,7 @@ use Getopt::Long;
 use POSIX;
 
 my $PROG = basename $0;
-my $KRAKEN2_DIR = '/home/me/miniconda3/envs/MTD/libexec';
-
-if (! -e "$KRAKEN2_DIR/classify") {
+my $KRAKEN2_DIR = $ENV{"KRAKEN2_DIR"} || ""; if (! $KRAKEN2_DIR || ! -e "$KRAKEN2_DIR/classify") {
   use Cwd 'abs_path';
   $KRAKEN2_DIR = dirname abs_path($0);
 }

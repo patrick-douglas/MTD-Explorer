@@ -23,6 +23,7 @@ min_l=""                    # Kraken2 --minimizer-len, used only with --build
 min_s=""                    # Kraken2 --minimizer-spaces, used only with --build
 read_len=75                 # Bracken read length
 threads="$(nproc)"
+masker_threads="${MTD_KRAKEN2_MASKER_THREADS:-$threads}"
 condapath="${HOME}/miniconda3"
 offline_files_folder=""
 
@@ -192,6 +193,12 @@ Optional:
   -r INT   Bracken read length (default: 75)
   -h       Show this help message
 
+Environment:
+
+  MTD_KRAKEN2_MASKER_THREADS
+           Threads used by k2mask during low-complexity masking.
+           Default: the installer CPU thread count.
+
 The installer automatically downloads and installs Miniconda.
 
 WARNING:
@@ -299,6 +306,11 @@ validate_arguments() {
         exit 1
     fi
 
+    if ! [[ "$masker_threads" =~ ^[1-9][0-9]*$ ]]; then
+        log_error "Invalid Kraken2 masker thread count: $masker_threads"
+        exit 1
+    fi
+
     if ! [[ "$read_len" =~ ^[1-9][0-9]*$ ]]; then
         log_error "Invalid Bracken read length: $read_len"
         exit 1
@@ -309,6 +321,9 @@ validate_arguments() {
 
     log_info "Persistent installation cache:"
     log_info "  $offline_files_folder"
+
+    log_info "Kraken2 low-complexity masking threads:"
+    log_info "  $masker_threads"
 }
 
 configure_paths_and_options() {
@@ -768,7 +783,9 @@ run_kraken2_build() {
         ensure_kraken2_environment
     fi
 
-    env PATH="$KRAKEN_ENV_PREFIX/bin:$PATH" \
+    env \
+        PATH="$KRAKEN_ENV_PREFIX/bin:$PATH" \
+        MTD_KRAKEN2_MASKER_THREADS="$masker_threads" \
         "$KRAKEN2_BUILD_BIN" "$@"
 }
 
@@ -1583,6 +1600,7 @@ download_shared_kraken2_taxonomy_once() {
 
     if ! env \
         PATH="$KRAKEN_ENV_PREFIX/bin:$PATH" \
+        KRAKEN2_DIR="$KRAKEN_ENV_LIBEXEC" \
         "$downloader" \
         --download-taxonomy \
         --threads "$threads" \
@@ -1747,6 +1765,45 @@ restore_default_genomic_library_helper() {
     install_kraken_helper \
         "$dir/Installation/download_genomic_library.sh" \
         "download_genomic_library.sh"
+}
+
+# MTD_KRAKEN2_PARALLEL_MASK_INSTALL_V2
+validate_parallel_mask_helper() {
+    local helper="$dir/Installation/mask_low_complexity.sh"
+
+    if [[ ! -f "$helper" ]]; then
+        log_error "Parallel Kraken2 masking helper was not found:"
+        log_error "  $helper"
+        exit 1
+    fi
+
+    if ! bash -n "$helper"; then
+        log_error "Parallel Kraken2 masking helper failed Bash syntax validation:"
+        log_error "  $helper"
+        exit 1
+    fi
+
+    if ! grep -Fq "MTD_KRAKEN2_PARALLEL_MASK_V2" "$helper"; then
+        log_error "Unexpected Kraken2 masking helper marker:"
+        log_error "  $helper"
+        exit 1
+    fi
+
+    if ! grep -Fq -- '-threads "$masker_threads"' "$helper"; then
+        log_error "Parallel Kraken2 helper does not pass threads to k2mask:"
+        log_error "  $helper"
+        exit 1
+    fi
+
+    log_ok "Parallel Kraken2 masking helper passed repository validation."
+}
+
+restore_parallel_mask_helper() {
+    validate_parallel_mask_helper
+
+    install_kraken_helper \
+        "$dir/Installation/mask_low_complexity.sh" \
+        "mask_low_complexity.sh"
 }
 
 patch_perl_local_download_dir() {
@@ -2278,6 +2335,7 @@ run_required_command \
 install_default_kraken_helpers() {
     restore_default_rsync_helper
     restore_default_genomic_library_helper
+    restore_parallel_mask_helper
 }
 
 prepare_microbiome_manifests() {
