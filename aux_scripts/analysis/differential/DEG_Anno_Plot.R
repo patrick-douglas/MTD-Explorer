@@ -3225,23 +3225,157 @@ ggsave(
   })
 
   ## ----------------------------------------------------------
-  ## Dotplot
-  ## ----------------------------------------------------------
+## Dotplot
+## ----------------------------------------------------------
+tryCatch({
+  # Long GO and pathway descriptions require substantially more room
+  # than the default enrichplot device. Wrap labels and calculate the
+  # output height from both the number of terms and wrapped text lines.
+  #
+  # Optional customization:
+  #   export MTD_ENRICHMENT_DOTPLOT_WRAP=50
+  #   export MTD_ENRICHMENT_DOTPLOT_WIDTH=14
 
-  tryCatch({
-    p.dot <- dotplot(data, showCategory = plot_terms) + ggtitle("dotplot for GSEA")
-
-    ggsave(
-      paste0(edb, "/GSEA_", edb0, "_dotplot.pdf"),
-      plot = p.dot,
-      height = 4.8,
-      width = 6
+  dotplot_wrap_width <- suppressWarnings(
+    as.integer(
+      Sys.getenv(
+        "MTD_ENRICHMENT_DOTPLOT_WRAP",
+        "50"
+      )
     )
-  }, error = function(e) {
-    write_plot_skip("dotplot", e)
-  })
+  )
 
-  ## ----------------------------------------------------------
+  if (
+    is.na(dotplot_wrap_width) ||
+    dotplot_wrap_width < 20L
+  ) {
+    dotplot_wrap_width <- 50L
+  }
+
+  dotplot_width <- suppressWarnings(
+    as.numeric(
+      Sys.getenv(
+        "MTD_ENRICHMENT_DOTPLOT_WIDTH",
+        "14"
+      )
+    )
+  )
+
+  if (
+    is.na(dotplot_width) ||
+    !is.finite(dotplot_width) ||
+    dotplot_width < 8
+  ) {
+    dotplot_width <- 14
+  }
+
+  dotplot_descriptions <- as.character(
+    utils::head(
+      data@result$Description,
+      plot_terms
+    )
+  )
+
+  dotplot_descriptions[
+    is.na(dotplot_descriptions)
+  ] <- ""
+
+  wrapped_descriptions <- stringr::str_wrap(
+    dotplot_descriptions,
+    width = dotplot_wrap_width
+  )
+
+  wrapped_line_counts <- vapply(
+    strsplit(
+      wrapped_descriptions,
+      "\n",
+      fixed = TRUE
+    ),
+    function(lines) {
+      max(1L, length(lines))
+    },
+    integer(1)
+  )
+
+  # The minimum accommodates short enrichment lists. Additional height
+  # is allocated for every displayed text line. The upper limit prevents
+  # accidental creation of an excessively large graphics device.
+  dotplot_height <- max(
+    7,
+    2.5 + 0.24 * sum(wrapped_line_counts)
+  )
+
+  dotplot_height <- min(
+    dotplot_height,
+    24
+  )
+
+  p.dot <- dotplot(
+    data,
+    showCategory = plot_terms
+  ) +
+    ggtitle("Dotplot for GSEA") +
+    ggplot2::scale_y_discrete(
+      labels = function(labels) {
+        stringr::str_wrap(
+          labels,
+          width = dotplot_wrap_width
+        )
+      }
+    ) +
+    ggplot2::theme(
+      axis.text.y = ggplot2::element_text(
+        size = 8,
+        lineheight = 0.92
+      ),
+      axis.text.x = ggplot2::element_text(
+        size = 9
+      ),
+      axis.title = ggplot2::element_text(
+        size = 10
+      ),
+      plot.title = ggplot2::element_text(
+        size = 12,
+        hjust = 0.5
+      ),
+      plot.margin = ggplot2::margin(
+        t = 10,
+        r = 18,
+        b = 10,
+        l = 10
+      )
+    )
+
+  ggsave(
+    paste0(
+      edb,
+      "/GSEA_",
+      edb0,
+      "_dotplot.pdf"
+    ),
+    plot = p.dot,
+    width = dotplot_width,
+    height = dotplot_height,
+    units = "in",
+    limitsize = FALSE
+  )
+
+  message(
+    "[GSEA DOTPLOT] Terms: ",
+    plot_terms,
+    "; wrap width: ",
+    dotplot_wrap_width,
+    " characters; dimensions: ",
+    sprintf("%.1f", dotplot_width),
+    " x ",
+    sprintf("%.1f", dotplot_height),
+    " inches"
+  )
+}, error = function(e) {
+  write_plot_skip("dotplot", e)
+})
+
+## ----------------------------------------------------------
   ## Cnetplot
   ## ----------------------------------------------------------
 
