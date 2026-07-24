@@ -99,18 +99,39 @@ case $library_name in
 
     echo "Using cached plasmid files from:"
     echo "  $local_download_dir"
+  # MTD_CURRENT_PLASMID_MANIFEST_V1
+  current_manifest="$local_download_dir/manifest_plasmid.names.txt"
 
-    mapfile -d '' plasmid_files < <(
-        find "$local_download_dir" \
-            -maxdepth 1 \
-            -type f \
-            -name '*.genomic.fna.gz' \
-            -size +0c \
-            -print0 |
-        sort -z
-    )
+  if [[ ! -s "$current_manifest" ]]; then
+    echo "Error: validated current plasmid manifest not found:" >&2
+    echo "  $current_manifest" >&2
+    echo "Run manifest.plasmid.sh before invoking Kraken2." >&2
+    exit 1
+  fi
 
-    if (( ${#plasmid_files[@]} == 0 )); then
+  plasmid_files=()
+
+  while IFS= read -r plasmid_name; do
+    [[ -n "$plasmid_name" ]] || continue
+
+    if [[ "$plasmid_name" == */* || "$plasmid_name" == "." || "$plasmid_name" == ".." ]]; then
+      echo "Error: unsafe filename in plasmid manifest:" >&2
+      echo "  $plasmid_name" >&2
+      exit 1
+    fi
+
+    plasmid_path="$local_download_dir/$plasmid_name"
+
+    if [[ ! -s "$plasmid_path" ]]; then
+      echo "Error: current plasmid release file is missing or empty:" >&2
+      echo "  $plasmid_path" >&2
+      exit 1
+    fi
+
+    plasmid_files+=("$plasmid_path")
+  done < "$current_manifest"
+
+  if (( ${#plasmid_files[@]} == 0 )); then
         echo "Error: no non-empty *.genomic.fna.gz files found in:" >&2
         echo "  $local_download_dir" >&2
         exit 1

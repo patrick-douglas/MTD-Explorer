@@ -47,6 +47,8 @@ KRAKEN_ENV_LIBEXEC=""
 kraken_build_opts=()
 ORIGINAL_CHANNEL_PRIORITY=""
 KRAKEN_TAXONOMY_CACHE=""
+KRAKEN_TAXONOMY_REMOTE_BASE_URL="https://ftp.ncbi.nlm.nih.gov/pub/taxonomy"
+KRAKEN_TAXONOMY_REMOTE_MANIFEST_NAME=".mtd_taxonomy_remote_md5.tsv"
 # Validated and immutable Virus-Host DB mirror used by MTD Explorer.
 VIRUSHOST_MIRROR_REPOSITORY="patrick-douglas/MTD"
 VIRUSHOST_MIRROR_TAG="virushostdb-mirror-r235-g271.0-a250b2e61d9f"
@@ -1566,10 +1568,146 @@ validate_kraken2_taxonomy_dir() {
     return 0
 }
 
+# MTD_KRAKEN2_TAXONOMY_FRESHNESS_V1
+fetch_small_remote_file_once() {
+    local url="$1"
+    local destination="$2"
+    local partial_file="${destination}.part"
+    local exit_status=0
+
+    rm -f -- "$partial_file"
+
+    if command -v curl >/dev/null 2>&1; then
+        curl \
+            --fail \
+            --location \
+            --silent \
+            --show-error \
+            --connect-timeout 30 \
+            --max-time 300 \
+            --output "$partial_file" \
+            "$url"
+        exit_status=$?
+    elif command -v wget >/dev/null 2>&1; then
+        wget \
+            --quiet \
+            --tries=3 \
+            --timeout=60 \
+            --output-document="$partial_file" \
+            "$url"
+        exit_status=$?
+    else
+        log_error "Neither curl nor wget is available for the NCBI freshness check."
+        return 127
+    fi
+
+    if (( exit_status != 0 )); then
+        rm -f -- "$partial_file"
+        return "$exit_status"
+    fi
+
+    if [[ ! -s "$partial_file" ]]; then
+        rm -f -- "$partial_file"
+        log_warning "Downloaded NCBI checksum file is empty: $url"
+        return 1
+    fi
+
+    mv -f -- "$partial_file" "$destination"
+}
+
+fetch_ncbi_taxonomy_remote_manifest_once() {
+    local destination="$1"
+    local temp_dir=""
+    local asset=""
+    local relative_url=""
+    local sidecar=""
+    local checksum=""
+
+    local -a assets=(
+        "taxdump.tar.gz"
+        "nucl_gb.accession2taxid.gz"
+        "nucl_wgs.accession2taxid.gz"
+    )
+
+    local -a relative_urls=(
+        "taxdump.tar.gz.md5"
+        "accession2taxid/nucl_gb.accession2taxid.gz.md5"
+        "accession2taxid/nucl_wgs.accession2taxid.gz.md5"
+    )
+
+    temp_dir="$(mktemp -d)" || return 1
+    : > "$temp_dir/manifest.tsv"
+
+    for index in "${!assets[@]}"; do
+        asset="${assets[$index]}"
+        relative_url="${relative_urls[$index]}"
+        sidecar="$temp_dir/${asset}.md5"
+
+        if ! fetch_small_remote_file_once \
+            "$KRAKEN_TAXONOMY_REMOTE_BASE_URL/$relative_url" \
+            "$sidecar"
+        then
+            rm -rf -- "$temp_dir"
+            return 1
+        fi
+
+        checksum="$(
+            awk '
+                NF {
+                    value = tolower($1)
+                    print value
+                    exit
+                }
+            ' "$sidecar"
+        )"
+
+        if ! [[ "$checksum" =~ ^[[:xdigit:]]{32}$ ]]; then
+            log_warning "Invalid NCBI MD5 sidecar for: $asset"
+            rm -rf -- "$temp_dir"
+            return 1
+        fi
+
+        printf '%s\t%s\n' \
+            "$asset" \
+            "$checksum" \
+            >> "$temp_dir/manifest.tsv"
+    done
+
+    if [[ "$(wc -l < "$temp_dir/manifest.tsv")" -ne 3 ]]; then
+        log_warning "Incomplete NCBI taxonomy remote manifest."
+        rm -rf -- "$temp_dir"
+        return 1
+    fi
+
+    mv -f -- "$temp_dir/manifest.tsv" "$destination"
+    rm -rf -- "$temp_dir"
+}
+
+fetch_ncbi_taxonomy_remote_manifest() {
+    local destination="$1"
+
+    if ! retry_until_success \
+        "Checking current NCBI taxonomy release checksums" \
+        fetch_ncbi_taxonomy_remote_manifest_once \
+        "$destination"
+    then
+        log_error "Could not retrieve the current NCBI taxonomy checksums."
+        return 1
+    fi
+}
+
 download_shared_kraken2_taxonomy_once() {
+    local expected_manifest="$1"
     local downloader="$KRAKEN_AUX_DIR/kraken2-build-download-taxonomy"
     local taxonomy_dir="$KRAKEN_TAXONOMY_CACHE/taxonomy"
     local complete_marker="$KRAKEN_TAXONOMY_CACHE/.mtd_taxonomy_complete"
+    local cache_manifest="$KRAKEN_TAXONOMY_CACHE/$KRAKEN_TAXONOMY_REMOTE_MANIFEST_NAME"
+
+    if [[ ! -s "$expected_manifest" ]]; then
+        log_error "Expected NCBI taxonomy manifest is missing or empty:"
+        log_error "  $expected_manifest"
+        return 1
+    fi
 
     if [[ ! -f "$downloader" ]]; then
         log_error "Kraken2 taxonomy downloader not found:"
@@ -1583,10 +1721,10 @@ download_shared_kraken2_taxonomy_once() {
         return 126
     fi
 
-    log_info "Removing any incomplete taxonomy cache before download..."
+    log_info "Removing the obsolete or incomplete taxonomy cache..."
 
-    rm -rf "$taxonomy_dir"
-    rm -f "$complete_marker"
+    rm -rf -- "$taxonomy_dir"
+    rm -f -- "$complete_marker" "$cache_manifest"
 
     if ! mkdir -p "$KRAKEN_TAXONOMY_CACHE"; then
         log_error "Could not create taxonomy cache directory:"
@@ -1594,7 +1732,7 @@ download_shared_kraken2_taxonomy_once() {
         return 1
     fi
 
-    log_info "Downloading the shared NCBI taxonomy cache..."
+    log_info "Downloading the current shared NCBI taxonomy cache..."
 
     ensure_kraken2_environment
 
@@ -1609,8 +1747,8 @@ download_shared_kraken2_taxonomy_once() {
         log_warning "Shared taxonomy download failed."
         log_warning "Removing incomplete files before the next attempt."
 
-        rm -rf "$taxonomy_dir"
-        rm -f "$complete_marker"
+        rm -rf -- "$taxonomy_dir"
+        rm -f -- "$complete_marker" "$cache_manifest"
         return 1
     fi
 
@@ -1618,12 +1756,23 @@ download_shared_kraken2_taxonomy_once() {
         log_warning "Downloaded taxonomy did not pass validation."
         log_warning "Removing incomplete or invalid taxonomy files."
 
-        rm -rf "$taxonomy_dir"
-        rm -f "$complete_marker"
+        rm -rf -- "$taxonomy_dir"
+        rm -f -- "$complete_marker" "$cache_manifest"
         return 1
     fi
 
-    date -u '+%Y-%m-%dT%H:%M:%SZ' > "$complete_marker"
+    if ! cp -f -- "$expected_manifest" "$cache_manifest"; then
+        log_error "Could not store the NCBI taxonomy checksum manifest."
+        rm -rf -- "$taxonomy_dir"
+        rm -f -- "$complete_marker" "$cache_manifest"
+        return 1
+    fi
+
+    {
+        echo "status=complete"
+        echo "validated_at=$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+        echo "remote_manifest=$cache_manifest"
+    } > "$complete_marker"
 
     log_ok "Shared Kraken2 taxonomy downloaded and validated."
     log_info "Taxonomy cache:"
@@ -1635,43 +1784,66 @@ download_shared_kraken2_taxonomy_once() {
 prepare_shared_kraken2_taxonomy() {
     local taxonomy_dir="$KRAKEN_TAXONOMY_CACHE/taxonomy"
     local complete_marker="$KRAKEN_TAXONOMY_CACHE/.mtd_taxonomy_complete"
+    local cache_manifest="$KRAKEN_TAXONOMY_CACHE/$KRAKEN_TAXONOMY_REMOTE_MANIFEST_NAME"
+    local remote_manifest=""
+
+    remote_manifest="$(mktemp)" || {
+        log_error "Could not create a temporary NCBI checksum manifest."
+        exit 1
+    }
+
+    if ! fetch_ncbi_taxonomy_remote_manifest "$remote_manifest"; then
+        rm -f -- "$remote_manifest"
+        exit 1
+    fi
 
     if [[ -f "$complete_marker" ]] &&
-       validate_kraken2_taxonomy_dir "$taxonomy_dir"; then
-
-        log_ok "Using the existing validated Kraken2 taxonomy cache."
+       [[ -s "$cache_manifest" ]] &&
+       validate_kraken2_taxonomy_dir "$taxonomy_dir" &&
+       cmp -s -- "$remote_manifest" "$cache_manifest"
+    then
+        log_ok "The cached Kraken2 taxonomy matches the current NCBI release."
         log_info "Taxonomy cache:"
         log_info "  $KRAKEN_TAXONOMY_CACHE"
+        rm -f -- "$remote_manifest"
         return 0
     fi
 
-    if [[ -e "$taxonomy_dir" || -e "$complete_marker" ]]; then
-        log_warning "Existing taxonomy cache is incomplete or invalid."
-        log_warning "It will be removed and downloaded again."
-        rm -rf "$taxonomy_dir"
-        rm -f "$complete_marker"
+    if [[ -s "$cache_manifest" ]]; then
+        log_warning "The cached Kraken2 taxonomy is older than the current NCBI release."
+        log_warning "Changed checksum manifest:"
+        diff -u -- "$cache_manifest" "$remote_manifest" >&2 || true
+    elif [[ -e "$taxonomy_dir" || -e "$complete_marker" ]]; then
+        log_warning "The existing taxonomy cache has no remote checksum manifest."
+        log_warning "It will be refreshed once to establish a trusted baseline."
     else
-        log_info "No valid shared Kraken2 taxonomy cache was found."
+        log_info "No validated Kraken2 taxonomy cache was found."
     fi
 
     if ! retry_until_success \
-        "Shared NCBI taxonomy for all Kraken2 databases" \
-        download_shared_kraken2_taxonomy_once; then
-
+        "Current shared NCBI taxonomy for all Kraken2 databases" \
+        download_shared_kraken2_taxonomy_once \
+        "$remote_manifest"
+    then
+        rm -f -- "$remote_manifest"
         log_error "The shared Kraken2 taxonomy could not be prepared."
         exit 1
     fi
+
+    rm -f -- "$remote_manifest"
 }
 
-install_shared_kraken2_taxonomy() {
+copy_cached_taxonomy_to_database() {
     local database="$1"
     local source_taxonomy="$KRAKEN_TAXONOMY_CACHE/taxonomy"
     local destination_taxonomy="$database/taxonomy"
+    local cache_manifest="$KRAKEN_TAXONOMY_CACHE/$KRAKEN_TAXONOMY_REMOTE_MANIFEST_NAME"
 
-    prepare_shared_kraken2_taxonomy
-
-    log_info "Installing cached NCBI taxonomy into:"
-    log_info "  $database"
+    if [[ ! -s "$cache_manifest" ]]; then
+        log_error "Kraken2 taxonomy cache checksum manifest is missing:"
+        log_error "  $cache_manifest"
+        exit 1
+    fi
 
     if ! mkdir -p "$database"; then
         log_error "Could not create Kraken2 database directory:"
@@ -1679,11 +1851,19 @@ install_shared_kraken2_taxonomy() {
         exit 1
     fi
 
-    rm -rf "$destination_taxonomy"
+    rm -rf -- "$destination_taxonomy"
 
-    if ! cp -a "$source_taxonomy" "$database/"; then
+    if ! cp -a -- "$source_taxonomy" "$database/"; then
         log_error "Could not copy the shared taxonomy into:"
         log_error "  $database"
+        exit 1
+    fi
+
+    if ! cp -f -- \
+        "$cache_manifest" \
+        "$destination_taxonomy/$KRAKEN_TAXONOMY_REMOTE_MANIFEST_NAME"
+    then
+        log_error "Could not copy the taxonomy checksum manifest into the database."
         exit 1
     fi
 
@@ -1692,9 +1872,233 @@ install_shared_kraken2_taxonomy() {
         log_error "  $destination_taxonomy"
         exit 1
     fi
+}
 
-    log_ok "Cached taxonomy installed and validated:"
-    log_ok "  $destination_taxonomy"
+install_shared_kraken2_taxonomy() {
+    local database="$1"
+
+    prepare_shared_kraken2_taxonomy
+
+    log_info "Installing the current cached NCBI taxonomy into:"
+    log_info "  $database"
+
+    copy_cached_taxonomy_to_database "$database"
+
+    log_ok "Current cached taxonomy installed and validated:"
+    log_ok "  $database/taxonomy"
+}
+
+reset_stale_kraken2_build_outputs() {
+    local database="$1"
+
+    log_warning "Removing stale Kraken2 mapping and database outputs."
+
+    rm -f -- \
+        "$database/seqid2taxid.map" \
+        "$database/unmapped.txt" \
+        "$database/unmapped.prebuild.txt" \
+        "$database/unmapped.prebuild.origins.tsv" \
+        "$database/hash.k2d" \
+        "$database/opts.k2d" \
+        "$database/taxo.k2d" \
+        "$database/seqid2taxid.map.tmp" \
+        "$database/accmap_file.tmp" \
+        "$database/seqid2taxid_acc.tmp"
+}
+
+sync_database_taxonomy_with_current_cache() {
+    local database="$1"
+    local cache_manifest="$KRAKEN_TAXONOMY_CACHE/$KRAKEN_TAXONOMY_REMOTE_MANIFEST_NAME"
+    local database_manifest="$database/taxonomy/$KRAKEN_TAXONOMY_REMOTE_MANIFEST_NAME"
+
+    # This performs a new online checksum comparison. It catches an NCBI
+    # taxonomy release that appeared while the genomic libraries were being
+    # prepared, which may take several hours.
+    prepare_shared_kraken2_taxonomy
+
+    if validate_kraken2_taxonomy_dir "$database/taxonomy" &&
+       [[ -s "$database_manifest" ]] &&
+       cmp -s -- "$cache_manifest" "$database_manifest"
+    then
+        log_ok "Database taxonomy already matches the current NCBI release."
+        return 0
+    fi
+
+    log_warning "Database taxonomy is not synchronized with the current NCBI release."
+    copy_cached_taxonomy_to_database "$database"
+    reset_stale_kraken2_build_outputs "$database"
+
+    log_ok "Database taxonomy was refreshed before the expensive Kraken2 build."
+}
+
+preflight_kraken2_accession_mapping() {
+    local database="$1"
+    local lookup_bin="$KRAKEN_ENV_LIBEXEC/lookup_accession_numbers"
+    local work_dir=""
+    local prelim_file=""
+    local accession_file=""
+    local map_output=""
+    local unmapped_report="$database/unmapped.prebuild.txt"
+    local origin_report="$database/unmapped.prebuild.origins.tsv"
+    local target_count=0
+    local unmapped_count=0
+    local prelim_count=0
+    local map_file=""
+    local -a accession_maps=()
+
+    ensure_kraken2_environment
+
+    if [[ ! -x "$lookup_bin" ]]; then
+        log_error "Kraken2 lookup_accession_numbers was not found:"
+        log_error "  $lookup_bin"
+        return 1
+    fi
+
+    accession_maps=("$database"/taxonomy/*.accession2taxid)
+
+    if [[ ! -e "${accession_maps[0]}" ]]; then
+        log_error "No accession-to-TaxID maps were found in:"
+        log_error "  $database/taxonomy"
+        return 1
+    fi
+
+    if [[ -d "$database/library/added" ]]; then
+        map_file="$database/library/added/prelim_map.txt"
+
+        if find "$database/library/added" \
+            -maxdepth 1 \
+            -type f \
+            -name 'prelim_map_*.txt' \
+            -print -quit | grep -q .
+        then
+            find "$database/library/added" \
+                -maxdepth 1 \
+                -type f \
+                -name 'prelim_map_*.txt' \
+                -print0 |
+            sort -z |
+            xargs -0 cat > "$map_file"
+        fi
+    fi
+
+    work_dir="$(mktemp -d "$database/.mtd-taxonomy-preflight.XXXXXX")" || {
+        log_error "Could not create the Kraken2 mapping preflight directory."
+        return 1
+    }
+
+    prelim_file="$work_dir/prelim_map.txt"
+    accession_file="$work_dir/accmap_file.tmp"
+    map_output="$work_dir/seqid2taxid.map.tmp"
+
+    : > "$prelim_file"
+
+    while IFS= read -r -d '' map_file; do
+        cat -- "$map_file" >> "$prelim_file"
+        prelim_count=$((prelim_count + 1))
+    done < <(
+        find "$database/library" \
+            -mindepth 2 \
+            -maxdepth 2 \
+            -type f \
+            -name 'prelim_map.txt' \
+            -print0 |
+        sort -z
+    )
+
+    if (( prelim_count == 0 )) || [[ ! -s "$prelim_file" ]]; then
+        rm -rf -- "$work_dir"
+        log_error "No preliminary Kraken2 mapping files were found."
+        return 1
+    fi
+
+    grep '^TAXID' "$prelim_file" |
+        cut -f 2- > "$map_output" || true
+
+    grep '^ACCNUM' "$prelim_file" |
+        cut -f 2- > "$accession_file" || true
+
+    target_count="$(wc -l < "$accession_file" | tr -d '[:space:]')"
+
+    rm -f -- "$database/unmapped.txt" "$unmapped_report" "$origin_report"
+
+    if [[ -s "$accession_file" ]]; then
+        log_info "Preflighting Kraken2 accession-to-TaxID mappings:"
+        log_info "  ACCNUM targets: $target_count"
+
+        if ! (
+            cd "$work_dir" || exit 1
+            "$lookup_bin" \
+                "$accession_file" \
+                "${accession_maps[@]}" \
+                > "$work_dir/seqid2taxid_acc.tmp"
+        ); then
+            rm -rf -- "$work_dir"
+            log_error "Kraken2 accession mapping preflight failed."
+            return 1
+        fi
+
+        cat "$work_dir/seqid2taxid_acc.tmp" >> "$map_output"
+    fi
+
+    if [[ -s "$work_dir/unmapped.txt" ]]; then
+        cp -f -- "$work_dir/unmapped.txt" "$unmapped_report"
+        unmapped_count="$(wc -l < "$unmapped_report" | tr -d '[:space:]')"
+
+        if [[ -f "$dir/Installation/report_kraken2_unmapped.py" ]]; then
+            python3 \
+                "$dir/Installation/report_kraken2_unmapped.py" \
+                --database "$database" \
+                --unmapped "$unmapped_report" \
+                --output "$origin_report" \
+                || true
+        fi
+
+        log_error "Kraken2 taxonomy is current, but accessions remain unmapped."
+        log_error "Unmapped accessions: $unmapped_count"
+        log_error "Build was stopped before capacity estimation and database construction."
+        log_error "Unmapped list:"
+        log_error "  $unmapped_report"
+
+        if [[ -s "$origin_report" ]]; then
+            log_error "Library-origin report:"
+            log_error "  $origin_report"
+        fi
+
+        head -n 20 "$unmapped_report" >&2
+        rm -rf -- "$work_dir"
+        return 1
+    fi
+
+    if [[ ! -s "$map_output" ]]; then
+        rm -rf -- "$work_dir"
+        log_error "The Kraken2 preflight produced an empty sequence-to-TaxID map."
+        return 1
+    fi
+
+    mv -f -- "$map_output" "$database/seqid2taxid.map"
+    rm -rf -- "$work_dir"
+
+    log_ok "All Kraken2 reference accessions mapped before database construction."
+    log_info "Prepared mapping:"
+    log_info "  $database/seqid2taxid.map"
+}
+
+prepare_kraken2_database_mapping() {
+    local database="$1"
+
+    sync_database_taxonomy_with_current_cache "$database"
+
+    if [[ -s "$database/unmapped.txt" ]]; then
+        log_warning "A previous Kraken2 build left unmapped references."
+        reset_stale_kraken2_build_outputs "$database"
+    else
+        rm -f -- "$database/seqid2taxid.map"
+    fi
+
+    if ! preflight_kraken2_accession_mapping "$database"; then
+        log_error "Kraken2 reference mapping validation failed."
+        exit 1
+    fi
 }
 
 build_kraken2_database() {
@@ -1828,7 +2232,14 @@ copy_manifest_with_offline_folder() {
     sed -i \
     "s|^offline_files_folder=.*|offline_files_folder=\"$offline_files_folder\"|" \
     "$destination_script"
-    run_required_script "$destination_script"
+
+    # MTD_NCBI_MANIFEST_FRESHNESS_V1
+    chmod +x "$destination_script"
+    run_required_command \
+        "Synchronizing the current NCBI remote catalog" \
+        env \
+        MTD_MANIFEST_HELPER="$MANIFEST_SCRIPTS_DIR/sync_ncbi_cache.py" \
+        "$destination_script"
 }
 
 
@@ -2218,6 +2629,7 @@ chmod +x "$manifest_destination"
 run_required_command \
     "Synchronizing NCBI RefSeq viral genomes" \
     env \
+    MTD_MANIFEST_HELPER="$MANIFEST_SCRIPTS_DIR/sync_ncbi_cache.py" \
     MTD_OFFLINE_FILES_FOLDER="$offline_files_folder" \
     BUILD_COMBINED_FASTA=1 \
     REQUIRE_COMPLETE_COLLECTION=1 \
@@ -2424,7 +2836,13 @@ add_local_plasmid_library() {
         "s|^LOCAL_DIR=.*|LOCAL_DIR=$plasmid_cache/|" \
         "$manifest_destination"
 
-    run_required_script "$manifest_destination"
+    chmod +x "$manifest_destination"
+    run_required_command \
+        "Synchronizing the current NCBI plasmid release" \
+        env \
+        MTD_MANIFEST_HELPER="$MANIFEST_SCRIPTS_DIR/sync_ncbi_cache.py" \
+        MTD_KRAKEN2_PLASMID_CACHE="$plasmid_cache" \
+        "$manifest_destination"
 
     if [[ ! -d "$plasmid_cache" ]]; then
         log_error "Plasmid cache directory not found:"
@@ -2543,6 +2961,10 @@ build_microbiome_kraken_database() {
     --add-to-library "$viral_library" \
     --threads "$threads" \
     --db "$database"
+
+    show_progress 67 "Checking taxonomy freshness and reference mappings"
+
+    prepare_kraken2_database_mapping "$database"
 
     show_progress 68 "Building the final Kraken2 microbiome database"
 
