@@ -289,31 +289,88 @@ def download_entries(
     return failures
 
 
+# MTD_NCBI_ASSEMBLY_HEADER_PARSER_V2
 def parse_assembly_summary(
     data: bytes,
     summary_url: str,
     allowed_levels: set[str],
 ) -> list[RemoteEntry]:
-    text = data.decode("utf-8", errors="replace")
+    # utf-8-sig removes a possible UTF-8 BOM without affecting normal UTF-8.
+    text = data.decode("utf-8-sig", errors="replace")
     header: list[str] | None = None
     rows: list[list[str]] = []
 
     for raw_line in text.splitlines():
-        if raw_line.startswith("# assembly_accession"):
-            header = raw_line[2:].split("\t")
+        # NCBI files normally use "# assembly_accession", but some mirrors,
+        # releases, and generated subsets may use "#assembly_accession",
+        # leading whitespace, or an UTF-8 BOM. Normalize the comment prefix
+        # before deciding whether this is the tab-delimited header.
+        line = raw_line.lstrip("\ufeff")
+        stripped = line.lstrip()
+
+        if not stripped:
             continue
-        if raw_line.startswith("#") or not raw_line.strip():
+
+        if stripped.startswith("#"):
+            candidate = stripped[1:].lstrip()
+            fields = [field.strip() for field in candidate.split("\t")]
+
+            if fields and fields[0].lower() == "assembly_accession":
+                header = fields
+
             continue
-        rows.append(raw_line.split("\t"))
+
+        rows.append(line.rstrip("\r\n").split("\t"))
 
     if header is None:
-        fail(f"The NCBI assembly summary has no recognized header: {summary_url}")
+        nonempty = [
+            line.strip()
+            for line in text.splitlines()
+            if line.strip()
+        ]
+        preview = " | ".join(nonempty[:5])
+        preview = preview[:800]
 
-    index = {name: position for position, name in enumerate(header)}
-    required = {"assembly_accession", "assembly_level", "version_status", "seq_rel_date", "asm_name", "ftp_path"}
+        lowered = text.lstrip().lower()
+        if lowered.startswith("<!doctype html") or lowered.startswith("<html"):
+            fail(
+                "NCBI returned HTML instead of an assembly summary: "
+                f"{summary_url}. Response preview: {preview}"
+            )
+
+        fail(
+            "The NCBI assembly summary has no recognized tab-delimited "
+            f"assembly_accession header: {summary_url}. "
+            f"Response preview: {preview}"
+        )
+
+    # Remove any accidental leading comment marker or whitespace from every
+    # column name while preserving the official NCBI names.
+    header = [
+        field.lstrip("\ufeff#").strip()
+        for field in header
+    ]
+
+    index = {
+        name: position
+        for position, name in enumerate(header)
+    }
+
+    required = {
+        "assembly_accession",
+        "assembly_level",
+        "version_status",
+        "seq_rel_date",
+        "asm_name",
+        "ftp_path",
+    }
     missing = required - set(index)
+
     if missing:
-        fail(f"Assembly summary is missing required columns: {', '.join(sorted(missing))}")
+        fail(
+            "Assembly summary is missing required columns: "
+            + ", ".join(sorted(missing))
+        )
 
     entries: list[RemoteEntry] = []
     seen: set[str] = set()
@@ -321,25 +378,31 @@ def parse_assembly_summary(
     for fields in rows:
         if len(fields) < len(header):
             continue
+
         ftp_path = fields[index["ftp_path"]].strip()
         assembly_level = fields[index["assembly_level"]].strip()
+
         if ftp_path == "na" or not ftp_path:
             continue
+
         if allowed_levels and assembly_level not in allowed_levels:
             continue
 
         ftp_path = re.sub(r"^ftp:", "https:", ftp_path)
-        ftp_path = ftp_path.replace("ftp.ncbi.nlm.nih.gov", "ftp.ncbi.nlm.nih.gov")
         ftp_path = ftp_path.rstrip("/")
         assembly_dir = ftp_path.rsplit("/", 1)[-1]
+
         if not re.match(r"^GC[AF]_\d+\.\d+_", assembly_dir):
             continue
 
         name = f"{assembly_dir}_genomic.fna.gz"
+
         if name in seen:
             continue
+
         seen.add(name)
         url = f"{ftp_path}/{name}"
+
         signature_source = "\t".join(
             [
                 fields[index["assembly_accession"]].strip(),
@@ -350,7 +413,10 @@ def parse_assembly_summary(
                 ftp_path,
             ]
         )
-        signature = hashlib.sha256(signature_source.encode("utf-8")).hexdigest()
+        signature = hashlib.sha256(
+            signature_source.encode("utf-8")
+        ).hexdigest()
+
         entries.append(
             RemoteEntry(
                 name=name,
@@ -363,7 +429,6 @@ def parse_assembly_summary(
 
     entries.sort(key=lambda item: item.name)
     return entries
-
 
 def remote_head_entry(name: str, url: str, release: str) -> RemoteEntry:
     _, headers = request_bytes(url, method="HEAD")
