@@ -1,0 +1,41 @@
+selection_rank,GO_ID,GO_name,group,sample,ssGSEA_NES,welch_BH_q
+1,GO:0005802,trans-Golgi network,infected,infected_1,2.3445,0.2497738391251603
+1,GO:0005802,trans-Golgi network,infected,infected_2,7.815,0.2497738391251603
+1,GO:0005802,trans-Golgi network,infected,infected_3,6.3785,0.2497738391251603
+1,GO:0005802,trans-Golgi network,infected,infected_4,4.6775,0.2497738391251603
+1,GO:0005802,trans-Golgi network,infected,infected_5,4.2424,0.2497738391251603
+1,GO:0005802,trans-Golgi network,uninfected,uninfected_1,3.3754,0.2497738391251603
+1,GO:0005802,trans-Golgi network,uninfected,uninfected_2,0.696,0.2497738391251603
+1,GO:0005802,trans-Golgi network,uninfected,uninfected_3,2.3005,0.2497738391251603
+1,GO:0005802,trans-Golgi network,uninfected,uninfected_4,-1.1813,0.2497738391251603
+1,GO:0005802,trans-Golgi network,uninfected,uninfected_5,-3.1442,0.2497738391251603
+2,GO:0008757,S-adenosylmethionine-dependent methyltransferase activity,infected,infected_1,3.7589,0.2497738391251603
+2,GO:0008757,S-adenosylmethionine-dependent methyltransferase activity,infected,infected_2,8.3176,0.2497738391251603
+2,GO:0008757,S-adenosylmethionine-dependent methyltransferase activity,infected,infected_3,7.7456,0.2497738391251603
+2,GO:0008757,S-adenosylmethionine-dependent methyltransferase activity,infected,infected_4,6.6888,0.2497738391251603
+2,GO:0008757,S-adenosylmethionine-dependent methyltransferase activity,infected,infected_5,4.7007,0.2497738391251603
+2,GO:0008757,S-adenosylmethionine-dependent methyltransferase activity,uninfected,uninfected_1,3.2637,0.2497738391251603
+2,GO:0008757,S-adenosylmethionine-dependent methyltransferase activity,uninfected,uninfected_2,3.3575,0.2497738391251603
+2,GO:0008757,S-adenosylmethionine-dependent methyltransferase activity,uninfected,uninfected_3,3.7252,0.2497738391251603
+2,GO:0008757,S-adenosylmethionine-dependent methyltransferase activity,uninfected,uninfected_4,0.8975,0.2497738391251603
+2,GO:0008757,S-adenosylmethionine-dependent methyltransferase activity,uninfected,uninfected_5,-0.3621,0.2497738391251603
+3,GO:0051321,meiotic cell cycle,infected,infected_1,10.7333,0.2497738391251603
+3,GO:0051321,meiotic cell cycle,infected,infected_2,5.7478,0.2497738391251603
+3,GO:0051321,meiotic cell cycle,infected,infected_3,5.5626,0.2497738391251603
+3,GO:0051321,meiotic cell cycle,infected,infected_4,7.4556,0.2497738391251603
+3,GO:0051321,meiotic cell cycle,infected,infected_5,6.8422,0.2497738391251603
+3,GO:0051321,meiotic cell cycle,uninfected,uninfected_1,9.5446,0.2497738391251603
+3,GO:0051321,meiotic cell cycle,uninfected,uninfected_2,12.2548,0.2497738391251603
+3,GO:0051321,meiotic cell cycle,uninfected,uninfected_3,9.4202,0.2497738391251603
+3,GO:0051321,meiotic cell cycle,uninfected,uninfected_4,11.6437,0.2497738391251603
+3,GO:0051321,meiotic cell cycle,uninfected,uninfected_5,11.7003,0.2497738391251603
+4,GO:0007127,meiosis I,infected,infected_1,2.6097,0.2497738391251603
+4,GO:0007127,meiosis I,infected,infected_2,-1.5294,0.2497738391251603
+4,GO:0007127,meiosis I,infected,infected_3,-2.1096,0.2497738391251603
+4,GO:0007127,meiosis I,infected,infected_4,1.3572,0.2497738391251603
+4,GO:0007127,meiosis I,infected,infected_5,-0.1982,0.2497738391251603
+4,GO:0007127,meiosis I,uninfected,uninfected_1,1.8862,0.2497738391251603
+4,GO:0007127,meiosis I,uninfected,uninfected_2,4.9018,0.2497738391251603
+4,GO:0007127,meiosis I,uninfected,uninfected_3,1.6937,0.2497738391251603
+4,GO:0007127,meiosis I,uninfected,uninfected_4,4.0072,0.2497738391251603
+4,GO:0007127,meiosis I,uninfected,uninfected_5,5.5184,0.2497738391251603
