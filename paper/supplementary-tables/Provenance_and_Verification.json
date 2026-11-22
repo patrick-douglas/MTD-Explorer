@@ -1,0 +1,440 @@
+{
+  "prepared": "2026-11-20",
+  "language": "English",
+  "supplementary_tables": 8,
+  "parts": 21,
+  "data_rows": 12465,
+  "reference_bioproject": "PRJNA1306560",
+  "paired_end_libraries": 15,
+  "evaluated_Explorer_commit": "04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d",
+  "original_MTD_source_snapshot": "d488faf929b12d810d5b46742975e535e6f48397",
+  "part_rows": {
+    "S1": 25,
+    "S2": 51,
+    "S3A": 201,
+    "S3B": 23,
+    "S3C": 22,
+    "S4A": 84,
+    "S4B": 117,
+    "S4C": 15,
+    "S4D": 30,
+    "S4E": 7,
+    "S5A": 16,
+    "S5B": 34,
+    "S5C": 16,
+    "S6A": 16,
+    "S6B": 29,
+    "S6C": 10821,
+    "S7A": 425,
+    "S7B": 425,
+    "S8A": 24,
+    "S8B": 49,
+    "S8C": 35
+  },
+  "source_identities": [
+    {
+      "id": "registry",
+      "label": "HostSpecies_04d61d.csv",
+      "sha256": "76d6744ea8875388b33c8129e9c814691ec10e5ab37ea5b3f897fbfa8822b2e5",
+      "note": "Frozen registry, not a multi-species execution validation.",
+      "url": "https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/HostSpecies.csv"
+    },
+    {
+      "id": "methods",
+      "label": "mtd_methods_run_parameters.csv",
+      "sha256": "55c247d75892297e266e372f21aa9886bf0197092a9288ddc4d22a295fc68514",
+      "note": "117 structured records; original content identity retained separately from portable presentation."
+    },
+    {
+      "id": "inputs",
+      "label": "run_inputs.tsv",
+      "sha256": "6615a6761ec90fc5da70215985d4946899b3994bcc8bd9a916a9b86922f76724",
+      "note": "Input content hashes and resource metadata signatures recorded by the evaluated run."
+    },
+    {
+      "id": "fastqs",
+      "label": "used_fastq_files.tsv",
+      "sha256": "20e85c3651bc71fc831bd27fb0a0bec0ed374355e28ede5b7fff9bd5fbd45f2b",
+      "note": ""
+    },
+    {
+      "id": "samplesheet",
+      "label": "used_samplesheet.csv",
+      "sha256": "bce3865c10a732ce8c1a0c5fa961d7502594a6690ba345029fe99d581bda474f",
+      "note": ""
+    },
+    {
+      "id": "functional_manifest",
+      "label": "functional_annotation_manifest.tsv",
+      "sha256": "d7de191995c756c7ab20eeca1f521b73e75dd5a3a01df3ec6ba2dc99995af861",
+      "note": "Supplied separately; outside the output inventory."
+    },
+    {
+      "id": "figure2",
+      "label": "figure_2_verified_counts.json",
+      "sha256": "285a5168c42a9a30c2ccf57442f09d427f2d734cd7311f21d026da0eba2cb2b6",
+      "note": ""
+    },
+    {
+      "id": "ena_aliases",
+      "label": "ena_run_aliases.tsv",
+      "sha256": "c0db7653ae40e1dad5694a856121d59cf964e6779d4f5319567bd865eb63761a",
+      "note": "Public metadata snapshot retrieved 17 November 2026.",
+      "url": "https://www.ebi.ac.uk/ena/portal/api/filereport?accession=PRJNA1306560&result=read_run&fields=run_accession,secondary_study_accession,experiment_alias,run_alias,submitted_ftp"
+    },
+    {
+      "id": "ena_runs",
+      "label": "ena_runs.tsv",
+      "sha256": "66823f09de97a9c0eb7a775026a8fed07acc0518d7b51cf9854efde96748c3f7",
+      "note": "",
+      "url": "https://www.ebi.ac.uk/ena/browser/view/PRJNA1306560"
+    },
+    {
+      "id": "bioproject",
+      "label": "bioproject.xml",
+      "sha256": "74d38796128462c48ef4e02b95d58b60988fc3133a01d45b870dd94e981f3c5f",
+      "note": "",
+      "url": "https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1306560"
+    },
+    {
+      "id": "config_ssgsea",
+      "label": "Tools__ssGSEA2.0__config.yaml",
+      "sha256": "2c940af1de42ac889c500faed420f3f43da669ad7e2162bbc08c4f8dffc47768",
+      "note": "",
+      "url": "https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/Tools/ssGSEA2.0/config.yaml"
+    },
+    {
+      "id": "code",
+      "label": "MTD_explorer_benchmark.sh",
+      "sha256": "cf99972ee2acd616c8d736992ef0fa6ccb5216662cbf2ce81e30d381bda68afe",
+      "note": "",
+      "url": "https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/MTD_explorer.sh"
+    },
+    {
+      "id": "orgdb_builder",
+      "label": "build_gold_orgdb_04d61d.R",
+      "sha256": "1e26aeca168d17e51f01ee5c51b81e33cbc088214b80c2753b3b28a7922a9277",
+      "note": "Frozen source assigns GO evidence IEA at line 218 and calls AnnotationForge::makeOrgPackage at line 404.",
+      "url": "https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/orgdb/build_gold_orgdb_from_gtf_eggnog.R"
+    },
+    {
+      "id": "figure5",
+      "label": "figure_5_provenance.json",
+      "sha256": "eafcaaaff1bdd9069260d25954de990e2eb035042f584f13891388cc802510c5",
+      "note": ""
+    },
+    {
+      "id": "halla_audit",
+      "label": "halla_independent_audit.json",
+      "sha256": "b939f74c4c191a4b1350bd3eea0d21703d085021bab18e0fda2656846a133175",
+      "note": ""
+    },
+    {
+      "id": "monitor_audit",
+      "label": "resource_independent_audit.json",
+      "sha256": "52a0a497fe572f65c164fcadadf021a19ca89d2be4b44242bc4c612ae8061dc0",
+      "note": ""
+    },
+    {
+      "id": "timing_audit",
+      "label": "stage_timing_hardware_audit.json",
+      "sha256": "c2bae1f9e8d27c8dabe4b165baa0357d8e5913ecea15fa32d13d26154ad24630",
+      "note": ""
+    },
+    {
+      "id": "eggnog",
+      "label": "taxid_6526_gold_orgdb.emapper.annotations",
+      "sha256": "d8a7606c515420f973ae7259212f98d5cf1c234c95c9c2851e9ba1d64f58fa7c",
+      "note": "Protein-based predicted assignments; not experimental evidence."
+    },
+    {
+      "id": "console",
+      "label": "console_clean.log",
+      "sha256": "9eda3a5b9991e7dcacdd14f3526c7780af5104ecb0e3a788901310637ab04e24",
+      "note": ""
+    },
+    {
+      "label": "review_original_comparison.md",
+      "size_bytes": 19644,
+      "sha256": "1368e24fbbf8e7ceb8b78c2def96488346a4ccc8356e44e59fc81ed1147bb05a"
+    },
+    {
+      "label": "mtd_methods_run_parameters.csv",
+      "size_bytes": 16577,
+      "sha256": "55c247d75892297e266e372f21aa9886bf0197092a9288ddc4d22a295fc68514"
+    },
+    {
+      "label": "software.txt",
+      "size_bytes": 1970,
+      "sha256": "6d014c33786a4672e89edb570f0d3426d481e9b77a97fbcd2f6f53332af5da2b"
+    },
+    {
+      "label": "console_clean.log",
+      "size_bytes": 5329325,
+      "sha256": "9eda3a5b9991e7dcacdd14f3526c7780af5104ecb0e3a788901310637ab04e24"
+    },
+    {
+      "label": "taxid_6526_gold_orgdb.emapper.annotations",
+      "size_bytes": 23903875,
+      "sha256": "d8a7606c515420f973ae7259212f98d5cf1c234c95c9c2851e9ba1d64f58fa7c"
+    },
+    {
+      "label": "benchmark_DEG_Anno_Plot.R",
+      "size_bytes": 225359,
+      "sha256": "eb645ce18bfef0faedabbceeb08c7040ec88ba35e6dbe45fc3dc09a51a64199d"
+    },
+    {
+      "label": "pipeline_steps.tsv",
+      "size_bytes": 2050,
+      "sha256": "e40fafe7a43f96a1c47d9b784471cbbf924217281a6805c06f869d1d3a937899"
+    },
+    {
+      "label": "pipeline_steps_raw.tsv",
+      "size_bytes": 1687,
+      "sha256": "9ed575f515d8331c881c9b1ec8809f18e6473b254c7b7512d7b1e7dbe5d4cd22"
+    },
+    {
+      "label": "summary.tsv",
+      "size_bytes": 2586,
+      "sha256": "6e794b94cad30a41d5c906c6b0d774eac1185b91fe25d2b2bb01295c3aea4506"
+    },
+    {
+      "label": "resource_samples.csv",
+      "size_bytes": 6180685,
+      "sha256": "5661f7f75597bbc7ef1b9f78a3a8664f4690470bbc309a43f445e0da895b7f5b"
+    },
+    {
+      "label": "output_inventory.tsv",
+      "size_bytes": 1692539,
+      "sha256": "e223da775845ae4ba40a11fda56d140e877429fecc1b55ae3e1d856aa40490a3"
+    },
+    {
+      "label": "output_extensions.tsv",
+      "size_bytes": 235846,
+      "sha256": "cd3f97682de060e0695f95a4385a2b42cd4ba65c4697fe98da887949510a063f"
+    },
+    {
+      "label": "pipeline_summary.tsv",
+      "size_bytes": 2296,
+      "sha256": "4cec7fdb3d562c7d23136e6cd9dcf62eae9ff9f228b8d18295434d63a70a995f"
+    },
+    {
+      "label": "stage_timing_hardware_audit.json",
+      "size_bytes": 6009,
+      "sha256": "c2bae1f9e8d27c8dabe4b165baa0357d8e5913ecea15fa32d13d26154ad24630"
+    },
+    {
+      "label": "resource_independent_audit.json",
+      "size_bytes": 5605,
+      "sha256": "52a0a497fe572f65c164fcadadf021a19ca89d2be4b44242bc4c612ae8061dc0"
+    }
+  ],
+  "numeric_comparison_relative_tolerance": 5e-14,
+  "text_identifiers_hashes_and_ISO_timestamps_preserved_exactly": true,
+  "original_scientific_source_files_modified": false,
+  "manuscript_modified": false,
+  "new_inferential_statistical_tests_performed": false,
+  "notes": [
+    "S5A has 32 transparent hour/percentage conversion formulas with verified cached results.",
+    "Missing historical versions remain explicitly Not recorded.",
+    "A source-file identity is not a checksum of an unavailable installed database."
+  ],
+  "original_workbook_validation": [
+    {
+      "part": "S1",
+      "rows": 25,
+      "columns": 6,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S2",
+      "rows": 51,
+      "columns": 7,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S3A",
+      "rows": 201,
+      "columns": 19,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S3B",
+      "rows": 23,
+      "columns": 7,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S3C",
+      "rows": 22,
+      "columns": 6,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S4A",
+      "rows": 84,
+      "columns": 6,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S4B",
+      "rows": 117,
+      "columns": 7,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S4C",
+      "rows": 15,
+      "columns": 12,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S4D",
+      "rows": 30,
+      "columns": 8,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S4E",
+      "rows": 7,
+      "columns": 6,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S5A",
+      "rows": 16,
+      "columns": 7,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 32,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S5B",
+      "rows": 34,
+      "columns": 6,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S5C",
+      "rows": 16,
+      "columns": 8,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S6A",
+      "rows": 16,
+      "columns": 9,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S6B",
+      "rows": 29,
+      "columns": 5,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S6C",
+      "rows": 10821,
+      "columns": 8,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S7A",
+      "rows": 425,
+      "columns": 16,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S7B",
+      "rows": 425,
+      "columns": 16,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S8A",
+      "rows": 24,
+      "columns": 10,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S8B",
+      "rows": 49,
+      "columns": 7,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    },
+    {
+      "part": "S8C",
+      "rows": 35,
+      "columns": 21,
+      "all_data_values_and_types_preserved": true,
+      "csv_matches": true,
+      "formula_cached_values_checked": 0,
+      "frozen_header_and_native_table": true
+    }
+  ],
+  "original_workbook_verification_scope": "These checks describe the original 20 November 2026 export before removal of workbook styling. Historical table-style checks refer exclusively to that export.",
+  "packaged_csv_verification": {
+    "parts_with_identical_bytes_to_original_export": 21,
+    "data_rows": 12465,
+    "companion_csv_files_with_identical_bytes_to_original_export": 2,
+    "index_and_source_catalog_identical_to_original_export": true
+  }
+}

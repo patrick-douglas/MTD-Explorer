@@ -1,0 +1,17 @@
+﻿Directory or prefix,Content,Files,Directories,Logical bytes,Logical size (GiB),Logical bytes (%),Files with recorded SHA-256,Files above hashing limit
+temp,Retained read-processing and alignment intermediates,627,25,1308886550422,1218.9955920185894,93.97909424706297,281,346
+kraken,Kraken2 reports and classification outputs,110,4,80508128741,74.97903773654252,5.780547608320773,50,60
+halla,Host-microbiome integration inputs and results,45,4,2023482256,1.8845147043466568,0.14528763366280464,42,3
+ssGSEA,Host gene-set scoring outputs and summaries,49,13,577931778,0.5382409114390612,0.04149596083443854,44,5
+Host_DEG,Host differential-expression and functional-analysis outputs,824,62,395421753,0.3682652050629258,0.028391596032937005,824,0
+hmn_genefamily_abundance_files,Microbial gene-family outputs and intermediates,191,21,120319680,0.1120564341545105,0.008639048619493248,191,0
+exploratory,Shared descriptive outputs and extracted-read products,315,37,81398235,0.07580801378935575,0.005844457944917548,315,0
+signature_gct,Per-gene-set expression matrices,8191,1,70844856,0.06597941368818283,0.005086716947925708,8191,0
+graphlan,GraPhlAn taxonomic visualization outputs,10,1,33285216,0.03099927306175232,0.002389904954321143,10,0
+[top-level files],"Combined host-count, taxonomic and summary matrices",4,0,24592762,0.022903794422745705,0.001765779850857532,3,1
+fastp,Read-preparation reports,30,1,9412351,0.008765934966504574,0.000675814280030797,30,0
+krona,Krona visualization outputs,32,1,5604001,0.005219132639467716,0.0004023717242490071,32,0
+Nonhost_DEG,Taxonomic comparison outputs,113,11,5124745,0.0047727907076478004,0.0003679607626741105,113,0
+.mtd_state,"Execution state, input identities and per-sample checkpoints",271,98,70258,6.543286144733429e-05,5.044580220861264e-06,271,0
+hmn_pathway_abundance_files,Microbial pathway summaries,6,1,58460,5.4445117712020874e-05,4.197474447202446e-06,6,0
+methods,Run parameters and provenance records,3,1,23077,2.1492131054401398e-05,1.6569469349656321e-06,3,0

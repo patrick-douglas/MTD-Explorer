@@ -1,0 +1,5 @@
+{
+  "checks": "Independent headline summary quantiles from all 20,000 CSV rows and all four packaged input SHA-256 identities",
+  "all_checks_passed": true,
+  "failures": []
+}

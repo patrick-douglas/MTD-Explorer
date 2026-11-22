@@ -1,0 +1,16 @@
+sample,group
+infected_1,infected
+infected_2,infected
+infected_3,infected
+infected_4,infected
+infected_5,infected
+infection_failed_1,infection_failed
+infection_failed_2,infection_failed
+infection_failed_3,infection_failed
+infection_failed_4,infection_failed
+infection_failed_5,infection_failed
+uninfected_1,uninfected
+uninfected_2,uninfected
+uninfected_3,uninfected
+uninfected_4,uninfected
+uninfected_5,uninfected

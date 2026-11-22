@@ -1,0 +1,21 @@
+taxon,original_relative_rank,rank_p025_given_eligible,rank_median_given_eligible,rank_p975_given_eligible
+Wolbachia endosymbiont (group A) of Lypha dubia,1,1.0,1.0,1.0
+Streptomyces sp. T12,2,2.0,2.0,3.0
+Penicillium digitatum,3,2.0,3.0,4.0
+uncultured Acetobacteroides sp.,4,3.0,4.0,8.0
+Sporisorium graminicola,5,4.0,5.0,8.0
+Halomonas sp. JS92-SW72,6,4.0,6.0,10.0
+Dictyostelium discoideum,7,5.0,7.0,9.0
+Coccidioides posadasii,8,5.0,7.0,15.0
+Bremia lactucae,9,8.0,9.0,11.0
+Colletotrichum higginsianum,10,8.0,12.0,17.0
+Cytophaga hutchinsonii,11,8.0,12.0,23.0
+Limnoglobus roseus,12,10.0,14.0,24.0
+Laribacter hongkongensis,13,7.0,13.0,24.0
+Aestuariivirga sp.,14,10.0,14.0,23.0
+Puccinia striiformis,15,6.0,14.0,29.0
+Botrytis cinerea,16,10.0,15.0,23.0
+Biomphalaria virus 3,17,12.0,18.0,34.0
+Akanthomyces muscarius,18,13.0,20.0,33.0
+Rania fehmarnensis,19,15.0,21.0,33.0
+Schizosaccharomyces pombe,20,15.0,22.0,32.0

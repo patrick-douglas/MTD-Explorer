@@ -1,0 +1,9 @@
+﻿table,title,parts,worksheets
+S1,Comparison of original MTD and MTD Explorer,S1: 25 rows,S1 Comparison
+S2,Software and execution environments,S2: 51 rows,S2 Software
+S3,"Host registry, reference resources and annotation coverage",S3A: 201 rows; S3B: 23 rows; S3C: 22 rows,S3A Host registry; S3B Reference resources; S3C Annotation coverage
+S4,Benchmark configuration and input provenance,S4A: 84 rows; S4B: 117 rows; S4C: 15 rows; S4D: 30 rows; S4E: 7 rows,S4A Configuration; S4B Recorded parameters; S4C Libraries; S4D FASTQ identities; S4E Resource signatures
+S5,Runtime and computational resource measurements,S5A: 16 rows; S5B: 34 rows; S5C: 16 rows,S5A Stage durations; S5B Resource measures; S5C Resources by stage
+S6,Output inventory and logical storage,"S6A: 16 rows; S6B: 29 rows; S6C: 10,821 rows",S6A Output families; S6B File types; S6C File inventory
+S7,Complete taxon prioritization rankings,S7A: 425 rows; S7B: 425 rows,S7A Relative rankings; S7B Count rankings
+S8,Host–microbiome associations and gene context,S8A: 24 rows; S8B: 49 rows; S8C: 35 rows,S8A HAllA blocks; S8B HAllA pairs; S8C Associated genes

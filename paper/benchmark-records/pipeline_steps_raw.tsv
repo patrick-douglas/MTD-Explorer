@@ -1,0 +1,18 @@
+timestamp_utc	epoch_ns	percent	message
+2026-08-21T19:25:36.876007166Z	1787340336876581563	0	MTD Explorer initialization and input validation
+2026-08-21T19:41:17.717225801Z	1787341277718017621	10	Preparing raw reads
+2026-08-21T22:03:55.406125423Z	1787349835406933588	20	Classifying host reads with Kraken2
+2026-08-21T22:42:04.140688842Z	1787352124141520466	25	Classifying non-host reads with Kraken2
+2026-08-21T23:08:40.782350834Z	1787353720783214157	30	Creating the global Kraken2 read-composition summary
+2026-08-21T23:08:40.788067317Z	1787353720788912829	30	Preparing optional contaminant removal
+2026-08-22T01:05:34.990498601Z	1787360734991374773	35	Reclassifying decontaminated non-host reads with Kraken2
+2026-08-22T01:33:52.846582500Z	1787362432847551930	40	Running Bracken taxonomic abundance estimation
+2026-08-22T01:34:05.797669176Z	1787362445798550388	45	Combining Bracken outputs for downstream analyses
+2026-08-22T01:34:23.334557623Z	1787362463335376204	50	Preparing Kraken2 and Bracken visualization outputs
+2026-08-22T02:33:10.532331450Z	1787365990533333607	55	Running HUMAnN functional profiling
+2026-08-23T09:12:40.593031111Z	1787476360593900681	65	Processing host reads and host expression
+2026-08-23T21:06:33.699146179Z	1787519193700027446	75	Running ssGSEA pathway enrichment
+2026-08-24T02:01:56.650855914Z	1787536916651747185	80	Running microbiome-host association analyses with HAllA
+2026-08-24T02:20:40.596303021Z	1787538040597155481	90	Analyzing microbiome-host pathway associations
+2026-08-24T02:23:51.455692404Z	1787538231456527361	100	MTD Explorer analysis completed successfully
+2026-08-24T02:23:51.459759362Z	1787538231460355020	100	__BENCHMARK_WRAPPER_END__

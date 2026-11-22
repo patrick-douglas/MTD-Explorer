@@ -1,0 +1,85 @@
+﻿Category,Parameter,Value,Unit or scope,Evidence,Interpretation
+Execution,Dataset,PRJNA1306560 / SRP609141,Public RNA-seq dataset,ena_runs; ena_aliases; bioproject,
+Execution,Host,Biomphalaria glabrata; TaxID 6526,Host species,methods; functional_manifest,
+Execution,Libraries,15,Paired-end sequencing runs,samplesheet; ena_aliases,Five libraries per supplied group; public metadata share one BioSample and do not establish independent biological replication.
+Execution,Groups,infected; uninfected; infection_failed,Five libraries each,samplesheet; ena_aliases,
+Execution,Contrasts,infected_vs_uninfected; infected_vs_infection_failed; uninfected_vs_infection_failed,Three pairwise comparisons,samplesheet,
+Execution,BioSample,SAMN50639599,Shared deposited BioSample,ena_runs,"Sample labels and archive aliases, not this generic BioSample alone, identify the groups."
+Execution,Instrument,Illumina NextSeq 2000,Archive metadata,ena_runs,
+Execution,Input FASTQs,30,Local paired FASTQ files,fastqs; inputs,"Recorded total 69,767,774,383 bytes. Content SHA-256 values were recorded by the run; original FASTQs were not rehashed for this manuscript."
+Execution,Selected implementation,04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d,Git commit,timing_audit,Clean Git snapshot; later main changes are not assigned this timing.
+Execution,Execution mode,local; official_clean,One reference execution,timing_audit,
+Execution,Heavy-stage resume,0,Disabled,methods; timing_audit,No heavy-stage intermediate reuse; this does not establish a cold OS/database cache.
+Execution,Process start UTC,2026-08-21T19:25:36Z,Benchmark metadata,timing_audit,"Use benchmark start, not methods CSV export timestamp."
+Execution,Process end UTC,2026-08-24T02:23:51Z,Benchmark metadata,timing_audit,
+Execution,Requested threads,20,Controller/tool setting,methods; timing_audit,Not a claim that every substep used 20 physical cores.
+Hardware,CPU model,Intel Core i9-10900K @ 3.70GHz,Recorded hardware,timing_audit,Hardware of this one local execution; observed resource peaks and configured capacity are distinct quantities.
+Hardware,Physical CPU cores,10,Cores,timing_audit,Hardware of this one local execution; observed resource peaks and configured capacity are distinct quantities.
+Hardware,Logical CPUs,20,Logical CPUs,timing_audit,Hardware of this one local execution; observed resource peaks and configured capacity are distinct quantities.
+Hardware,OS-visible memory,125.644287109375,GiB,timing_audit,Hardware of this one local execution; observed resource peaks and configured capacity are distinct quantities.
+Hardware,Operating system,Linux Mint 21.1,Recorded OS,timing_audit,Hardware of this one local execution; observed resource peaks and configured capacity are distinct quantities.
+Hardware,Input storage,18 TB SATA rotating disk (sdb1),Recorded input device,timing_audit,Hardware of this one local execution; observed resource peaks and configured capacity are distinct quantities.
+Hardware,Output storage,Root filesystem on 4 TB NVMe (nvme1n1p2),Recorded output device,timing_audit,Hardware of this one local execution; observed resource peaks and configured capacity are distinct quantities.
+Hardware,Configured swap device,2 TB NVMe (nvme0n1p1); configured capacity is not observed consumption,Recorded swap device,timing_audit,Hardware of this one local execution; observed resource peaks and configured capacity are distinct quantities.
+Execution,Read-layout request / resolution,auto / pe,Requested / effective,methods; timing_audit,
+Execution,Analysis-mode request,auto,Comparison route resolved from samplesheet,methods; timing_audit,This benchmark is not an independent no-comparison-mode validation.
+Execution,Portable original command,<MTD_ROOT>/MTD_explorer.sh --input <INPUT_DIR>/samplesheet.csv --output <OUTPUT_DIR> --hostid 6526 --threads 20 --read-layout auto --analysis-mode auto --blast --extract-microbiome-reads --extract-microbiome-reads-top-n 5,Command with machine-specific prefixes replaced,methods,Tokens are documented in S4 notes; no installation command is implied.
+Read preparation,Trimming skipped,0,no_trim,methods; code,Exact evaluated fastp argument configuration; rationale does not establish unchanged downstream expression.
+Read preparation,Minimum retained length,35,nt,methods; code,Exact evaluated fastp argument configuration; rationale does not establish unchanged downstream expression.
+Read preparation,Poly-X trimming,Enabled,--trim_poly_x,methods; code,Exact evaluated fastp argument configuration; rationale does not establish unchanged downstream expression.
+Read preparation,Qualified read-quality threshold,15,Phred,methods; code,Exact evaluated fastp argument configuration; rationale does not establish unchanged downstream expression.
+Read preparation,Unqualified-base limit,40,percent,methods; code,Exact evaluated fastp argument configuration; rationale does not establish unchanged downstream expression.
+Read preparation,Ambiguous-base limit,5,bases,methods; code,Exact evaluated fastp argument configuration; rationale does not establish unchanged downstream expression.
+Read preparation,Terminal front trimming,Enabled; window 1; mean Phred 5,--cut_front,methods; code,Exact evaluated fastp argument configuration; rationale does not establish unchanged downstream expression.
+Read preparation,Terminal tail trimming,Enabled; window 1; mean Phred 5,--cut_tail,methods; code,Exact evaluated fastp argument configuration; rationale does not establish unchanged downstream expression.
+Read preparation,Paired validation,Equal FASTQ-record counts and mate-ID validation,Paired-end inputs/outputs,methods; code,
+Host Kraken2,Confidence threshold,0.05,--confidence,methods,
+Host Kraken2,Minimum hit groups,3,--minimum-hit-groups,methods,
+Microbial Kraken2,Confidence threshold,0.1,--confidence,methods,
+Microbial Kraken2,Minimum hit groups,3,--minimum-hit-groups,methods,
+Contaminant removal,Contaminant list,conta_ls.txt; present,List content hash in S4e,methods; inputs,Specific excluded TaxIDs are not recoverable from a hash alone.
+Contaminant removal,Extracted format,FASTQ with qualities,Paired non-host reads,methods,
+Bracken,Read length,75,nt,methods,
+Bracken,Minimum threshold,10,reads,methods,
+Bracken,Taxonomic levels,P; G; S,Phylum; genus; species,methods,
+Microbial read extraction,Extraction enabled,1,Enabled,methods,
+Microbial read extraction,Ranking representation,absolute,Detected taxa ranking,methods,
+Microbial read extraction,Top taxa,5,Taxa,methods,
+Microbial read extraction,Minimum abundance,0,Sample abundance,methods,
+Microbial read extraction,Include child taxa,1,Enabled,methods,
+Host quantification,Selected aligner,Magic-BLAST,--blast,methods; timing_audit,HISAT2 metadata are present but that branch was not selected.
+Host quantification,Aligner input,Kraken2 host-classified paired reads,SAMPLE_host_1.fq + SAMPLE_host_2.fq,methods; code,The alternative HISAT2 branch uses prepared/trimmed FASTQs.
+Host quantification,featureCounts paired mode,-p --countReadPairs,Fragments/read pairs,methods,
+Functional profiling,HUMAnN mate handling,R1 then R2 concatenation,Individual reads analyzed independently,methods,
+Functional profiling,HUMAnN threads,20,Threads,methods,
+Functional profiling,Renormalization,relab,Relative abundance,methods,
+Functional profiling,Prescreen species selected,0,All 15 MetaPhlAn prescreens,console,Translated UniRef90 assignment continued; this does not mean absence of taxa in Kraken2/Bracken.
+Functional profiling,Pathway abundance zero-sum columns,6,Libraries,console,Do not generalize to gene-family profiles or claim complete pathways for all samples.
+Host differential expression,Significance criterion,BH-adjusted p < 0.05,DESeq2,figure5; halla_audit,Figure 5 volcano combined criterion additionally uses |log2FC| > 0.5; overlap counts based on adjusted p alone are distinct.
+Host / microbiome volcano,Display fold-change cutoff,0.5,Absolute log2 fold change,figure5,EnhancedVolcano labels ten features in the manuscript; all valid feature points remain shown.
+ssGSEA,GMT mode,Reference-matched custom eggNOG GO,Master intersected with host.gct,methods; figure2,
+ssGSEA,Preparation set-size range,5–500,Input-matched genes per GO set,figure2,
+ssGSEA,Scoring overlap minimum,10,Matched genes,config_ssgsea,
+ssGSEA,Permutations,1000,Configured ssGSEA nperm,config_ssgsea,
+ssGSEA,Weight,0.75,ssGSEA weight,config_ssgsea,
+ssGSEA,Sample normalization,rank,sample_norm_type,config_ssgsea,
+ssGSEA,Correlation transform,z.score,correl_type,config_ssgsea,
+ssGSEA,Statistic,area.under.RES,statistic,config_ssgsea,
+ssGSEA,Output score type,NES,Normalized enrichment score,config_ssgsea,
+ssGSEA,Global FDR,FALSE,Configured global_fdr,config_ssgsea,
+ssGSEA,Multi-core scoring,TRUE,Configured multi_core,config_ssgsea,
+HAllA,Metric,Spearman,Host gene / GO-score integration,methods; halla_audit,
+HAllA,BH FDR alpha,0.05,Global pairwise correction,methods; halla_audit,
+HAllA,FNR threshold,0.2,Block discovery,methods; halla_audit,
+HAllA,Linkage,average,Hierarchical clustering,methods; halla_audit,
+HAllA,Similarity-to-distance,Absolute similarity,Clustering only; displayed rho remains signed,methods; halla_audit,
+HAllA,Configured iterations,1000,Generic permutation configuration,methods; halla_audit,Configured permutations were bypassed by the vectorized Spearman path in this evaluated run.
+HAllA,Actual Spearman p-value path,Two-sided asymptotic Student-t transformation,Vectorized performance patch,methods; halla_audit,Configured permutations were bypassed by the vectorized Spearman path in this evaluated run.
+HAllA,Test family,8839575,"425 taxonomic features × 20,799 host genes",methods; halla_audit,
+HAllA,Extra Pearson analysis,1,Enabled,methods; halla_audit,
+HAllA,Library scope,15,All three groups jointly,halla_audit,Pooled associations retain group structure; do not infer within-group or causal relationships.
+HAllA,Extended metadata,None,No supplied covariates/repeated-subject metadata,methods; halla_audit,No batch effect removed in this no-extended-metadata run.
+Monitoring,Configured sample interval,5,s,monitor_audit,Observed mean interval 5.071797 s; processing overhead adds to sleep interval.
+Monitoring,Resource observations,39020,Recorded polls,monitor_audit,Last poll occurs about 1.871 s after process wall time; retain official wall-time definition.
+Monitoring,RSS statistic,Sampled sum of VmRSS across selected active descendants,GiB,monitor_audit,Shared pages can be counted more than once; distinct from unique physical memory and GNU time maxRSS.
+Monitoring,CPU statistic,Whole-system CPU busy / total capacity,Percent,monitor_audit,Includes work outside the pipeline; process-tree CPU is a different recorded measure.

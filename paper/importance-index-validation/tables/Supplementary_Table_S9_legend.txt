@@ -1,0 +1,17 @@
+Supplementary Table S9. Taxon Prioritization Index (TPI) rankings under alternative weights, detection criteria, taxon inclusion criteria and library resampling.
+
+S9 Summary reports bootstrap retention, Jaccard similarity, Spearman correlation of full rankings and eligible-taxon counts. Each resampled ranking is compared with that model's full-data ranking.
+
+S9A Scenarios reports all 186 comparisons. Each abundance representation includes 79 unique joint weight vectors, ten named weight models including the default, two changes in the detection threshold and two restrictions on taxon inclusion. The reference for retention and Jaccard similarity in this sheet is the original default ranking in the same representation. The detection threshold of ten estimated reads produced the same ranking as the default in these input matrices.
+
+S9B Bootstrap taxa reports results for all 425 features in both representations and both models. Inclusion frequencies use all 5,000 draws. Rank percentiles use only draws in which the feature was eligible. Each row identifies the feature's rank in the corresponding full-data model and in the original default model.
+
+S9C LOO metrics reports top-set metrics for all 15 single-library omissions in each representation and model. A separate column gives retention of the original default top 20.
+
+S9D Weight grid taxa reports the proportion of the 79 distinct weight vectors that placed each feature in the top 20 and its minimum and maximum ranks across these vectors.
+
+S9E LOO taxa reports the number of omissions in which each feature remained eligible, the number retaining it in the top 20 and the rank range across eligible omissions.
+
+S9F Definitions describes the study design, models, reference rankings, random seed, source identities and column meanings.
+
+Relative percentages retain their original within-library denominators. The detection-threshold scenarios change the prevalence definition while holding abundance values constant. The inclusion scenarios restrict the taxa used for min–max scaling and keep their relative percentages unchanged. All-zero features are ineligible in a resample. Each bootstrap draw contains five libraries from each of the three groups. Each omission leaves one group with four libraries. The replicate-level files contain all sampled indices, metrics and taxon rankings used for these summaries.

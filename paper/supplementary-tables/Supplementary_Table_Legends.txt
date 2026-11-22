@@ -1,0 +1,403 @@
+MTD Explorer supplementary table legends
+
+Reference execution: PRJNA1306560, 15 paired-end libraries, 21–24 August 2026.
+Evaluated MTD Explorer commit: 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d.
+
+Supplementary Table S1. Comparison of original MTD and MTD Explorer.
+
+S1. Comparison of the original MTD framework and MTD Explorer
+Comparison of the original MTD publication (2022), the pinned upstream repository snapshot d488faf929b12d810d5b46742975e535e6f48397 (7 May 2024), and the evaluated MTD Explorer commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d. Classifications describe changes in the inspected implementation; external methods remain attributed to their original developers. An implementation capability is distinguished from a benefit demonstrated by this one local reference execution.
+Note: The pinned upstream snapshot postdates the 2022 publication and does not represent the published 2022 code.
+Note: Absence statements are limited to the inspected publication, entry points and associated scripts; they do not claim an exhaustive audit of repository history.
+Note: Later main-branch changes are outside the evaluated timing scope.
+Sources: S1-PAPER, S1-O-README, S1-O-ENTRY, S1-O-SE, S1-O-R, S1-O-HOSTS, S1-O-CUSTOM, S1-O-INSTALL, S1-O-RINSTALL, S1-E-ENTRY, S1-E-CUSTOM, S1-E-ORGDB, S1-E-BUILDER, S1-E-PROTEIN, S1-E-ENTREZ, S1-E-RANK, S1-E-PREVALENCE, S1-E-R, S1-E-SLURM, S1-E-HALLA.
+
+Supplementary Table S2. Software and execution environments.
+
+S2. Software versions and execution contexts recorded for the reference application
+Software and interpreter versions recovered from the preserved reference-run records, together with the source revision for vendored implementations. Dedicated runtime environments, benchmark-controller probes and reference preparation are distinguished. Not recorded indicates that a historical version could not be recovered from these records; it does not mean that software was absent. Current installations and the later editorial audit environments do not substitute for missing benchmark versions. Database identifiers are reported in Table S3.
+Note: Bracken has two recorded identifiers: Conda package 3.1p1 and executable banner 3.0.1; both are retained.
+Note: The primary R412 interpreter capture does not establish the version of the separate Rscript used for EnhancedVolcano.
+Note: Reference annotation on 13 August 2026 preceded the timed 21–24 August execution.
+Note: The HAllA Spearman fast path used asymptotic two-sided Student-t p values; generic configuration entries for 1000 permutations were bypassed in that path.
+Sources: S1-E-ENTRY, S1-E-ORGDB, S1-E-BUILDER, S2-METHODS, S2-CONSOLE, S2-PROBE, S2-HALLA, S2-HALLA-PATCH, S2-EV, S2-EGGNOG, S2-REF, S2-SSGSEA, S2-RSOURCE, S2-HARDWARE.
+
+Supplementary Table S3. Host registry, reference resources and annotation coverage.
+
+S3A. Registered host reference resources
+Complete host registry at the evaluated MTD Explorer revision (04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d): 201 distinct requested TaxIDs, reference TaxIDs/species, assembly/release metadata, reference download locations and declared annotation-package names. Requested and reference species are retained separately. Status fields are the registry declarations; they are not independent download or execution validation.
+Note: All 201 entries list genome, GTF and protein URLs. One entry uses a reference TaxID different from the requested TaxID (Equus asinus asinus to Equus asinus).
+Note: The table preserves source field names. OrgDb strings denote registry package identifiers and do not establish availability of a pre-built public package.
+Note: Only the B. glabrata reference application was benchmarked here. No cross-species performance or biological-accuracy validation is inferred.
+Sources: registry.
+
+S3B. Resources of the B. glabrata reference application
+Reference, taxonomy and functional resources recorded for the B. glabrata application. Verification status distinguishes declared registry metadata, installed-path records, supplied content and unresolved database provenance. Identifiers and basenames are presented without machine-specific directory prefixes.
+Note: Source IDs are resolved in the accompanying provenance manifest. Registered release labels and filename labels are not independently authenticated installed database releases.
+Sources: registry, methods, inputs, functional_manifest, figure2, eggnog, console, code, orgdb_builder.
+
+S3C. Reference annotation and run-specific GO-set coverage
+Verified reference annotation counts and compatibility of reference-matched GO sets with the expression input used in Figure 2. Overlapping assignment categories retain their appropriate denominator. Preparation and scoring eligibility are distinguished.
+Note: All supplied eggNOG queries match coding-reference IDs. The master contains 1,654,844 gene–GO pairs matching the eggNOG assignments exactly.
+Note: No direct OrgDb table-coverage measurement, functional-accuracy assessment or multi-species validation is implied.
+Sources: figure2, eggnog, functional_manifest.
+
+Supplementary Table S4. Benchmark configuration and input provenance.
+
+S4A. Reference-run configuration
+Selected execution and scientific-analysis settings for the evaluated local B. glabrata run. The complete structured export is retained in S4b, deposited run aliases in S4c, FASTQ identities in S4d, and resource signatures in S4e.
+Note: Portable tokens: <MTD_ROOT>, pipeline installation; <INPUT_DIR>, FASTQ/samplesheet directory; <OUTPUT_DIR>, analysis output; <CONDA_ROOT>, Conda installation; <CACHE_ROOT>, resource cache.
+Note: The benchmark used existing references/databases. No cold-cache, recovery, scaling or cross-software speedup experiment is inferred.
+Sources: methods, inputs, samplesheet, fastqs, ena_aliases, ena_runs, bioproject, code, config_ssgsea, halla_audit, monitor_audit, timing_audit, figure2, figure5, console.
+
+S4B. Complete structured methods records
+All 117 structured records exported by the reference execution, retaining categories, programs, parameter names, values and descriptions. Machine-specific input, output, installation and cache prefixes are replaced by explicit portable tokens; the source file identity is preserved in the provenance manifest.
+Note: These are 117 records, not 117 independent parameters or proof that every alternative branch executed.
+Note: The recorded run_datetime is a log-export timestamp. Actual start/end and the selected branches are specified in S4a.
+Note: HAllA generic permutation settings are superseded for this run by the vectorized asymptotic Spearman path documented in S4a.
+Sources: methods, inputs, code, halla_audit.
+
+S4C. Library identities and deposited aliases
+Mapping of the 15 analysis-library labels and groups to the public SRA run accessions using deposited experiment aliases. Archive metadata identify paired-end Illumina NextSeq 2000 libraries under one shared BioSample. Group allocation agrees with the supplied samplesheet.
+Note: The five runs per group are described as libraries/sequencing runs. Biological independence is not established solely by the generic shared BioSample.
+Note: BioProject describes infection_failed as exposed snails without infection after 30 days; no resistance mechanism is inferred from that label.
+Note: Public metadata snapshot: 17 November 2026.
+Sources: samplesheet, ena_aliases, ena_runs, bioproject.
+
+S4D. Recorded input FASTQ identities
+Thirty paired input FASTQ files identified by analysis label, run accession, mate, basename, recorded byte size and SHA-256 content identity. Names and sizes agree between the supplied FASTQ manifest and run-input records. Total recorded input size is 69,767,774,383 bytes.
+Note: The original FASTQ files were not supplied for independent content rehashing. Hashes are the content identities recorded by the evaluated pipeline.
+Note: SRA linkage follows the deposited experiment alias; this does not constitute a new archive FASTQ-to-local FASTQ content comparison.
+Sources: inputs, fastqs, ena_aliases.
+
+S4E. Recorded input and resource signatures
+Signatures retained from run_inputs.tsv with their implemented definitions. FASTQ and samplesheet identities use full content SHA-256; installed reference/database signatures hash resource metadata. Portable display tokens replace machine-specific path prefixes without changing the recorded signature.
+Note: A metadata signature cannot substitute for a database-content checksum or an independently verified biological release.
+Note: The contaminant list content hash is retained, but its source contents were not supplied.
+Sources: inputs, samplesheet, code.
+
+Supplementary Table S5. Runtime and computational resource measurements.
+
+S5A. Benchmark stage intervals
+All sixteen recorded pipeline-event intervals in the single local reference execution. Durations encompass the work within each block; they are not exclusive executable timers. Percentages use the process wall time of 197,894.592676 s.
+Note: The raw epoch-derived total is 197,894.583773457 s, approximately 9 ms below total process wall time. Separately rounded interval values sum to 197,894.583774 s.
+Note: Reference execution: 15 paired-end libraries, 20 requested threads, Magic-BLAST; hardware and full run configuration are reported in Table S4.
+Note: One run was measured; no timing variability, original-MTD speedup, thread scaling, Slurm scaling or recovery benchmark is implied.
+Sources: REF-2DD7181A3F, REF-7B26C92FBC, REF-D38C49FEBE.
+
+S5B. Benchmark resource measurements
+Global computational measurements from the reference execution. Sampled summaries, whole-machine counters and GNU time measures are reported with their original units and distinct definitions.
+Note: RSS is a sampled sum across selected active descendant processes and can count shared pages repeatedly. It is distinct from unique physical memory, system memory use and GNU time maximum RSS.
+Note: System CPU, physical-disk and network counters cover the machine and can include activity outside the pipeline. CPU means are unweighted arithmetic means of sampled percentages.
+Note: The monitored RSS peak occurred within the broad host-processing/expression block, not an isolated executable. Observed peaks are not minimum hardware requirements.
+Note: The configured 5-s interval becomes a mean observed interval of 5.071797 s. All 39,020 observations were retained; the final poll extends approximately 1.871 s beyond process completion.
+Sources: REF-D38C49FEBE, REF-739233E96C, REF-8571D3D535.
+
+S5C. Resource observations by pipeline interval
+Descriptive resource summaries for observations assigned to each recorded interval. Assignment uses the original UTC event boundaries and sample timestamps; boundary alignment is approximate within about one second.
+Note: There are 39,018 observations inside stage intervals and two outside (the initial and final polls).
+Note: An interval with no poll has blank resource values, not zeros. Short event intervals can be unsampled.
+Note: CPU columns are arithmetic sample means. RSS and swap columns are separate sampled maxima. These are summaries of the interval, not exclusive executable measurements.
+Sources: REF-739233E96C, REF-2DD7181A3F.
+
+Supplementary Table S6. Output inventory and logical storage.
+
+S6A. Benchmark output families
+Complete inventoried output summarized by top-level directory or prefix: 10,821 files, 281 directories and 1,392,742,248,591 logical file bytes. Files include analysis results, configuration records and retained intermediates.
+Note: Logical file size is the sum of reported file lengths; it is distinct from physical allocated storage, peak disk requirement and whole-machine disk I/O.
+Note: The inventory recorded SHA-256 for 10,406 files of at most 20 MiB. The other 415 files carry the original SKIPPED_GT_20MiB marker; this is a configured hashing limit, not a failed integrity check.
+Note: The inventory contains 90 done checkpoints: fastp, 15; host_alignment, 15; humann_metaphlan, 15; kraken_host, 15; kraken_micro_final, 15; kraken_micro_raw, 15. They were created during the clean run; recovery or reuse was not tested.
+Note: The 39,020 resource observations are measurements in the benchmark bundle and are not 39,020 additional scientific output files.
+Sources: REF-7357E349C3, REF-412EFACD1E.
+
+S6B. Benchmark output filename types
+The same complete file inventory summarized by normalized filename suffix. Final suffixes are used except for conventional compressed sequence/annotation suffixes such as .fq.gz; names without a suffix are reported separately.
+Note: Normalization is an editorial summary of filenames, not content-type detection. The source inventory is unchanged.
+Note: The original output_extensions.tsv collector groups many gene-set-specific filename endings separately (8,276 data entries). Those labels are not interpreted as 8,276 different scientific file types.
+Note: The 8,197 .gct files include 8,191 per-gene-set signature matrices plus six other GCT files. File counts do not equal independent discoveries or figures.
+Sources: REF-7357E349C3, REF-CBC47F9957.
+
+S6C. Complete benchmark file inventory
+All 10,821 inventoried files, retaining portable paths relative to the scientific output directory, reported sizes, modification times and digest information.
+Note: No file or path is omitted. Directory entries are counted separately in S6A; a portable directory listing is supplied as an accompanying CSV.
+Note: A blank SHA-256 field means that the original collector skipped files above 20 MiB. The digest-status and original-digest-field columns retain that distinction.
+Note: The inventory reports the files present at collection time, including retained intermediates. It is not a measurement of peak allocated storage.
+Sources: REF-7357E349C3.
+
+Supplementary Table S7. Complete taxon prioritization rankings.
+
+S7A. Complete taxon prioritization: relative abundance
+Complete rankings of 425 taxonomic features over 15 libraries, calculated independently using species relative abundance in percent. Mean abundance includes zero entries; the sum is across all libraries. The recorded score is I = 0.45P + 0.30M + 0.15X + 0.10T, where P is prevalence divided by 100 and M, X and T are the mean, maximum and sum after log10(v+1) and min–max scaling among all 425 features in the same representation. Scores are rounded to six decimal places.
+Note: The original rank order and all four weighted contributions are retained. Ties follow the implemented prevalence, mean, maximum and taxon-name ordering.
+Note: The score is the Taxon Prioritization Index (TPI). The mean and sum depend on the same 15 observations and are mathematically dependent; no independence or optimized-weight claim is implied.
+Note: The sum of library-specific percentages in S7A is not a single pooled percentage. S7B uses estimated reads, not relative percentages.
+Note: Zero entries, presence >0 and constant-component handling follow the recorded implementation. Weight sensitivity and stability under library resampling are reported in Supplementary Table S9.
+Sources: S7-RANK-CODE, S7-RECORDED-RANKINGS.
+
+S7B. Complete taxon prioritization: estimated read counts
+Complete rankings of 425 taxonomic features over 15 libraries, calculated independently using Bracken estimated read counts. Mean abundance includes zero entries; the sum is across all libraries. The recorded score is I = 0.45P + 0.30M + 0.15X + 0.10T, where P is prevalence divided by 100 and M, X and T are the mean, maximum and sum after log10(v+1) and min–max scaling among all 425 features in the same representation. Scores are rounded to six decimal places.
+Note: The original rank order and all four weighted contributions are retained. Ties follow the implemented prevalence, mean, maximum and taxon-name ordering.
+Note: The score is the Taxon Prioritization Index (TPI). The mean and sum depend on the same 15 observations and are mathematically dependent; no independence or optimized-weight claim is implied.
+Note: The sum of library-specific percentages in S7A is not a single pooled percentage. S7B uses estimated reads, not relative percentages.
+Note: Zero entries, presence >0 and constant-component handling follow the recorded implementation. Weight sensitivity and stability under library resampling are reported in Supplementary Table S9.
+Sources: S7-RANK-CODE, S7-RECORDED-RANKINGS.
+
+Supplementary Table S8. Host–microbiome associations and gene context.
+
+S8A. Reported HAllA association blocks
+All 24 reported host-gene HAllA blocks from the reference run, including member feature sets, block dimensions, individual pair significance and the minimum pair-adjusted p value within each block. The blocks span 27 taxonomic features and 35 host genes and contain 49 distinct pairs, 45 of which individually meet global BH-adjusted p <0.05.
+Note: The minimum adjusted p value within a block is not assigned to every member pair. Four enclosed pairs do not individually meet BH 0.05; see S8B.
+Note: HAllA used all 15 libraries jointly, average-linkage clustering on absolute Spearman similarity and FNR threshold 0.2.
+Note: Numerically reported zero p values in the largest block result from exact rank correlations under the asymptotic calculation, not literal zero probability.
+Sources: S8-HALLA-OUTPUTS, S8-HALLA-PATCH.
+
+S8B. Individual pairs inside reported HAllA blocks
+Original signed Spearman coefficients, asymptotic p values and globally BH-adjusted p values for all 49 pairs within the 24 reported blocks. Forty-five pairs are individually significant: 37 positive and eight negative. BH correction used the entire family of 425 × 20,799 = 8,839,575 taxon–gene tests, rather than this selected subset.
+Note: The evaluated vectorized Spearman path used two-sided asymptotic Student-t p values, bypassing the generic configuration of 1,000 permutation iterations.
+Note: Six pairs have exact rho=1 and numerically reported p=0. They share tied baseline profiles in 13 of 15 libraries, with only infected_2 and infected_3 differing. These sparse patterns do not establish a validated lncRNA hub or within-group association.
+Note: Taxon names are sequence-based classifications. Association signs are separate from infected-versus-uninfected expression-change signs.
+Sources: S8-HALLA-OUTPUTS, S8-HALLA-PATCH.
+
+S8C. Expression and annotation context of HAllA-associated genes
+Expression and annotation context for all 35 host genes represented in the reported HAllA blocks. Twenty-nine are protein coding and six are lncRNAs. Eight meet DESeq2 BH-adjusted p <0.05 for infected versus uninfected (five libraries per group): five have positive and three negative estimates. NCBI records are active RefSeq MODEL records with an exact BGLAX cross-reference and reference-coordinate match; 17 have informative predicted product descriptions, including four of the eight DE genes.
+Note: NCBI product descriptions are predictions, not experimentally validated gene symbols. Preserve “-like” and retain the BGLAX identifiers. eggNOG names refer to ortholog annotations and can differ from the species-specific NCBI descriptions.
+Note: The eggNOG file contains records for 22 of 29 coding genes and six of eight DE genes, and none for the six lncRNAs. Not available denotes an absent record; Not assigned denotes a missing field in an existing record.
+Note: BGLAX_044265, the lncRNA in the largest block, is uncharacterized and not DE for this contrast (adjusted p approximately 0.197).
+Note: No enrichment test was introduced for this 35-gene subset. Host GO-score HAllA reported zero significant pairs and zero blocks.
+Sources: S8-HALLA-OUTPUTS, S8-DESEQ2, S8-REFERENCE-CACHE, S8-EGGNOG, S8-NCBI.
+
+SOURCE CATALOG
+
+S1-PAPER: Original MTD publication, Wu, Liu and Ling (2022)
+https://doi.org/10.1093/bib/bbac111
+
+S1-O-README: Original MTD pinned source: README.md
+https://github.com/FEI38750/MTD/blob/d488faf929b12d810d5b46742975e535e6f48397/README.md
+Pinned commit d488faf929b12d810d5b46742975e535e6f48397
+
+S1-O-ENTRY: Original MTD pinned source: MTD.sh
+https://github.com/FEI38750/MTD/blob/d488faf929b12d810d5b46742975e535e6f48397/MTD.sh
+Pinned commit d488faf929b12d810d5b46742975e535e6f48397
+
+S1-O-SE: Original MTD pinned source: MTD_SE.sh
+https://github.com/FEI38750/MTD/blob/d488faf929b12d810d5b46742975e535e6f48397/MTD_SE.sh
+Pinned commit d488faf929b12d810d5b46742975e535e6f48397
+
+S1-O-R: Original MTD pinned source: DEG_Anno_Plot.R
+https://github.com/FEI38750/MTD/blob/d488faf929b12d810d5b46742975e535e6f48397/DEG_Anno_Plot.R
+Pinned commit d488faf929b12d810d5b46742975e535e6f48397
+
+S1-O-HOSTS: Original MTD pinned source: HostSpecies.csv
+https://github.com/FEI38750/MTD/blob/d488faf929b12d810d5b46742975e535e6f48397/HostSpecies.csv
+Pinned commit d488faf929b12d810d5b46742975e535e6f48397
+
+S1-O-CUSTOM: Original MTD pinned source: Customized_host.sh
+https://github.com/FEI38750/MTD/blob/d488faf929b12d810d5b46742975e535e6f48397/Customized_host.sh
+Pinned commit d488faf929b12d810d5b46742975e535e6f48397
+
+S1-O-INSTALL: Original MTD pinned source: Install.sh
+https://github.com/FEI38750/MTD/blob/d488faf929b12d810d5b46742975e535e6f48397/Install.sh
+Pinned commit d488faf929b12d810d5b46742975e535e6f48397
+
+S1-O-RINSTALL: Original MTD pinned source: Installation/R_packages_installation.R
+https://github.com/FEI38750/MTD/blob/d488faf929b12d810d5b46742975e535e6f48397/Installation/R_packages_installation.R
+Pinned commit d488faf929b12d810d5b46742975e535e6f48397
+
+S1-E-ENTRY: Evaluated MTD Explorer pinned source: MTD_explorer.sh
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/MTD_explorer.sh
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+S1-E-CUSTOM: Evaluated MTD Explorer pinned source: Create_custom_host.sh
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/Create_custom_host.sh
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+S1-E-ORGDB: Evaluated MTD Explorer pinned source: aux_scripts/orgdb/install_gold_orgdb_from_hostspecies.sh
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/orgdb/install_gold_orgdb_from_hostspecies.sh
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+S1-E-BUILDER: Evaluated MTD Explorer pinned source: aux_scripts/orgdb/build_gold_orgdb_from_gtf_eggnog.R
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/orgdb/build_gold_orgdb_from_gtf_eggnog.R
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+S1-E-PROTEIN: Evaluated MTD Explorer pinned source: aux_scripts/orgdb/make_gene_representative_fasta.py
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/orgdb/make_gene_representative_fasta.py
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+S1-E-ENTREZ: Evaluated MTD Explorer pinned source: aux_scripts/host_reference/build_gid_to_entrez_from_ncbi.py
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/host_reference/build_gid_to_entrez_from_ncbi.py
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+S1-E-RANK: Evaluated MTD Explorer pinned source: aux_scripts/exploratory/MTD_exploratory_detected_microbiome_rank.R
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/exploratory/MTD_exploratory_detected_microbiome_rank.R
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+S1-E-PREVALENCE: Evaluated MTD Explorer pinned source: aux_scripts/exploratory/MTD_exploratory_prevalence_abundance.R
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/exploratory/MTD_exploratory_prevalence_abundance.R
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+S1-E-R: Evaluated MTD Explorer pinned source: aux_scripts/analysis/differential/DEG_Anno_Plot.R
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/analysis/differential/DEG_Anno_Plot.R
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+S1-E-SLURM: Evaluated MTD Explorer pinned source: aux_scripts/hpc/mtd_hpc_submit_array.sh
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/hpc/mtd_hpc_submit_array.sh
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+S1-E-HALLA: Evaluated MTD Explorer pinned source: update_fix/patch_halla_performance.py
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/update_fix/patch_halla_performance.py
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+S2-METHODS: Recorded reference-run software/environment parameters
+Record or verification: mtd_methods_run_parameters.csv
+
+S2-CONSOLE: Reference-run console; runtime tool banners and DESeq2 validation
+Record or verification: console_clean.log
+
+S2-PROBE: Benchmark controller tools captured before execution/installation
+Record or verification: software.txt
+
+S2-HALLA: HAllA host-gene performance report
+halla/host_gene/performance.txt
+
+S2-HALLA-PATCH: Frozen vectorized HAllA performance patch
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/update_fix/patch_halla_performance.py
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+S2-EV: Original host EnhancedVolcano execution log
+Host_DEG/infected_vs_uninfected/host_counts_infected_vs_uninfected.EV.volcano.log
+
+S2-EGGNOG: Reference-preparation eggNOG-mapper annotation header
+Record or verification: taxid_6526_gold_orgdb.emapper.annotations
+
+S2-REF: Functional reference manifest
+Record or verification: functional_annotation_manifest.tsv
+
+S2-SSGSEA: Evaluated vendored ssGSEA source revision
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/Tools/ssGSEA2.0/src/ssGSEA2.0.R
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+S2-RSOURCE: Evaluated host/microbial R analysis source
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/analysis/differential/DEG_Anno_Plot.R
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+S2-HARDWARE: Recorded operating system and hardware
+Record or verification: hardware.txt
+
+S7-RANK-CODE: Evaluated taxon ranking implementation
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/exploratory/MTD_exploratory_detected_microbiome_rank.R
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+S7-RECORDED-RANKINGS: Reference-run full species relative-abundance and estimated-count ranking exports
+Recorded exploratory ranking tables. All 425 rows in each representation were independently checked for Figure 4.
+
+S8-HALLA-OUTPUTS: Reference-run halla/host_gene outputs
+sig_clusters.txt, all_associations.txt, X.tsv, Y.tsv, performance.txt and dendrogram linkage files; Figure 6 data verification.
+
+S8-HALLA-PATCH: Evaluated vectorized Spearman implementation
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/update_fix/patch_halla_performance.py
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+S8-DESEQ2: Reference-run infected-versus-uninfected host DESeq2 results
+host_counts_infected_vs_uninfected_gene_symbols_table.csv
+
+S8-REFERENCE-CACHE: Gene IDs, biotypes and coordinates of the installed reference
+gene_ID_cache.csv
+
+S8-EGGNOG: Reference-matched representative-protein eggNOG annotations
+taxid_6526_gold_orgdb.emapper.annotations; emapper 2.1.3; generated 13 August 2026
+
+S8-NCBI: Official NCBI Gene records
+https://www.ncbi.nlm.nih.gov/gene/
+
+registry: registry
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/HostSpecies.csv
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+methods: methods
+Record or verification: mtd_methods_run_parameters.csv
+
+inputs: inputs
+Record or verification: run_inputs.tsv
+
+functional_manifest: functional_manifest
+Record or verification: functional_annotation_manifest.tsv
+
+figure2: figure2
+Record or verification: figure_2_verified_counts.json
+
+eggnog: eggnog
+Record or verification: taxid_6526_gold_orgdb.emapper.annotations
+
+console: console
+Record or verification: console_clean.log
+
+code: code
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/MTD_explorer.sh
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+orgdb_builder: orgdb_builder
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/orgdb/build_gold_orgdb_from_gtf_eggnog.R
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+samplesheet: samplesheet
+Record or verification: used_samplesheet.csv
+
+fastqs: fastqs
+Record or verification: used_fastq_files.tsv
+
+ena_aliases: ena_aliases
+https://www.ebi.ac.uk/ena/portal/api/filereport?accession=PRJNA1306560&result=read_run&fields=run_accession,secondary_study_accession,experiment_alias,run_alias,submitted_ftp
+
+ena_runs: ena_runs
+https://www.ebi.ac.uk/ena/browser/view/PRJNA1306560
+
+bioproject: bioproject
+https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1306560
+
+config_ssgsea: config_ssgsea
+https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/Tools/ssGSEA2.0/config.yaml
+Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+
+halla_audit: halla_audit
+Record or verification: halla_independent_audit.json
+
+monitor_audit: monitor_audit
+Record or verification: resource_independent_audit.json
+
+timing_audit: timing_audit
+Record or verification: stage_timing_hardware_audit.json
+
+figure5: figure5
+Record or verification: figure_5_provenance.json
+
+REF-2DD7181A3F: Reference-run pipeline_steps.tsv
+Reference-run record: pipeline_steps.tsv
+Reference execution or recorded source
+
+REF-7B26C92FBC: Reference-run pipeline_steps_raw.tsv
+Reference-run record: pipeline_steps_raw.tsv
+Reference execution or recorded source
+
+REF-D38C49FEBE: Reference-run summary.tsv
+Reference-run record: summary.tsv
+Reference execution or recorded source
+
+REF-739233E96C: Reference-run resource_samples.csv
+Reference-run record: resource_samples.csv
+Reference execution or recorded source
+
+REF-8571D3D535: frozen collector at commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+frozen collector at commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+Reference execution or recorded source
+
+REF-7357E349C3: Reference-run output_inventory.tsv
+Reference-run record: output_inventory.tsv
+Reference execution or recorded source
+
+REF-412EFACD1E: Reference-run pipeline_summary.tsv
+Reference-run record: pipeline_summary.tsv
+Reference execution or recorded source
+
+REF-CBC47F9957: Reference-run output_extensions.tsv
+Reference-run record: output_extensions.tsv
+Reference execution or recorded source

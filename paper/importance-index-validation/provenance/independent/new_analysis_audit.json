@@ -1,0 +1,91 @@
+{
+  "independent_auditor": "importance_independent_reproduction",
+  "method": "Independent standard-library ranking and quantile arithmetic; no root analysis code imported or executed",
+  "protocol_and_script_frozen_hashes_match": true,
+  "all_5000_draws_preserve_five_libraries_per_group": true,
+  "seed_20261120_draws_reproduced": true,
+  "exact_81_multiplier_products_reduce_to_79_distinct_weight_vectors": true,
+  "selected_bootstrap_replicates_one_based": [
+    1,
+    2,
+    3,
+    34,
+    605,
+    674,
+    1314,
+    1346,
+    1399,
+    1431,
+    1481,
+    2302,
+    2500,
+    2765,
+    2856,
+    2872,
+    2963,
+    2983,
+    4316,
+    4876,
+    4991,
+    4998,
+    4999,
+    5000
+  ],
+  "audit_runs": [
+    {
+      "representation": "relative_percent",
+      "model": "default",
+      "fixed_scenarios_recomputed": 93,
+      "LOO_rankings_recomputed": 15,
+      "bootstrap_rankings_recomputed": 24,
+      "bootstrap_draws_headline_metrics_checked": 5000,
+      "taxon_bootstrap_and_LOO_summaries_checked": 425
+    },
+    {
+      "representation": "relative_percent",
+      "model": "no_total",
+      "fixed_scenarios_recomputed": 93,
+      "LOO_rankings_recomputed": 15,
+      "bootstrap_rankings_recomputed": 24,
+      "bootstrap_draws_headline_metrics_checked": 5000,
+      "taxon_bootstrap_and_LOO_summaries_checked": 425
+    },
+    {
+      "representation": "estimated_reads",
+      "model": "default",
+      "fixed_scenarios_recomputed": 93,
+      "LOO_rankings_recomputed": 15,
+      "bootstrap_rankings_recomputed": 24,
+      "bootstrap_draws_headline_metrics_checked": 5000,
+      "taxon_bootstrap_and_LOO_summaries_checked": 425
+    },
+    {
+      "representation": "estimated_reads",
+      "model": "no_total",
+      "fixed_scenarios_recomputed": 93,
+      "LOO_rankings_recomputed": 15,
+      "bootstrap_rankings_recomputed": 24,
+      "bootstrap_draws_headline_metrics_checked": 5000,
+      "taxon_bootstrap_and_LOO_summaries_checked": 425
+    }
+  ],
+  "audit_totals": {
+    "fixed_scenario_rank_and_score_vectors_independently_recomputed": 186,
+    "leave_one_out_rank_vectors_independently_recomputed": 60,
+    "bootstrap_rank_and_score_vectors_independently_recomputed": 96,
+    "bootstrap_replicate_retention_and_Jaccard_pairs_checked": 20000,
+    "bootstrap_taxon_summaries_checked": 1700,
+    "leave_one_out_taxon_summaries_checked": 1700,
+    "weight_grid_taxon_summaries_checked": 850
+  },
+  "headline_summary_quantiles_and_four_input_hashes_match": true,
+  "failures": [],
+  "all_checks_passed": true,
+  "interpretation_limits": [
+    "Protocol is a post hoc internal robustness plan, not preregistration or independent biological validation.",
+    "No-total sampling metrics correctly compare to each no-total model's own full-data reference; historical-default retention is a separately named metric.",
+    "Conditional percentile rank ranges omit bootstrap draws in which a taxon is ineligible; eligibility and unconditional top20 frequencies are supplied separately.",
+    "The 79 weight-grid frequencies describe those scenarios, not a sampling probability or confidence interval.",
+    "Ranks are deterministic positions including secondary tie-breaks; Spearman of positions is a secondary summary and should not replace top-set metrics."
+  ]
+}

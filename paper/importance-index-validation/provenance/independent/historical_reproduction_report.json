@@ -1,0 +1,546 @@
+{
+  "task": "Independent exact reproduction of historical taxon importance rankings",
+  "date": "2026-11-20",
+  "historical_R_code": {
+    "path": "provenance/historical_importance_index.R",
+    "bytes": 36407,
+    "sha256": "b48db4af7d5b9ce9b1474be28f6fd9dbe0bfe7607b191f5cf6a6999d6ad9e69e"
+  },
+  "method": "Independent standard-library Python arithmetic using exported full per-library matrices; no root analysis imported; no statistical resampling performed",
+  "weights_prevalence_mean_max_total": [
+    0.45,
+    0.3,
+    0.15,
+    0.1
+  ],
+  "presence_rule": "abundance > 0",
+  "scaling": "For each abundance summary across nonzero-total taxa, log10(v+1), then min-max. Constant/nonfinite extrema produce zero component.",
+  "rounding_and_sort": "Score calculated with unrounded components, then score/components rounded to6decimals; sorting by score, prevalence_percent, raw mean, raw max descending, then taxon ascending. Python lexicographic order reproduced the entire frozen ordering here; R character collation can be locale-specific in a different dataset.",
+  "source_preprocessing_from_R": "Reader converts missing and negative abundance to0; aggregates duplicate taxon names before removing all-zero rows; relative mode divides each library by sum over remaining taxa and multiplies100. Full ranked table scores precomputed summary input; wide per-library export is a separate subsequent step and is independently checked here for consistency.",
+  "representations": [
+    {
+      "representation": "relative",
+      "units": "within-library Bracken percentages",
+      "taxon_identity_key": "taxon label; numeric TaxIDs are not supplied in these exported matrices",
+      "n_taxa": 425,
+      "n_samples": 15,
+      "samples": [
+        "infected_1",
+        "infected_2",
+        "infected_3",
+        "infected_4",
+        "infected_5",
+        "infection_failed_1",
+        "infection_failed_2",
+        "infection_failed_3",
+        "infection_failed_4",
+        "infection_failed_5",
+        "uninfected_1",
+        "uninfected_2",
+        "uninfected_3",
+        "uninfected_4",
+        "uninfected_5"
+      ],
+      "source_files": [
+        {
+          "path": "data/relative_percent_matrix.tsv",
+          "bytes": 47365,
+          "sha256": "354c4cf827ac9e2d49a9614374185116776b815472ecd1463db3763cb92ad337"
+        },
+        {
+          "path": "data/relative_percent_historical_ranking.tsv",
+          "bytes": 83340,
+          "sha256": "a7c52d6bf7631dc23aca80d8fa47a91b288efa951b683f2e426e2faf547c9a12"
+        },
+        {
+          "path": "data/relative_percent_historical_summary.tsv",
+          "bytes": 55361,
+          "sha256": "1a1a5b4e5369f87fb14b2e25d95dbf81880d3d2213b3080693d781dbca278154"
+        }
+      ],
+      "matrix_column_totals": {
+        "infected_1": 100.00000000000009,
+        "infected_2": 100.0,
+        "infected_3": 99.99999999999996,
+        "infected_4": 99.99999999999996,
+        "infected_5": 100.0,
+        "infection_failed_1": 99.99999999999997,
+        "infection_failed_2": 99.99999999999996,
+        "infection_failed_3": 100.0,
+        "infection_failed_4": 100.00000000000006,
+        "infection_failed_5": 99.99999999999997,
+        "uninfected_1": 99.99999999999997,
+        "uninfected_2": 100.00000000000001,
+        "uninfected_3": 99.99999999999994,
+        "uninfected_4": 100.00000000000006,
+        "uninfected_5": 100.00000000000006
+      },
+      "all_values_finite_nonnegative": true,
+      "duplicate_taxa": 0,
+      "zero_total_taxa": 0,
+      "max_abs_error_against_frozen_ranking": {
+        "n_samples": 0.0,
+        "prevalence_n": 0.0,
+        "prevalence_percent": 3.552713678800501e-14,
+        "mean_abundance": 2.6645352591003757e-14,
+        "median_abundance": 0.0,
+        "max_abundance": 0.0,
+        "total_abundance": 4.689582056016661e-13,
+        "importance_score": 0.0,
+        "prevalence_score": 0.0,
+        "mean_abundance_score": 0.0,
+        "max_abundance_score": 0.0,
+        "total_abundance_score": 0.0
+      },
+      "mismatch_counts_at_tolerance": {
+        "n_samples": 0,
+        "prevalence_n": 0,
+        "prevalence_percent": 0,
+        "mean_abundance": 0,
+        "median_abundance": 0,
+        "max_abundance": 0,
+        "total_abundance": 0,
+        "importance_score": 0,
+        "prevalence_score": 0,
+        "mean_abundance_score": 0,
+        "max_abundance_score": 0,
+        "total_abundance_score": 0
+      },
+      "max_abs_error_against_original_summary": {
+        "n_samples": 0.0,
+        "prevalence_n": 0.0,
+        "prevalence_percent": 3.552713678800501e-14,
+        "mean_abundance": 2.6645352591003757e-14,
+        "median_abundance": 0.0,
+        "max_abundance": 0.0,
+        "total_abundance": 4.689582056016661e-13
+      },
+      "complete_rank_order_exact": true,
+      "rank_order_mismatches": [],
+      "rounded_score_tie_groups": [
+        [
+          "Cryptococcus depauperatus",
+          "Rhodanobacter soli"
+        ],
+        [
+          "Ogataea parapolymorpha",
+          "Orientia tsutsugamushi"
+        ],
+        [
+          "Cyanidioschyzon merolae",
+          "Lysinibacillus louembei"
+        ],
+        [
+          "Bdellovibrio bacteriovorus",
+          "Rufibacter sp. DG15C"
+        ],
+        [
+          "Colletotrichum lupini",
+          "Neobacillus oceani"
+        ],
+        [
+          "Caproiciproducens sp. LBM24188",
+          "Flavihumibacter rivuli"
+        ],
+        [
+          "Candidatus Ponderosibacter sp. Uisw_141_02",
+          "Theileria equi"
+        ],
+        [
+          "Candidatus Nucleicultrix amoebiphila",
+          "Fusobacterium sp. SB021"
+        ],
+        [
+          "Debaryomyces hansenii",
+          "Fluviicola sp."
+        ],
+        [
+          "Aliikangiella litoralis",
+          "Candidatus Bodocaedibacter vickermanii",
+          "Ehrlichia ruminantium"
+        ],
+        [
+          "Angustibacter sp. McL0619",
+          "Clostridium pasteurianum",
+          "Pontibacter sp. G13"
+        ],
+        [
+          "Alphabaculovirus erankerariae",
+          "Gaprivervirus vr26"
+        ]
+      ],
+      "all_numeric_ranking_keys_tied_groups": [
+        [
+          "Cryptococcus depauperatus",
+          "Rhodanobacter soli"
+        ],
+        [
+          "Ogataea parapolymorpha",
+          "Orientia tsutsugamushi"
+        ],
+        [
+          "Cyanidioschyzon merolae",
+          "Lysinibacillus louembei"
+        ],
+        [
+          "Bdellovibrio bacteriovorus",
+          "Rufibacter sp. DG15C"
+        ],
+        [
+          "Colletotrichum lupini",
+          "Neobacillus oceani"
+        ],
+        [
+          "Caproiciproducens sp. LBM24188",
+          "Flavihumibacter rivuli"
+        ],
+        [
+          "Candidatus Ponderosibacter sp. Uisw_141_02",
+          "Theileria equi"
+        ],
+        [
+          "Candidatus Nucleicultrix amoebiphila",
+          "Fusobacterium sp. SB021"
+        ],
+        [
+          "Debaryomyces hansenii",
+          "Fluviicola sp."
+        ],
+        [
+          "Aliikangiella litoralis",
+          "Candidatus Bodocaedibacter vickermanii",
+          "Ehrlichia ruminantium"
+        ],
+        [
+          "Angustibacter sp. McL0619",
+          "Clostridium pasteurianum",
+          "Pontibacter sp. G13"
+        ],
+        [
+          "Alphabaculovirus erankerariae",
+          "Gaprivervirus vr26"
+        ]
+      ],
+      "dependency_total_equals_n_times_mean_max_abs_error": 7.105427357601002e-15,
+      "output_file": "provenance/independent/independently_recomputed_relative_ranking.tsv"
+    },
+    {
+      "representation": "absolute",
+      "units": "Bracken estimated read counts",
+      "taxon_identity_key": "taxon label; numeric TaxIDs are not supplied in these exported matrices",
+      "n_taxa": 425,
+      "n_samples": 15,
+      "samples": [
+        "infected_1",
+        "infected_2",
+        "infected_3",
+        "infected_4",
+        "infected_5",
+        "infection_failed_1",
+        "infection_failed_2",
+        "infection_failed_3",
+        "infection_failed_4",
+        "infection_failed_5",
+        "uninfected_1",
+        "uninfected_2",
+        "uninfected_3",
+        "uninfected_4",
+        "uninfected_5"
+      ],
+      "source_files": [
+        {
+          "path": "data/estimated_reads_matrix.tsv",
+          "bytes": 25995,
+          "sha256": "3539b39335bef5ae115a3cecbf3668eb3579fd88d3eb4ce9310c0f8e6c10f396"
+        },
+        {
+          "path": "data/estimated_reads_historical_ranking.tsv",
+          "bytes": 68467,
+          "sha256": "5af5a630a9b26cd6d4596de2d53aeff32fd022e01de2c52752b62fa451bd4e64"
+        },
+        {
+          "path": "data/estimated_reads_historical_summary.tsv",
+          "bytes": 40123,
+          "sha256": "d9647b4706da93628879c8278b0d29f6af7aadb284e5c35b3c4dc9234203a09e"
+        }
+      ],
+      "matrix_column_totals": {
+        "infected_1": 230639.0,
+        "infected_2": 199705.0,
+        "infected_3": 544396.0,
+        "infected_4": 161259.0,
+        "infected_5": 77054.0,
+        "infection_failed_1": 55490.0,
+        "infection_failed_2": 61595.0,
+        "infection_failed_3": 85827.0,
+        "infection_failed_4": 53363.0,
+        "infection_failed_5": 64694.0,
+        "uninfected_1": 42229.0,
+        "uninfected_2": 37662.0,
+        "uninfected_3": 73741.0,
+        "uninfected_4": 62989.0,
+        "uninfected_5": 33759.0
+      },
+      "all_values_finite_nonnegative": true,
+      "duplicate_taxa": 0,
+      "zero_total_taxa": 0,
+      "max_abs_error_against_frozen_ranking": {
+        "n_samples": 0.0,
+        "prevalence_n": 0.0,
+        "prevalence_percent": 3.552713678800501e-14,
+        "mean_abundance": 3.2741809263825417e-11,
+        "median_abundance": 0.0,
+        "max_abundance": 0.0,
+        "total_abundance": 0.0,
+        "importance_score": 0.0,
+        "prevalence_score": 0.0,
+        "mean_abundance_score": 0.0,
+        "max_abundance_score": 0.0,
+        "total_abundance_score": 0.0
+      },
+      "mismatch_counts_at_tolerance": {
+        "n_samples": 0,
+        "prevalence_n": 0,
+        "prevalence_percent": 0,
+        "mean_abundance": 0,
+        "median_abundance": 0,
+        "max_abundance": 0,
+        "total_abundance": 0,
+        "importance_score": 0,
+        "prevalence_score": 0,
+        "mean_abundance_score": 0,
+        "max_abundance_score": 0,
+        "total_abundance_score": 0
+      },
+      "max_abs_error_against_original_summary": {
+        "n_samples": 0.0,
+        "prevalence_n": 0.0,
+        "prevalence_percent": 3.552713678800501e-14,
+        "mean_abundance": 3.2741809263825417e-11,
+        "median_abundance": 0.0,
+        "max_abundance": 0.0,
+        "total_abundance": 0.0
+      },
+      "complete_rank_order_exact": true,
+      "rank_order_mismatches": [],
+      "rounded_score_tie_groups": [
+        [
+          "Cryptococcus depauperatus",
+          "Rhodanobacter soli"
+        ],
+        [
+          "Ogataea parapolymorpha",
+          "Orientia tsutsugamushi"
+        ],
+        [
+          "Rickettsia prowazekii",
+          "Streptomyces malaysiensis"
+        ],
+        [
+          "Lacibacter sp. MH-610",
+          "Lacunisphaera limnophila"
+        ],
+        [
+          "Cyanidioschyzon merolae",
+          "Lysinibacillus louembei",
+          "Pleurocapsa sp. FMAR1"
+        ],
+        [
+          "Chitinophaga oryzae",
+          "Opitutus sp. GAS368"
+        ],
+        [
+          "Epilithonimonas sp. UC225_85",
+          "Planctomyces sp. SH-PL14",
+          "Planctopirus sp. SH287"
+        ],
+        [
+          "Actinomarinicola tropica",
+          "Bdellovibrio bacteriovorus",
+          "Rufibacter sp. DG15C"
+        ],
+        [
+          "Colletotrichum lupini",
+          "Neobacillus oceani"
+        ],
+        [
+          "Legionella sp. D16C41",
+          "Miltoncostaea oceani"
+        ],
+        [
+          "Candidatus Nitrospira inopinata",
+          "Ligilactobacillus acidipiscis"
+        ],
+        [
+          "Caproiciproducens sp. LBM24188",
+          "Flavihumibacter rivuli",
+          "Tundrisphaera lichenicola"
+        ],
+        [
+          "Candidatus Midichloria mitochondrii",
+          "Clostridium tetani"
+        ],
+        [
+          "Chlamydia pneumoniae",
+          "Sediminibacterium longum"
+        ],
+        [
+          "Candidatus Ponderosibacter sp. Uisw_141_02",
+          "Theileria equi"
+        ],
+        [
+          "Photobacterium sp. HL06",
+          "Weissella cibaria"
+        ],
+        [
+          "Candidatus Nucleicultrix amoebiphila",
+          "Fusobacterium sp. SB021"
+        ],
+        [
+          "Aspergillus nidulans",
+          "Debaryomyces hansenii",
+          "Fluviicola sp.",
+          "Lewinella sp. LCG006"
+        ],
+        [
+          "Botrimarina mediterranea",
+          "Thermodesulfobacterium commune"
+        ],
+        [
+          "Aliikangiella litoralis",
+          "Candidatus Bodocaedibacter vickermanii",
+          "Drechmeria coniospora",
+          "Ehrlichia ruminantium"
+        ],
+        [
+          "Halobacteriovorax marinus",
+          "Jiulongibacter sp. NS-SX5"
+        ],
+        [
+          "Angustibacter sp. McL0619",
+          "Clostridium pasteurianum",
+          "Pontibacter sp. G13"
+        ],
+        [
+          "Alphabaculovirus erankerariae",
+          "Gaprivervirus vr26"
+        ]
+      ],
+      "all_numeric_ranking_keys_tied_groups": [
+        [
+          "Cryptococcus depauperatus",
+          "Rhodanobacter soli"
+        ],
+        [
+          "Ogataea parapolymorpha",
+          "Orientia tsutsugamushi"
+        ],
+        [
+          "Rickettsia prowazekii",
+          "Streptomyces malaysiensis"
+        ],
+        [
+          "Lacibacter sp. MH-610",
+          "Lacunisphaera limnophila"
+        ],
+        [
+          "Cyanidioschyzon merolae",
+          "Lysinibacillus louembei",
+          "Pleurocapsa sp. FMAR1"
+        ],
+        [
+          "Chitinophaga oryzae",
+          "Opitutus sp. GAS368"
+        ],
+        [
+          "Epilithonimonas sp. UC225_85",
+          "Planctomyces sp. SH-PL14",
+          "Planctopirus sp. SH287"
+        ],
+        [
+          "Actinomarinicola tropica",
+          "Bdellovibrio bacteriovorus",
+          "Rufibacter sp. DG15C"
+        ],
+        [
+          "Colletotrichum lupini",
+          "Neobacillus oceani"
+        ],
+        [
+          "Legionella sp. D16C41",
+          "Miltoncostaea oceani"
+        ],
+        [
+          "Candidatus Nitrospira inopinata",
+          "Ligilactobacillus acidipiscis"
+        ],
+        [
+          "Caproiciproducens sp. LBM24188",
+          "Flavihumibacter rivuli",
+          "Tundrisphaera lichenicola"
+        ],
+        [
+          "Candidatus Midichloria mitochondrii",
+          "Clostridium tetani"
+        ],
+        [
+          "Chlamydia pneumoniae",
+          "Sediminibacterium longum"
+        ],
+        [
+          "Candidatus Ponderosibacter sp. Uisw_141_02",
+          "Theileria equi"
+        ],
+        [
+          "Photobacterium sp. HL06",
+          "Weissella cibaria"
+        ],
+        [
+          "Candidatus Nucleicultrix amoebiphila",
+          "Fusobacterium sp. SB021"
+        ],
+        [
+          "Aspergillus nidulans",
+          "Debaryomyces hansenii",
+          "Fluviicola sp.",
+          "Lewinella sp. LCG006"
+        ],
+        [
+          "Botrimarina mediterranea",
+          "Thermodesulfobacterium commune"
+        ],
+        [
+          "Aliikangiella litoralis",
+          "Candidatus Bodocaedibacter vickermanii",
+          "Drechmeria coniospora",
+          "Ehrlichia ruminantium"
+        ],
+        [
+          "Halobacteriovorax marinus",
+          "Jiulongibacter sp. NS-SX5"
+        ],
+        [
+          "Angustibacter sp. McL0619",
+          "Clostridium pasteurianum",
+          "Pontibacter sp. G13"
+        ],
+        [
+          "Alphabaculovirus erankerariae",
+          "Gaprivervirus vr26"
+        ]
+      ],
+      "dependency_total_equals_n_times_mean_max_abs_error": 9.094947017729282e-13,
+      "output_file": "provenance/independent/independently_recomputed_absolute_ranking.tsv"
+    }
+  ],
+  "relative_matrix_from_absolute_max_abs_error_percentage_points": 4.796163466380676e-14,
+  "source_files_modified": false,
+  "bootstrap_or_sensitivity_analysis_run": false,
+  "interpretation": [
+    "Total equals n times arithmetic mean within a fixed sample universe; they are not independent underlying abundance summaries.",
+    "The log1p and separate min-max transforms mean their scaled score vectors are not numerically identical; removing total is still a meaningful sensitivity scenario, not a change to the frozen score definition.",
+    "Maximum is sensitive to high abundance in a single sampled library; bootstrap copies of a library do not create independent new biological samples.",
+    "For resampling, recompute prevalence, mean, maximum, total, min-max and rounded tie ordering; taxa absent from all selected libraries need an explicit ineligibility/rank policy.",
+    "Percentages have denominator all425taxa per library before any display subset; do not renormalize only the top20."
+  ]
+}

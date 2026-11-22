@@ -1,0 +1,67 @@
+﻿id,title,locator,context
+S1-PAPER,"Original MTD publication, Wu, Liu and Ling (2022)",https://doi.org/10.1093/bib/bbac111,
+S1-O-README,Original MTD pinned source: README.md,https://github.com/FEI38750/MTD/blob/d488faf929b12d810d5b46742975e535e6f48397/README.md,Pinned commit d488faf929b12d810d5b46742975e535e6f48397
+S1-O-ENTRY,Original MTD pinned source: MTD.sh,https://github.com/FEI38750/MTD/blob/d488faf929b12d810d5b46742975e535e6f48397/MTD.sh,Pinned commit d488faf929b12d810d5b46742975e535e6f48397
+S1-O-SE,Original MTD pinned source: MTD_SE.sh,https://github.com/FEI38750/MTD/blob/d488faf929b12d810d5b46742975e535e6f48397/MTD_SE.sh,Pinned commit d488faf929b12d810d5b46742975e535e6f48397
+S1-O-R,Original MTD pinned source: DEG_Anno_Plot.R,https://github.com/FEI38750/MTD/blob/d488faf929b12d810d5b46742975e535e6f48397/DEG_Anno_Plot.R,Pinned commit d488faf929b12d810d5b46742975e535e6f48397
+S1-O-HOSTS,Original MTD pinned source: HostSpecies.csv,https://github.com/FEI38750/MTD/blob/d488faf929b12d810d5b46742975e535e6f48397/HostSpecies.csv,Pinned commit d488faf929b12d810d5b46742975e535e6f48397
+S1-O-CUSTOM,Original MTD pinned source: Customized_host.sh,https://github.com/FEI38750/MTD/blob/d488faf929b12d810d5b46742975e535e6f48397/Customized_host.sh,Pinned commit d488faf929b12d810d5b46742975e535e6f48397
+S1-O-INSTALL,Original MTD pinned source: Install.sh,https://github.com/FEI38750/MTD/blob/d488faf929b12d810d5b46742975e535e6f48397/Install.sh,Pinned commit d488faf929b12d810d5b46742975e535e6f48397
+S1-O-RINSTALL,Original MTD pinned source: Installation/R_packages_installation.R,https://github.com/FEI38750/MTD/blob/d488faf929b12d810d5b46742975e535e6f48397/Installation/R_packages_installation.R,Pinned commit d488faf929b12d810d5b46742975e535e6f48397
+S1-E-ENTRY,Evaluated MTD Explorer pinned source: MTD_explorer.sh,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/MTD_explorer.sh,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+S1-E-CUSTOM,Evaluated MTD Explorer pinned source: Create_custom_host.sh,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/Create_custom_host.sh,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+S1-E-ORGDB,Evaluated MTD Explorer pinned source: aux_scripts/orgdb/install_gold_orgdb_from_hostspecies.sh,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/orgdb/install_gold_orgdb_from_hostspecies.sh,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+S1-E-BUILDER,Evaluated MTD Explorer pinned source: aux_scripts/orgdb/build_gold_orgdb_from_gtf_eggnog.R,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/orgdb/build_gold_orgdb_from_gtf_eggnog.R,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+S1-E-PROTEIN,Evaluated MTD Explorer pinned source: aux_scripts/orgdb/make_gene_representative_fasta.py,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/orgdb/make_gene_representative_fasta.py,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+S1-E-ENTREZ,Evaluated MTD Explorer pinned source: aux_scripts/host_reference/build_gid_to_entrez_from_ncbi.py,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/host_reference/build_gid_to_entrez_from_ncbi.py,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+S1-E-RANK,Evaluated MTD Explorer pinned source: aux_scripts/exploratory/MTD_exploratory_detected_microbiome_rank.R,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/exploratory/MTD_exploratory_detected_microbiome_rank.R,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+S1-E-PREVALENCE,Evaluated MTD Explorer pinned source: aux_scripts/exploratory/MTD_exploratory_prevalence_abundance.R,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/exploratory/MTD_exploratory_prevalence_abundance.R,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+S1-E-R,Evaluated MTD Explorer pinned source: aux_scripts/analysis/differential/DEG_Anno_Plot.R,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/analysis/differential/DEG_Anno_Plot.R,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+S1-E-SLURM,Evaluated MTD Explorer pinned source: aux_scripts/hpc/mtd_hpc_submit_array.sh,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/hpc/mtd_hpc_submit_array.sh,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+S1-E-HALLA,Evaluated MTD Explorer pinned source: update_fix/patch_halla_performance.py,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/update_fix/patch_halla_performance.py,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+S2-METHODS,Recorded reference-run software/environment parameters,Record or verification: mtd_methods_run_parameters.csv,
+S2-CONSOLE,Reference-run console; runtime tool banners and DESeq2 validation,Record or verification: console_clean.log,
+S2-PROBE,Benchmark controller tools captured before execution/installation,Record or verification: software.txt,
+S2-HALLA,HAllA host-gene performance report,halla/host_gene/performance.txt,
+S2-HALLA-PATCH,Frozen vectorized HAllA performance patch,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/update_fix/patch_halla_performance.py,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+S2-EV,Original host EnhancedVolcano execution log,Host_DEG/infected_vs_uninfected/host_counts_infected_vs_uninfected.EV.volcano.log,
+S2-EGGNOG,Reference-preparation eggNOG-mapper annotation header,Record or verification: taxid_6526_gold_orgdb.emapper.annotations,
+S2-REF,Functional reference manifest,Record or verification: functional_annotation_manifest.tsv,
+S2-SSGSEA,Evaluated vendored ssGSEA source revision,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/Tools/ssGSEA2.0/src/ssGSEA2.0.R,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+S2-RSOURCE,Evaluated host/microbial R analysis source,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/analysis/differential/DEG_Anno_Plot.R,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+S2-HARDWARE,Recorded operating system and hardware,Record or verification: hardware.txt,
+S7-RANK-CODE,Evaluated taxon ranking implementation,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/exploratory/MTD_exploratory_detected_microbiome_rank.R,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+S7-RECORDED-RANKINGS,Reference-run full species relative-abundance and estimated-count ranking exports,Recorded exploratory ranking tables. All 425 rows in each representation were independently checked for Figure 4.,
+S8-HALLA-OUTPUTS,Reference-run halla/host_gene outputs,"sig_clusters.txt, all_associations.txt, X.tsv, Y.tsv, performance.txt and dendrogram linkage files; Figure 6 data verification.",
+S8-HALLA-PATCH,Evaluated vectorized Spearman implementation,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/update_fix/patch_halla_performance.py,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+S8-DESEQ2,Reference-run infected-versus-uninfected host DESeq2 results,host_counts_infected_vs_uninfected_gene_symbols_table.csv,
+S8-REFERENCE-CACHE,"Gene IDs, biotypes and coordinates of the installed reference",gene_ID_cache.csv,
+S8-EGGNOG,Reference-matched representative-protein eggNOG annotations,taxid_6526_gold_orgdb.emapper.annotations; emapper 2.1.3; generated 13 August 2026,
+S8-NCBI,Official NCBI Gene records,https://www.ncbi.nlm.nih.gov/gene/,
+registry,registry,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/HostSpecies.csv,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+methods,methods,Record or verification: mtd_methods_run_parameters.csv,
+inputs,inputs,Record or verification: run_inputs.tsv,
+functional_manifest,functional_manifest,Record or verification: functional_annotation_manifest.tsv,
+figure2,figure2,Record or verification: figure_2_verified_counts.json,
+eggnog,eggnog,Record or verification: taxid_6526_gold_orgdb.emapper.annotations,
+console,console,Record or verification: console_clean.log,
+code,code,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/MTD_explorer.sh,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+orgdb_builder,orgdb_builder,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/orgdb/build_gold_orgdb_from_gtf_eggnog.R,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+samplesheet,samplesheet,Record or verification: used_samplesheet.csv,
+fastqs,fastqs,Record or verification: used_fastq_files.tsv,
+ena_aliases,ena_aliases,"https://www.ebi.ac.uk/ena/portal/api/filereport?accession=PRJNA1306560&result=read_run&fields=run_accession,secondary_study_accession,experiment_alias,run_alias,submitted_ftp",
+ena_runs,ena_runs,https://www.ebi.ac.uk/ena/browser/view/PRJNA1306560,
+bioproject,bioproject,https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1306560,
+config_ssgsea,config_ssgsea,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/Tools/ssGSEA2.0/config.yaml,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
+halla_audit,halla_audit,Record or verification: halla_independent_audit.json,
+monitor_audit,monitor_audit,Record or verification: resource_independent_audit.json,
+timing_audit,timing_audit,Record or verification: stage_timing_hardware_audit.json,
+figure5,figure5,Record or verification: figure_5_provenance.json,
+REF-2DD7181A3F,Reference-run pipeline_steps.tsv,Reference-run record: pipeline_steps.tsv,Reference execution or recorded source
+REF-7B26C92FBC,Reference-run pipeline_steps_raw.tsv,Reference-run record: pipeline_steps_raw.tsv,Reference execution or recorded source
+REF-D38C49FEBE,Reference-run summary.tsv,Reference-run record: summary.tsv,Reference execution or recorded source
+REF-739233E96C,Reference-run resource_samples.csv,Reference-run record: resource_samples.csv,Reference execution or recorded source
+REF-8571D3D535,frozen collector at commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d,frozen collector at commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d,Reference execution or recorded source
+REF-7357E349C3,Reference-run output_inventory.tsv,Reference-run record: output_inventory.tsv,Reference execution or recorded source
+REF-412EFACD1E,Reference-run pipeline_summary.tsv,Reference-run record: pipeline_summary.tsv,Reference execution or recorded source
+REF-CBC47F9957,Reference-run output_extensions.tsv,Reference-run record: output_extensions.tsv,Reference execution or recorded source

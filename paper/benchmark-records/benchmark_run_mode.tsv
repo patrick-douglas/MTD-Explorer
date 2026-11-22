@@ -1,0 +1,4 @@
+key	value
+benchmark_run_kind	official_clean
+resume_heavy	0
+official_clean_benchmark	1

@@ -1,0 +1,13 @@
+﻿id,label,details,kind,x,y,width,height
+reference,Coordinated host reference,Genome FASTA  ·  GTF gene annotation  ·  Protein FASTA,input,511,156,778,111
+metadata,Reference gene metadata,"GTF gene IDs, names and positions",process,60,350,480,160
+representatives,Gene-representative proteins,Map protein/transcript IDs to genes | Retain the longest mapped sequence | Rename queries with GTF gene IDs,process,660,350,480,160
+quantification,Host alignment + counting,RNA-seq reads aligned to genome | featureCounts using the GTF,process,1260,350,480,160
+eggnog,eggNOG-mapper,DIAMOND-based annotation | Queries retain reference gene IDs,process,660,580,480,130
+counts,Host gene-count matrix,Gene-level counts | Reference GTF gene identifiers,process,1260,580,480,130
+orgdb,Custom OrgDb,AnnotationForge | Reference gene IDs as GID keys | Imported GO evidence: IEA,resource,60,825,480,165
+master,Reference GO master GMT,GO terms linked to reference genes | Persistent reference collection,resource,660,825,480,165
+expression,Host-expression input,Gene IDs and expression values | Analysis-specific matrix (host.gct),process,1260,825,480,165
+interpretation,Host GO interpretation,Reference-linked gene annotation | GO enrichment,output,60,1150,480,135
+analysis_gmt,Analysis-specific GO GMT,Intersect with expression gene IDs | Retain compatible GO sets,resource,660,1150,480,135
+scores,ssGSEA,GO-set scores across samples | Comparison route,output,1260,1150,480,135

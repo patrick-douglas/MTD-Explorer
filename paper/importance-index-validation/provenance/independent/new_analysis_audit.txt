@@ -1,0 +1,6 @@
+Independent audit of the importance-index robustness analysis
+
+All checks passed: True
+Failures: 0
+Checked protocol/script identities, the 81-to-79 weight grid, all 5,000 stratified draws and their seed, 186 fixed scenarios, 60 leave-one-out rankings, 96 selected bootstrap rankings, all 20,000 top-20 retention/Jaccard pairs, all taxon summaries, headline quantiles and four input hashes.
+Full findings are in new_analysis_audit.json. Scientific interpretation remains internal robustness only.

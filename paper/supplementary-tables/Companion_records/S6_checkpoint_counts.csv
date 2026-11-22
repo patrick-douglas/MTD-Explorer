@@ -1,0 +1,7 @@
+stage,done_checkpoints
+fastp,15
+host_alignment,15
+humann_metaphlan,15
+kraken_host,15
+kraken_micro_final,15
+kraken_micro_raw,15

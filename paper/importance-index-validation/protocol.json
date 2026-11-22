@@ -1,0 +1,40 @@
+{
+  "study": "Internal robustness of the MTD Explorer descriptive taxon-importance index",
+  "date": "2026-11-20",
+  "scope": "Post hoc internal robustness study; scenarios specified before inspecting robustness outputs. Not biological validation, accuracy validation, weight optimization or preregistration.",
+  "benchmark_commit": "04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d",
+  "dataset": "PRJNA1306560; Biomphalaria glabrata; 425 classified species-level features; 15 paired-end libraries",
+  "representations": ["relative_percent", "estimated_reads"],
+  "default_weights": [0.45, 0.30, 0.15, 0.10],
+  "component_order": ["prevalence", "mean", "maximum", "total"],
+  "score_rule": "Prevalence is proportion >0. Means include zeros. Each abundance summary uses log10(v+1), then min-max across eligible taxa. Constant components map to zero. Scores rounded to 6 decimals before sorting; ties use decreasing prevalence, mean, maximum, then ascending taxon label. No taxon IDs are present in the supplied matrices.",
+  "weight_sensitivity": {
+    "multipliers": [0.5, 1.0, 1.5],
+    "design": "All 81 joint products of four multipliers, multiplied by default weights and normalized to sum 1. Deduplicate exactly equivalent normalized weight vectors before analysis.",
+    "named_comparisons": ["default", "equal_weights", "no_prevalence", "no_mean", "no_maximum", "no_total", "total_weight_added_to_mean", "prevalence_mean_equal", "prevalence_only", "mean_only"],
+    "interpretation": "Grid inclusion frequency describes the specified scenarios, not a probability or confidence interval. Baseline/ablation results do not establish superiority or optimal weights."
+  },
+  "sampling_stability": {
+    "leave_one_out": "All 15 single-library omissions; group sizes become 4/5/5.",
+    "bootstrap_replicates": 5000,
+    "bootstrap_seed": 20261120,
+    "bootstrap_generator": "NumPy PCG64 via default_rng",
+    "strata": ["infected", "infection_failed", "uninfected"],
+    "draws_per_stratum": 5,
+    "models": ["default", "no_total"],
+    "processing": "Use identical draws across both representations and models. Recompute prevalence, all abundance summaries, active-taxon universe, log transforms, min-max and ranking in each draw. Retain original within-library relative-abundance denominators. Absent taxa are ineligible, with top-20 inclusion zero; summarize rank quantiles conditional on eligibility.",
+    "interpretation": "Internal resampling stability conditional on the observed 15 libraries and 5/5/5 composition; does not create independent biological replication. Percentile rank ranges are empirical stability intervals, not population confidence intervals."
+  },
+  "additional_sensitivity": {
+    "presence_thresholds_estimated_reads": [10, 50],
+    "presence_threshold_rule": "Change only the presence definition to estimated reads >= threshold using the paired count matrix; keep original abundance values and normalization universe. These thresholds are sensitivity settings, not validated detection cutoffs.",
+    "universe_minimum_observed_libraries": [2, 3],
+    "universe_rule": "Retain taxa originally observed in at least 2 or 3 libraries, recalculate min-max within the retained universe, and keep original abundance values/within-library percentage denominators; no reclosure."
+  },
+  "metrics": {
+    "primary": ["top-20 retention count", "top-20 Jaccard similarity", "per-taxon top-20 inclusion frequency", "conditional rank percentile range"],
+    "secondary": ["top-10 and top-50 retention", "Spearman correlation of deterministic full rankings", "median absolute displacement of original top-20 positions", "eligibility frequency"],
+    "excluded_rank_for_full_comparison": "Assign absent/ineligible taxa a common bottom tied rank; do not assign artificial distinct ranks by taxon name."
+  },
+  "publication": "Preserve all specified scenarios and original data. Do not select weights, redefine candidates, or alter the evaluated implementation based on favorable results. Provide complete inputs, scripts, seeds, draws, ranks, summaries, figures, tables, software versions and checksums."
+}

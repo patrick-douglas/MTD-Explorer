@@ -1,0 +1,164 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="180mm" height="129.5172mm" viewBox="30 56 1740 1252" role="img" aria-labelledby="title desc">
+<title id="title">Reference-matched host annotation architecture in MTD Explorer</title>
+<desc id="desc">Coordinated genome, GTF and protein resources support gene-ID-matched protein annotation and host quantification. GTF metadata and eggNOG assignments support a custom OrgDb. GO master GMT is a parallel product of eggNOG GO assignments. The master is matched to the expression input to produce an analysis-specific GMT for ssGSEA in the comparison route.</desc>
+<text x="60" y="106" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="700" font-style="normal" text-anchor="start" fill="#20303B">Reference-matched host annotation</text>
+<g id="legend">
+<rect x="1340" y="157" width="28" height="22" rx="4" fill="#F0F2F4" stroke="#77848E" stroke-width="2"/>
+<text x="1382" y="178" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">Workflow steps and data</text>
+<rect x="1340" y="205" width="28" height="22" rx="4" fill="#E4EFF2" stroke="#0C6D7E" stroke-width="3"/>
+<text x="1382" y="226" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">Reference-matched resources</text>
+<rect x="1340" y="253" width="28" height="22" rx="4" fill="#F0F2F4" stroke="#A36B08" stroke-width="3"/>
+<text x="1382" y="274" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">Host-reference input</text>
+</g>
+<g id="edge-reference-metadata" fill="#77848E" stroke="none">
+<polygon points="898.400,267.000 898.400,309.000 901.600,309.000 901.600,267.000"/>
+<polygon points="900.000,307.400 300.000,307.400 300.000,310.600 900.000,310.600"/>
+<polygon points="298.400,309.000 298.400,336.000 301.600,336.000 301.600,309.000"/>
+<circle cx="900" cy="309" r="1.6"/>
+<circle cx="300" cy="309" r="1.6"/>
+<polygon id="arrowhead-reference-metadata" points="300,350 292.0,334.0 308.0,334.0"/>
+</g>
+<g id="edge-reference-proteins" fill="#77848E" stroke="none">
+<polygon points="898.400,267.000 898.400,336.000 901.600,336.000 901.600,267.000"/>
+<polygon id="arrowhead-reference-proteins" points="900,350 892.0,334.0 908.0,334.0"/>
+</g>
+<g id="edge-reference-counting" fill="#77848E" stroke="none">
+<polygon points="898.400,267.000 898.400,309.000 901.600,309.000 901.600,267.000"/>
+<polygon points="900.000,310.600 1500.000,310.600 1500.000,307.400 900.000,307.400"/>
+<polygon points="1498.400,309.000 1498.400,336.000 1501.600,336.000 1501.600,309.000"/>
+<circle cx="900" cy="309" r="1.6"/>
+<circle cx="1500" cy="309" r="1.6"/>
+<polygon id="arrowhead-reference-counting" points="1500,350 1492.0,334.0 1508.0,334.0"/>
+</g>
+<g id="edge-representative-eggnog" fill="#77848E" stroke="none">
+<polygon points="898.400,510.000 898.400,566.000 901.600,566.000 901.600,510.000"/>
+<polygon id="arrowhead-representative-eggnog" points="900,580 892.0,564.0 908.0,564.0"/>
+</g>
+<g id="edge-counts" fill="#77848E" stroke="none">
+<polygon points="1498.400,510.000 1498.400,566.000 1501.600,566.000 1501.600,510.000"/>
+<polygon id="arrowhead-counts" points="1500,580 1492.0,564.0 1508.0,564.0"/>
+</g>
+<g id="edge-expression" fill="#77848E" stroke="none">
+<polygon points="1498.400,710.000 1498.400,811.000 1501.600,811.000 1501.600,710.000"/>
+<polygon id="arrowhead-expression" points="1500,825 1492.0,809.0 1508.0,809.0"/>
+</g>
+<g id="edge-metadata-orgdb" fill="#77848E" stroke="none">
+<polygon points="298.400,510.000 298.400,770.000 301.600,770.000 301.600,510.000"/>
+</g>
+<g id="edge-eggnog-orgdb" fill="#0C6D7E" stroke="none">
+<polygon points="660.000,643.400 605.000,643.400 605.000,646.600 660.000,646.600"/>
+<polygon points="603.400,645.000 603.400,770.000 606.600,770.000 606.600,645.000"/>
+<polygon points="605.000,768.400 300.000,768.400 300.000,771.600 605.000,771.600"/>
+<circle cx="605" cy="645" r="1.6"/>
+<circle cx="605" cy="770" r="1.6"/>
+</g>
+<g id="edge-orgdb-join" fill="#0C6D7E" stroke="none">
+<polygon points="298.400,770.000 298.400,811.000 301.600,811.000 301.600,770.000"/>
+<polygon id="arrowhead-orgdb-join" points="300,825 292.0,809.0 308.0,809.0"/>
+</g>
+<g id="edge-eggnog-master" fill="#0C6D7E" stroke="none">
+<polygon points="898.400,710.000 898.400,811.000 901.600,811.000 901.600,710.000"/>
+<polygon id="arrowhead-eggnog-master" points="900,825 892.0,809.0 908.0,809.0"/>
+</g>
+<g id="edge-orgdb-interpretation" fill="#0C6D7E" stroke="none">
+<polygon points="298.400,990.000 298.400,1136.000 301.600,1136.000 301.600,990.000"/>
+<polygon id="arrowhead-orgdb-interpretation" points="300,1150 292.0,1134.0 308.0,1134.0"/>
+</g>
+<g id="edge-master-analysis" fill="#0C6D7E" stroke="none">
+<polygon points="898.400,990.000 898.400,1136.000 901.600,1136.000 901.600,990.000"/>
+<polygon id="arrowhead-master-analysis" points="900,1150 892.0,1134.0 908.0,1134.0"/>
+</g>
+<g id="edge-expression-ids" fill="#77848E" stroke="none">
+<polygon points="1260.000,905.400 1200.000,905.400 1200.000,908.600 1260.000,908.600"/>
+<polygon points="1198.400,907.000 1198.400,1070.000 1201.600,1070.000 1201.600,907.000"/>
+<polygon points="1200.000,1068.400 1060.000,1068.400 1060.000,1071.600 1200.000,1071.600"/>
+<polygon points="1058.400,1070.000 1058.400,1136.000 1061.600,1136.000 1061.600,1070.000"/>
+<circle cx="1200" cy="907" r="1.6"/>
+<circle cx="1200" cy="1070" r="1.6"/>
+<circle cx="1060" cy="1070" r="1.6"/>
+<polygon id="arrowhead-expression-ids" points="1060,1150 1052.0,1134.0 1068.0,1134.0"/>
+</g>
+<g id="edge-expression-scoring" fill="#77848E" stroke="none">
+<polygon points="1498.400,990.000 1498.400,1136.000 1501.600,1136.000 1501.600,990.000"/>
+<polygon id="arrowhead-expression-scoring" points="1500,1150 1492.0,1134.0 1508.0,1134.0"/>
+</g>
+<g id="edge-gmt-scoring" fill="#0C6D7E" stroke="none">
+<polygon points="1140.000,1218.600 1246.000,1218.600 1246.000,1215.400 1140.000,1215.400"/>
+<polygon id="arrowhead-gmt-scoring" points="1260,1217 1244.0,1225.0 1244.0,1209.0"/>
+</g>
+<circle cx="300" cy="770" r="5" fill="#0C6D7E"/>
+<g id="reference">
+<rect x="511" y="156" width="778" height="111" rx="13" fill="#F0F2F4" stroke="#A36B08" stroke-width="3"/>
+<text x="533" y="196" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" font-style="normal" text-anchor="start" fill="#20303B">Coordinated host reference</text>
+<text x="533" y="239" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">Genome FASTA  ·  GTF gene annotation  ·  Protein FASTA</text>
+</g>
+<g id="metadata">
+<rect x="60" y="350" width="480" height="160" rx="13" fill="#F0F2F4" stroke="#77848E" stroke-width="2"/>
+<text x="82" y="390" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" font-style="normal" text-anchor="start" fill="#20303B">Reference gene metadata</text>
+<text x="82" y="433" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">GTF gene IDs, names and positions</text>
+</g>
+<g id="representatives">
+<rect x="660" y="350" width="480" height="160" rx="13" fill="#F0F2F4" stroke="#77848E" stroke-width="2"/>
+<text x="682" y="390" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700" font-style="normal" text-anchor="start" fill="#20303B">Gene-representative proteins</text>
+<text x="682" y="433" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">Map protein/transcript IDs to genes</text>
+<text x="682" y="465" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">Retain the longest mapped sequence</text>
+<text x="682" y="497" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">Rename queries with GTF gene IDs</text>
+</g>
+<g id="quantification">
+<rect x="1260" y="350" width="480" height="160" rx="13" fill="#F0F2F4" stroke="#77848E" stroke-width="2"/>
+<text x="1282" y="390" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700" font-style="normal" text-anchor="start" fill="#20303B">Host alignment + counting</text>
+<text x="1282" y="433" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">RNA-seq reads aligned to genome</text>
+<text x="1282" y="465" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">featureCounts using the GTF</text>
+</g>
+<g id="eggnog">
+<rect x="660" y="580" width="480" height="130" rx="13" fill="#F0F2F4" stroke="#77848E" stroke-width="2"/>
+<text x="682" y="620" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" font-style="normal" text-anchor="start" fill="#20303B">eggNOG-mapper</text>
+<text x="682" y="663" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">DIAMOND-based annotation</text>
+<text x="682" y="695" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">Queries retain reference gene IDs</text>
+</g>
+<g id="counts">
+<rect x="1260" y="580" width="480" height="130" rx="13" fill="#F0F2F4" stroke="#77848E" stroke-width="2"/>
+<text x="1282" y="620" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" font-style="normal" text-anchor="start" fill="#20303B">Host gene-count matrix</text>
+<text x="1282" y="663" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">Gene-level counts</text>
+<text x="1282" y="695" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">Reference GTF gene identifiers</text>
+</g>
+<g id="orgdb">
+<rect x="60" y="825" width="480" height="165" rx="13" fill="#E4EFF2" stroke="#0C6D7E" stroke-width="3"/>
+<text x="82" y="865" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" font-style="normal" text-anchor="start" fill="#20303B">Custom OrgDb</text>
+<text x="82" y="908" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">AnnotationForge</text>
+<text x="82" y="940" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">Reference gene IDs as GID keys</text>
+<text x="82" y="972" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">Imported GO evidence: IEA</text>
+</g>
+<g id="master">
+<rect x="660" y="825" width="480" height="165" rx="13" fill="#E4EFF2" stroke="#0C6D7E" stroke-width="3"/>
+<text x="682" y="865" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700" font-style="normal" text-anchor="start" fill="#20303B">Reference GO master GMT</text>
+<text x="682" y="908" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">GO terms linked to reference genes</text>
+<text x="682" y="940" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">Persistent reference collection</text>
+</g>
+<g id="expression">
+<rect x="1260" y="825" width="480" height="165" rx="13" fill="#F0F2F4" stroke="#77848E" stroke-width="2"/>
+<text x="1282" y="865" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" font-style="normal" text-anchor="start" fill="#20303B">Host-expression input</text>
+<text x="1282" y="908" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">Gene IDs and expression values</text>
+<text x="1282" y="940" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">Analysis-specific matrix (host.gct)</text>
+</g>
+<text x="915" y="1047" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" font-style="normal" text-anchor="start" fill="#0C6D7E">GO sets</text>
+<text x="1080" y="1104" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400" font-style="normal" text-anchor="start" fill="#52616D">Expression IDs</text>
+<g id="interpretation">
+<rect x="60" y="1150" width="480" height="135" rx="13" fill="#F0F2F4" stroke="#77848E" stroke-width="2"/>
+<text x="82" y="1190" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" font-style="normal" text-anchor="start" fill="#20303B">Host GO interpretation</text>
+<text x="82" y="1233" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">Reference-linked gene annotation</text>
+<text x="82" y="1265" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">GO enrichment</text>
+</g>
+<g id="analysis_gmt">
+<rect x="660" y="1150" width="480" height="135" rx="13" fill="#E4EFF2" stroke="#0C6D7E" stroke-width="3"/>
+<text x="682" y="1190" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700" font-style="normal" text-anchor="start" fill="#20303B">Analysis-specific GO GMT</text>
+<text x="682" y="1233" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">Intersect with expression gene IDs</text>
+<text x="682" y="1265" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">Retain compatible GO sets</text>
+</g>
+<g id="scores">
+<rect x="1260" y="1150" width="480" height="135" rx="13" fill="#F0F2F4" stroke="#77848E" stroke-width="2"/>
+<text x="1282" y="1190" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" font-style="normal" text-anchor="start" fill="#20303B">ssGSEA</text>
+<text x="1282" y="1233" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">GO-set scores across samples</text>
+<text x="1282" y="1265" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="400" font-style="normal" text-anchor="start" fill="#20303B">Comparison route</text>
+</g>
+</svg>

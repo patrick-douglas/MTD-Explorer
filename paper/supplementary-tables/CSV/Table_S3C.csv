@@ -1,0 +1,23 @@
+﻿Layer,Measure,Value,Unit,Denominator or universe,Interpretation
+Reference,All reference genes,26406,genes,gene_ID_cache.csv,Includes coding and noncoding genes.
+Reference,Protein-coding genes,22006,genes,All reference genes,Denominator for eggNOG query-record coverage.
+eggNOG,Coding genes with a query record,17468,genes,"22,006 protein-coding genes",79.378351% coverage; query record is not experimental validation.
+eggNOG,Coding genes without a query record,4538,genes,"22,006 protein-coding genes",Absence of a record is not absence of a gene.
+eggNOG assignment fields,Pfam,16944,genes,"17,468 eggNOG query records","Categories overlap; raw annotation fields, not direct OrgDb SQLite table coverage."
+eggNOG assignment fields,GO,11885,genes,"17,468 eggNOG query records","Categories overlap; raw annotation fields, not direct OrgDb SQLite table coverage."
+eggNOG assignment fields,KEGG KO,11187,genes,"17,468 eggNOG query records","Categories overlap; raw annotation fields, not direct OrgDb SQLite table coverage."
+eggNOG assignment fields,Preferred ortholog name,10803,genes,"17,468 eggNOG query records","Categories overlap; raw annotation fields, not direct OrgDb SQLite table coverage."
+eggNOG assignment fields,KEGG pathway,6981,genes,"17,468 eggNOG query records","Categories overlap; raw annotation fields, not direct OrgDb SQLite table coverage."
+eggNOG assignment fields,KEGG module,2014,genes,"17,468 eggNOG query records","Categories overlap; raw annotation fields, not direct OrgDb SQLite table coverage."
+eggNOG assignment fields,Description,16756,genes,"17,468 eggNOG query records","Categories overlap; raw annotation fields, not direct OrgDb SQLite table coverage."
+GO-set compatibility,ssGSEA input genes,20799,genes,host.gct,15 libraries.
+GO-set compatibility,Reference-master GO genes,11885,genes,master GMT,Union of reference master sets.
+GO-set compatibility,Input/master gene overlap,11282,genes,"20,799 ssGSEA input genes",54.242992%; this is not the union of the analysis GMT.
+GO-set compatibility,Genes in retained analysis GMT,10550,genes,"11,517 retained GO sets",Union after matching 5–500 input genes per set.
+GO-set compatibility,Genes in scoring-eligible GMT,10537,genes,"8,191 scoring-eligible GO sets",Union after additionally requiring at least 10 input-matched genes.
+GO-set compatibility,GO master sets,21848,sets,master GMT,Reference-wide GO sets.
+GO-set compatibility,Retained analysis GO sets,11517,sets,"21,848 GO master sets",5–500 input-matched genes per set.
+GO-set compatibility,Scoring-eligible GO sets,8191,sets,"11,517 retained analysis sets",At least 10 matched genes; not a new scoring rerun.
+GO-set compatibility,Retained sets below scoring overlap,3326,sets,"11,517 retained analysis sets",5–9 matched genes.
+GO-set compatibility,Sets below preparation minimum,9708,sets,"21,848 master sets",Fewer than five matched genes.
+GO-set compatibility,Sets above preparation maximum,623,sets,"21,848 master sets",More than 500 matched genes.

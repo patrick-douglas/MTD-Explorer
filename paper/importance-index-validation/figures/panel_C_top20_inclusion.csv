@@ -1,0 +1,41 @@
+taxon,original_relative_rank,representation,top20_inclusion_frequency,eligibility_frequency
+Wolbachia endosymbiont (group A) of Lypha dubia,1,relative_percent,1.0,1.0
+Wolbachia endosymbiont (group A) of Lypha dubia,1,estimated_reads,1.0,1.0
+Streptomyces sp. T12,2,relative_percent,1.0,1.0
+Streptomyces sp. T12,2,estimated_reads,1.0,1.0
+Penicillium digitatum,3,relative_percent,1.0,1.0
+Penicillium digitatum,3,estimated_reads,1.0,1.0
+uncultured Acetobacteroides sp.,4,relative_percent,1.0,1.0
+uncultured Acetobacteroides sp.,4,estimated_reads,1.0,1.0
+Sporisorium graminicola,5,relative_percent,1.0,1.0
+Sporisorium graminicola,5,estimated_reads,1.0,1.0
+Halomonas sp. JS92-SW72,6,relative_percent,1.0,1.0
+Halomonas sp. JS92-SW72,6,estimated_reads,0.9992,1.0
+Dictyostelium discoideum,7,relative_percent,1.0,1.0
+Dictyostelium discoideum,7,estimated_reads,1.0,1.0
+Coccidioides posadasii,8,relative_percent,0.9982,1.0
+Coccidioides posadasii,8,estimated_reads,0.998,1.0
+Bremia lactucae,9,relative_percent,1.0,1.0
+Bremia lactucae,9,estimated_reads,1.0,1.0
+Colletotrichum higginsianum,10,relative_percent,0.9984,1.0
+Colletotrichum higginsianum,10,estimated_reads,0.7648,1.0
+Cytophaga hutchinsonii,11,relative_percent,0.9444,1.0
+Cytophaga hutchinsonii,11,estimated_reads,0.8802,1.0
+Limnoglobus roseus,12,relative_percent,0.92,1.0
+Limnoglobus roseus,12,estimated_reads,0.9176,1.0
+Laribacter hongkongensis,13,relative_percent,0.9266,1.0
+Laribacter hongkongensis,13,estimated_reads,0.5144,1.0
+Aestuariivirga sp.,14,relative_percent,0.9386,1.0
+Aestuariivirga sp.,14,estimated_reads,0.9296,1.0
+Puccinia striiformis,15,relative_percent,0.8562,1.0
+Puccinia striiformis,15,estimated_reads,0.9252,1.0
+Botrytis cinerea,16,relative_percent,0.9372,1.0
+Botrytis cinerea,16,estimated_reads,0.9488,1.0
+Biomphalaria virus 3,17,relative_percent,0.68,1.0
+Biomphalaria virus 3,17,estimated_reads,0.903,1.0
+Akanthomyces muscarius,18,relative_percent,0.5318,1.0
+Akanthomyces muscarius,18,estimated_reads,0.5436,1.0
+Rania fehmarnensis,19,relative_percent,0.498,1.0
+Rania fehmarnensis,19,estimated_reads,0.6742,1.0
+Schizosaccharomyces pombe,20,relative_percent,0.3322,1.0
+Schizosaccharomyces pombe,20,estimated_reads,0.3058,1.0

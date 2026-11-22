@@ -1,0 +1,29 @@
+{
+  "purpose": "Portable adaptations of independently executed audit scripts; scientific calculations unchanged. Originals under analysis remain intact.",
+  "original_audit_file_sha256": {
+    "audit_new_analysis.py": "ef07f74ba3ee77741a444805c73b89c846c22208e647c7ca3cd59a6c560117ca",
+    "historical_reproduction_report.json": "e0d30c9e584129df454d1dd7dfe4a3c2333f6fd4a85c968fb0e43f0af36f0cce",
+    "independently_recomputed_absolute_ranking.tsv": "92c2f79ae3a7f858bd381e5d8d5acaf227c426c25b91d8e778dce3ba3efcd770",
+    "new_analysis_audit.json": "46407d8f4a8d45d2f91dcb9eb542c7d8eb6d6624cb5d9b78497f9712457ebc85",
+    "summary_json_audit.json": "c2ab64c7ec001c7a6fd30b3ba59a5ee999efe5ee6bf12fd0422467672e7fc544",
+    "reproduce_historical_rankings.py": "e48058f3711902052e40e510ee03ac87ef7b1a86dc2d0f5c14094711af7e7228",
+    "new_analysis_audit.txt": "cbfd1e2434fe7c49473ba2009bb908f18ae175ffc7ae10cedd3875c2dc32111a",
+    "independently_recomputed_relative_ranking.tsv": "581bd32534f6efdc8007f5b0d94d7bb05c4ce281fa38cc0f4619ab0765f53546"
+  },
+  "additional_packaged_inputs": [
+    {
+      "file": "data/relative_percent_historical_summary.tsv",
+      "sha256": "1a1a5b4e5369f87fb14b2e25d95dbf81880d3d2213b3080693d781dbca278154",
+      "source_logical_path": "exploratory/taxonomy/prevalence_abundance/species_relative/prevalence_vs_abundance_species_relative.tsv"
+    },
+    {
+      "file": "data/estimated_reads_historical_summary.tsv",
+      "sha256": "d9647b4706da93628879c8278b0d29f6af7aadb284e5c35b3c4dc9234203a09e",
+      "source_logical_path": "exploratory/taxonomy/prevalence_abundance/species_absolute/prevalence_vs_abundance_species_absolute.tsv"
+    }
+  ],
+  "portable_scripts": [
+    "src/audit_historical.py",
+    "src/audit_validation.py"
+  ]
+}

@@ -1,0 +1,851 @@
+representation,taxon,reference_rank,weight_grid_top20_frequency,weight_grid_rank_min,weight_grid_rank_max
+relative_percent,Wolbachia endosymbiont (group A) of Lypha dubia,1,1.0,1,1
+relative_percent,Streptomyces sp. T12,2,1.0,2,2
+relative_percent,Penicillium digitatum,3,1.0,3,3
+relative_percent,uncultured Acetobacteroides sp.,4,1.0,4,5
+relative_percent,Sporisorium graminicola,5,1.0,5,9
+relative_percent,Halomonas sp. JS92-SW72,6,1.0,5,9
+relative_percent,Dictyostelium discoideum,7,1.0,6,14
+relative_percent,Coccidioides posadasii,8,1.0,7,11
+relative_percent,Bremia lactucae,9,1.0,7,16
+relative_percent,Colletotrichum higginsianum,10,0.8227848101265823,4,34
+relative_percent,Cytophaga hutchinsonii,11,1.0,10,17
+relative_percent,Limnoglobus roseus,12,0.9620253164556962,10,21
+relative_percent,Laribacter hongkongensis,13,0.9493670886075949,8,26
+relative_percent,Aestuariivirga sp.,14,0.8860759493670886,10,22
+relative_percent,Puccinia striiformis,15,0.9873417721518988,12,21
+relative_percent,Botrytis cinerea,16,0.8481012658227848,12,24
+relative_percent,Biomphalaria virus 3,17,0.6835443037974683,13,28
+relative_percent,Akanthomyces muscarius,18,0.5949367088607594,12,36
+relative_percent,Rania fehmarnensis,19,0.5443037974683544,15,34
+relative_percent,Schizosaccharomyces pombe,20,0.5063291139240507,10,40
+relative_percent,Rhizophagus irregularis,21,0.4810126582278481,16,41
+relative_percent,Klebsiella pneumoniae,22,0.46835443037974683,7,63
+relative_percent,Cutibacterium acnes,23,0.4050632911392405,17,35
+relative_percent,Fusarium falciforme,24,0.0,22,28
+relative_percent,Toxoplasma gondii,25,0.05063291139240506,19,31
+relative_percent,Lactiplantibacillus plantarum,26,0.0,23,29
+relative_percent,Staphylococcus aureus,27,0.31645569620253167,15,45
+relative_percent,Uliginosibacterium sangjuense,28,0.13924050632911392,19,35
+relative_percent,Malassezia restricta,29,0.0,25,29
+relative_percent,Fontisphaera persica,30,0.17721518987341772,17,51
+relative_percent,Neobacillus sp. YX16,31,0.012658227848101266,20,40
+relative_percent,Cryptosporidium parvum,32,0.0,22,44
+relative_percent,Ottowia oryzae,33,0.0,25,38
+relative_percent,Oleiharenicola sp. Vm1,34,0.0,23,45
+relative_percent,Hemiselmis andersenii,35,0.0379746835443038,20,50
+relative_percent,Henningerozyma blattae,36,0.0,27,42
+relative_percent,Lodderomyces orthopsilosis,37,0.0,33,38
+relative_percent,Candidatus Symbiobacter mobilis,38,0.0,29,47
+relative_percent,Niveibacterium microcysteis,39,0.12658227848101267,18,68
+relative_percent,Marasmius oreades,40,0.0,32,42
+relative_percent,Anoxybacillus flavithermus,41,0.0,31,48
+relative_percent,Rhizobacter fulvus,42,0.0,31,49
+relative_percent,Talaromyces rugulosus,43,0.0,32,51
+relative_percent,Ideonella dechloratans,44,0.0,37,45
+relative_percent,Aquincola tertiaricarbonis,45,0.0,38,46
+relative_percent,Leishmania martiniquensis,46,0.0,30,59
+relative_percent,Rhizobacter gummiphilus,47,0.0,36,51
+relative_percent,Diaphorobacter limosus,48,0.0,23,91
+relative_percent,Besnoitia besnoiti,49,0.0,48,54
+relative_percent,Aureliella helgolandensis,50,0.0,41,67
+relative_percent,Neospora caninum,51,0.0,37,87
+relative_percent,Theileria orientalis,52,0.0,44,71
+relative_percent,Guillardia theta,53,0.0,40,70
+relative_percent,Kwoniella botswanensis,54,0.0,52,58
+relative_percent,Casimicrobium huifangae,55,0.0,43,76
+relative_percent,Vanrija pseudolonga,56,0.0,53,59
+relative_percent,Malassezia vespertilionis,57,0.0,52,66
+relative_percent,Aquirufa nivalisilvae,58,0.0,52,71
+relative_percent,Schizosaccharomyces osmophilus,59,0.0,46,77
+relative_percent,Bartonella henselae,60,0.0,54,67
+relative_percent,Penicillium oxalicum,61,0.0,49,78
+relative_percent,Chitinibacter fontanus,62,0.0,56,66
+relative_percent,Penicillium psychrofluorescens,63,0.0,57,67
+relative_percent,Candidatus Bandiella euplotis,64,0.0,46,105
+relative_percent,Telmatocola sphagniphila,65,0.0,47,109
+relative_percent,Psilocybe cubensis,66,0.0,58,70
+relative_percent,Candidatus Mycoplasma mahonii,67,0.0,53,88
+relative_percent,Reyranella sp.,68,0.0,59,78
+relative_percent,Dermatobacter hominis,69,0.0,60,82
+relative_percent,Pseudolysobacter antarcticus,70,0.0,61,84
+relative_percent,Sodalis glossinidius,71,0.0,62,90
+relative_percent,Liberibacter crescens,72,0.0,62,87
+relative_percent,Anatilimnocola aggregata,73,0.0,71,79
+relative_percent,Babesia bovis,74,0.0,72,77
+relative_percent,Ferruginibacter lapsinanis,75,0.0,64,99
+relative_percent,Inhella inkyongensis,76,0.0,73,82
+relative_percent,Zymoseptoria tritici,77,0.0,73,83
+relative_percent,Naumovozyma castellii,78,0.0,73,86
+relative_percent,Sorangium cellulosum,79,0.0,65,103
+relative_percent,Scheffersomyces stipitis,80,0.0,64,88
+relative_percent,Cardiobacterium hominis,81,0.0,60,118
+relative_percent,Dokdonella koreensis,82,0.0,72,90
+relative_percent,Fusarium oxysporum,83,0.0,63,125
+relative_percent,Pseudideonella sakaiensis,84,0.0,77,91
+relative_percent,Plasmodium gaboni,85,0.0,79,100
+relative_percent,Peredibacter starrii,86,0.0,69,131
+relative_percent,Yersinia aldovae,87,0.0,57,139
+relative_percent,Kinneretia aquatilis,88,0.0,83,92
+relative_percent,Emticicia oligotrophica,89,0.0,80,107
+relative_percent,Lachancea thermotolerans,90,0.0,88,95
+relative_percent,Theileria annulata,91,0.0,89,95
+relative_percent,Brettanomyces bruxellensis,92,0.0,88,101
+relative_percent,Bigelowiella natans,93,0.0,92,98
+relative_percent,Desulfitobacterium elongatum,94,0.0,93,106
+relative_percent,Cloacibacterium caeni,95,0.0,66,151
+relative_percent,Giardia duodenalis,96,0.0,81,132
+relative_percent,Neurospora crassa,97,0.0,82,134
+relative_percent,Aspergillus fumigatus,98,0.0,95,107
+relative_percent,Aureispira sp. CCB-E,99,0.0,83,140
+relative_percent,Fimbriimonas sp. LA-C6,100,0.0,84,143
+relative_percent,Tetrapisispora phaffii,101,0.0,99,111
+relative_percent,Neisseria meningitidis,102,0.0,53,201
+relative_percent,Buchnera aphidicola,103,0.0,99,112
+relative_percent,Micropruina glycogenica,104,0.0,101,114
+relative_percent,Plasmodium chabaudi,105,0.0,99,115
+relative_percent,Aeromonas jandaei,106,0.0,61,172
+relative_percent,Schlesneria sp. DSM 10557,107,0.0,72,157
+relative_percent,Marinitoga aeolica,108,0.0,85,155
+relative_percent,Aliamphritea spongicola,109,0.0,103,116
+relative_percent,Plasmodium relictum,110,0.0,104,120
+relative_percent,Thalassiosira pseudonana,111,0.0,86,163
+relative_percent,Pichia kudriavzevii,112,0.0,105,122
+relative_percent,Aristophania vespae,113,0.0,106,124
+relative_percent,Sphaerotilus microaerophilus,114,0.0,95,134
+relative_percent,Legionella lytica,115,0.0,96,135
+relative_percent,Nitrosomonas sp. Is79A3,116,0.0,107,127
+relative_percent,Candidatus Carsonella ruddii,117,0.0,107,126
+relative_percent,Dokdonella aquatica,118,0.0,101,135
+relative_percent,Podospora bellae-mahoneyi,119,0.0,109,130
+relative_percent,Terrirubrum flagellatum,120,0.0,110,136
+relative_percent,Zygosaccharomyces rouxii,121,0.0,111,137
+relative_percent,Ferruginibacter albus,122,0.0,112,142
+relative_percent,Luteolibacter sp. LG18,123,0.0,113,145
+relative_percent,Kaistella polysaccharea,124,0.0,114,147
+relative_percent,Gemmata obscuriglobus,125,0.0,115,147
+relative_percent,Plasmodium falciparum,126,0.0,116,149
+relative_percent,Aquirhabdus parva,127,0.0,117,150
+relative_percent,Winogradskyella sp. R77965,128,0.0,119,154
+relative_percent,Babesia microti,129,0.0,120,155
+relative_percent,Eremothecium gossypii,130,0.0,73,180
+relative_percent,Talaromyces marneffei,131,0.0,121,159
+relative_percent,Betabaculovirus chofumiferanae,132,0.0,122,159
+relative_percent,Paragemmobacter aquarius,133,0.0,115,139
+relative_percent,Leptolyngbya sp. 7M,134,0.0,121,162
+relative_percent,Erysipelatoclostridium sp. An173,135,0.0,124,166
+relative_percent,Mycolicibacterium fluoranthenivorans,136,0.0,96,164
+relative_percent,Emticicia sp. 21SJ11W-3,137,0.0,126,170
+relative_percent,Torulaspora delbrueckii,138,0.0,125,143
+relative_percent,Metamycoplasma salivarium,139,0.0,127,171
+relative_percent,Trypanosoma brucei,140,0.0,128,173
+relative_percent,Brettanomyces nanus,141,0.0,129,143
+relative_percent,Kwoniella bestiolae,142,0.0,132,147
+relative_percent,Zoogloea sp. GDB6,143,0.0,85,186
+relative_percent,Puccinia triticina,144,0.0,129,181
+relative_percent,Pochonia chlamydosporia,145,0.0,130,182
+relative_percent,Cercospora beticola,146,0.0,86,188
+relative_percent,Thermomonas aquatica,147,0.0,106,165
+relative_percent,Paludibaculum fermentans,148,0.0,131,186
+relative_percent,Kwoniella dendrophila,149,0.0,140,153
+relative_percent,Streptomyces dryopteridis,150,0.0,141,158
+relative_percent,Riemerella anatipestifer,151,0.0,142,161
+relative_percent,Fusarium keratoplasticum,152,0.0,143,162
+relative_percent,Sediminibacterium planctonicum,153,0.0,144,165
+relative_percent,Fusarium musae,154,0.0,118,167
+relative_percent,Cryptomonas paramaecium,155,0.0,92,197
+relative_percent,Nitrospira sp. Nam80,156,0.0,145,168
+relative_percent,Allostigmatella aurantiaca,157,0.0,123,170
+relative_percent,Candidozyma auris,158,0.0,146,171
+relative_percent,Saccharomyces mikatae,159,0.0,147,175
+relative_percent,Faecalibacillus intestinalis,160,0.0,98,198
+relative_percent,Aquella oligotrophica,161,0.0,148,174
+relative_percent,Paucibacter sediminis,162,0.0,128,171
+relative_percent,Planctellipticum variicoloris,163,0.0,149,177
+relative_percent,Purpureocillium takamizusanense,164,0.0,150,178
+relative_percent,Sugiyamaella lignohabitans,165,0.0,138,174
+relative_percent,Aspergillus puulaauensis,166,0.0,152,182
+relative_percent,Runella sp. SP2,167,0.0,153,184
+relative_percent,Cutaneotrichosporon cavernicola,168,0.0,141,178
+relative_percent,Saccharomyces cerevisiae,169,0.0,108,200
+relative_percent,Nitrospira moscoviensis,170,0.0,154,186
+relative_percent,Dechloromonas sp. ARDL1,171,0.0,144,177
+relative_percent,Naegleria lovaniensis,172,0.0,110,201
+relative_percent,Babesia duncani,173,0.0,155,190
+relative_percent,Vagococcus fluvialis,174,0.0,156,192
+relative_percent,Tundrisphaera macrotermitis,175,0.0,161,180
+relative_percent,Candidatus Phycorickettsia trachydisci,176,0.0,158,206
+relative_percent,Nitrosopumilus sp. S4,177,0.0,159,208
+relative_percent,Aurantibacillus circumpalustris,178,0.0,160,215
+relative_percent,Tahibacter sp. UC22_41,179,0.0,172,183
+relative_percent,Yamadazyma tenuis,180,0.0,130,203
+relative_percent,Richelia sinica,181,0.0,161,217
+relative_percent,Kwoniella pini,182,0.0,175,184
+relative_percent,Trichomonas vaginalis,183,0.0,162,221
+relative_percent,Faucicola osloensis,184,0.0,133,203
+relative_percent,Pyricularia grisea,185,0.0,163,222
+relative_percent,Lactobacillus sp. M44,186,0.0,139,204
+relative_percent,Singulisphaera chitinilytica,187,0.0,176,191
+relative_percent,Encephalitozoon intestinalis,188,0.0,177,191
+relative_percent,Limnospira indica,189,0.0,113,268
+relative_percent,Desulfovibrio subterraneus,190,0.0,178,194
+relative_percent,Caenispirillum salinarum,191,0.0,179,196
+relative_percent,Naegleria fowleri,192,0.0,120,269
+relative_percent,Thermomonas brevis,193,0.0,164,205
+relative_percent,Affinundibacterium cyanobacteriorum,194,0.0,181,200
+relative_percent,Niveibacterium sp. SC-1,195,0.0,182,204
+relative_percent,Nitrosomonas sp.,196,0.0,183,213
+relative_percent,Hylemonella gracilis,197,0.0,184,217
+relative_percent,Caldilinea tarbellica,198,0.0,176,208
+relative_percent,Naumovozyma dairenensis,199,0.0,185,223
+relative_percent,Lodderomyces elongisporus,200,0.0,178,210
+relative_percent,Huiozyma naganishii,201,0.0,179,209
+relative_percent,Candida dubliniensis,202,0.0,187,226
+relative_percent,Ferrimonas sp. SCSIO 43195,203,0.0,189,228
+relative_percent,Blattabacterium cuenoti,204,0.0,190,230
+relative_percent,Panacibacter ginsenosidivorans,205,0.0,191,233
+relative_percent,Borrelia salvatorii,206,0.0,192,237
+relative_percent,Kolteria novifilia,207,0.0,193,241
+relative_percent,Epilithonimonas vandammei,208,0.0,151,270
+relative_percent,Phaeodactylum tricornutum,209,0.0,194,247
+relative_percent,Prosthecobacter fluviatilis,210,0.0,195,249
+relative_percent,Latilactobacillus fuchuensis,211,0.0,196,250
+relative_percent,Phreatobacter cathodiphilus,212,0.0,193,212
+relative_percent,Vogesella sp. XCS3,213,0.0,202,214
+relative_percent,Kaistia sp. 32K,214,0.0,202,214
+relative_percent,Remersonia thermophila,215,0.0,209,217
+relative_percent,Pseudonocardia benzenivorans,216,0.0,209,218
+relative_percent,Aromatoleum bremense,217,0.0,210,219
+relative_percent,Saccharomycodes ludwigii,218,0.0,214,220
+relative_percent,Pseudoluteimonas lycopersici,219,0.0,216,226
+relative_percent,Pseudobacter ginsenosidimutans,220,0.0,217,223
+relative_percent,Cellvibrio sp. 25HG11W-0,221,0.0,218,230
+relative_percent,Pseudothauera hydrothermalis,222,0.0,219,229
+relative_percent,Zygotorulaspora mrakii,223,0.0,219,233
+relative_percent,Limosilactobacillus reuteri,224,0.0,183,271
+relative_percent,Candidatus Phytoplasma solani,225,0.0,221,237
+relative_percent,Rubrivivax gelatinosus,226,0.0,222,239
+relative_percent,Metarhizium brunneum,227,0.0,223,240
+relative_percent,Granulicatella adiacens,228,0.0,187,272
+relative_percent,Lawsonella clevelandensis,229,0.0,224,239
+relative_percent,Candidatus Sneabacter namystus,230,0.0,223,240
+relative_percent,Aquisphaera giovannonii,231,0.0,226,241
+relative_percent,Ustilaginoidea virens,232,0.0,227,244
+relative_percent,Candidatus Chlorohelix allophototropha,233,0.0,228,246
+relative_percent,Nordella sp. HKS 07,234,0.0,229,247
+relative_percent,Pseudoduganella sp. R-31,235,0.0,191,273
+relative_percent,Adhaeribacter swui,236,0.0,230,249
+relative_percent,Candidatus Vidania fulgoroideorum,237,0.0,230,249
+relative_percent,Nakamurella multipartita,238,0.0,232,251
+relative_percent,Flavivirga eckloniae,239,0.0,195,274
+relative_percent,Planctomyces sp. SH-PL62,240,0.0,233,253
+relative_percent,Miltoncostaea marina,241,0.0,234,256
+relative_percent,Rhizobacter sp. AJA081-3,242,0.0,235,257
+relative_percent,Amniculibacterium sp. G2-70,243,0.0,197,275
+relative_percent,Sinomicrobium kalidii,244,0.0,236,258
+relative_percent,Caulifigura coniformis,245,0.0,237,260
+relative_percent,Abyssalbus ytuae,246,0.0,238,260
+relative_percent,Thauera butanivorans,247,0.0,198,276
+relative_percent,Polynucleobacter ibericus,248,0.0,239,263
+relative_percent,Candida albicans,249,0.0,240,263
+relative_percent,Lactobacillus iners,250,0.0,199,277
+relative_percent,Rhizoctonia solani,251,0.0,241,264
+relative_percent,Plasmodium yoelii,252,0.0,242,266
+relative_percent,Lysobacter firmicutimachus,253,0.0,243,266
+relative_percent,Trichoderma asperellum,254,0.0,244,267
+relative_percent,Eleftheria terrae,255,0.0,245,268
+relative_percent,Paroceanicella profunda,256,0.0,201,278
+relative_percent,Kouleothrix sp. 19917,257,0.0,246,269
+relative_percent,Mycovorax composti,258,0.0,205,279
+relative_percent,Limosilactobacillus fermentum,259,0.0,207,280
+relative_percent,Paraoerskovia sediminicola,260,0.0,247,271
+relative_percent,Treponema succinifaciens,261,0.0,209,281
+relative_percent,Thiospirochaeta perfilievii,262,0.0,248,272
+relative_percent,Thermothelomyces thermophilus,263,0.0,249,275
+relative_percent,Phenylobacterium sp.,264,0.0,250,276
+relative_percent,Halobacteriovorax sp. BALOs_7,265,0.0,251,277
+relative_percent,Salinispira pacifica,266,0.0,252,279
+relative_percent,Xenorhabdus poinarii,267,0.0,253,284
+relative_percent,Labilithrix luteola,268,0.0,254,285
+relative_percent,Metamycoplasma buccale,269,0.0,255,286
+relative_percent,Formosa sp. Hel1_31_208,270,0.0,256,288
+relative_percent,Gephyromycinifex aptenodytis,271,0.0,257,289
+relative_percent,Zoogloea sp. JDB1,272,0.0,220,282
+relative_percent,Legionella waltersii,273,0.0,258,290
+relative_percent,Nitrosococcus watsonii,274,0.0,259,292
+relative_percent,Yarrowia lipolytica,275,0.0,260,294
+relative_percent,Hydrocurvibacter sulfurireducens,276,0.0,261,296
+relative_percent,Mimivirus bradfordmassiliense,277,0.0,262,297
+relative_percent,Haliscomenobacter hydrossis,278,0.0,263,298
+relative_percent,Acidianus brierleyi,279,0.0,264,300
+relative_percent,Pospiviroid exocortiscitri,280,0.0,265,301
+relative_percent,Terrisphaera buseokensis,281,0.0,266,302
+relative_percent,Chryseolinea soli,282,0.0,267,303
+relative_percent,Thermomonas paludicola,283,0.0,236,283
+relative_percent,Cryptococcus depauperatus,284,0.0,239,284
+relative_percent,Rhodanobacter soli,285,0.0,240,285
+relative_percent,Clostridium manihotivorum,286,0.0,246,286
+relative_percent,Thermomonas carbonis,287,0.0,252,287
+relative_percent,Nitrosomonas domestica,288,0.0,254,288
+relative_percent,Propioniciclava sp. MC1595,289,0.0,255,289
+relative_percent,Rothia mucilaginosa,290,0.0,261,290
+relative_percent,Truepera radiovictrix,291,0.0,270,291
+relative_percent,Thermomonas sp. HDW16,292,0.0,273,292
+relative_percent,Luteolibacter ambystomatis,293,0.0,274,293
+relative_percent,Flavihumibacter fluvii,294,0.0,278,294
+relative_percent,Epilithonimonas sp. UC225_85,295,0.0,280,295
+relative_percent,Paludisphaera borealis,296,0.0,281,296
+relative_percent,Pseudocnuella soli,297,0.0,282,297
+relative_percent,Filimonas lacunae,298,0.0,284,298
+relative_percent,Chitinimonas arctica,299,0.0,287,299
+relative_percent,Bacteroides salyersiae,300,0.0,291,300
+relative_percent,Porphyromonas pasteri,301,0.0,293,301
+relative_percent,Oryzomicrobium terrae,302,0.0,295,302
+relative_percent,Borreliella burgdorferi,303,0.0,299,303
+relative_percent,Bacteroides hominis,304,0.0,304,304
+relative_percent,Streptomyces malaysiensis,305,0.0,305,305
+relative_percent,Natronocytophaga cellulosiphila,306,0.0,306,306
+relative_percent,Mycoplasmopsis equigenitalium,307,0.0,307,307
+relative_percent,Caldimonas thermodepolymerans,308,0.0,308,308
+relative_percent,Vitreoscilla filiformis,309,0.0,309,309
+relative_percent,Ferrovum myxofaciens,310,0.0,310,310
+relative_percent,Pleurocapsa sp. FMAR1,311,0.0,311,311
+relative_percent,Fulvivirga ligni,312,0.0,312,312
+relative_percent,Kluyveromyces marxianus,313,0.0,313,313
+relative_percent,Allostella humosa,314,0.0,314,314
+relative_percent,Sediminibacillus dalangtanensis,315,0.0,315,315
+relative_percent,Phenylobacterium sp. NIBR 498073,316,0.0,316,316
+relative_percent,Rhodocytophaga rosea,317,0.0,317,317
+relative_percent,Dickeya lacustris,318,0.0,318,318
+relative_percent,Kueselia aquadivae,319,0.0,319,319
+relative_percent,Steroidobacter denitrificans,320,0.0,320,320
+relative_percent,Planctopirus sp. SH287,321,0.0,321,321
+relative_percent,Actinomarinicola tropica,322,0.0,322,322
+relative_percent,Haematobacter massiliensis,323,0.0,323,323
+relative_percent,Planctomyces sp. SH-PL14,324,0.0,324,324
+relative_percent,Mycolicibacterium phage J1,325,0.0,325,325
+relative_percent,Legionella sp. D16C41,326,0.0,326,326
+relative_percent,Roseateles amylovorans,327,0.0,327,327
+relative_percent,Rothia aeria,328,0.0,328,328
+relative_percent,Lysinibacillus sp. FW12,329,0.0,329,329
+relative_percent,Sediminibacterium longum,330,0.0,330,330
+relative_percent,Mucilaginibacter ginsenosidivorans,331,0.0,331,331
+relative_percent,Plasmodium vinckei,332,0.0,332,332
+relative_percent,Vulcanimicrobium alpinum,333,0.0,333,333
+relative_percent,Piscinibacter sp. XHJ-5,334,0.0,334,334
+relative_percent,Neisseria sp. oral taxon 014,335,0.0,335,335
+relative_percent,Schaalia odontolytica,336,0.0,336,336
+relative_percent,Komagataella phaffii,337,0.0,337,337
+relative_percent,Tundrisphaera lichenicola,338,0.0,338,338
+relative_percent,Photobacterium sp. HL06,339,0.0,339,339
+relative_percent,Lewinella sp. LCG006,340,0.0,340,340
+relative_percent,Candidatus Phytoplasma rubi,341,0.0,341,341
+relative_percent,Plasmodium knowlesi,342,0.0,342,342
+relative_percent,Lysobacter sp. KIS68-7,343,0.0,343,343
+relative_percent,Affinirhizobium rhizoryzae,344,0.0,344,344
+relative_percent,Paucibacter sp. JuS9,345,0.0,345,345
+relative_percent,Aspergillus nidulans,346,0.0,346,346
+relative_percent,Lacibacter sp. MH-610,347,0.0,347,347
+relative_percent,Paenirhizobium cremeum,348,0.0,348,348
+relative_percent,Lautropia mirabilis,349,0.0,349,349
+relative_percent,Botrimarina mediterranea,350,0.0,350,350
+relative_percent,Hyphomicrobium denitrificans,351,0.0,351,351
+relative_percent,Aspergillus chevalieri,352,0.0,352,352
+relative_percent,Drechmeria coniospora,353,0.0,353,353
+relative_percent,Kazachstania africana,354,0.0,354,354
+relative_percent,Mycoplasma corogypsi,355,0.0,355,355
+relative_percent,Opitutus sp. GAS368,356,0.0,356,356
+relative_percent,Methylacidimicrobium sp. AP8,357,0.0,357,357
+relative_percent,Plasmodium vivax,358,0.0,358,358
+relative_percent,Candidatus Liberibacter africanus,359,0.0,359,359
+relative_percent,Halorhodospira halophila,360,0.0,360,360
+relative_percent,Jiulongibacter sp. NS-SX5,361,0.0,361,361
+relative_percent,Clostridium beijerinckii,362,0.0,362,362
+relative_percent,Clostridium tetani,363,0.0,363,363
+relative_percent,Kwoniella mangrovensis,364,0.0,364,364
+relative_percent,Candidatus Nitrospira inopinata,365,0.0,365,365
+relative_percent,Fusobacterium mortiferum,366,0.0,366,366
+relative_percent,Marinobacterium marisflavi,367,0.0,367,367
+relative_percent,Lacunimicrobium album,368,0.0,368,368
+relative_percent,Chlamydia pneumoniae,369,0.0,369,369
+relative_percent,Kwoniella shivajii,370,0.0,370,370
+relative_percent,Mycosarcoma maydis,371,0.0,371,371
+relative_percent,Ogataea parapolymorpha,372,0.0,372,372
+relative_percent,Orientia tsutsugamushi,373,0.0,373,373
+relative_percent,Thalassotalea hakodatensis,374,0.0,374,374
+relative_percent,Colletotrichum jinshuiense,375,0.0,375,375
+relative_percent,Lacibacter sediminis,376,0.0,376,376
+relative_percent,Kwoniella europaea,377,0.0,377,377
+relative_percent,Rickettsia prowazekii,378,0.0,378,378
+relative_percent,Candidatus Ichthyocystis hellenicum,379,0.0,379,379
+relative_percent,Lacunisphaera limnophila,380,0.0,380,380
+relative_percent,Cyanidioschyzon merolae,381,0.0,381,381
+relative_percent,Lysinibacillus louembei,382,0.0,382,382
+relative_percent,Njordella aestuarii,383,0.0,383,383
+relative_percent,Chitinophaga oryzae,384,0.0,384,384
+relative_percent,Bdellovibrio bacteriovorus,385,0.0,385,385
+relative_percent,Rufibacter sp. DG15C,386,0.0,386,386
+relative_percent,Fluoribacter dumoffii,387,0.0,387,387
+relative_percent,Colletotrichum lupini,388,0.0,388,388
+relative_percent,Neobacillus oceani,389,0.0,389,389
+relative_percent,Paraglaciecola psychrophila,390,0.0,390,390
+relative_percent,Miltoncostaea oceani,391,0.0,391,391
+relative_percent,Ligilactobacillus acidipiscis,392,0.0,392,392
+relative_percent,Caproiciproducens sp. LBM24188,393,0.0,393,393
+relative_percent,Flavihumibacter rivuli,394,0.0,394,394
+relative_percent,Candidatus Nitrosocosmicus sp. R,395,0.0,395,395
+relative_percent,Nitrospira sp. KM1,396,0.0,396,396
+relative_percent,Colletotrichum destructivum,397,0.0,397,397
+relative_percent,Candidatus Midichloria mitochondrii,398,0.0,398,398
+relative_percent,Candidatus Ponderosibacter sp. Uisw_141_02,399,0.0,399,399
+relative_percent,Theileria equi,400,0.0,400,400
+relative_percent,Geotalea daltonii,401,0.0,401,401
+relative_percent,Weissella cibaria,402,0.0,402,402
+relative_percent,Candidatus Nucleicultrix amoebiphila,403,0.0,403,403
+relative_percent,Fusobacterium sp. SB021,404,0.0,404,404
+relative_percent,Debaryomyces hansenii,405,0.0,405,405
+relative_percent,Fluviicola sp.,406,0.0,406,406
+relative_percent,Congregicoccus parvus,407,0.0,407,407
+relative_percent,Halanaerobium hydrogeniformans,408,0.0,408,408
+relative_percent,Stratiformator vulcanicus,409,0.0,409,409
+relative_percent,Thermodesulfobacterium commune,410,0.0,410,410
+relative_percent,Candidatus Sulfidibacterium hydrothermale,411,0.0,411,411
+relative_percent,Aliikangiella litoralis,412,0.0,412,412
+relative_percent,Candidatus Bodocaedibacter vickermanii,413,0.0,413,413
+relative_percent,Ehrlichia ruminantium,414,0.0,414,414
+relative_percent,Halobacteriovorax marinus,415,0.0,415,415
+relative_percent,Angustibacter sp. McL0619,416,0.0,416,416
+relative_percent,Clostridium pasteurianum,417,0.0,417,417
+relative_percent,Pontibacter sp. G13,418,0.0,418,418
+relative_percent,Bdellovibrio sp. HCB337,419,0.0,419,419
+relative_percent,Capsulimonas corticalis,420,0.0,420,420
+relative_percent,Candidatus Planktophila dulcis,421,0.0,421,421
+relative_percent,Mastadenovirus exoticum,422,0.0,422,422
+relative_percent,Candidatus Paracaedibacter symbiosus,423,0.0,423,423
+relative_percent,Alphabaculovirus erankerariae,424,0.0,424,424
+relative_percent,Gaprivervirus vr26,425,0.0,425,425
+estimated_reads,Wolbachia endosymbiont (group A) of Lypha dubia,1,1.0,1,1
+estimated_reads,Streptomyces sp. T12,2,1.0,2,2
+estimated_reads,Dictyostelium discoideum,3,1.0,3,4
+estimated_reads,uncultured Acetobacteroides sp.,4,1.0,4,6
+estimated_reads,Penicillium digitatum,5,1.0,5,9
+estimated_reads,Sporisorium graminicola,6,1.0,6,11
+estimated_reads,Coccidioides posadasii,7,1.0,7,12
+estimated_reads,Bremia lactucae,8,1.0,7,16
+estimated_reads,Halomonas sp. JS92-SW72,9,1.0,9,13
+estimated_reads,Puccinia striiformis,10,0.9746835443037974,5,21
+estimated_reads,Limnoglobus roseus,11,0.9240506329113924,9,23
+estimated_reads,Biomphalaria virus 3,12,0.8734177215189873,10,22
+estimated_reads,Cytophaga hutchinsonii,13,1.0,12,19
+estimated_reads,Aestuariivirga sp.,14,0.8481012658227848,11,24
+estimated_reads,Botrytis cinerea,15,0.8354430379746836,10,24
+estimated_reads,Colletotrichum higginsianum,16,0.5822784810126582,3,41
+estimated_reads,Rania fehmarnensis,17,0.6075949367088608,14,39
+estimated_reads,Akanthomyces muscarius,18,0.5189873417721519,8,35
+estimated_reads,Laribacter hongkongensis,19,0.6582278481012658,14,29
+estimated_reads,Toxoplasma gondii,20,0.5316455696202531,18,26
+estimated_reads,Rhizophagus irregularis,21,0.4810126582278481,15,43
+estimated_reads,Cryptosporidium parvum,22,0.379746835443038,18,27
+estimated_reads,Schizosaccharomyces pombe,23,0.46835443037974683,7,43
+estimated_reads,Staphylococcus aureus,24,0.3924050632911392,10,45
+estimated_reads,Cutibacterium acnes,25,0.2911392405063291,18,46
+estimated_reads,Lodderomyces orthopsilosis,26,0.11392405063291139,19,31
+estimated_reads,Fusarium falciforme,27,0.0,23,34
+estimated_reads,Marasmius oreades,28,0.189873417721519,17,35
+estimated_reads,Oleiharenicola sp. Vm1,29,0.0,22,49
+estimated_reads,Malassezia restricta,30,0.0,27,33
+estimated_reads,Lactiplantibacillus plantarum,31,0.0,25,40
+estimated_reads,Fontisphaera persica,32,0.11392405063291139,17,67
+estimated_reads,Neobacillus sp. YX16,33,0.0,23,54
+estimated_reads,Candidatus Symbiobacter mobilis,34,0.0,26,50
+estimated_reads,Aquincola tertiaricarbonis,35,0.0,27,40
+estimated_reads,Henningerozyma blattae,36,0.0,27,53
+estimated_reads,Uliginosibacterium sangjuense,37,0.0,29,40
+estimated_reads,Besnoitia besnoiti,38,0.0,32,41
+estimated_reads,Ottowia oryzae,39,0.0,34,42
+estimated_reads,Ideonella dechloratans,40,0.0,36,43
+estimated_reads,Klebsiella pneumoniae,41,0.16455696202531644,15,83
+estimated_reads,Anoxybacillus flavithermus,42,0.0,32,62
+estimated_reads,Talaromyces rugulosus,43,0.0,33,63
+estimated_reads,Guillardia theta,44,0.0,25,62
+estimated_reads,Hemiselmis andersenii,45,0.0,31,53
+estimated_reads,Bartonella henselae,46,0.0,36,55
+estimated_reads,Kwoniella botswanensis,47,0.0,42,47
+estimated_reads,Leishmania martiniquensis,48,0.0,30,84
+estimated_reads,Rhizobacter fulvus,49,0.0,45,51
+estimated_reads,Psilocybe cubensis,50,0.0,45,51
+estimated_reads,Diaphorobacter limosus,51,0.05063291139240506,18,97
+estimated_reads,Schizosaccharomyces osmophilus,52,0.0,32,67
+estimated_reads,Rhizobacter gummiphilus,53,0.0,50,57
+estimated_reads,Scheffersomyces stipitis,54,0.0,41,70
+estimated_reads,Casimicrobium huifangae,55,0.0,45,72
+estimated_reads,Niveibacterium microcysteis,56,0.0,38,89
+estimated_reads,Naumovozyma castellii,57,0.0,55,61
+estimated_reads,Babesia bovis,58,0.0,56,63
+estimated_reads,Neospora caninum,59,0.0,36,105
+estimated_reads,Liberibacter crescens,60,0.0,51,73
+estimated_reads,Aureliella helgolandensis,61,0.0,44,88
+estimated_reads,Vanrija pseudolonga,62,0.0,54,71
+estimated_reads,Fusarium oxysporum,63,0.0,44,96
+estimated_reads,Theileria orientalis,64,0.0,46,100
+estimated_reads,Malassezia vespertilionis,65,0.0,62,67
+estimated_reads,Brettanomyces bruxellensis,66,0.0,56,75
+estimated_reads,Chitinibacter fontanus,67,0.0,57,80
+estimated_reads,Desulfitobacterium elongatum,68,0.0,59,77
+estimated_reads,Theileria annulata,69,0.0,60,80
+estimated_reads,Aquirufa nivalisilvae,70,0.0,51,94
+estimated_reads,Penicillium oxalicum,71,0.0,61,81
+estimated_reads,Buchnera aphidicola,72,0.0,65,83
+estimated_reads,Lachancea thermotolerans,73,0.0,66,83
+estimated_reads,Aspergillus fumigatus,74,0.0,70,86
+estimated_reads,Plasmodium chabaudi,75,0.0,70,86
+estimated_reads,Bigelowiella natans,76,0.0,72,88
+estimated_reads,Reyranella sp.,77,0.0,59,98
+estimated_reads,Dermatobacter hominis,78,0.0,60,99
+estimated_reads,Plasmodium relictum,79,0.0,74,90
+estimated_reads,Aristophania vespae,80,0.0,74,91
+estimated_reads,Aliamphritea spongicola,81,0.0,76,92
+estimated_reads,Sphaerotilus microaerophilus,82,0.0,68,112
+estimated_reads,Pseudolysobacter antarcticus,83,0.0,64,103
+estimated_reads,Candidatus Mycoplasma mahonii,84,0.0,54,129
+estimated_reads,Penicillium psychrofluorescens,85,0.0,65,107
+estimated_reads,Pichia kudriavzevii,86,0.0,79,95
+estimated_reads,Pseudideonella sakaiensis,87,0.0,81,96
+estimated_reads,Anatilimnocola aggregata,88,0.0,74,93
+estimated_reads,Eremothecium gossypii,89,0.0,52,149
+estimated_reads,Kaistella polysaccharea,90,0.0,85,98
+estimated_reads,Candidatus Bandiella euplotis,91,0.0,50,164
+estimated_reads,Kwoniella bestiolae,92,0.0,78,119
+estimated_reads,Dokdonella koreensis,93,0.0,89,101
+estimated_reads,Zygosaccharomyces rouxii,94,0.0,91,102
+estimated_reads,Inhella inkyongensis,95,0.0,79,119
+estimated_reads,Ferruginibacter lapsinanis,96,0.0,68,139
+estimated_reads,Sorangium cellulosum,97,0.0,69,141
+estimated_reads,Paragemmobacter aquarius,98,0.0,85,124
+estimated_reads,Betabaculovirus chofumiferanae,99,0.0,96,104
+estimated_reads,Zoogloea sp. GDB6,100,0.0,69,161
+estimated_reads,Sodalis glossinidius,101,0.0,71,146
+estimated_reads,Talaromyces marneffei,102,0.0,98,107
+estimated_reads,Babesia microti,103,0.0,99,108
+estimated_reads,Winogradskyella sp. R77965,104,0.0,99,110
+estimated_reads,Kinneretia aquatilis,105,0.0,99,115
+estimated_reads,Zymoseptoria tritici,106,0.0,84,133
+estimated_reads,Nitrosomonas sp. Is79A3,107,0.0,105,116
+estimated_reads,Riemerella anatipestifer,108,0.0,90,129
+estimated_reads,Plasmodium gaboni,109,0.0,87,134
+estimated_reads,Brettanomyces nanus,110,0.0,94,130
+estimated_reads,Saccharomyces mikatae,111,0.0,96,131
+estimated_reads,Candidatus Carsonella ruddii,112,0.0,107,122
+estimated_reads,Cryptomonas paramaecium,113,0.0,77,165
+estimated_reads,Emticicia oligotrophica,114,0.0,93,151
+estimated_reads,Cardiobacterium hominis,115,0.0,108,133
+estimated_reads,Torulaspora delbrueckii,116,0.0,111,134
+estimated_reads,Dechloromonas sp. ARDL1,117,0.0,93,148
+estimated_reads,Erysipelatoclostridium sp. An173,118,0.0,113,137
+estimated_reads,Schlesneria sp. DSM 10557,119,0.0,97,150
+estimated_reads,Micropruina glycogenica,120,0.0,114,140
+estimated_reads,Dokdonella aquatica,121,0.0,119,136
+estimated_reads,Legionella lytica,122,0.0,116,137
+estimated_reads,Trypanosoma brucei,123,0.0,115,144
+estimated_reads,Telmatocola sphagniphila,124,0.0,57,237
+estimated_reads,Vagococcus fluvialis,125,0.0,118,139
+estimated_reads,Ferruginibacter albus,126,0.0,117,147
+estimated_reads,Pseudoduganella sp. R-31,127,0.0,79,202
+estimated_reads,Neurospora crassa,128,0.0,99,173
+estimated_reads,Cloacibacterium caeni,129,0.0,110,152
+estimated_reads,Yersinia aldovae,130,0.0,110,153
+estimated_reads,Puccinia triticina,131,0.0,119,154
+estimated_reads,Fimbriimonas sp. LA-C6,132,0.0,100,180
+estimated_reads,Tetrapisispora phaffii,133,0.0,120,155
+estimated_reads,Fusarium musae,134,0.0,115,155
+estimated_reads,Neisseria meningitidis,135,0.0,82,204
+estimated_reads,Aquirhabdus parva,136,0.0,122,158
+estimated_reads,Podospora bellae-mahoneyi,137,0.0,122,159
+estimated_reads,Mycolicibacterium fluoranthenivorans,138,0.0,117,156
+estimated_reads,Babesia duncani,139,0.0,135,141
+estimated_reads,Peredibacter starrii,140,0.0,80,205
+estimated_reads,Naegleria lovaniensis,141,0.0,101,177
+estimated_reads,Nitrospira moscoviensis,142,0.0,140,147
+estimated_reads,Pochonia chlamydosporia,143,0.0,125,165
+estimated_reads,Limnospira indica,144,0.0,87,208
+estimated_reads,Aureispira sp. CCB-E,145,0.0,104,190
+estimated_reads,Candidozyma auris,146,0.0,142,151
+estimated_reads,Terrirubrum flagellatum,147,0.0,126,170
+estimated_reads,Kwoniella dendrophila,148,0.0,143,151
+estimated_reads,Leptolyngbya sp. 7M,149,0.0,127,171
+estimated_reads,Thermomonas aquatica,150,0.0,130,162
+estimated_reads,Luteolibacter sp. LG18,151,0.0,128,175
+estimated_reads,Aromatoleum bremense,152,0.0,113,183
+estimated_reads,Sugiyamaella lignohabitans,153,0.0,136,164
+estimated_reads,Cercospora beticola,154,0.0,118,185
+estimated_reads,Plasmodium falciparum,155,0.0,132,184
+estimated_reads,Giardia duodenalis,156,0.0,110,204
+estimated_reads,Saccharomyces cerevisiae,157,0.0,120,186
+estimated_reads,Lodderomyces elongisporus,158,0.0,121,187
+estimated_reads,Aeromonas jandaei,159,0.0,123,188
+estimated_reads,Zygotorulaspora mrakii,160,0.0,126,190
+estimated_reads,Sediminibacterium planctonicum,161,0.0,146,171
+estimated_reads,Faecalibacillus intestinalis,162,0.0,128,191
+estimated_reads,Allostigmatella aurantiaca,163,0.0,147,167
+estimated_reads,Cutaneotrichosporon cavernicola,164,0.0,151,170
+estimated_reads,Rubrivivax gelatinosus,165,0.0,131,195
+estimated_reads,Vogesella sp. XCS3,166,0.0,132,196
+estimated_reads,Fusarium keratoplasticum,167,0.0,147,179
+estimated_reads,Paucibacter sediminis,168,0.0,156,170
+estimated_reads,Gemmata obscuriglobus,169,0.0,135,204
+estimated_reads,Marinitoga aeolica,170,0.0,115,231
+estimated_reads,Thalassiosira pseudonana,171,0.0,116,233
+estimated_reads,Paludibaculum fermentans,172,0.0,138,211
+estimated_reads,Tundrisphaera macrotermitis,173,0.0,163,178
+estimated_reads,Pseudothauera hydrothermalis,174,0.0,144,200
+estimated_reads,Purpureocillium takamizusanense,175,0.0,151,191
+estimated_reads,Kwoniella pini,176,0.0,171,184
+estimated_reads,Faucicola osloensis,177,0.0,152,203
+estimated_reads,Blattabacterium cuenoti,178,0.0,172,184
+estimated_reads,Candida dubliniensis,179,0.0,174,185
+estimated_reads,Nitrospira sp. Nam80,180,0.0,154,197
+estimated_reads,Saccharomycodes ludwigii,181,0.0,157,205
+estimated_reads,Thauera butanivorans,182,0.0,135,224
+estimated_reads,Aquella oligotrophica,183,0.0,157,201
+estimated_reads,Ferrimonas sp. SCSIO 43195,184,0.0,176,187
+estimated_reads,Yamadazyma tenuis,185,0.0,161,206
+estimated_reads,Emticicia sp. 21SJ11W-3,186,0.0,141,234
+estimated_reads,Planctellipticum variicoloris,187,0.0,158,207
+estimated_reads,Runella sp. SP2,188,0.0,159,209
+estimated_reads,Thermomonas brevis,189,0.0,162,208
+estimated_reads,Hylemonella gracilis,190,0.0,178,192
+estimated_reads,Aspergillus puulaauensis,191,0.0,160,214
+estimated_reads,Rhizobacter sp. AJA081-3,192,0.0,168,209
+estimated_reads,Naegleria fowleri,193,0.0,150,232
+estimated_reads,Polynucleobacter ibericus,194,0.0,172,211
+estimated_reads,Streptomyces dryopteridis,195,0.0,163,223
+estimated_reads,Metamycoplasma salivarium,196,0.0,145,246
+estimated_reads,Niveibacterium sp. SC-1,197,0.0,179,198
+estimated_reads,Singulisphaera chitinilytica,198,0.0,180,198
+estimated_reads,Tahibacter sp. UC22_41,199,0.0,181,200
+estimated_reads,Nitrosomonas sp.,200,0.0,184,201
+estimated_reads,Lactobacillus sp. M44,201,0.0,181,212
+estimated_reads,Bacteroides salyersiae,202,0.0,160,237
+estimated_reads,Caldilinea tarbellica,203,0.0,186,213
+estimated_reads,Naumovozyma dairenensis,204,0.0,189,211
+estimated_reads,Plasmodium yoelii,205,0.0,189,214
+estimated_reads,Richelia sinica,206,0.0,166,241
+estimated_reads,Epilithonimonas vandammei,207,0.0,167,242
+estimated_reads,Bacteroides hominis,208,0.0,169,245
+estimated_reads,Desulfovibrio subterraneus,209,0.0,192,221
+estimated_reads,Caenispirillum salinarum,210,0.0,193,222
+estimated_reads,Eleftheria terrae,211,0.0,195,215
+estimated_reads,Caldimonas thermodepolymerans,212,0.0,179,247
+estimated_reads,Trichoderma asperellum,213,0.0,198,217
+estimated_reads,Vitreoscilla filiformis,214,0.0,181,249
+estimated_reads,Candidatus Phytoplasma solani,215,0.0,201,219
+estimated_reads,Kluyveromyces marxianus,216,0.0,185,256
+estimated_reads,Affinundibacterium cyanobacteriorum,217,0.0,198,236
+estimated_reads,Latilactobacillus fuchuensis,218,0.0,199,234
+estimated_reads,Aurantibacillus circumpalustris,219,0.0,170,263
+estimated_reads,Dickeya lacustris,220,0.0,188,257
+estimated_reads,Remersonia thermophila,221,0.0,215,223
+estimated_reads,Phreatobacter cathodiphilus,222,0.0,216,225
+estimated_reads,Encephalitozoon intestinalis,223,0.0,201,244
+estimated_reads,Huiozyma naganishii,224,0.0,217,225
+estimated_reads,Lysobacter firmicutimachus,225,0.0,218,228
+estimated_reads,Steroidobacter denitrificans,226,0.0,199,264
+estimated_reads,Pyricularia grisea,227,0.0,175,280
+estimated_reads,Paroceanicella profunda,228,0.0,202,266
+estimated_reads,Halobacteriovorax sp. BALOs_7,229,0.0,225,238
+estimated_reads,Pseudoluteimonas lycopersici,230,0.0,226,239
+estimated_reads,Kaistia sp. 32K,231,0.0,227,240
+estimated_reads,Flavivirga eckloniae,232,0.0,207,268
+estimated_reads,Zoogloea sp. JDB1,233,0.0,210,269
+estimated_reads,Haematobacter massiliensis,234,0.0,212,270
+estimated_reads,Treponema succinifaciens,235,0.0,213,271
+estimated_reads,Pseudobacter ginsenosidimutans,236,0.0,228,240
+estimated_reads,Pseudonocardia benzenivorans,237,0.0,231,245
+estimated_reads,Panacibacter ginsenosidivorans,238,0.0,210,272
+estimated_reads,Roseateles amylovorans,239,0.0,217,274
+estimated_reads,Lysinibacillus sp. FW12,240,0.0,219,275
+estimated_reads,Mycovorax composti,241,0.0,224,278
+estimated_reads,Candidatus Phycorickettsia trachydisci,242,0.0,182,304
+estimated_reads,Candidatus Vidania fulgoroideorum,243,0.0,232,253
+estimated_reads,Cellvibrio sp. 25HG11W-0,244,0.0,233,251
+estimated_reads,Limosilactobacillus fermentum,245,0.0,225,280
+estimated_reads,Neisseria sp. oral taxon 014,246,0.0,226,281
+estimated_reads,Xenorhabdus poinarii,247,0.0,235,253
+estimated_reads,Candidatus Sneabacter namystus,248,0.0,236,254
+estimated_reads,Chitinimonas arctica,249,0.0,227,283
+estimated_reads,Lawsonella clevelandensis,250,0.0,238,258
+estimated_reads,Candida albicans,251,0.0,239,263
+estimated_reads,Metamycoplasma buccale,252,0.0,240,263
+estimated_reads,Granulicatella adiacens,253,0.0,236,285
+estimated_reads,Thermomonas paludicola,254,0.0,239,286
+estimated_reads,Plasmodium knowlesi,255,0.0,240,287
+estimated_reads,Aquisphaera giovannonii,256,0.0,241,272
+estimated_reads,Limosilactobacillus reuteri,257,0.0,242,288
+estimated_reads,Gephyromycinifex aptenodytis,258,0.0,243,269
+estimated_reads,Metarhizium brunneum,259,0.0,244,270
+estimated_reads,Legionella waltersii,260,0.0,246,273
+estimated_reads,Lysobacter sp. KIS68-7,261,0.0,245,290
+estimated_reads,Cryptococcus depauperatus,262,0.0,247,291
+estimated_reads,Rhodanobacter soli,263,0.0,248,292
+estimated_reads,Affinirhizobium rhizoryzae,264,0.0,249,293
+estimated_reads,Trichomonas vaginalis,265,0.0,194,325
+estimated_reads,Formosa sp. Hel1_31_208,266,0.0,248,276
+estimated_reads,Clostridium manihotivorum,267,0.0,252,295
+estimated_reads,Nitrosopumilus sp. S4,268,0.0,197,330
+estimated_reads,Candidatus Chlorohelix allophototropha,269,0.0,250,280
+estimated_reads,Ferrovum myxofaciens,270,0.0,255,297
+estimated_reads,Thermomonas carbonis,271,0.0,256,298
+estimated_reads,Nitrosococcus watsonii,272,0.0,251,283
+estimated_reads,Nakamurella multipartita,273,0.0,252,282
+estimated_reads,Nordella sp. HKS 07,274,0.0,253,283
+estimated_reads,Planctomyces sp. SH-PL62,275,0.0,254,285
+estimated_reads,Borrelia salvatorii,276,0.0,217,309
+estimated_reads,Paucibacter sp. JuS9,277,0.0,257,299
+estimated_reads,Propioniciclava sp. MC1595,278,0.0,259,300
+estimated_reads,Adhaeribacter swui,279,0.0,255,286
+estimated_reads,Amniculibacterium sp. G2-70,280,0.0,260,301
+estimated_reads,Paenirhizobium cremeum,281,0.0,264,302
+estimated_reads,Lautropia mirabilis,282,0.0,265,303
+estimated_reads,Lactobacillus iners,283,0.0,266,304
+estimated_reads,Hyphomicrobium denitrificans,284,0.0,268,305
+estimated_reads,Abyssalbus ytuae,285,0.0,258,295
+estimated_reads,Miltoncostaea marina,286,0.0,259,298
+estimated_reads,Aspergillus chevalieri,287,0.0,271,306
+estimated_reads,Labilithrix luteola,288,0.0,260,299
+estimated_reads,Ustilaginoidea virens,289,0.0,261,299
+estimated_reads,Prosthecobacter fluviatilis,290,0.0,222,321
+estimated_reads,Sinomicrobium kalidii,291,0.0,262,305
+estimated_reads,Kazachstania africana,292,0.0,274,307
+estimated_reads,Kouleothrix sp. 19917,293,0.0,263,307
+estimated_reads,Mycoplasma corogypsi,294,0.0,275,309
+estimated_reads,Methylacidimicrobium sp. AP8,295,0.0,277,310
+estimated_reads,Plasmodium vivax,296,0.0,278,311
+estimated_reads,Caulifigura coniformis,297,0.0,265,310
+estimated_reads,Rothia aeria,298,0.0,285,312
+estimated_reads,Paludisphaera borealis,299,0.0,287,313
+estimated_reads,Halorhodospira halophila,300,0.0,288,315
+estimated_reads,Thermomonas sp. HDW16,301,0.0,289,316
+estimated_reads,Luteolibacter ambystomatis,302,0.0,290,317
+estimated_reads,Thiospirochaeta perfilievii,303,0.0,267,317
+estimated_reads,Clostridium beijerinckii,304,0.0,291,318
+estimated_reads,Kolteria novifilia,305,0.0,229,342
+estimated_reads,Flavihumibacter fluvii,306,0.0,292,319
+estimated_reads,Paraoerskovia sediminicola,307,0.0,272,321
+estimated_reads,Truepera radiovictrix,308,0.0,293,320
+estimated_reads,Hydrocurvibacter sulfurireducens,309,0.0,273,320
+estimated_reads,Kwoniella mangrovensis,310,0.0,294,321
+estimated_reads,Phaeodactylum tricornutum,311,0.0,230,347
+estimated_reads,Fusobacterium mortiferum,312,0.0,297,322
+estimated_reads,Pseudocnuella soli,313,0.0,300,323
+estimated_reads,Yarrowia lipolytica,314,0.0,276,326
+estimated_reads,Mimivirus bradfordmassiliense,315,0.0,277,325
+estimated_reads,Marinobacterium marisflavi,316,0.0,301,324
+estimated_reads,Nitrosomonas domestica,317,0.0,302,325
+estimated_reads,Filimonas lacunae,318,0.0,303,326
+estimated_reads,Rhizoctonia solani,319,0.0,279,329
+estimated_reads,Piscinibacter sp. XHJ-5,320,0.0,306,328
+estimated_reads,Borreliella burgdorferi,321,0.0,308,329
+estimated_reads,Haliscomenobacter hydrossis,322,0.0,282,333
+estimated_reads,Salinispira pacifica,323,0.0,284,336
+estimated_reads,Kwoniella shivajii,324,0.0,311,330
+estimated_reads,Ogataea parapolymorpha,325,0.0,312,331
+estimated_reads,Orientia tsutsugamushi,326,0.0,313,332
+estimated_reads,Thalassotalea hakodatensis,327,0.0,314,333
+estimated_reads,Colletotrichum jinshuiense,328,0.0,315,334
+estimated_reads,Rothia mucilaginosa,329,0.0,317,335
+estimated_reads,Oryzomicrobium terrae,330,0.0,319,336
+estimated_reads,Thermothelomyces thermophilus,331,0.0,289,347
+estimated_reads,Natronocytophaga cellulosiphila,332,0.0,323,337
+estimated_reads,Phenylobacterium sp.,333,0.0,294,352
+estimated_reads,Lacibacter sediminis,334,0.0,327,338
+estimated_reads,Kwoniella europaea,335,0.0,328,339
+estimated_reads,Candidatus Phytoplasma rubi,336,0.0,329,340
+estimated_reads,Rickettsia prowazekii,337,0.0,331,341
+estimated_reads,Streptomyces malaysiensis,338,0.0,332,342
+estimated_reads,Acidianus brierleyi,339,0.0,296,360
+estimated_reads,Mycoplasmopsis equigenitalium,340,0.0,334,343
+estimated_reads,Lacibacter sp. MH-610,341,0.0,336,344
+estimated_reads,Lacunisphaera limnophila,342,0.0,337,345
+estimated_reads,Kueselia aquadivae,343,0.0,338,346
+estimated_reads,Cyanidioschyzon merolae,344,0.0,339,347
+estimated_reads,Lysinibacillus louembei,345,0.0,340,348
+estimated_reads,Pleurocapsa sp. FMAR1,346,0.0,341,349
+estimated_reads,Fulvivirga ligni,347,0.0,343,350
+estimated_reads,Allostella humosa,348,0.0,344,351
+estimated_reads,Sediminibacillus dalangtanensis,349,0.0,346,352
+estimated_reads,Njordella aestuarii,350,0.0,348,353
+estimated_reads,Rhodocytophaga rosea,351,0.0,349,354
+estimated_reads,Chitinophaga oryzae,352,0.0,350,355
+estimated_reads,Opitutus sp. GAS368,353,0.0,351,356
+estimated_reads,Epilithonimonas sp. UC225_85,354,0.0,353,357
+estimated_reads,Planctomyces sp. SH-PL14,355,0.0,354,358
+estimated_reads,Planctopirus sp. SH287,356,0.0,355,359
+estimated_reads,Chryseolinea soli,357,0.0,308,382
+estimated_reads,Mycolicibacterium phage J1,358,0.0,356,360
+estimated_reads,Actinomarinicola tropica,359,0.0,357,361
+estimated_reads,Bdellovibrio bacteriovorus,360,0.0,358,362
+estimated_reads,Rufibacter sp. DG15C,361,0.0,359,363
+estimated_reads,Porphyromonas pasteri,362,0.0,361,364
+estimated_reads,Phenylobacterium sp. NIBR 498073,363,0.0,362,365
+estimated_reads,Terrisphaera buseokensis,364,0.0,314,390
+estimated_reads,Colletotrichum lupini,365,0.0,363,366
+estimated_reads,Neobacillus oceani,366,0.0,364,367
+estimated_reads,Schaalia odontolytica,367,0.0,365,368
+estimated_reads,Paraglaciecola psychrophila,368,0.0,366,369
+estimated_reads,Legionella sp. D16C41,369,0.0,367,370
+estimated_reads,Miltoncostaea oceani,370,0.0,368,371
+estimated_reads,Candidatus Nitrospira inopinata,371,0.0,369,372
+estimated_reads,Ligilactobacillus acidipiscis,372,0.0,370,373
+estimated_reads,Candidatus Liberibacter africanus,373,0.0,371,374
+estimated_reads,Caproiciproducens sp. LBM24188,374,0.0,372,375
+estimated_reads,Flavihumibacter rivuli,375,0.0,373,376
+estimated_reads,Tundrisphaera lichenicola,376,0.0,374,377
+estimated_reads,Candidatus Nitrosocosmicus sp. R,377,0.0,375,378
+estimated_reads,Vulcanimicrobium alpinum,378,0.0,376,379
+estimated_reads,Nitrospira sp. KM1,379,0.0,377,380
+estimated_reads,Colletotrichum destructivum,380,0.0,378,381
+estimated_reads,Komagataella phaffii,381,0.0,379,382
+estimated_reads,Candidatus Midichloria mitochondrii,382,0.0,380,383
+estimated_reads,Clostridium tetani,383,0.0,381,384
+estimated_reads,Pospiviroid exocortiscitri,384,0.0,327,402
+estimated_reads,Chlamydia pneumoniae,385,0.0,383,385
+estimated_reads,Sediminibacterium longum,386,0.0,384,386
+estimated_reads,Mucilaginibacter ginsenosidivorans,387,0.0,385,387
+estimated_reads,Mycosarcoma maydis,388,0.0,386,388
+estimated_reads,Candidatus Ponderosibacter sp. Uisw_141_02,389,0.0,387,389
+estimated_reads,Theileria equi,390,0.0,388,390
+estimated_reads,Geotalea daltonii,391,0.0,389,391
+estimated_reads,Photobacterium sp. HL06,392,0.0,391,392
+estimated_reads,Weissella cibaria,393,0.0,392,393
+estimated_reads,Candidatus Nucleicultrix amoebiphila,394,0.0,393,394
+estimated_reads,Fusobacterium sp. SB021,395,0.0,394,395
+estimated_reads,Aspergillus nidulans,396,0.0,395,396
+estimated_reads,Debaryomyces hansenii,397,0.0,396,397
+estimated_reads,Fluviicola sp.,398,0.0,397,398
+estimated_reads,Lewinella sp. LCG006,399,0.0,398,399
+estimated_reads,Congregicoccus parvus,400,0.0,399,400
+estimated_reads,Halanaerobium hydrogeniformans,401,0.0,400,401
+estimated_reads,Stratiformator vulcanicus,402,0.0,401,402
+estimated_reads,Botrimarina mediterranea,403,0.0,403,403
+estimated_reads,Thermodesulfobacterium commune,404,0.0,404,404
+estimated_reads,Candidatus Sulfidibacterium hydrothermale,405,0.0,405,405
+estimated_reads,Aliikangiella litoralis,406,0.0,406,406
+estimated_reads,Candidatus Bodocaedibacter vickermanii,407,0.0,407,407
+estimated_reads,Drechmeria coniospora,408,0.0,408,408
+estimated_reads,Ehrlichia ruminantium,409,0.0,409,409
+estimated_reads,Plasmodium vinckei,410,0.0,410,410
+estimated_reads,Halobacteriovorax marinus,411,0.0,411,411
+estimated_reads,Jiulongibacter sp. NS-SX5,412,0.0,412,412
+estimated_reads,Candidatus Ichthyocystis hellenicum,413,0.0,413,413
+estimated_reads,Angustibacter sp. McL0619,414,0.0,414,414
+estimated_reads,Clostridium pasteurianum,415,0.0,415,415
+estimated_reads,Pontibacter sp. G13,416,0.0,416,416
+estimated_reads,Bdellovibrio sp. HCB337,417,0.0,417,417
+estimated_reads,Capsulimonas corticalis,418,0.0,418,418
+estimated_reads,Candidatus Planktophila dulcis,419,0.0,419,419
+estimated_reads,Lacunimicrobium album,420,0.0,420,420
+estimated_reads,Mastadenovirus exoticum,421,0.0,421,421
+estimated_reads,Candidatus Paracaedibacter symbiosus,422,0.0,422,422
+estimated_reads,Alphabaculovirus erankerariae,423,0.0,423,423
+estimated_reads,Gaprivervirus vr26,424,0.0,424,424
+estimated_reads,Fluoribacter dumoffii,425,0.0,425,425

@@ -1,0 +1,35 @@
+﻿Measurement,Value,Unit,Scope and definition,Source,Source metric key
+Total process wall time,197894.592676,s,Process elapsed time; rounded display is 54 h 58 min 15 s.,benchmark_bundle/summary.tsv,wall_time_seconds
+Resource observations,39020,count,Original collector observations; includes the first and final polls.,benchmark_bundle/summary.tsv,sample_count
+Mean system CPU busy,65.667489,% of total capacity,Unweighted mean of sampled whole-machine percentages; includes activity outside the pipeline.,benchmark_bundle/summary.tsv,mean_system_cpu_busy
+Peak system CPU busy,100.0,% of total capacity,Largest sampled whole-machine percentage.,benchmark_bundle/summary.tsv,peak_system_cpu_busy
+Mean monitored process-tree CPU,56.249525,% of total capacity,"Unweighted mean across selected active descendants, normalized to all logical CPUs.",benchmark_bundle/summary.tsv,mean_process_tree_cpu_total_capacity
+Peak monitored process-tree CPU,101.109,% of total capacity,Largest sampled percentage; the exported value briefly exceeds 100%.,benchmark_bundle/summary.tsv,peak_process_tree_cpu_total_capacity
+Peak monitored process-tree CPU (one-CPU scale),2022.183,% of one logical CPU,"One-logical-CPU scale, distinct from percentage of total CPU capacity.",benchmark_bundle/summary.tsv,peak_process_tree_cpu_one_core
+Peak monitored process-tree RSS,117.273323,GiB,Sampled sum of VmRSS across selected active descendants; shared pages may be counted more than once.,benchmark_bundle/summary.tsv,peak_process_tree_rss
+Peak monitored process-tree swap,13.922272,GiB,Sampled sum of VmSwap across the same selected descendants; distinct from resident memory.,benchmark_bundle/summary.tsv,peak_process_tree_swap
+Peak system memory used,117.520729,GiB,Whole-machine MemTotal minus MemAvailable; distinct from the process RSS sum.,benchmark_bundle/summary.tsv,peak_system_memory_used
+Minimum system memory available,8.123558,GiB,Smallest sampled whole-machine MemAvailable.,benchmark_bundle/summary.tsv,minimum_system_memory_available
+Peak one-minute load average,22.65,load average,Largest sampled one-minute system load average.,benchmark_bundle/summary.tsv,peak_load_1min
+Peak monitored process count,24,count,Largest count of selected active descendant processes.,benchmark_bundle/summary.tsv,peak_process_count
+Peak monitored thread count,216,count,Largest sampled thread count across selected active descendants.,benchmark_bundle/summary.tsv,peak_thread_count
+Physical disk reads,4883.446259,GiB,Whole-machine physical-disk counter increase; includes activity outside the pipeline.,benchmark_bundle/summary.tsv,total_physical_disk_read
+Physical disk writes,2871.865376,GiB,Whole-machine physical-disk counter increase; includes activity outside the pipeline.,benchmark_bundle/summary.tsv,total_physical_disk_write
+Network received,3.451278,GiB,"Whole-machine counter increase, excluding loopback.",benchmark_bundle/summary.tsv,total_network_received
+Network transmitted,13.931761,GiB,"Whole-machine counter increase, excluding loopback.",benchmark_bundle/summary.tsv,total_network_transmitted
+Peak reported temperature,93.0,degrees Celsius,Maximum temperature reported by the available sensor collection.,benchmark_bundle/summary.tsv,peak_reported_temperature
+GNU time user CPU time,2213806.83,s,GNU time measurement; distinct from the sampled CPU percentages.,benchmark_bundle/summary.tsv,gnu_time_user_seconds
+GNU time system CPU time,22732.88,s,GNU time measurement; distinct from the sampled CPU percentages.,benchmark_bundle/summary.tsv,gnu_time_system_seconds
+GNU time CPU percentage,1130.0,%,GNU time reported CPU percentage; not normalized to total logical CPU capacity.,benchmark_bundle/summary.tsv,gnu_time_cpu_percent
+GNU time maximum RSS,123456016.0,KiB,GNU time maximum-RSS definition; not interchangeable with the sampled sum of process RSS.,benchmark_bundle/summary.tsv,gnu_time_max_rss
+GNU time major page faults,3551660,count,GNU time reported count.,benchmark_bundle/summary.tsv,gnu_time_major_page_faults
+GNU time minor page faults,6015706022,count,GNU time reported count.,benchmark_bundle/summary.tsv,gnu_time_minor_page_faults
+GNU time filesystem inputs,10225404728.0,implementation-defined blocks,Original GNU time units; not converted to bytes.,benchmark_bundle/summary.tsv,gnu_time_fs_inputs
+GNU time filesystem outputs,7054860928.0,implementation-defined blocks,Original GNU time units; not converted to bytes.,benchmark_bundle/summary.tsv,gnu_time_fs_outputs
+Configured sampling interval,5.0,s,"Monitor samples, then sleeps for the configured interval.",benchmark_bundle/resource_samples.csv; frozen collector at 04d61d,
+Mean observed sampling interval,5.071797432020298,s,Mean of consecutive original elapsed-time differences.,benchmark_bundle/resource_samples.csv; frozen collector at 04d61d,
+Median observed sampling interval,5.081999999994878,s,Median of consecutive original elapsed-time differences.,benchmark_bundle/resource_samples.csv; frozen collector at 04d61d,
+Minimum observed sampling interval,5.02599999999984,s,Minimum of consecutive original elapsed-time differences.,benchmark_bundle/resource_samples.csv; frozen collector at 04d61d,
+Maximum observed sampling interval,5.55899999999383,s,Maximum of consecutive original elapsed-time differences.,benchmark_bundle/resource_samples.csv; frozen collector at 04d61d,
+Intervals longer than six seconds,0,count,No such gap occurred in the original resource observations.,benchmark_bundle/resource_samples.csv; frozen collector at 04d61d,
+Last monitor observation after process wall time,1.8713240000070073,s,Final monitor poll extends beyond process completion; wall time remains the process value.,benchmark_bundle/resource_samples.csv; frozen collector at 04d61d,
