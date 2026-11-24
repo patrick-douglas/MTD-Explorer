@@ -293,11 +293,11 @@ select_one_bracken_column_per_sample <- function(numeric_sample_cols) {
     grepl("(_frac$|\\.frac$)", numeric_sample_cols, ignore.case = TRUE)
   ]
 
-  if (length(num_cols) >= 2) {
+  if (length(num_cols) > 0) {
     cat("[INFO] Bracken-style _num/_frac columns detected.\n")
     cat("[INFO] Keeping only _num columns for prevalence vs abundance.\n")
     sample_cols <- num_cols
-  } else if (length(frac_cols) >= 2) {
+  } else if (length(frac_cols) > 0) {
     cat("[INFO] Bracken-style _frac columns detected, but no _num columns were found.\n")
     cat("[INFO] Keeping _frac columns for prevalence vs abundance.\n")
     sample_cols <- frac_cols
@@ -525,7 +525,15 @@ if (mode == "relative") {
   max_val <- max(plot_matrix, na.rm = TRUE)
   col_sums <- colSums(plot_matrix, na.rm = TRUE)
 
-  if (max_val <= 1) {
+  # Explicit Bracken count columns take precedence over magnitude heuristics.
+  bracken_counts <- exists("sample_cols", inherits = FALSE) &&
+    length(sample_cols) > 0 && all(grepl("(_num$|\\.num$)", sample_cols, ignore.case = TRUE))
+  if (bracken_counts) {
+    cat("[INFO] Bracken count columns: converting each sample to percentage.\n")
+    col_sums[col_sums == 0] <- NA
+    plot_matrix <- sweep(plot_matrix, 2, col_sums, "/") * 100
+    plot_matrix[is.na(plot_matrix)] <- 0
+  } else if (max_val <= 1) {
     cat("[INFO] Input appears to be fractional relative abundance. Multiplying by 100.\n")
     plot_matrix <- plot_matrix * 100
   } else if (max_val <= 100 && median(col_sums, na.rm = TRUE) <= 101) {

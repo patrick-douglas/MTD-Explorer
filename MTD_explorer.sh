@@ -2941,7 +2941,7 @@ mkdir -p "$heatmap_base" "$stacked_base" "$prevalence_base" "$detected_microbiom
             mkdir -p "$detected_out"
 
             echo "------------------------------------------------------------"
-            echo "[RUN] Detected microbiome ranked tables"
+            echo "[RUN] Taxon Prioritization Index (TPI) ranked tables and figures"
             echo "Rank: $tax_rank"
             echo "Mode: $detected_mode"
             echo "Input: $detected_in"

@@ -6,8 +6,8 @@
 # Input:
 #   prevalence_vs_abundance_<rank>_relative.tsv
 #
-# Main score:
-#   importance_score =
+# Taxon Prioritization Index (TPI); legacy importance_score is retained:
+#   TPI =
 #     0.45 * prevalence_score +
 #     0.30 * mean_abundance_score +
 #     0.15 * max_abundance_score +
@@ -97,7 +97,7 @@ Optional:
       Prevalence percentage used to define core taxa. Default: 75
 
   --plot_top INTEGER
-      Number of top taxa to show in the importance score figure.
+      Number of top taxa to show in the TPI figures.
       Default: 20
 
   --width NUMERIC
@@ -186,7 +186,9 @@ if (!is.finite(presence_threshold) || presence_threshold < 0) {
 
 weight_sum <- w_prevalence + w_mean + w_max + w_total
 
-if (!is.finite(weight_sum) || weight_sum <= 0) {
+if (any(!is.finite(c(w_prevalence, w_mean, w_max, w_total))) ||
+    any(c(w_prevalence, w_mean, w_max, w_total) < 0) ||
+    !is.finite(weight_sum) || weight_sum <= 0) {
   stop("[ERROR] Invalid weights. Sum must be > 0.")
 }
 
@@ -817,6 +819,11 @@ df$importance_score <-
   w_max * df$max_abundance_score +
   w_total * df$total_abundance_score
 
+# Retain unrounded weighted contributions to reproduce the legacy rounded TPI.
+df$tpi_prevalence_contribution <- w_prevalence * df$prevalence_score
+df$tpi_mean_contribution <- w_mean * df$mean_abundance_score
+df$tpi_max_contribution <- w_max * df$max_abundance_score
+df$tpi_total_contribution <- w_total * df$total_abundance_score
 df$importance_score <- round(df$importance_score, 6)
 df$prevalence_score <- round(df$prevalence_score, 6)
 df$mean_abundance_score <- round(df$mean_abundance_score, 6)
@@ -891,6 +898,29 @@ ranked_importance <- df[order(
 
 ranked_importance$rank_position <- seq_len(nrow(ranked_importance))
 ranked_importance <- ranked_importance[, final_cols]
+# Canonical TPI exports. The legacy score and ranking are unchanged.
+tpi_ranked <- ranked_importance
+tpi_ranked$tpi_rank <- tpi_ranked$rank_position
+tpi_ranked$tpi_score <- tpi_ranked$importance_score
+tpi_ranked$abundance_mode <- rep(mode, nrow(tpi_ranked))
+tpi_ranked$tpi_interpretation <- tpi_ranked$importance_interpretation
+idx_tpi <- match(tpi_ranked$taxon, df$taxon)
+if (anyNA(idx_tpi) || anyDuplicated(df$taxon)) stop("TPI requires unique matching taxon identifiers")
+for (nm in c("tpi_prevalence_contribution", "tpi_mean_contribution", "tpi_max_contribution", "tpi_total_contribution")) {
+  tpi_ranked[[nm]] <- df[[nm]][idx_tpi]
+}
+tpi_component_cols <- c("tpi_prevalence_contribution", "tpi_mean_contribution", "tpi_max_contribution", "tpi_total_contribution")
+if (any(abs(rowSums(tpi_ranked[, tpi_component_cols, drop = FALSE]) - tpi_ranked$tpi_score) > 5.1e-7)) {
+  stop("TPI components do not sum to the rounded legacy score")
+}
+write_table(tpi_ranked, paste0("detected_microbiome_", rank_label, "_ranked_by_TPI.tsv"))
+for (n in c(20, 50)) write_table(head(tpi_ranked, n), paste0("top", n, "_detected_microbiome_", rank_label, "_by_TPI.tsv"))
+write_table(tpi_ranked[, c("tpi_rank", "taxon", "abundance_mode", "tpi_score", tpi_component_cols)],
+  paste0("detected_microbiome_", rank_label, "_TPI_components.tsv"))
+write_table(data.frame(component = c("prevalence", "mean", "maximum", "total"),
+  weight = c(w_prevalence, w_mean, w_max, w_total)),
+  paste0("detected_microbiome_", rank_label, "_TPI_weights.tsv"))
+
 
 write_table(
   ranked_importance,
@@ -1302,6 +1332,12 @@ if (!is.null(abundance_input)) {
     ranked_with_samples_file
   )
 
+  tpi_with_samples <- ranked_with_samples
+  tpi_match <- match(tpi_with_samples$taxon, tpi_ranked$taxon)
+  for (nm in setdiff(names(tpi_ranked), names(tpi_with_samples))) {
+    tpi_with_samples[[nm]] <- tpi_ranked[[nm]][tpi_match]
+  }
+  write_table(tpi_with_samples, paste0("detected_microbiome_", rank_label, "_TPI_ranked_with_samples.tsv"))
   cat("[OK] Ranked table with sample abundances:\n")
   cat(
     file.path(
@@ -1353,8 +1389,9 @@ cat(
   "==================================\n\n",
   "Input table:\n",
   input_file, "\n\n",
-  "Main ranking formula:\n",
-  "importance_score = ",
+  "Taxon Prioritization Index (TPI); legacy importance_score is identical.\n",
+  "Abundance mode: ", mode, "\n",
+  "TPI = ",
   round(w_prevalence, 4), " * prevalence_score + ",
   round(w_mean, 4), " * mean_abundance_score + ",
   round(w_max, 4), " * max_abundance_score + ",
@@ -1369,7 +1406,16 @@ cat(
   "High prevalence but low abundance taxa may represent stable low-abundance community members.\n",
   "Low prevalence but high maximum abundance taxa may represent sample-specific blooms or possible contaminants.\n",
   "Low prevalence and low abundance taxa should be interpreted cautiously.\n\n",
-  "Generated files:\n",
+  "TPI is a descriptive, dataset- and mode-specific prioritization score, not a significance test,\n",
+  "a measure of pathogenicity, or proof of biological interactions. Mean and total are dependent.\n",
+  "Relative abundance is within-library Bracken composition, not absolute microbial burden.\n",
+  "Weighted components are exported before rounding; TPI is rounded to six decimals.\n\n",
+  "Generated files (legacy names retained):\n",
+  "- detected_microbiome_", rank_label, "_ranked_by_TPI.tsv\n",
+  "- detected_microbiome_", rank_label, "_TPI_components.tsv\n",
+  "- detected_microbiome_", rank_label, "_TPI_weights.tsv\n",
+  "- top20/top50_detected_microbiome_", rank_label, "_by_TPI.tsv\n",
+  "- TPI lollipop, components, landscape and overview figures (if plot_top > 0).\n",
   "- detected_microbiome_", rank_label, "_ranked_by_importance.tsv\n",
   "- top20_detected_microbiome_", rank_label, "_by_importance.tsv\n",
   "- top50_detected_microbiome_", rank_label, "_by_importance.tsv\n",
@@ -1393,183 +1439,146 @@ cat(
 # Figures
 # ------------------------------------------------------------
 
-if (plot_top > 0) {
-
-  top_plot <- head(ranked_importance, plot_top)
-
-  top_plot$taxon <- factor(
-    top_plot$taxon,
-    levels = rev(top_plot$taxon)
-  )
-
-  # ----------------------------------------------------------
-  # Figure 1: horizontal barplot / lollipop-style ranking
-  # ----------------------------------------------------------
-
-  p_rank <- ggplot(
-    top_plot,
-    aes(
-      x = importance_score,
-      y = taxon
-    )
-  ) +
-    geom_segment(
-      aes(
-        x = 0,
-        xend = importance_score,
-        y = taxon,
-        yend = taxon
-      ),
-      linewidth = 0.7,
-      alpha = 0.7
-    ) +
-    geom_point(
-      aes(size = prevalence_percent),
-      alpha = 0.9
-    ) +
-    labs(
-      title = paste0("Top ", plot_top, " detected ", rank_label, " by exploratory importance score"),
-      subtitle = paste0(
-        "Score = ",
-        round(w_prevalence, 2), "×prevalence + ",
-        round(w_mean, 2), "×mean abundance + ",
-        round(w_max, 2), "×max abundance + ",
-        round(w_total, 2), "×total abundance"
-      ),
-      x = "Exploratory importance score",
-      y = rank_label,
-      size = "Prevalence (%)"
-    ) +
-    theme_bw(base_size = 12) +
-    theme(
-      plot.title = element_text(face = "bold"),
-      axis.text.y = element_text(size = 9),
-      panel.grid.minor = element_blank()
-    )
-
-  rank_png <- file.path(
-    output_dir,
-    paste0("top", plot_top, "_detected_microbiome_", rank_label, "_importance_lollipop.png")
-  )
-
-  ggsave(
-    filename = rank_png,
-    plot = p_rank,
-    width = plot_width,
-    height = plot_height,
-    dpi = plot_dpi
-  )
-
-  cat("[OK] Importance ranking figure saved:\n")
-  cat(rank_png, "\n")
-
-  if (save_pdf) {
-    rank_pdf <- file.path(
-      output_dir,
-      paste0("top", plot_top, "_detected_microbiome_", rank_label, "_importance_lollipop.pdf")
-    )
-
-    ggsave(
-      filename = rank_pdf,
-      plot = p_rank,
-      width = plot_width,
-      height = plot_height
-    )
-
-    cat("[OK] Importance ranking PDF saved:\n")
-    cat(rank_pdf, "\n")
-  }
-
-  # ----------------------------------------------------------
-  # Figure 2: prevalence-abundance landscape colored by score
-  # ----------------------------------------------------------
-
-  label_df <- top_plot
-
-  p_landscape <- ggplot(
-    ranked_importance,
-    aes(
-      x = prevalence_percent,
-      y = mean_abundance,
-      size = max_abundance,
-      color = importance_score
-    )
-  ) +
-    geom_point(alpha = 0.75) +
-    scale_y_continuous(trans = "log10") +
-    scale_x_continuous(
-      limits = c(0, 100),
-      breaks = seq(0, 100, by = 25)
-    ) +
-    labs(
-      title = paste0("Detected ", rank_label, " prevalence-abundance landscape"),
-      subtitle = paste0("Color indicates exploratory importance score; labels show top ", plot_top, " taxa"),
-      x = "Prevalence across samples (%)",
-      y = "Mean relative abundance (%)",
-      size = "Max abundance",
-      color = "Importance score"
-    ) +
-    theme_bw(base_size = 12) +
-    theme(
-      plot.title = element_text(face = "bold"),
-      panel.grid.minor = element_blank(),
-      legend.position = "right"
-    )
-
+# TPI plots: same scores and ranking as the legacy output.
+if (plot_top > 0 && nrow(tpi_ranked) > 0) {
+  top_plot <- head(tpi_ranked, plot_top)
+  n_top <- nrow(top_plot)
+  levels_top <- rev(top_plot$taxon)
+  top_plot$taxon <- factor(top_plot$taxon, levels = levels_top)
+  taxon_labels <- setNames(paste0(top_plot$tpi_rank, "  ",
+    vapply(as.character(top_plot$taxon), function(z) {
+      paste(strwrap(z, width = 52), collapse = "\n")
+    }, character(1))), as.character(top_plot$taxon))
+  mode_label <- if (mode == "relative") "Relative abundance" else "Estimated read counts"
+  mean_label <- if (mode == "relative") "Mean relative abundance (%)" else "Mean estimated read count"
+  max_label <- if (mode == "relative") "Maximum relative\nabundance (%)" else "Maximum estimated\nread count"
+  prefix <- paste0("detected_microbiome_", rank_label, "_TPI")
+  top_prefix <- paste0("top", plot_top, "_detected_microbiome_", rank_label)
+  tpi_theme <- theme_bw(base_size = 11) + theme(
+    plot.title = element_text(face = "bold", color = "#203642", size = 13),
+    plot.subtitle = element_text(color = "#536777", size = 10),
+    panel.grid.minor = element_blank(), panel.grid.major = element_line(color = "#e5ebef"),
+    panel.border = element_blank(), axis.line = element_line(color = "#9aabb4"),
+    legend.key = element_blank(), plot.margin = margin(8, 12, 8, 8))
+  score_scale <- function() scale_x_continuous(limits = c(0, 1), breaks = c(0, .5, 1),
+    expand = expansion(mult = c(0, .04)))
+  taxon_scale <- function() scale_y_discrete(limits = levels_top, drop = FALSE,
+    expand = expansion(add = .6))
+  prevalence_scale <- function() scale_size_area(max_size = 4, limits = c(0, 100),
+    breaks = c(25, 50, 75, 100), name = "Detection prevalence (%)")
+  p_rank <- ggplot(top_plot, aes(x = tpi_score, y = taxon)) +
+    geom_segment(aes(x = 0, xend = tpi_score, yend = taxon), color = "#8ba6af", size = .45) +
+    geom_point(aes(size = prevalence_percent), color = "#086b7d") +
+    score_scale() + prevalence_scale() +
+    labs(title = paste0("Top ", n_top, " taxa by TPI"),
+      subtitle = paste0(rank_label, "-level classifications | ", mode_label),
+      x = "Taxon Prioritization Index (TPI)", y = NULL) + tpi_theme +
+    scale_y_discrete(limits = levels_top, labels = taxon_labels, drop = FALSE,
+      expand = expansion(add = .6)) +
+    theme(legend.position = "bottom", axis.text.y = element_text(size = 9),
+      legend.title = element_text(size = 9), legend.text = element_text(size = 9))
+  component_cols <- c("tpi_prevalence_contribution", "tpi_mean_contribution",
+    "tpi_max_contribution", "tpi_total_contribution")
+  component_labels <- sprintf(c("Prevalence (%.2f)", "Mean (%.2f)",
+    "Maximum (%.2f)", "Total (%.2f)"), c(w_prevalence,w_mean,w_max,w_total))
+  components_plot <- do.call(rbind, lapply(seq_along(component_cols), function(j) {
+    data.frame(taxon = top_plot$taxon, component = component_labels[j],
+      contribution = top_plot[[component_cols[j]]], stringsAsFactors = FALSE)
+  }))
+  components_plot$taxon <- factor(components_plot$taxon, levels = levels_top)
+  components_plot$component <- factor(components_plot$component, levels = component_labels)
+  p_components <- ggplot(components_plot, aes(x = contribution, y = taxon, fill = component)) +
+    geom_col(width = .62, position = position_stack(reverse = TRUE)) +
+    score_scale() + taxon_scale() +
+    scale_fill_manual(values = setNames(c("#086b7d", "#448dbb", "#df9938", "#a6b4c0"), component_labels), drop = FALSE) +
+    labs(title = "TPI components", subtitle = "Weighted contributions", x = "Weighted contribution", y = NULL, fill = NULL) +
+    tpi_theme + theme(legend.position = "bottom", legend.text = element_text(size = 9)) +
+    guides(fill = guide_legend(nrow = 2, byrow = TRUE))
+  # The standalone component panel keeps the rank/taxon key.
+  p_components_single <- p_components + scale_y_discrete(limits = levels_top, labels = taxon_labels,
+    drop = FALSE, expand = expansion(add = .6)) + theme(axis.text.y = element_text(size = 9))
+  p_components <- p_components + theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+  # All positive taxa appear in the log-scale landscape; zero means cannot be plotted on log10.
+  landscape_data <- tpi_ranked[is.finite(tpi_ranked$mean_abundance) & tpi_ranked$mean_abundance > 0, , drop = FALSE]
+  label_df <- landscape_data[landscape_data$tpi_rank <= n_top, , drop = FALSE]
+  sample_counts <- unique(tpi_ranked$n_samples)
+  sample_text <- if (length(sample_counts) == 1) as.character(sample_counts) else "available"
+  landscape_note <- paste0("Numbers identify the TPI ranks in A and B; ", mode_label, ".")
+  if (nrow(landscape_data) < nrow(tpi_ranked)) landscape_note <- paste0(landscape_note,
+    " Zero/non-finite means omitted from log axis: ", nrow(tpi_ranked) - nrow(landscape_data), ".")
+  p_landscape <- ggplot(landscape_data, aes(x = prevalence_percent, y = mean_abundance)) +
+    geom_point(aes(size = max_abundance, color = tpi_score), alpha = .78) +
+    scale_y_log10(labels = function(x) format(x, scientific = FALSE, trim = TRUE)) +
+    scale_x_continuous(breaks = seq(0, 100, by = 25), expand = expansion(mult = c(.03,.10))) +
+    coord_cartesian(xlim = c(0, 100), clip = "off") +
+    scale_color_gradient(low = "#c9dce5", high = "#075566", limits = c(0,1), name = "TPI") +
+    scale_size_area(max_size = 6, name = max_label) +
+    labs(title = paste0("Prevalence and abundance across ", nrow(tpi_ranked), " taxa"),
+      subtitle = mode_label, x = paste0("Prevalence across ", sample_text, " libraries (%)"),
+      y = mean_label, caption = landscape_note) + tpi_theme +
+    theme(legend.position = "right", plot.caption = element_text(hjust = 0, color = "#536777", size = 9))
   if (has_ggrepel) {
-    p_landscape <- p_landscape +
-      ggrepel::geom_text_repel(
-        data = label_df,
-        aes(label = taxon),
-        size = 3,
-        max.overlaps = Inf,
-        box.padding = 0.4,
-        point.padding = 0.25,
-        min.segment.length = 0
-      )
+    p_landscape <- p_landscape + ggrepel::geom_text_repel(data = label_df,
+      aes(label = tpi_rank), seed = 7955, size = 3.2, max.overlaps = Inf,
+      box.padding = .35, point.padding = .25, min.segment.length = 0, segment.color = "#8ba6af",
+      color = "#203642", show.legend = FALSE)
   } else {
-    p_landscape <- p_landscape +
-      geom_text(
-        data = label_df,
-        aes(label = taxon),
-        size = 3,
-        check_overlap = TRUE,
-        vjust = -0.8
-      )
+    # No new required package; labels may overlap if ggrepel is unavailable.
+    warning("ggrepel unavailable: TPI landscape rank labels may overlap.")
+    p_landscape <- p_landscape + geom_text(data = label_df, aes(label = tpi_rank),
+      size = 3, nudge_x = 1.4, vjust = -.6, color = "#203642", show.legend = FALSE)
   }
-
-  landscape_png <- file.path(
-    output_dir,
-    paste0("detected_microbiome_", rank_label, "_prevalence_abundance_importance_landscape.png")
-  )
-
-  ggsave(
-    filename = landscape_png,
-    plot = p_landscape,
-    width = plot_width,
-    height = plot_height,
-    dpi = plot_dpi
-  )
-
-  cat("[OK] Prevalence-abundance importance landscape saved:\n")
-  cat(landscape_png, "\n")
-
+  # grid and gtable are already supplied by R and ggplot2. Align the two upper panels.
+  overview <- function() {
+    a <- ggplotGrob(p_rank + labs(tag = "A") + theme(plot.tag = element_text(face = "bold")))
+    b <- ggplotGrob(p_components + labs(tag = "B") + theme(plot.tag = element_text(face = "bold")))
+    if (length(a$heights) == length(b$heights)) {
+      h <- grid::unit.pmax(a$heights, b$heights)
+      a$heights <- h; b$heights <- h
+    }
+    cplot <- ggplotGrob(p_landscape + labs(tag = "C") + theme(plot.tag = element_text(face = "bold")))
+    grid::grid.newpage()
+    grid::pushViewport(grid::viewport(layout = grid::grid.layout(2, 2,
+      widths = grid::unit(c(0.60, 0.40), "null"),
+      heights = grid::unit(c(max(4.8, 0.25*label_lines + 1.8), 4.5), "null"))))
+    draw_at <- function(g, row, col) {
+      grid::pushViewport(grid::viewport(layout.pos.row = row, layout.pos.col = col))
+      grid::grid.draw(g); grid::popViewport()
+    }
+    draw_at(a, 1, 1); draw_at(b, 1, 2); draw_at(cplot, 2, 1:2)
+    grid::popViewport()
+  }
+  max_label_chars <- max(nchar(as.character(top_plot$taxon)))
+  label_lines <- sum(vapply(as.character(top_plot$taxon), function(z) max(1L, length(strwrap(z, 52))), integer(1)))
+  top_height <- max(plot_height, 2.2 + .27 * label_lines)
+  top_width <- max(plot_width, 8.5, 6 + min(max_label_chars, 52) * .075)
+  overview_width <- max(12, top_width + 3.3)
+  overview_height <- max(10, top_height + 4.5)
+  save_plot <- function(plot, stem, width, height) {
+    ggsave(file.path(output_dir, paste0(stem, ".png")), plot = plot, width = width, height = height,
+      dpi = plot_dpi, bg = "white", limitsize = FALSE)
+    if (save_pdf) ggsave(file.path(output_dir, paste0(stem, ".pdf")), plot = plot,
+      width = width, height = height, bg = "white", limitsize = FALSE)
+  }
+  save_plot(p_rank, paste0(top_prefix, "_TPI_lollipop"), top_width, top_height)
+  save_plot(p_components_single, paste0(prefix, "_components"), top_width, top_height)
+  save_plot(p_landscape, paste0(prefix, "_landscape"), max(plot_width, 10), max(plot_height, 6))
+  grDevices::png(file.path(output_dir, paste0(prefix, "_overview.png")), width = overview_width,
+    height = overview_height, units = "in", res = plot_dpi, bg = "white")
+  tryCatch(overview(), finally = grDevices::dev.off())
   if (save_pdf) {
-    landscape_pdf <- file.path(
-      output_dir,
-      paste0("detected_microbiome_", rank_label, "_prevalence_abundance_importance_landscape.pdf")
-    )
-
-    ggsave(
-      filename = landscape_pdf,
-      plot = p_landscape,
-      width = plot_width,
-      height = plot_height
-    )
-
-    cat("[OK] Prevalence-abundance importance landscape PDF saved:\n")
-    cat(landscape_pdf, "\n")
+    grDevices::pdf(file.path(output_dir, paste0(prefix, "_overview.pdf")), width = overview_width,
+      height = overview_height, useDingbats = FALSE)
+    tryCatch(overview(), finally = grDevices::dev.off())
   }
+  # Legacy paths remain available to downstream tools and documentation.
+  for (ext in c("png", if (save_pdf) "pdf")) {
+    if (!file.copy(file.path(output_dir, paste0(top_prefix, "_TPI_lollipop.", ext)),
+      file.path(output_dir, paste0(top_prefix, "_importance_lollipop.", ext)), overwrite = TRUE)) stop("Cannot write legacy TPI lollipop alias")
+    if (!file.copy(file.path(output_dir, paste0(prefix, "_landscape.", ext)),
+      file.path(output_dir, paste0("detected_microbiome_",rank_label,"_prevalence_abundance_importance_landscape.",ext)), overwrite = TRUE)) stop("Cannot write legacy TPI landscape alias")
+  }
+  cat("[OK] TPI lollipop, components, landscape and overview saved.\n")
 }
 
 cat("[OK] Main ranked table:\n")
