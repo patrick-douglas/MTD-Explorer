@@ -411,6 +411,11 @@ logs/
 These outputs are designed for descriptive analysis, quality control, and
 visual inspection of the detected microbiome.
 
+The `detected_microbiome/` subfolders contain the Taxon Prioritization Index
+(TPI) rankings, weighted components, per-sample tables and standalone and
+integrated figures for absolute and relative abundance. Legacy importance-score
+files are retained for compatibility. See the [TPI output guide](taxonomic-exploratory-outputs.md#integrated-tpi-overview).
+
 ### Host expression exploratory outputs
 
 Host expression exploratory outputs may include non-comparison QC figures,

@@ -160,7 +160,7 @@ The dataset is used to illustrate outputs from:
 - functional profiling;
 - ssGSEA;
 - HAllA host–microbiome integration;
-- taxonomic exploratory analysis;
+- taxonomic exploratory analysis, including the Taxon Prioritization Index (TPI);
 - alpha and beta diversity;
 - core microbiome analysis;
 - taxonomic composition and abundance;

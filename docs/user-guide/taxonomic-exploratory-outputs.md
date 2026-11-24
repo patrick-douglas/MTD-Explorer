@@ -396,7 +396,7 @@ exploratory/taxonomy/detected_microbiome/species_absolute_with_samples_distribut
 The example image used in this documentation corresponds to:
 
 ```text
-detected_microbiome_species_prevalence_abundance_importance_landscape.png
+detected_microbiome_species_TPI_landscape.png
 ```
 
 ### How to read the plot
@@ -409,7 +409,9 @@ Prevalence answers this question:
 In what percentage of samples was this taxon detected?
 ```
 
-The y-axis shows mean abundance.
+The y-axis shows mean abundance in Bracken estimated read counts (absolute
+mode) or percentages (relative mode). Relative percentages are normalized
+within each library over the taxa in the input matrix, not over all sequenced reads.
 
 Mean abundance answers this question:
 
@@ -417,12 +419,14 @@ Mean abundance answers this question:
 How abundant is this taxon on average across the dataset?
 ```
 
-The point size represents maximum abundance.
+The point size represents maximum abundance. The mean-abundance axis is
+logarithmic; zero or non-finite means cannot appear on that axis. Numbers
+identify the top taxa by their TPI rank.
 
 A large point means that the taxon reached high abundance in at least one
 sample.
 
-The point color represents the exploratory importance score.
+The point color represents the Taxon Prioritization Index (TPI; 0–1).
 
 A higher score means that the taxon ranked higher according to the descriptive
 ranking used by [MTD Explorer][mtd-explorer].
@@ -453,12 +457,13 @@ contamination, or host association without additional evidence.
 
 Do not compare groups using this plot alone.
 
-## Detected microbiome importance ranking
+<a id="detected-microbiome-importance-ranking"></a>
 
-The detected microbiome ranking plot shows the top taxa ranked by exploratory
-importance score.
+## Detected microbiome ranking by TPI
 
-![Top detected species by exploratory importance score](../assets/images/user-guide/taxonomic-exploratory/taxonomy-detected-species-importance-score.png)
+The ranking orders detected taxa by the Taxon Prioritization Index (TPI).
+
+![Top detected species by TPI](../assets/images/user-guide/taxonomic-exploratory/taxonomy-detected-species-importance-score.png)
 
 ### Output location
 
@@ -477,12 +482,12 @@ exploratory/taxonomy/detected_microbiome/species_absolute_with_samples_distribut
 The example image used in this documentation corresponds to:
 
 ```text
-top20_detected_microbiome_species_importance_lollipop.png
+top20_detected_microbiome_species_TPI_lollipop.png
 ```
 
 ### How to read the plot
 
-The x-axis shows the exploratory importance score.
+The x-axis shows the TPI (0–1).
 
 Higher values indicate taxa that rank higher according to the descriptive
 scoring formula used by [MTD Explorer][mtd-explorer].
@@ -493,12 +498,14 @@ The point size represents prevalence.
 
 Larger points indicate taxa detected in a larger percentage of samples.
 
-### Ranked table and importance-score formula
+<a id="ranked-table-and-importance-score-formula"></a>
 
-The complete ranking used by the importance plot is written to:
+### Ranked table and TPI formula
+
+The canonical complete ranking is written to:
 
 ```text
-detected_microbiome_species_ranked_by_importance.tsv
+detected_microbiome_species_ranked_by_TPI.tsv
 ```
 
 When another taxonomic rank is selected, `species` is replaced by the
@@ -508,7 +515,7 @@ The table ranks every detected taxon using a composite exploratory score. With
 the default MTD Explorer weights, the formula is:
 
 ```text
-importance_score =
+tpi_score =
     0.45 * prevalence_score
   + 0.30 * mean_abundance_score
   + 0.15 * max_abundance_score
@@ -555,7 +562,9 @@ total abundance.
 | Total abundance | `0.10` | 10% |
 
 The script normalizes the weights internally if custom values are supplied and
-their sum differs from 1.
+their sum differs from 1. Weights must be finite and nonnegative, with a
+positive sum. In a fixed-size sample set, total abundance equals mean abundance
+times the number of samples; these components are not independent.
 
 Consequently, taxa detected consistently across samples generally receive a
 higher priority, while taxa with strong mean, maximum, or cumulative abundance
@@ -564,11 +573,11 @@ can also move upward in the ranking.
 ### Main columns in the ranked table
 
 The main columns in
-`detected_microbiome_species_ranked_by_importance.tsv` are:
+`detected_microbiome_species_ranked_by_TPI.tsv` are:
 
 | Column | Meaning |
 | --- | --- |
-| `rank_position` | Final position in the importance ranking |
+| `tpi_rank` | Final TPI rank; identical to legacy `rank_position` |
 | `taxon` | Detected taxon name |
 | `rank` | Taxonomic rank used in the analysis |
 | `n_samples` | Total number of samples evaluated |
@@ -579,17 +588,28 @@ The main columns in
 | `max_abundance` | Highest abundance observed in one sample |
 | `total_abundance` | Abundance summed across samples |
 | `prevalence_class` | Descriptive prevalence category |
-| `importance_interpretation` | Descriptive classification based on prevalence and abundance patterns |
-| `importance_score` | Final composite score used for ranking |
+| `tpi_interpretation` | Descriptive prevalence/abundance category; legacy alias retained |
+| `tpi_score` | Composite index; identical to legacy `importance_score` |
+| `abundance_mode` | `absolute` or `relative` |
 | `prevalence_score` | Prevalence component expressed from 0 to 1 |
 | `mean_abundance_score` | Normalized mean-abundance component |
 | `max_abundance_score` | Normalized maximum-abundance component |
 | `total_abundance_score` | Normalized total-abundance component |
+| `tpi_prevalence_contribution` | Weighted prevalence component |
+| `tpi_mean_contribution` | Weighted mean-abundance component |
+| `tpi_max_contribution` | Weighted maximum-abundance component |
+| `tpi_total_contribution` | Weighted total-abundance component |
 
-### Importance interpretation categories
+The sum of the weighted contributions equals the TPI up to rounding.
+The previous `ranked_by_importance.tsv` and corresponding top-20/top-50
+files, columns, and figure names are retained as compatibility outputs.
+
+<a id="importance-interpretation-categories"></a>
+
+### TPI interpretation categories
 
 With the default core-prevalence threshold of 75%, the
-`importance_interpretation` column uses these descriptive rules:
+`tpi_interpretation` column uses these descriptive rules:
 
 | Value | Rule |
 | --- | --- |
@@ -604,7 +624,7 @@ When a custom core-prevalence threshold is supplied, it replaces the default
 
 ### Ranking order
 
-The table is ordered first by decreasing `importance_score`. Ties are resolved
+The table is ordered first by decreasing `tpi_score`. Ties are resolved
 using:
 
 1. decreasing `prevalence_percent`;
@@ -616,19 +636,19 @@ The pipeline also creates abbreviated versions containing the first 20 and
 first 50 taxa:
 
 ```text
-top20_detected_microbiome_species_by_importance.tsv
-top50_detected_microbiome_species_by_importance.tsv
+top20_detected_microbiome_species_by_TPI.tsv
+top50_detected_microbiome_species_by_TPI.tsv
 ```
 
-!!! important "How to interpret the importance score"
+!!! important "How to interpret the TPI"
 
-    The importance score is a descriptive and dataset-specific prioritization
+    The TPI is a descriptive and dataset-specific prioritization
     index. It is not a p-value, a false-discovery-rate-adjusted result, a
     differential-abundance statistic, evidence of causality, or a
     machine-learning feature-importance estimate.
 
     Because the abundance components are normalized relative to the taxa
-    present in each table, importance scores should primarily be compared
+    present in each table, TPI scores should primarily be compared
     within the same analysis, taxonomic rank, and abundance mode. Scores from
     different datasets, or from absolute and relative abundance tables, are
     not necessarily directly comparable.
@@ -656,7 +676,7 @@ study design.
 
 The prevalence-abundance landscape shows the distribution of detected taxa.
 
-The importance ranking plot summarizes the highest-ranking taxa.
+The TPI ranking plot summarizes the highest-ranking taxa.
 
 Use them together:
 
@@ -665,6 +685,60 @@ Use them together:
 3. inspect the corresponding ranked table;
 4. review per-sample [Kraken2][kraken2] reports when needed;
 5. interpret results in the context of the database and experimental design.
+
+## Integrated TPI overview
+
+MTD Explorer exports a three-panel overview for each abundance mode. Panel A
+ranks the top 20 taxa by TPI, with point size indicating prevalence. Panel B
+shows the four weighted contributions for the same taxa in the same order.
+Panel C shows prevalence and mean abundance for taxa with positive finite means;
+point size indicates maximum abundance, color indicates TPI, and numeric labels
+refer to the ranks in panels A and B.
+
+### Absolute TPI overview
+
+![B. glabrata absolute TPI overview](../assets/images/user-guide/taxonomic-exploratory/taxonomy-tpi-overview-absolute.png)
+
+Absolute mode summarizes estimated counts and may be influenced by library size
+and the number of classified reads.
+
+### Relative TPI overview
+
+![B. glabrata relative TPI overview](../assets/images/user-guide/taxonomic-exploratory/taxonomy-tpi-overview-relative.png)
+
+Relative mode uses within-library percentages and describes composition rather
+than absolute microbial burden. Relative TPI can reorder taxa compared with
+absolute TPI. Neither mode demonstrates biological importance or significance.
+
+### Standalone weighted components
+
+![B. glabrata absolute TPI components](../assets/images/user-guide/taxonomic-exploratory/taxonomy-tpi-components-absolute.png)
+
+### Additional TPI files
+
+Under `exploratory/taxonomy/detected_microbiome/species_<mode>_with_samples_distribution/`:
+
+| Output | Purpose |
+| --- | --- |
+| `detected_microbiome_species_ranked_by_TPI.tsv` | Complete ranking and scores |
+| `top20_detected_microbiome_species_by_TPI.tsv` | First 20 taxa |
+| `top50_detected_microbiome_species_by_TPI.tsv` | First 50 taxa |
+| `detected_microbiome_species_TPI_components.tsv` | Weighted components |
+| `detected_microbiome_species_TPI_weights.tsv` | Effective normalized weights |
+| `detected_microbiome_species_TPI_ranked_with_samples.tsv` | Ranking with sample distribution, when inputs are supplied |
+| `top20_detected_microbiome_species_TPI_lollipop.png` | Ranking plot |
+| `detected_microbiome_species_TPI_components.png` | Standalone weighted components |
+| `detected_microbiome_species_TPI_landscape.png` | Prevalence–abundance landscape |
+| `detected_microbiome_species_TPI_overview.png` | Combined panels A, B and C |
+
+PDF versions are also produced by default. The examples here were regenerated
+from the original 15-library *B. glabrata* samplesheet and an estimated-read
+matrix reconstructed from the archived absolute per-sample abundance table
+using the native TPI implementation (commit `84fe132`). The raw intermediate
+Bracken matrix was not available. Regression checks reproduced the historical
+absolute and relative rankings and per-sample abundances at the stored
+precision, for all 425 taxa. Other documentation figures retain their
+original analysis provenance.
 
 ## Core microbiome
 

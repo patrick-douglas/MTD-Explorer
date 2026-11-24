@@ -75,7 +75,7 @@ MTD Explorer can generate outputs for:
 - host transcriptome analysis;
 - host differential expression;
 - microbiome taxonomic profiling;
-- taxonomic exploratory summaries;
+- taxonomic exploratory summaries, including the Taxon Prioritization Index (TPI);
 - Krona and GraPhlAn visualizations;
 - microbiome group comparisons;
 - HUMAnN-derived functional profiling;

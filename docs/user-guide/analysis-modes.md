@@ -54,6 +54,11 @@ The analysis mode is independent of the optional execution backend. Supplying
 per-sample stages, but it does not change whether the biological run resolves
 as `auto`, `comparison`, or `exploratory`.
 
+The Taxon Prioritization Index (TPI) is a descriptive taxonomic output in
+exploratory mode and in comparison mode when exploratory taxonomic figures are
+enabled. It does not require a group contrast and is not a differential-abundance test.
+See [TPI outputs](taxonomic-exploratory-outputs.md#integrated-tpi-overview).
+
 ## Automatic mode
 
 Automatic mode is the default.
