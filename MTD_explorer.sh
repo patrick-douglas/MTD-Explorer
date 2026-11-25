@@ -2613,7 +2613,7 @@ write_methods_log() {
         # Software paths
         csv_row "Software path" "kraken2" "path" "$KRAKEN2_BIN" "Dedicated MTD_kraken2 executable path"
         csv_row "Software path" "bracken" "path" "$BRACKEN_BIN" "Dedicated MTD_kraken2 executable path"
-        csv_row "Software path" "fastp" "path" "$(get_tool_path fastp)" "Executable path"
+        csv_row "Software path" "fastp" "path" "${FASTP_RUNTIME_PATH:-$([[ "$no_trimm" == 1 ]] && printf not_used || printf pending)}" "Local executable selected at trimming; remote path not inferred"
         csv_row "Software path" "pigz" "path" "$(get_tool_path pigz)" "Executable path"
         csv_row "Software path" "python" "path" "$(get_tool_path python)" "Executable path"
         csv_row "Software path" "Rscript" "path" "$(get_tool_path Rscript)" "Executable path"
@@ -2628,7 +2628,8 @@ write_methods_log() {
         csv_row "Software version" "kraken2" "version" "$KRAKEN2_VERSION" "Validated dedicated runtime version"
         csv_row "Software version" "bracken" "conda_package_version" "$BRACKEN_PACKAGE_VERSION" "Validated dedicated Conda package version"
         csv_row "Software version" "bracken" "cli_banner" "$BRACKEN_CLI_VERSION" "Upstream executable banner; may be stale relative to the package version"
-        csv_row "Software version" "fastp" "version" "$(get_tool_version 'fastp --version')" "Best-effort version capture"
+        csv_row "Software version" "fastp" "version" "${FASTP_REPORT_VERSIONS:-$([[ "$no_trimm" == 1 ]] && printf not_used || printf pending)}" "Version(s) from per-sample fastp JSON reports; see fastp_runtime.tsv"
+        csv_row "Software version" "fastp" "runtime_cli_banner" "${FASTP_TOOL_ID:-not_available}" "Local trimming executable banner, if available"
         csv_row "Software version" "python" "version" "$(get_tool_version 'python --version')" "Best-effort version capture"
         csv_row "Software version" "Rscript" "version" "$(get_tool_version 'Rscript --version')" "Best-effort version capture"
         csv_row "Software version" "humann" "version" "$(run_humann_tool "$HUMANN_BIN" --version 2>&1 | head -n 1 | sed 's/\r//g')" "Version from dedicated MTD_humann environment"
@@ -4810,9 +4811,10 @@ else
     echo
 
     conda deactivate
-    conda activate MTD_fastp
+    conda activate MTD_fastp || die "Could not activate MTD_fastp"
 
     mkdir -p "$outputdr/fastp"
+    FASTP_RUNTIME_PATH="$(command -v fastp)" || die "fastp executable not found in MTD_fastp"
     FASTP_TOOL_ID="$(fastp --version 2>&1 | head -n 1 | tr '\t' ' ')"
 
     sample_index=0
@@ -5028,6 +5030,48 @@ echo "${g}============================================${w}"
 
 column -s $'\t' -t "$PREPARED_FASTQ_MANIFEST" 2>/dev/null || \
     cat "$PREPARED_FASTQ_MANIFEST"
+
+# Record actual report-producing versions, also for Slurm/resumed samples.
+# Do not infer a remote executable path from the controller's Conda environment.
+if [[ "$no_trimm" == "1" ]]; then
+    FASTP_RUNTIME_PATH=not_used
+    FASTP_REPORT_VERSIONS=not_used
+    rm -f -- "$outputdr/methods/fastp_runtime.tsv"
+else
+    if [[ -n "$HPC_CONF" ]]; then
+        FASTP_RUNTIME_PATH=remote_path_not_captured
+    fi
+    if ! FASTP_REPORT_VERSIONS="$(python3 - "$outputdr" "${pipeline_samples[@]}" <<'PY_FASTP_PROVENANCE'
+import csv
+import json
+import sys
+from pathlib import Path
+
+root = Path(sys.argv[1])
+rows = []
+for sample in sys.argv[2:]:
+    report = root / "fastp" / f"Trimmed_{sample}.fastp.json"
+    try:
+        version = json.loads(report.read_text(encoding="utf-8"))["summary"]["fastp_version"]
+        if not isinstance(version, str) or not version.strip():
+            raise ValueError("empty version")
+        version = version.strip()
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        print(f"[WARNING] fastp version unavailable for {sample}: {exc}", file=sys.stderr)
+        version = "unknown"
+    rows.append((sample, version, str(report)))
+with (root / "methods" / "fastp_runtime.tsv").open("w", encoding="utf-8", newline="") as handle:
+    writer = csv.writer(handle, delimiter="\t", lineterminator="\n")
+    writer.writerow(("sample", "fastp_version", "json_report"))
+    writer.writerows(rows)
+print(";".join(sorted({row[1] for row in rows})) or "unknown")
+PY_FASTP_PROVENANCE
+    )"; then
+        FASTP_REPORT_VERSIONS=unknown
+        echo "[WARNING] Could not record fastp report versions." >&2
+    fi
+fi
+write_methods_log
 
 # Dependency identities make invalidation flow downstream. For example, a
 # fastp version change invalidates Kraken2 checkpoints; a Kraken2 version
@@ -7840,9 +7884,9 @@ run_cmd run_humann_tool "$HUMANN_REGROUP_TABLE_BIN" --input humann_genefamilies_
 echo "${g}Translate KEGG and GO ID to human readable terms${w}"
 conda deactivate
 conda activate R412
-Rscript "$HUMANN_ANALYSIS_DIR/humann_ID_translation_adjusted.R" "$outputdr/temp/HUMAnN_output/humann_genefamilies_relAbundance_kegg.tsv" "$outputdr/temp/HUMAnN_output/humann_genefamilies_relAbundance_go.tsv" "$HUMANN_ANALYSIS_DIR"
+run_cmd Rscript "$HUMANN_ANALYSIS_DIR/humann_ID_translation_adjusted.R" "$outputdr/temp/HUMAnN_output/humann_genefamilies_relAbundance_kegg.tsv" "$outputdr/temp/HUMAnN_output/humann_genefamilies_relAbundance_go.tsv" "$HUMANN_ANALYSIS_DIR"
     # Tranlate unnormalized table (for Deseq2)
-Rscript "$HUMANN_ANALYSIS_DIR/humann_ID_translation_adjusted.R" "$outputdr/temp/HUMAnN_output/humann_genefamilies_Abundance_kegg.tsv" "$outputdr/temp/HUMAnN_output/humann_genefamilies_Abundance_go.tsv" "$HUMANN_ANALYSIS_DIR"
+run_cmd Rscript "$HUMANN_ANALYSIS_DIR/humann_ID_translation_adjusted.R" "$outputdr/temp/HUMAnN_output/humann_genefamilies_Abundance_kegg.tsv" "$outputdr/temp/HUMAnN_output/humann_genefamilies_Abundance_go.tsv" "$HUMANN_ANALYSIS_DIR"
 conda deactivate
 conda activate MTD
 

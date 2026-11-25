@@ -293,6 +293,24 @@ if (filename %in% c("humann_genefamilies_Abundance_go_translated.tsv","humann_ge
   #translated file has additional quote symbol "\""
   cts<-read.table(args[1],
                   row.names=1, sep="\t",header=T)
+  # Complete translated tables retain all rows; functional DE uses only
+  # canonical GO/KO features as identified by the translation sidecar.
+  map_path <- sub("\\.tsv$", "_id_map.tsv", args[1])
+  if (file.exists(map_path)) {
+    id_map <- read.delim(map_path, check.names = FALSE, stringsAsFactors = FALSE)
+    idx <- match(rownames(cts), id_map$Gene_Family)
+    if (anyNA(idx) || anyDuplicated(id_map$Gene_Family) ||
+        !is.logical(id_map$eligible_for_functional_de) ||
+        anyNA(id_map$eligible_for_functional_de)) {
+      stop("Invalid HUMAnN translation ID map: ", map_path)
+    }
+    keep <- id_map$eligible_for_functional_de[idx]
+    message("[HUMAnN DEG] Excluding ", sum(!keep), " non-functional rows.")
+    cts <- cts[keep, , drop = FALSE]
+    if (!nrow(cts)) stop("No canonical functional features remain for HUMAnN DEG.")
+  } else {
+    warning("Legacy HUMAnN translated table has no ID map; regenerate translation for functional DE filtering.")
+  }
   #round the values before as.integer
   cts<-as.data.frame(lapply(lapply(cts,round),as.integer),row.names = row.names(cts))
   # make a folder for outputs

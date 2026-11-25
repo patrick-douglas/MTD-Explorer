@@ -1,35 +1,42 @@
-args = commandArgs(trailingOnly=TRUE) # Passing arguments to an R script from bash/shell command lines
-dir<-args[3]
+args <- commandArgs(trailingOnly = TRUE)
+if (length(args) != 3L) stop("Usage: Rscript humann_ID_translation_adjusted.R KEGG.tsv GO.tsv dictionary_dir")
 
-translation<-function(tsv,terms){
-  # import humann_kegg/go tables
-  id<-read.table(tsv, sep="\t", comment.char = "", header = T, check.names = F)
-  # adjust the column names
+translation <- function(tsv, dictionary, pattern) {
+  id <- read.table(tsv, sep = "\t", comment.char = "", header = TRUE,
+                   check.names = FALSE, stringsAsFactors = FALSE, quote = "")
   names(id)[1] <- "Gene_Family"
-  names(id)[-1] <- sub("_Abundance-RPKs","",names(id)[-1])
-  # split KEGG/GO terms to a new column
-  id$new <- sapply(regmatches(id$Gene_Family, gregexpr("^GO:[0-9]{7}|^K[0-9]{5}", id$Gene_Family)), paste, collapse = "")
-  # pass ungrouped row name
-  if ("" %in% id$new){id$new[match("",id$new)] <- id$Gene_Family[match("",id$new)]}
-  # drop "ko:" row.names for KEGG terms table
-  row.names(terms)<-gsub("^ko:","",row.names(terms))
-  # left join by all.x=T, keep all data in "id" dataframe
-  id1<-merge(id, terms, all.x=T, by.x="new", by.y="row.names")
-  # pass unknown and ungrouped row name
-  while (NA %in% id1$terms){id1$terms[match(NA,id1$terms)] <- id1$new[match(NA,id1$terms)]}
-  
-  # Forçar criação de nomes únicos para 'row.names' ao final
-  row.names(id1) <- make.unique(paste0(id1$terms, "_", seq_along(id1$terms)))
-  
-  id1<-subset(id1,select=-c(new,Gene_Family,terms))
-  # output keeps first col rowname "Gene_Family"
-  write.table(data.frame("Gene_Family"=rownames(id1),id1), sub(".tsv$","_translated.tsv",tsv), sep="\t",row.names = F)
+  names(id)[-1] <- sub("_Abundance-RPKs$", "", names(id)[-1])
+  original <- as.character(id$Gene_Family)
+  if (anyNA(original) || any(!nzchar(original)) || anyDuplicated(original)) {
+    stop("Invalid or duplicate HUMAnN feature IDs: ", tsv)
+  }
+  # Extract canonical IDs from the unstratified portion only.
+  base_id <- sub("\\|.*$", "", original)
+  eligible <- grepl(pattern, base_id)
+  key <- sub("^ko:", "", rownames(dictionary))
+  if (anyDuplicated(key)) stop("Duplicate dictionary IDs: ", tsv)
+  description <- as.character(dictionary[[1]])[match(base_id, key)]
+  translated <- eligible & !is.na(description) & nzchar(description)
+  # Keep unknown and special IDs intact. Include the original stratified ID
+  # in translated labels so equal descriptions cannot hide distinct features.
+  labels <- original
+  labels[translated] <- paste0(description[translated], " [", original[translated], "]")
+  if (anyDuplicated(labels)) stop("Duplicate translated feature labels: ", tsv)
+  id$Gene_Family <- labels
+  output <- sub("\\.tsv$", "_translated.tsv", tsv)
+  if (identical(output, tsv)) stop("Expected .tsv input: ", tsv)
+  write.table(id, output, sep = "\t", row.names = FALSE, quote = TRUE, qmethod = "double")
+  mapping <- data.frame(Gene_Family = labels, original_id = original,
+                        functional_id = base_id, eligible_for_functional_de = eligible,
+                        dictionary_match = translated, stringsAsFactors = FALSE)
+  write.table(mapping, sub("\\.tsv$", "_id_map.tsv", output),
+              sep = "\t", row.names = FALSE, quote = TRUE, qmethod = "double")
+  message("[HUMAnN translation] ", basename(tsv), ": ", sum(translated),
+          " translated; ", sum(eligible & !translated), " canonical IDs without labels; ",
+          sum(!eligible), " non-functional rows retained in complete table.")
 }
 
-## for KEGG
-terms<-read.table(paste0(dir,"/koterms.txt"),sep="\t", quote="")
-translation(args[1],terms)
-
-## for GO
-terms<-read.table(paste0(dir,"/goterms.txt"),sep="\t", quote="")
-translation(args[2],terms)
+terms <- read.table(file.path(args[3], "koterms.txt"), sep = "\t", quote = "", stringsAsFactors = FALSE)
+translation(args[1], terms, "^K[0-9]{5}$")
+terms <- read.table(file.path(args[3], "goterms.txt"), sep = "\t", quote = "", stringsAsFactors = FALSE)
+translation(args[2], terms, "^GO:[0-9]{7}$")

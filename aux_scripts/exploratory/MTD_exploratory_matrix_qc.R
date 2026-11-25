@@ -420,20 +420,29 @@ if (matrix_type == "bracken") {
     sample_cols <- frac_cols
   }
 
-  clean_sample_names <- sample_cols
-
-  clean_sample_names <- gsub("^Report_", "", clean_sample_names)
-  clean_sample_names <- gsub("_bracken$", "", clean_sample_names, ignore.case = TRUE)
-  clean_sample_names <- gsub("_num$", "", clean_sample_names, ignore.case = TRUE)
-  clean_sample_names <- gsub("_frac$", "", clean_sample_names, ignore.case = TRUE)
-  clean_sample_names <- gsub("\\.num$", "", clean_sample_names, ignore.case = TRUE)
-  clean_sample_names <- gsub("\\.frac$", "", clean_sample_names, ignore.case = TRUE)
-  clean_sample_names <- gsub("\\.bracken$", "", clean_sample_names, ignore.case = TRUE)
-
-  # Remove common rank/file suffixes left by Bracken combined outputs
-  clean_sample_names <- gsub("_phylum.*$", "", clean_sample_names, ignore.case = TRUE)
-  clean_sample_names <- gsub("_genus.*$", "", clean_sample_names, ignore.case = TRUE)
-  clean_sample_names <- gsub("_species.*$", "", clean_sample_names, ignore.case = TRUE)
+  # Remove only terminal Bracken decorations, not internal sample-ID text.
+  # Prefer exact samplesheet IDs when a biological ID itself ends in a rank.
+  qc_metadata <- read_samplesheet(samplesheet_file, sample_id_col_user, group_col_user)
+  known_ids <- if (is.null(qc_metadata)) character(0) else qc_metadata$sample
+  clean_one <- function(x) {
+    candidates <- c(x)
+    y <- sub("[_.](num|frac)$", "", x, ignore.case = TRUE)
+    candidates <- c(candidates, y)
+    y <- sub("^Report_", "", y)
+    candidates <- c(candidates, y)
+    y <- sub("[_.]bracken$", "", y, ignore.case = TRUE)
+    candidates <- c(candidates, y)
+    y <- sub("[_.](phylum|genus|species)$", "", y, ignore.case = TRUE)
+    candidates <- c(candidates, y)
+    matches <- unique(candidates[candidates %in% known_ids])
+    if (length(matches) > 1L) stop("[ERROR] Ambiguous sample ID: ", x)
+    if (length(matches) == 1L) return(matches[[1]])
+    y
+  }
+  clean_sample_names <- vapply(sample_cols, clean_one, character(1), USE.NAMES = FALSE)
+  if (anyDuplicated(clean_sample_names)) {
+    stop("[ERROR] Duplicate sample IDs after Bracken header normalization.")
+  }
 
   names(sample_cols) <- clean_sample_names
 }
@@ -541,6 +550,9 @@ sample_qc <- data.frame(
 )
 
 if (!is.null(ss)) {
+  if (anyDuplicated(ss$sample)) stop("[ERROR] Duplicate sample IDs in samplesheet.")
+  unmatched <- setdiff(sample_qc$sample, ss$sample)
+  if (length(unmatched)) warning("Unmatched matrix sample IDs: ", paste(unmatched, collapse = ", "))
   sample_qc <- merge(sample_qc, ss, by = "sample", all.x = TRUE, suffixes = c("", "_samplesheet"))
   sample_qc$group <- sample_qc$group_samplesheet
   sample_qc$group[is.na(sample_qc$group) | sample_qc$group == ""] <- "Ungrouped"
