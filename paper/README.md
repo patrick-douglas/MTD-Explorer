@@ -28,3 +28,7 @@ The [exploratory case study](exploratory-case-study/README.md) documents an inde
 ## Comparative functional regression: Biomphalaria glabrata
 
 The [comparative functional regression](comparative-functional-regression/README.md) documents the isolated GO/KEGG software test at revisions `af59f09` and `5be26aa`, including the original regression archive, before/after data, native plots, and audit. The original benchmark and historical supplements are preserved; corrected functional results must not be treated as numerically interchangeable with historical results.
+
+## Reference-compatible host annotation comparison
+
+The [host annotation comparison](host-annotation-comparison/README.md) documents the original MTD and MTD-Explorer source audit, fixed-input gene identifier compatibility, independently reproduced GO gene-set membership, the expected legacy ssGSEA no-overlap stop, and the custom OrgDb query. This comparison evaluates automation and identifier compatibility, not biological annotation accuracy.

@@ -1,0 +1,12 @@
+metric	value
+taxid	6526
+host_gct_genes	20799
+master_gmt_genes	11885
+overlap_genes	11282
+overlap_pct	54.2430
+master_gene_sets	21848
+kept_gene_sets	11517
+dropped_too_small	9708
+dropped_too_large	623
+minimum_set_size	5
+maximum_set_size	500

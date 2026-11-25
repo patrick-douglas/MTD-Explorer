@@ -1,0 +1,269 @@
+also installing the dependencies ‘maps’, ‘fields’, ‘CircStats’, ‘dtw’
+
+trying URL 'http://cran.rstudio.com/src/contrib/maps_3.4.4.tar.gz'
+Content type 'application/x-gzip' length 2276129 bytes (2.2 MB)
+==================================================
+downloaded 2.2 MB
+
+trying URL 'http://cran.rstudio.com/src/contrib/fields_18.0.tar.gz'
+Content type 'application/x-gzip' length 4065912 bytes (3.9 MB)
+==================================================
+downloaded 3.9 MB
+
+trying URL 'http://cran.rstudio.com/src/contrib/CircStats_0.2-7.tar.gz'
+Content type 'application/x-gzip' length 36756 bytes (35 KB)
+==================================================
+downloaded 35 KB
+
+trying URL 'http://cran.rstudio.com/src/contrib/dtw_1.23-3.tar.gz'
+Content type 'application/x-gzip' length 759847 bytes (742 KB)
+==================================================
+downloaded 742 KB
+
+trying URL 'http://cran.rstudio.com/src/contrib/verification_1.45.tar.gz'
+Content type 'application/x-gzip' length 889297 bytes (868 KB)
+==================================================
+downloaded 868 KB
+
+* installing *source* package ‘maps’ ...
+** package ‘maps’ successfully unpacked and MD5 sums checked
+** using staged installation
+checking for gawk... gawk
+configure: creating ./config.status
+config.status: creating src/Makefile
+** libs
+** arch - 
+make -f "/home/me/miniconda3/envs/R412/lib/R/etc/Makeconf" -f Makefile init.o mapclip.o mapget.o smooth.o thin.o 
+make[1]: Entering directory '/tmp/RtmpajG6LE/R.INSTALL8c23e19d62b00/maps/src'
+x86_64-conda-linux-gnu-cc -I"/home/me/miniconda3/envs/R412/lib/R/include" -DNDEBUG   -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/me/miniconda3/envs/R412/include -I/home/me/miniconda3/envs/R412/include -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib   -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/me/miniconda3/envs/R412/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1639563404388/work=/usr/local/src/conda/r-base-4.1.2 -fdebug-prefix-map=/home/me/miniconda3/envs/R412=/usr/local/src/conda-prefix  -c init.c -o init.o
+x86_64-conda-linux-gnu-cc -I"/home/me/miniconda3/envs/R412/lib/R/include" -DNDEBUG   -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/me/miniconda3/envs/R412/include -I/home/me/miniconda3/envs/R412/include -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib   -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/me/miniconda3/envs/R412/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1639563404388/work=/usr/local/src/conda/r-base-4.1.2 -fdebug-prefix-map=/home/me/miniconda3/envs/R412=/usr/local/src/conda-prefix  -c mapclip.c -o mapclip.o
+x86_64-conda-linux-gnu-cc -I"/home/me/miniconda3/envs/R412/lib/R/include" -DNDEBUG   -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/me/miniconda3/envs/R412/include -I/home/me/miniconda3/envs/R412/include -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib   -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/me/miniconda3/envs/R412/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1639563404388/work=/usr/local/src/conda/r-base-4.1.2 -fdebug-prefix-map=/home/me/miniconda3/envs/R412=/usr/local/src/conda-prefix  -c mapget.c -o mapget.o
+x86_64-conda-linux-gnu-cc -I"/home/me/miniconda3/envs/R412/lib/R/include" -DNDEBUG   -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/me/miniconda3/envs/R412/include -I/home/me/miniconda3/envs/R412/include -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib   -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/me/miniconda3/envs/R412/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1639563404388/work=/usr/local/src/conda/r-base-4.1.2 -fdebug-prefix-map=/home/me/miniconda3/envs/R412=/usr/local/src/conda-prefix  -c smooth.c -o smooth.o
+x86_64-conda-linux-gnu-cc -I"/home/me/miniconda3/envs/R412/lib/R/include" -DNDEBUG   -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/me/miniconda3/envs/R412/include -I/home/me/miniconda3/envs/R412/include -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib   -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/me/miniconda3/envs/R412/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1639563404388/work=/usr/local/src/conda/r-base-4.1.2 -fdebug-prefix-map=/home/me/miniconda3/envs/R412=/usr/local/src/conda-prefix  -c thin.c -o thin.o
+make[1]: Leaving directory '/tmp/RtmpajG6LE/R.INSTALL8c23e19d62b00/maps/src'
+"/home/me/miniconda3/envs/R412/lib/R/bin/R" CMD SHLIB -o maps.so init.o mapclip.o mapget.o smooth.o thin.o 
+make[1]: Entering directory '/tmp/RtmpajG6LE/R.INSTALL8c23e19d62b00/maps/src'
+x86_64-conda-linux-gnu-cc -shared -L/home/me/miniconda3/envs/R412/lib/R/lib -Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,-rpath,/home/me/miniconda3/envs/R412/lib -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib -L/home/me/miniconda3/envs/R412/lib -o maps.so init.o mapclip.o mapget.o smooth.o thin.o -L/home/me/miniconda3/envs/R412/lib/R/lib -lR
+make[1]: Leaving directory '/tmp/RtmpajG6LE/R.INSTALL8c23e19d62b00/maps/src'
+make -f "/home/me/miniconda3/envs/R412/lib/R/etc/Makeconf" -f Makefile Gmake
+make[1]: Entering directory '/tmp/RtmpajG6LE/R.INSTALL8c23e19d62b00/maps/src'
+x86_64-conda-linux-gnu-cc -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/me/miniconda3/envs/R412/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1639563404388/work=/usr/local/src/conda/r-base-4.1.2 -fdebug-prefix-map=/home/me/miniconda3/envs/R412=/usr/local/src/conda-prefix  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/me/miniconda3/envs/R412/include -I/home/me/miniconda3/envs/R412/include -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib -Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,-rpath,/home/me/miniconda3/envs/R412/lib -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib -L/home/me/miniconda3/envs/R412/lib  Gmake.c   -o Gmake
+make[1]: Leaving directory '/tmp/RtmpajG6LE/R.INSTALL8c23e19d62b00/maps/src'
+make -f "/home/me/miniconda3/envs/R412/lib/R/etc/Makeconf" -f Makefile Lmake
+make[1]: Entering directory '/tmp/RtmpajG6LE/R.INSTALL8c23e19d62b00/maps/src'
+x86_64-conda-linux-gnu-cc -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/me/miniconda3/envs/R412/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1639563404388/work=/usr/local/src/conda/r-base-4.1.2 -fdebug-prefix-map=/home/me/miniconda3/envs/R412=/usr/local/src/conda-prefix  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/me/miniconda3/envs/R412/include -I/home/me/miniconda3/envs/R412/include -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib -Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,-rpath,/home/me/miniconda3/envs/R412/lib -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib -L/home/me/miniconda3/envs/R412/lib  Lmake.c   -o Lmake
+make[1]: Leaving directory '/tmp/RtmpajG6LE/R.INSTALL8c23e19d62b00/maps/src'
+make -f "/home/me/miniconda3/envs/R412/lib/R/etc/Makeconf" -f Makefile world2.line
+make[1]: Entering directory '/tmp/RtmpajG6LE/R.INSTALL8c23e19d62b00/maps/src'
+Converting world to world2
+gawk -f ./convert.awk < world.line > world2.line
+make[1]: Leaving directory '/tmp/RtmpajG6LE/R.INSTALL8c23e19d62b00/maps/src'
+make -f "/home/me/miniconda3/envs/R412/lib/R/etc/Makeconf" -f Makefile county.L state.L usa.L nz.L world.L world2.L italy.L france.L state.vbm.L state.carto.L lakes.L
+make[1]: Entering directory '/tmp/RtmpajG6LE/R.INSTALL8c23e19d62b00/maps/src'
+./Lmake 0 s b county.line county.linestats ../inst/mapdata/county.L
+./Lmake 0 s b state.line state.linestats ../inst/mapdata/state.L
+./Lmake 0 s b usa.line usa.linestats ../inst/mapdata/usa.L
+./Lmake 0 s b nz.line nz.linestats ../inst/mapdata/nz.L
+./Lmake 0 s b world.line world.linestats ../inst/mapdata/world.L
+./Lmake 0 s b world2.line world2.linestats ../inst/mapdata/world2.L
+./Lmake 0 s b italy.line italy.linestats ../inst/mapdata/italy.L
+./Lmake 0 s b france.line france.linestats ../inst/mapdata/france.L
+./Lmake 0 p b state.vbm.line state.vbm.linestats ../inst/mapdata/state.vbm.L
+./Lmake 0 p b state.carto.line state.carto.linestats ../inst/mapdata/state.carto.L
+./Lmake 0 s b lakes.line lakes.linestats ../inst/mapdata/lakes.L
+make[1]: Leaving directory '/tmp/RtmpajG6LE/R.INSTALL8c23e19d62b00/maps/src'
+make -f "/home/me/miniconda3/envs/R412/lib/R/etc/Makeconf" -f Makefile county.G state.G usa.G nz.G world.G world2.G italy.G france.G state.vbm.G state.carto.G lakes.G
+make[1]: Entering directory '/tmp/RtmpajG6LE/R.INSTALL8c23e19d62b00/maps/src'
+./Gmake b county.gon county.gonstats ../inst/mapdata/county.G ../inst/mapdata/county.L
+./Gmake b state.gon state.gonstats ../inst/mapdata/state.G ../inst/mapdata/state.L
+./Gmake b usa.gon usa.gonstats ../inst/mapdata/usa.G ../inst/mapdata/usa.L
+./Gmake b nz.gon nz.gonstats ../inst/mapdata/nz.G ../inst/mapdata/nz.L
+./Gmake b world.gon world.gonstats ../inst/mapdata/world.G ../inst/mapdata/world.L
+./Gmake b world2.gon world2.gonstats ../inst/mapdata/world2.G ../inst/mapdata/world2.L
+./Gmake b italy.gon italy.gonstats ../inst/mapdata/italy.G ../inst/mapdata/italy.L
+./Gmake b france.gon france.gonstats ../inst/mapdata/france.G ../inst/mapdata/france.L
+./Gmake b state.vbm.gon state.vbm.gonstats ../inst/mapdata/state.vbm.G ../inst/mapdata/state.vbm.L
+./Gmake b state.carto.gon state.carto.gonstats ../inst/mapdata/state.carto.G ../inst/mapdata/state.carto.L
+./Gmake b lakes.gon lakes.gonstats ../inst/mapdata/lakes.G ../inst/mapdata/lakes.L
+make[1]: Leaving directory '/tmp/RtmpajG6LE/R.INSTALL8c23e19d62b00/maps/src'
+make -f "/home/me/miniconda3/envs/R412/lib/R/etc/Makeconf" -f Makefile county.N state.N usa.N nz.N world.N world2.N italy.N france.N state.vbm.N state.carto.N lakes.N
+make[1]: Entering directory '/tmp/RtmpajG6LE/R.INSTALL8c23e19d62b00/maps/src'
+make[1]: Leaving directory '/tmp/RtmpajG6LE/R.INSTALL8c23e19d62b00/maps/src'
+installing to /home/me/miniconda3/envs/R412/lib/R/library/00LOCK-maps/00new/maps/libs
+** R
+** data
+*** moving datasets to lazyload DB
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded from temporary location
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (maps)
+* installing *source* package ‘CircStats’ ...
+** package ‘CircStats’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+** inst
+** byte-compile and prepare package for lazy loading
+Warning message:
+package ‘boot’ was built under R version 4.1.3 
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded from temporary location
+Warning: package ‘boot’ was built under R version 4.1.3
+** testing if installed package can be loaded from final location
+Warning: package ‘boot’ was built under R version 4.1.3
+** testing if installed package keeps a record of temporary installation path
+* DONE (CircStats)
+* installing *source* package ‘dtw’ ...
+** package ‘dtw’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+x86_64-conda-linux-gnu-cc -I"/home/me/miniconda3/envs/R412/lib/R/include" -DNDEBUG -DDTW_R  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/me/miniconda3/envs/R412/include -I/home/me/miniconda3/envs/R412/include -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib   -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/me/miniconda3/envs/R412/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1639563404388/work=/usr/local/src/conda/r-base-4.1.2 -fdebug-prefix-map=/home/me/miniconda3/envs/R412=/usr/local/src/conda-prefix  -c dtw_R.c -o dtw_R.o
+x86_64-conda-linux-gnu-cc -I"/home/me/miniconda3/envs/R412/lib/R/include" -DNDEBUG -DDTW_R  -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/me/miniconda3/envs/R412/include -I/home/me/miniconda3/envs/R412/include -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib   -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/me/miniconda3/envs/R412/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1639563404388/work=/usr/local/src/conda/r-base-4.1.2 -fdebug-prefix-map=/home/me/miniconda3/envs/R412=/usr/local/src/conda-prefix  -c dtw_core.c -o dtw_core.o
+x86_64-conda-linux-gnu-cc -shared -L/home/me/miniconda3/envs/R412/lib/R/lib -Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,-rpath,/home/me/miniconda3/envs/R412/lib -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib -L/home/me/miniconda3/envs/R412/lib -o dtw.so dtw_R.o dtw_core.o -L/home/me/miniconda3/envs/R412/lib/R/lib -lR
+installing to /home/me/miniconda3/envs/R412/lib/R/library/00LOCK-dtw/00new/dtw/libs
+** R
+** data
+** demo
+** inst
+** byte-compile and prepare package for lazy loading
+Warning message:
+package ‘proxy’ was built under R version 4.1.3 
+** help
+*** installing help indices
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+Warning: package ‘proxy’ was built under R version 4.1.3
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+Warning: package ‘proxy’ was built under R version 4.1.3
+** testing if installed package keeps a record of temporary installation path
+* DONE (dtw)
+* installing *source* package ‘fields’ ...
+** package ‘fields’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+x86_64-conda-linux-gnu-cc -I"/home/me/miniconda3/envs/R412/lib/R/include" -DNDEBUG   -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/me/miniconda3/envs/R412/include -I/home/me/miniconda3/envs/R412/include -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib   -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/me/miniconda3/envs/R412/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1639563404388/work=/usr/local/src/conda/r-base-4.1.2 -fdebug-prefix-map=/home/me/miniconda3/envs/R412=/usr/local/src/conda-prefix  -c ExponentialUpperC.c -o ExponentialUpperC.o
+x86_64-conda-linux-gnu-cc -I"/home/me/miniconda3/envs/R412/lib/R/include" -DNDEBUG   -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/me/miniconda3/envs/R412/include -I/home/me/miniconda3/envs/R412/include -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib   -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/me/miniconda3/envs/R412/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1639563404388/work=/usr/local/src/conda/r-base-4.1.2 -fdebug-prefix-map=/home/me/miniconda3/envs/R412=/usr/local/src/conda-prefix  -c RdistEarth.c -o RdistEarth.o
+x86_64-conda-linux-gnu-cc -I"/home/me/miniconda3/envs/R412/lib/R/include" -DNDEBUG   -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/me/miniconda3/envs/R412/include -I/home/me/miniconda3/envs/R412/include -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib   -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/me/miniconda3/envs/R412/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1639563404388/work=/usr/local/src/conda/r-base-4.1.2 -fdebug-prefix-map=/home/me/miniconda3/envs/R412=/usr/local/src/conda-prefix  -c addToDiagC.c -o addToDiagC.o
+x86_64-conda-linux-gnu-cc -I"/home/me/miniconda3/envs/R412/lib/R/include" -DNDEBUG   -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/me/miniconda3/envs/R412/include -I/home/me/miniconda3/envs/R412/include -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib   -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/me/miniconda3/envs/R412/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1639563404388/work=/usr/local/src/conda/r-base-4.1.2 -fdebug-prefix-map=/home/me/miniconda3/envs/R412=/usr/local/src/conda-prefix  -c compactToMatC.c -o compactToMatC.o
+x86_64-conda-linux-gnu-cc -I"/home/me/miniconda3/envs/R412/lib/R/include" -DNDEBUG   -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/me/miniconda3/envs/R412/include -I/home/me/miniconda3/envs/R412/include -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib   -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/me/miniconda3/envs/R412/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1639563404388/work=/usr/local/src/conda/r-base-4.1.2 -fdebug-prefix-map=/home/me/miniconda3/envs/R412=/usr/local/src/conda-prefix  -c expfnC.c -o expfnC.o
+x86_64-conda-linux-gnu-gfortran -fno-optimize-sibling-calls  -fpic  -fopenmp -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/me/miniconda3/envs/R412/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1639563404388/work=/usr/local/src/conda/r-base-4.1.2 -fdebug-prefix-map=/home/me/miniconda3/envs/R412=/usr/local/src/conda-prefix  -c fieldsF77Code.f -o fieldsF77Code.o
+x86_64-conda-linux-gnu-cc -I"/home/me/miniconda3/envs/R412/lib/R/include" -DNDEBUG   -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/me/miniconda3/envs/R412/include -I/home/me/miniconda3/envs/R412/include -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib   -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/me/miniconda3/envs/R412/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1639563404388/work=/usr/local/src/conda/r-base-4.1.2 -fdebug-prefix-map=/home/me/miniconda3/envs/R412=/usr/local/src/conda-prefix  -c init.c -o init.o
+x86_64-conda-linux-gnu-cc -I"/home/me/miniconda3/envs/R412/lib/R/include" -DNDEBUG   -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/me/miniconda3/envs/R412/include -I/home/me/miniconda3/envs/R412/include -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib   -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/me/miniconda3/envs/R412/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1639563404388/work=/usr/local/src/conda/r-base-4.1.2 -fdebug-prefix-map=/home/me/miniconda3/envs/R412=/usr/local/src/conda-prefix  -c multebC.c -o multebC.o
+x86_64-conda-linux-gnu-cc -I"/home/me/miniconda3/envs/R412/lib/R/include" -DNDEBUG   -DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/me/miniconda3/envs/R412/include -I/home/me/miniconda3/envs/R412/include -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib   -fpic  -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/me/miniconda3/envs/R412/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/r-base-split_1639563404388/work=/usr/local/src/conda/r-base-4.1.2 -fdebug-prefix-map=/home/me/miniconda3/envs/R412=/usr/local/src/conda-prefix  -c rdistC.c -o rdistC.o
+x86_64-conda-linux-gnu-cc -shared -L/home/me/miniconda3/envs/R412/lib/R/lib -Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,-rpath,/home/me/miniconda3/envs/R412/lib -Wl,-rpath-link,/home/me/miniconda3/envs/R412/lib -L/home/me/miniconda3/envs/R412/lib -o fields.so ExponentialUpperC.o RdistEarth.o addToDiagC.o compactToMatC.o expfnC.o fieldsF77Code.o init.o multebC.o rdistC.o -llapack -lblas -lgfortran -lm -lgomp -lquadmath -lpthread -L/home/me/miniconda3/envs/R412/lib/R/lib -lR
+installing to /home/me/miniconda3/envs/R412/lib/R/library/00LOCK-fields/00new/fields/libs
+** R
+** data
+** inst
+** byte-compile and prepare package for lazy loading
+Warning messages:
+1: package ‘spam’ was built under R version 4.1.3 
+2: package ‘viridisLite’ was built under R version 4.1.3 
+3: package ‘RColorBrewer’ was built under R version 4.1.3 
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded from temporary location
+Warning: package ‘spam’ was built under R version 4.1.3
+Warning: package ‘viridisLite’ was built under R version 4.1.3
+Warning: package ‘RColorBrewer’ was built under R version 4.1.3
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+Warning: package ‘spam’ was built under R version 4.1.3
+Warning: package ‘viridisLite’ was built under R version 4.1.3
+Warning: package ‘RColorBrewer’ was built under R version 4.1.3
+** testing if installed package keeps a record of temporary installation path
+* DONE (fields)
+* installing *source* package ‘verification’ ...
+** package ‘verification’ successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** data
+*** moving datasets to lazyload DB
+** byte-compile and prepare package for lazy loading
+Warning messages:
+1: package ‘spam’ was built under R version 4.1.3 
+2: package ‘viridisLite’ was built under R version 4.1.3 
+3: package ‘RColorBrewer’ was built under R version 4.1.3 
+4: package ‘boot’ was built under R version 4.1.3 
+5: package ‘proxy’ was built under R version 4.1.3 
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded from temporary location
+Warning: package ‘spam’ was built under R version 4.1.3
+Warning: package ‘viridisLite’ was built under R version 4.1.3
+Warning: package ‘RColorBrewer’ was built under R version 4.1.3
+Warning: package ‘boot’ was built under R version 4.1.3
+Warning: package ‘proxy’ was built under R version 4.1.3
+** testing if installed package can be loaded from final location
+Warning: package ‘spam’ was built under R version 4.1.3
+Warning: package ‘viridisLite’ was built under R version 4.1.3
+Warning: package ‘RColorBrewer’ was built under R version 4.1.3
+Warning: package ‘boot’ was built under R version 4.1.3
+Warning: package ‘proxy’ was built under R version 4.1.3
+** testing if installed package keeps a record of temporary installation path
+* DONE (verification)
+
+The downloaded source packages are in
+	‘/tmp/RtmpyiGigz/downloaded_packages’
+Updating HTML index of packages in '.Library'
+Making 'packages.html' ... done
+
+verification installed
+
+
+parsing command line parameters:
+------------------------------------------------------------
+--- input_ds /media/me/18TB_BACKUP_LBN/drive.ifpa/LBN_RNA-Seq/Metatranscriptomics/MTD-Explorer/test_MTD_explorer_B.glabrata.extract_top5_trim/ssGSEA/host.gct ; prefer yaml? FALSE 
+--- output_prefix /home/me/MTD_original_annotation_test_Q9eIfpV8/legacy_ssgsea ; prefer yaml? FALSE 
+--- gene_set_databases /home/me/MTD_original_source_audit/Tools/ssGSEA2.0/db/msigdb/c2.all.v7.5.1.symbols.gmt ; prefer yaml? FALSE 
+--- sample_norm_type rank ; prefer yaml? FALSE 
+--- weight 0.75 ; prefer yaml? FALSE 
+--- correl_type z.score ; prefer yaml? FALSE 
+--- statistic area.under.RES ; prefer yaml? FALSE 
+--- output_score_type NES ; prefer yaml? FALSE 
+--- nperm 1000 ; prefer yaml? FALSE 
+--- min_overlap 10 ; prefer yaml? FALSE 
+--- extended_output TRUE ; prefer yaml? FALSE 
+--- export_signat_gct TRUE ; prefer yaml? FALSE 
+--- global_fdr FALSE ; prefer yaml? FALSE 
+--- multi_core TRUE ; prefer yaml? FALSE 
+--- yaml_file /home/me/MTD_original_source_audit/Tools/ssGSEA2.0/config.yaml ; prefer yaml? FALSE 
+--- threads 1 ; prefer yaml? FALSE 
+--- help FALSE ; prefer yaml? FALSE 
+
+
+Updating parameter file with command line parameters:
+------------------------------------------------------------
+output_prefix : ssgsea-results -> /home/me/MTD_original_annotation_test_Q9eIfpV8/legacy_ssgsea 
+sample_norm_type : rank -> rank 
+weight : 0.75 -> 0.75 
+correl_type : z.score -> z.score 
+statistic : area.under.RES -> area.under.RES 
+output_score_type : NES -> NES 
+nperm : 1000 -> 1000 
+min_overlap : 10 -> 10 
+extended_output : TRUE -> TRUE 
+export_signat_gct : TRUE -> TRUE 
+global_fdr : FALSE -> FALSE 
+multi_core : TRUE -> TRUE 
+------------------------------------------------------------ 
+
+parsing as GCT v1.2
+/media/me/18TB_BACKUP_LBN/drive.ifpa/LBN_RNA-Seq/Metatranscriptomics/MTD-Explorer/test_MTD_explorer_B.glabrata.extract_top5_trim/ssGSEA/host.gct 20799 rows, 15 cols, 0 row descriptors, 0 col descriptors
+Error in ssGSEA2(input.ds = opt$input_ds, output.prefix = opt$output_prefix,  : 
+  No overlap to any gene sets found in your data set!
+Possible reasons: 1) organism other than human; 2) wrong format of gene names/site ids!
+Execution halted
+ERROR conda.cli.main_run:execute(148): `conda run Rscript /home/me/MTD_original_source_audit/Tools/ssGSEA2.0/ssgsea-cli.R -i /media/me/18TB_BACKUP_LBN/drive.ifpa/LBN_RNA-Seq/Metatranscriptomics/MTD-Explorer/test_MTD_explorer_B.glabrata.extract_top5_trim/ssGSEA/host.gct -o /home/me/MTD_original_annotation_test_Q9eIfpV8/legacy_ssgsea -d /home/me/MTD_original_source_audit/Tools/ssGSEA2.0/db/msigdb/c2.all.v7.5.1.symbols.gmt -y /home/me/MTD_original_source_audit/Tools/ssGSEA2.0/config.yaml -u 1` failed. (See above for error)
