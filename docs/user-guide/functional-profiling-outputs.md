@@ -34,7 +34,15 @@ execution path.
 
 The complete profiles in `hmn_genefamily_abundance_files/` are also generated in exploratory mode, without the comparison-dependent `Nonhost_hmn_DEG/` folder. GO and KEGG translated tables preserve original functional IDs and associated strata. For the absolute (`Abundance`) and relative (`relAbundance`) tables, a corresponding `*_translated_id_map.tsv` records `Gene_Family`, `original_id`, `functional_id`, `eligible_for_functional_de`, and `dictionary_match`.
 
-Special non-functional rows (such as `UNGROUPED` and its strata) remain in the complete abundance tables, but are marked ineligible for functional differential analysis. Canonical GO/KO identifiers without a dictionary label remain traceable. This filtering may change comparative functional DEG normalization relative to historical releases; the older comparative example figures retain their original provenance. See the [exploratory case study](danio-rerio.md#microbial-functional-profiling) for a native example. No biological meaning should be assigned to special non-functional categories.
+Special non-functional rows (such as `UNGROUPED` and its strata) remain in the complete abundance tables, but are marked ineligible for functional differential analysis. Canonical GO/KO identifiers without a dictionary label remain traceable. This filtering changes the feature universe used for comparative functional normalization and testing. The four GO/KEGG PCA and heatmap examples on this page were regenerated from the original 15-library abundance matrices at analytical revision `5be26aa`, without repeating the upstream benchmark. The historical benchmark and its original outputs remain a separate snapshot. See the [exploratory case study](danio-rerio.md#microbial-functional-profiling) for a native example. No biological meaning should be assigned to special non-functional categories.
+
+## Comparative functional regression
+
+The isolated regression used the same abundance matrices, sample sheet, three contrasts, dictionaries and R environments at revisions `af59f09` and `5be26aa`. All ten logged subprocesses completed successfully. The original merged DEG tables were reproduced byte-for-byte by the pre-patch code. The corrected translation retained 3,750 GO and 3,384 KEGG rows; one non-functional row per matrix was excluded from differential testing.
+
+The corrected statistical outputs are not interchangeable with the historical results. In particular, removing `UNGROUPED|unclassified` changes the denominator of MaAsLin2 total-sum scaling: in this dataset that category accounted for 78.65–99.93% of raw KEGG abundance across libraries. The regression demonstrates software execution and traceability, not biological inference or statistical model validation. The current DESeq2 implementation rounds HUMAnN RPK values to integers; this limitation should be considered when interpreting results.
+
+The native PDFs, before/after tables, logs, input data and audit are available in the [comparative functional regression materials](https://github.com/patrick-douglas/MTD-Explorer/tree/main/paper/comparative-functional-regression). The standard taxon–host HAllA examples use different input matrices and were not rerun.
 
 ## Main folders
 
@@ -104,7 +112,7 @@ hmn_genefamily_abundance_files/Nonhost_hmn_DEG/KEGG/heatmap_thumbnail.pdf
 
 This heatmap summarizes KEGG-level functional abundance patterns across samples.
 
-It provides a pathway-oriented view of the non-host functional profile.
+It provides a KEGG Orthology (KO)-level view of the non-host functional profile, rather than a direct measurement of pathway activity.
 
 The full heatmap may also be available as:
 
@@ -124,7 +132,7 @@ hmn_genefamily_abundance_files/Nonhost_hmn_DEG/KEGG/PCA_color.pdf
 
 This PCA summarizes global variation in KEGG-level functional profiles.
 
-It is useful for checking whether pathway-level profiles separate according to
+It is useful for checking whether KO-level profiles separate according to
 the groups defined in the samplesheet.
 
 Other PCA versions may also be present:

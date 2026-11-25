@@ -24,3 +24,7 @@ shasum -a 256 -c SHA256SUMS.txt
 ## Exploratory case study: Danio rerio
 
 The [exploratory case study](exploratory-case-study/README.md) documents an independent six-library dataset (PRJNA1005695) using analytical revision `5be26aa`. It includes source tables, runtime and reference provenance, and repeatability checks. The original comparative materials above are retained unchanged; the exploratory run demonstrates software capabilities rather than biological inference. See the [online example](https://patrick-douglas.github.io/MTD-Explorer/user-guide/danio-rerio/).
+
+## Comparative functional regression: Biomphalaria glabrata
+
+The [comparative functional regression](comparative-functional-regression/README.md) documents the isolated GO/KEGG software test at revisions `af59f09` and `5be26aa`, including the original regression archive, before/after data, native plots, and audit. The original benchmark and historical supplements are preserved; corrected functional results must not be treated as numerically interchangeable with historical results.

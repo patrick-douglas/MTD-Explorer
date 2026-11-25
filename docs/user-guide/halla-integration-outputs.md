@@ -25,6 +25,10 @@ halla/
     groups. Pairwise comparison examples use `infected_vs_uninfected` where
     applicable. See [Example dataset: *Biomphalaria glabrata* (PRJNA1306560)](example-dataset.md) for the dataset origin, experimental groups, SRA accessions, and interpretation notes.
 
+!!! note "Integration input scope"
+
+    The standard driver uses `halla/Microbiomes.txt` (taxonomic features) with `halla/Host_gene.txt` or `halla/Host_score.txt`. The functional matrices `Microbiomes_humann_go.txt` and `Microbiomes_humann_kegg.txt` are exported separately by the functional differential module, but are not used by these standard HAllA calls. The functional regression therefore does not replace the historical taxonomic HAllA, k-means or PLS-DA examples.
+
 ## Main figures
 
 The representative HAllA integration figures shown on this page are:

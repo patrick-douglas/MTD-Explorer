@@ -201,6 +201,10 @@ context**, not as a confirmed publication associated with this BioProject.
     publication, these figures should not be interpreted as reproducing the
     original investigators' statistical analyses or biological conclusions.
 
+!!! note "Comparative functional regression"
+
+    The GO/KEGG PCA and heatmap examples in [Functional profiling outputs](functional-profiling-outputs.md) were regenerated at revision `5be26aa` from the saved functional matrices. The original full benchmark, taxonomic outputs, and host–microbiome association examples retain their historical provenance. The regression is documented separately in the [manuscript reproducibility materials](https://github.com/patrick-douglas/MTD-Explorer/tree/main/paper/comparative-functional-regression).
+
 ## Reproducibility
 
 Users wishing to reproduce these examples should retrieve the original
