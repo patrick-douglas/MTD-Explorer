@@ -130,6 +130,12 @@ requirements.
 The public documentation contains the full benchmark configuration and
 interpretation in `docs/user-guide/benchmarking.md`.
 
+## Additional exploratory reference measurement
+
+The six-library *Danio rerio* case (PRJNA1005695) was run locally at commit `5be26aa2e03938abb12fe00a37a08b0c0cef3777` with 20 threads, HISAT2, Bracken 150 bp and `--analysis-mode exploratory`. It completed on 25 November 2026 in 15,173 s (4 h 12 min 53 s), with GNU time maximum reported RSS of 113,107,988 KiB, 1089% CPU utilization and exit status 0. The output contained 678 files (~459 GiB).
+
+This was a fresh-output execution timed with GNU `/usr/bin/time -v` and stage markers, not an `official_clean` benchmark-wrapper run. Reference preparation was measured separately. Do not compare maximum RSS or CPU percentage directly with process-tree or sampled-system metrics above, or infer a speed advantage across these distinct workloads. See the [exploratory case study](https://patrick-douglas.github.io/MTD-Explorer/user-guide/danio-rerio/) and [benchmark notes](https://patrick-douglas.github.io/MTD-Explorer/user-guide/benchmarking/#reference-exploratory-run-prjna1005695).
+
 ## HPC benchmark
 
 ```bash

@@ -1,14 +1,14 @@
 # Example dataset: *Biomphalaria glabrata* (PRJNA1306560)
 
-The example figures shown throughout the [MTD Explorer][mtd-explorer]
+The comparative example figures in the [MTD Explorer][mtd-explorer]
 documentation were generated from publicly available RNA-seq data deposited in
 the [NCBI Sequence Read Archive][ncbi-sra] under
 [BioProject PRJNA1306560][bioproject].
 
-Using a single public dataset across the documentation makes the examples
-traceable and reproducible while demonstrating host transcriptomic,
-microbiome, functional, exploratory, and host–microbiome integration analyses
-within the same biological system.
+This dataset demonstrates host transcriptomic, microbiome, functional,
+exploratory and host–microbiome integration analyses within a comparative
+design. A separate [Danio rerio exploratory case study](danio-rerio.md)
+demonstrates the contrast-free workflow. See the [example datasets overview](example-datasets.md).
 
 !!! info "Dataset overview"
 

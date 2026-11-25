@@ -247,6 +247,64 @@ accounted for approximately **77.4%** of the complete wall time.
     so the documented result is described as an **official clean pipeline run**
     rather than asserting a cold filesystem-cache state.
 
+## Reference exploratory run: PRJNA1005695
+
+A second reference measurement used six paired-end intestinal libraries of *Danio rerio* from [PRJNA1005695](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1005695). See the [exploratory case study](danio-rerio.md) for the exact input accessions, references, command and source tables.
+
+| Setting | Exploratory reference run |
+|---|---|
+| Date | 25 November 2026 (UTC) |
+| Analytical commit | `5be26aa2e03938abb12fe00a37a08b0c0cef3777` |
+| Host TaxID | 7955 |
+| Analysis mode | `exploratory` |
+| Input | Six paired-end runs; 211,733,551 original read pairs |
+| Host alignment | HISAT2 |
+| Bracken read length | 150 bp |
+| Optional contaminant filtering | Disabled for this case |
+| Taxon-specific read extraction | Not requested |
+| CPU | Intel Core i9-10900K, 20 logical CPUs |
+| Threads | 20 |
+| Physical memory | 128 GB class (~125 GiB available to Linux) |
+| Measurement | GNU `/usr/bin/time -v` and pipeline stage markers |
+| Run kind | Fresh output directory; `--resume-heavy` enabled but no checkpoints reused |
+
+| Metric | Observed value |
+|---|---:|
+| Exit status | 0 |
+| Wall time | 15,173 s (4 h 12 min 53 s) |
+| Maximum reported RSS | 113,107,988 KiB (~107.87 GiB) |
+| CPU utilization (GNU time) | 1089% |
+| Swaps reported | 0 |
+| Output files | 678 |
+| Empty output files | 0 |
+| Output footprint (`du -h`) | ~459 GiB |
+
+Stage intervals below are elapsed times between progress markers, not exclusive per-tool measurements. Short intervals around contaminant handling, Bracken and visualization preparation are grouped. Initial and final overhead outside the marker interval is not included in the table.
+
+| Stage interval | Approximate duration |
+|---|---:|
+| Preparing raw reads | 0 h 56 min 27 s |
+| Kraken2 host classification | 0 h 14 min 51 s |
+| Kraken2 non-host classification | 0 h 11 min 33 s |
+| Read summary, optional filter handling, Bracken and visualization preparation | 0 h 01 min 21 s |
+| HUMAnN and associated functional processing | 1 h 33 min 40 s |
+| Host-read processing and host expression | 1 h 14 min 16 s |
+
+The [stage timing TSV](../assets/data/example-dataset/danio-rerio/pipeline-stage-timing.tsv) provides the original timestamps.
+
+### Separately measured reference preparation
+
+| Process | Wall time | Maximum reported RSS (KiB) |
+|---|---:|---:|
+| Custom host reference construction | 1 h 30 min 05 s | 93,835,952 |
+| Add Bracken 150-base distribution | 49 min 05 s | 115,804,492 |
+
+These one-time preparation measurements are excluded from the analytical runtime; the microbial Kraken2 database already existed. The definitive run reused the host resources and new Bracken distribution.
+
+!!! important "Do not interpret these cases as a controlled benchmark comparison"
+
+    The *B. glabrata* run used the official instrumented benchmark wrapper, which records aggregate process-tree RSS and sampled system CPU use. The *D. rerio* run used GNU time, whose maximum RSS is not a sampled peak sum across the process tree; its CPU percentage is also a different metric from sampled mean system CPU busy. The cases differ in sample counts, sequencing depths, reference resources, alignment tools and enabled stages. The fresh output directory does not imply a cold OS cache. Neither run demonstrates a controlled speed advantage of one analysis mode over the other.
+
 ## HPC benchmark
 
 First prepare and validate the HPC runtime as described in

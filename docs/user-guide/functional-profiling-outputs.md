@@ -30,6 +30,12 @@ execution path.
     groups. Pairwise comparison examples use `infected_vs_uninfected` where
     applicable. See [Example dataset: *Biomphalaria glabrata* (PRJNA1306560)](example-dataset.md) for the dataset origin, experimental groups, SRA accessions, and interpretation notes.
 
+## Complete functional profiles and ID maps
+
+The complete profiles in `hmn_genefamily_abundance_files/` are also generated in exploratory mode, without the comparison-dependent `Nonhost_hmn_DEG/` folder. GO and KEGG translated tables preserve original functional IDs and associated strata. For the absolute (`Abundance`) and relative (`relAbundance`) tables, a corresponding `*_translated_id_map.tsv` records `Gene_Family`, `original_id`, `functional_id`, `eligible_for_functional_de`, and `dictionary_match`.
+
+Special non-functional rows (such as `UNGROUPED` and its strata) remain in the complete abundance tables, but are marked ineligible for functional differential analysis. Canonical GO/KO identifiers without a dictionary label remain traceable. This filtering may change comparative functional DEG normalization relative to historical releases; the older comparative example figures retain their original provenance. See the [exploratory case study](danio-rerio.md#microbial-functional-profiling) for a native example. No biological meaning should be assigned to special non-functional categories.
+
 ## Main folders
 
 The functional outputs are usually split into two annotation layers:

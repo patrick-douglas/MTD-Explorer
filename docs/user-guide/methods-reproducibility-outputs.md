@@ -12,7 +12,8 @@ The main folder is:
 methods/
 ├── mtd_methods_run_parameters.csv
 ├── used_samplesheet.csv
-└── used_fastq_files.tsv
+├── used_fastq_files.tsv
+└── fastp_runtime.tsv (when runtime reports are available)
 ```
 
 ## Input provenance files
@@ -45,6 +46,12 @@ read2_size_bytes
 ```
 
 The manifest stores resolved absolute FASTQ paths and file sizes in bytes. For single-end samples, the R2 fields are recorded as `-`. The FASTQ files themselves are **not** copied into `methods/`; the manifest records which files were actually resolved and used.
+
+### fastp runtime provenance
+
+`methods/fastp_runtime.tsv` records the sample, fastp version from the per-sample JSON report, and JSON report path. The methods table records the observed report version(s), rather than relying on the executable found in the controller environment. Missing reports must not be interpreted as evidence of a particular version. The local trimming executable is recorded separately when available; a remote Slurm executable path is not inferred from the controller path. If trimming is disabled, fastp is not reported as used.
+
+The [Danio rerio example](danio-rerio.md#reproducibility-and-regression-checks) illustrates this output with all six reports recording version 1.3.6.
 
 ## Main reproducibility table
 

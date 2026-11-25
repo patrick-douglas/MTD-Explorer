@@ -61,12 +61,15 @@ Start with:
 - [User guide](https://patrick-douglas.github.io/MTD-Explorer/user-guide/)
 - [HPC / Slurm execution](https://patrick-douglas.github.io/MTD-Explorer/user-guide/hpc-slurm/)
 - [Pipeline benchmarking](https://patrick-douglas.github.io/MTD-Explorer/user-guide/benchmarking/)
+- [Example datasets](https://patrick-douglas.github.io/MTD-Explorer/user-guide/example-datasets/) — [comparative *B. glabrata*](https://patrick-douglas.github.io/MTD-Explorer/user-guide/example-dataset/) and [exploratory *D. rerio*](https://patrick-douglas.github.io/MTD-Explorer/user-guide/danio-rerio/)
 - [Academic references](https://patrick-douglas.github.io/MTD-Explorer/reference/)
 
 A complete 15-sample [PRJNA1306560](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1306560) reference analysis finished successfully in
 **54 h 58 min** using 20 threads, with a peak process-tree RSS of **117.27 GiB**.
 See [Pipeline benchmarking](https://patrick-douglas.github.io/MTD-Explorer/user-guide/benchmarking/#reference-local-benchmark-prjna1306560)
 for the benchmark configuration, hardware, stage timings, and interpretation.
+
+A separate six-library [PRJNA1005695](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1005695) exploratory run completed in **4 h 12 min 53 s**, with a maximum reported RSS of **107.87 GiB** (GNU time). See the [exploratory benchmark](https://patrick-douglas.github.io/MTD-Explorer/user-guide/benchmarking/#reference-exploratory-run-prjna1005695). These are different workloads and measurement methods, not a controlled performance comparison.
 
 ## Main analysis layers
 

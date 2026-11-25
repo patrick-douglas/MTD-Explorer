@@ -90,6 +90,10 @@ Use this page as a map of the documentation.
 
 </div>
 
+## Example datasets
+
+Use the [example datasets overview](example-datasets.md) to choose the comparative [*Biomphalaria glabrata*](example-dataset.md) or exploratory [*Danio rerio*](danio-rerio.md) walkthrough. Both use public data and documented settings.
+
 ## Output guides
 
 <div class="grid cards" markdown>

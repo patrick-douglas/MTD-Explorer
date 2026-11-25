@@ -321,6 +321,8 @@ pathway coverage
 MTD Explorer also performs post-processing of [HUMAnN][humann] outputs for
 downstream functional interpretation.
 
+The GO/KEGG translated functional tables have companion `*_translated_id_map.tsv` files for absolute and relative abundance. These preserve original identifiers and indicate functional DEG eligibility; complete profiles retain non-functional categories. See [Functional profiling outputs](functional-profiling-outputs.md). The [Danio rerio case](danio-rerio.md) shows the contrast-free functional outputs.
+
 ## Host expression outputs
 
 Host expression outputs are stored mainly in:
@@ -489,6 +491,8 @@ This file is useful for:
 
     It is one of the most useful folders when writing a manuscript or debugging
     a run later.
+
+The `methods/fastp_runtime.tsv` table, when generated, records the actual per-sample fastp versions from JSON reports. See [Methods and reproducibility outputs](methods-reproducibility-outputs.md#fastp-runtime-provenance).
 
 ## HPC operational outputs
 
