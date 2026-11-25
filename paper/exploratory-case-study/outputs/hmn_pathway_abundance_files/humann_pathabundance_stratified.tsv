@@ -1,0 +1,18 @@
+# Pathway	SRR25649158_Abundance	SRR25649159_Abundance	SRR25649161_Abundance	SRR25649162_Abundance	SRR25649181_Abundance	SRR25649182_Abundance
+UNINTEGRATED|g__Cetobacterium.s__Cetobacterium_somerae	13867.2680784906	19080.7959200316	0	0	0	0
+UNINTEGRATED|unclassified	85227.2651038661	53035.8061487625	97250.5940946727	0	0	0
+GLYCOGENSYNTH-PWY: glycogen biosynthesis I (from ADP-D-Glucose)|unclassified	12.1229531969	0	0	0	0	0
+HISDEG-PWY: L-histidine degradation I|g__Cetobacterium.s__Cetobacterium_somerae	10.5634512936	0	0	0	0	0
+P41-PWY: pyruvate fermentation to acetate and (S)-lactate I|unclassified	7.0286880143	0	0	0	0	0
+PWY-1042: glycolysis IV|unclassified	15.3550518641	21.3308796405	25.7766591847	0	0	0
+PWY-5100: pyruvate fermentation to acetate and lactate II|unclassified	7.0286880143	0	0	0	0	0
+PWY-6609: adenine and adenosine salvage III|g__Cetobacterium.s__Cetobacterium_somerae	0	22.6159313044	0	0	0	0
+PWY-6609: adenine and adenosine salvage III|unclassified	28.3258647727	0	44.9281291063	0	0	0
+PWY-7208: superpathway of pyrimidine nucleobases salvage|unclassified	0	14.1152898159	0	0	0	0
+PWY-7220: adenosine deoxyribonucleotides de novo biosynthesis II|unclassified	13.4677556462	0	0	0	0	0
+PWY-7221: guanosine ribonucleotides de novo biosynthesis|g__Cetobacterium.s__Cetobacterium_somerae	16.5001537350	33.5198999292	0	0	0	0
+PWY-7221: guanosine ribonucleotides de novo biosynthesis|unclassified	0	0	42.9627452045	0	0	0
+PWY-7222: guanosine deoxyribonucleotides de novo biosynthesis II|unclassified	13.4677556462	0	0	0	0	0
+PWY-7228: superpathway of guanosine nucleotides de novo biosynthesis I|g__Cetobacterium.s__Cetobacterium_somerae	11.2005124186	0	0	0	0	0
+PWY-7228: superpathway of guanosine nucleotides de novo biosynthesis I|unclassified	0	0	27.8437232881	0	0	0
+PWY-7663: gondoate biosynthesis (anaerobic)|unclassified	0	4.5675969734	41.8193827940	0	0	0

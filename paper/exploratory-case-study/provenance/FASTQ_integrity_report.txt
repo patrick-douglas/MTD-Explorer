@@ -1,0 +1,12 @@
+raw_fastq/SRR25649158_1.fastq.gz: OK
+raw_fastq/SRR25649158_2.fastq.gz: OK
+raw_fastq/SRR25649159_1.fastq.gz: OK
+raw_fastq/SRR25649159_2.fastq.gz: OK
+raw_fastq/SRR25649161_1.fastq.gz: OK
+raw_fastq/SRR25649161_2.fastq.gz: OK
+raw_fastq/SRR25649181_1.fastq.gz: OK
+raw_fastq/SRR25649181_2.fastq.gz: OK
+raw_fastq/SRR25649162_1.fastq.gz: OK
+raw_fastq/SRR25649162_2.fastq.gz: OK
+raw_fastq/SRR25649182_1.fastq.gz: OK
+raw_fastq/SRR25649182_2.fastq.gz: OK

@@ -1,0 +1,6 @@
+threshold_percent	min_samples_required	core_taxa_n	mean_abundance_sum	max_abundance_sum
+25	2	42	77389.1666666667	192106
+50	3	28	74077.5	174925
+75	5	15	58915.6666666667	115054
+90	6	14	53380.5	94332
+100	6	14	53380.5	94332

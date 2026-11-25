@@ -1,0 +1,162 @@
+[OK] R parse: humann_ID_translation_adjusted.R
+[OK] R parse: DEG_Anno_Plot.R
+[OK] R parse: MTD_exploratory_matrix_qc.R
+[HUMAnN translation] fixture_kegg.tsv: 3 translated; 1 canonical IDs without labels; 5 non-functional rows retained in complete table.
+[HUMAnN translation] fixture_go.tsv: 3 translated; 1 canonical IDs without labels; 5 non-functional rows retained in complete table.
+[HUMAnN DEG] Excluding 5 non-functional rows.
+[OK] fixture_kegg.tsv: 9 rows preserved; 4 eligible for functional DE; 5 excluded only from DE
+[HUMAnN DEG] Excluding 5 non-functional rows.
+[OK] fixture_go.tsv: 9 rows preserved; 4 eligible for functional DE; 5 excluded only from DE
+[HUMAnN translation] humann_genefamilies_Abundance_kegg.tsv: 577 translated; 0 canonical IDs without labels; 3 non-functional rows retained in complete table.
+[HUMAnN translation] humann_genefamilies_Abundance_go.tsv: 2676 translated; 21 canonical IDs without labels; 3 non-functional rows retained in complete table.
+[HUMAnN DEG] Excluding 3 non-functional rows.
+[OK] humann_genefamilies_Abundance_kegg.tsv: 580 rows preserved; 577 eligible for functional DE; 3 excluded only from DE
+[HUMAnN DEG] Excluding 3 non-functional rows.
+[OK] humann_genefamilies_Abundance_go.tsv: 2700 rows preserved; 2697 eligible for functional DE; 3 excluded only from DE
+[HUMAnN translation] humann_genefamilies_relAbundance_kegg.tsv: 577 translated; 0 canonical IDs without labels; 3 non-functional rows retained in complete table.
+[HUMAnN translation] humann_genefamilies_relAbundance_go.tsv: 2676 translated; 21 canonical IDs without labels; 3 non-functional rows retained in complete table.
+[HUMAnN DEG] Excluding 3 non-functional rows.
+[OK] humann_genefamilies_relAbundance_kegg.tsv: 580 rows preserved; 577 eligible for functional DE; 3 excluded only from DE
+[HUMAnN DEG] Excluding 3 non-functional rows.
+[OK] humann_genefamilies_relAbundance_go.tsv: 2700 rows preserved; 2697 eligible for functional DE; 3 excluded only from DE
+[HUMAnN translation] humann_genefamilies_Abundance_kegg.tsv: 3380 translated; 3 canonical IDs without labels; 1 non-functional rows retained in complete table.
+[HUMAnN translation] humann_genefamilies_Abundance_go.tsv: 3712 translated; 37 canonical IDs without labels; 1 non-functional rows retained in complete table.
+[HUMAnN DEG] Excluding 1 non-functional rows.
+[OK] humann_genefamilies_Abundance_kegg.tsv: 3384 rows preserved; 3383 eligible for functional DE; 1 excluded only from DE
+[HUMAnN DEG] Excluding 1 non-functional rows.
+[OK] humann_genefamilies_Abundance_go.tsv: 3750 rows preserved; 3749 eligible for functional DE; 1 excluded only from DE
+[HUMAnN translation] humann_genefamilies_relAbundance_kegg.tsv: 3380 translated; 3 canonical IDs without labels; 1 non-functional rows retained in complete table.
+[HUMAnN translation] humann_genefamilies_relAbundance_go.tsv: 3712 translated; 37 canonical IDs without labels; 1 non-functional rows retained in complete table.
+[HUMAnN DEG] Excluding 1 non-functional rows.
+[OK] humann_genefamilies_relAbundance_kegg.tsv: 3384 rows preserved; 3383 eligible for functional DE; 1 excluded only from DE
+[HUMAnN DEG] Excluding 1 non-functional rows.
+[OK] humann_genefamilies_relAbundance_go.tsv: 3750 rows preserved; 3749 eligible for functional DE; 1 excluded only from DE
+[SUCCESS] Translation and functional DE input filtering tests passed.
+Warning message:
+package ‘ggplot2’ was built under R version 4.1.3 
+============================================================
+MTD exploratory: matrix QC
+Input file     : $HOME/MTD-Explorer_Exploratory_D.rerio/results/Danio_rerio_exploratory/temp/bracken_raw_results/bracken_species_all 
+Separator      : TAB 
+Rows           : 104 
+Columns        : 15 
+Label          : microbiome_species 
+Matrix type    : bracken 
+Normalization  : relative 
+Output dir     : $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_species 
+============================================================
+[INFO] Bracken table detected with _num/_frac columns.
+[INFO] Keeping only _num columns for matrix QC.
+[INFO] Feature column: name 
+[INFO] Sample columns detected: 6 
+       Report_SRR25649158.species.bracken_num, Report_SRR25649159.species.bracken_num, Report_SRR25649161.species.bracken_num, Report_SRR25649162.species.bracken_num, Report_SRR25649181.species.bracken_num, Report_SRR25649182.species.bracken_num
+[OK] Normalized matrix saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_species/microbiome_species_normalized_matrix.tsv 
+[OK] Sample QC table saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_species/microbiome_species_sample_qc.tsv 
+[OK] Variable features table saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_species/microbiome_species_top_variable_features.tsv 
+[OK] PCA scores saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_species/microbiome_species_pca_scores.tsv 
+[OK] PCA PNG saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_species/microbiome_species_pca.png 
+[OK] PCA PDF saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_species/microbiome_species_pca.pdf 
+[OK] Top variable heatmap PNG saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_species/microbiome_species_top_variable_heatmap.png 
+[OK] Top variable heatmap PDF saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_species/microbiome_species_top_variable_heatmap.pdf 
+[OK] Sample correlation table saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_species/microbiome_species_sample_correlation.tsv 
+[OK] Sample correlation heatmap PNG saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_species/microbiome_species_sample_correlation_heatmap.png 
+[OK] Sample correlation heatmap PDF saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_species/microbiome_species_sample_correlation_heatmap.pdf 
+[OK] Detected features PNG saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_species/microbiome_species_detected_features_per_sample.png 
+[OK] Detected features PDF saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_species/microbiome_species_detected_features_per_sample.pdf 
+============================================================
+[DONE] Matrix QC completed.
+Label          : microbiome_species 
+Matrix type    : bracken 
+Normalization  : relative 
+Features       : 104 
+Samples        : 6 
+Output         : $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_species 
+============================================================
+Warning message:
+package ‘ggplot2’ was built under R version 4.1.3 
+============================================================
+MTD exploratory: matrix QC
+Input file     : $HOME/MTD-Explorer_Exploratory_D.rerio/results/Danio_rerio_exploratory/temp/bracken_raw_results/bracken_genus_all 
+Separator      : TAB 
+Rows           : 94 
+Columns        : 15 
+Label          : microbiome_genus 
+Matrix type    : bracken 
+Normalization  : relative 
+Output dir     : $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_genus 
+============================================================
+[INFO] Bracken table detected with _num/_frac columns.
+[INFO] Keeping only _num columns for matrix QC.
+[INFO] Feature column: name 
+[INFO] Sample columns detected: 6 
+       Report_SRR25649158.genus.bracken_num, Report_SRR25649159.genus.bracken_num, Report_SRR25649161.genus.bracken_num, Report_SRR25649162.genus.bracken_num, Report_SRR25649181.genus.bracken_num, Report_SRR25649182.genus.bracken_num
+[OK] Normalized matrix saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_genus/microbiome_genus_normalized_matrix.tsv 
+[OK] Sample QC table saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_genus/microbiome_genus_sample_qc.tsv 
+[OK] Variable features table saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_genus/microbiome_genus_top_variable_features.tsv 
+[OK] PCA scores saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_genus/microbiome_genus_pca_scores.tsv 
+[OK] PCA PNG saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_genus/microbiome_genus_pca.png 
+[OK] PCA PDF saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_genus/microbiome_genus_pca.pdf 
+[OK] Top variable heatmap PNG saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_genus/microbiome_genus_top_variable_heatmap.png 
+[OK] Top variable heatmap PDF saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_genus/microbiome_genus_top_variable_heatmap.pdf 
+[OK] Sample correlation table saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_genus/microbiome_genus_sample_correlation.tsv 
+[OK] Sample correlation heatmap PNG saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_genus/microbiome_genus_sample_correlation_heatmap.png 
+[OK] Sample correlation heatmap PDF saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_genus/microbiome_genus_sample_correlation_heatmap.pdf 
+[OK] Detected features PNG saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_genus/microbiome_genus_detected_features_per_sample.png 
+[OK] Detected features PDF saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_genus/microbiome_genus_detected_features_per_sample.pdf 
+============================================================
+[DONE] Matrix QC completed.
+Label          : microbiome_genus 
+Matrix type    : bracken 
+Normalization  : relative 
+Features       : 94 
+Samples        : 6 
+Output         : $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_genus 
+============================================================
+Warning message:
+package ‘ggplot2’ was built under R version 4.1.3 
+============================================================
+MTD exploratory: matrix QC
+Input file     : $HOME/MTD-Explorer_Exploratory_D.rerio/results/Danio_rerio_exploratory/temp/bracken_raw_results/bracken_phylum_all 
+Separator      : TAB 
+Rows           : 22 
+Columns        : 15 
+Label          : microbiome_phylum 
+Matrix type    : bracken 
+Normalization  : relative 
+Output dir     : $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_phylum 
+============================================================
+[INFO] Bracken table detected with _num/_frac columns.
+[INFO] Keeping only _num columns for matrix QC.
+[INFO] Feature column: name 
+[INFO] Sample columns detected: 6 
+       Report_SRR25649158.phylum.bracken_num, Report_SRR25649159.phylum.bracken_num, Report_SRR25649161.phylum.bracken_num, Report_SRR25649162.phylum.bracken_num, Report_SRR25649181.phylum.bracken_num, Report_SRR25649182.phylum.bracken_num
+[OK] Normalized matrix saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_phylum/microbiome_phylum_normalized_matrix.tsv 
+[OK] Sample QC table saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_phylum/microbiome_phylum_sample_qc.tsv 
+[OK] Variable features table saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_phylum/microbiome_phylum_top_variable_features.tsv 
+[OK] PCA scores saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_phylum/microbiome_phylum_pca_scores.tsv 
+[OK] PCA PNG saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_phylum/microbiome_phylum_pca.png 
+[OK] PCA PDF saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_phylum/microbiome_phylum_pca.pdf 
+[OK] Top variable heatmap PNG saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_phylum/microbiome_phylum_top_variable_heatmap.png 
+[OK] Top variable heatmap PDF saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_phylum/microbiome_phylum_top_variable_heatmap.pdf 
+[OK] Sample correlation table saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_phylum/microbiome_phylum_sample_correlation.tsv 
+[OK] Sample correlation heatmap PNG saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_phylum/microbiome_phylum_sample_correlation_heatmap.png 
+[OK] Sample correlation heatmap PDF saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_phylum/microbiome_phylum_sample_correlation_heatmap.pdf 
+[OK] Detected features PNG saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_phylum/microbiome_phylum_detected_features_per_sample.png 
+[OK] Detected features PDF saved: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_phylum/microbiome_phylum_detected_features_per_sample.pdf 
+============================================================
+[DONE] Matrix QC completed.
+Label          : microbiome_phylum 
+Matrix type    : bracken 
+Normalization  : relative 
+Features       : 22 
+Samples        : 6 
+Output         : $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/qc_phylum 
+============================================================
+[OK] species: six correct IDs and groups; eight nonempty figures
+[OK] genus: six correct IDs and groups; eight nonempty figures
+[OK] phylum: six correct IDs and groups; eight nonempty figures
+[OK] Species QC: historical matrix, abundance metrics and PCA preserved
+[OK] Actual fastp report versions: 1.3.6
+[SUCCESS] Local regression tests passed. Original run unchanged.
+
+Review log: $HOME/MTD-Explorer_Exploratory_D.rerio/provenance/post_Danio_patch_test_DmVhJVIM/validation.log

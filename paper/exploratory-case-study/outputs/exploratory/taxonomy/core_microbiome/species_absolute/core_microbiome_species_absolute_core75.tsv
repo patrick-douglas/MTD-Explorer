@@ -1,0 +1,16 @@
+taxon	rank	n_samples	prevalence_n	prevalence_percent	mean_abundance	median_abundance	max_abundance	total_abundance	core_25pct	core_50pct	core_75pct	core_90pct	core_100pct
+Cetobacterium somerae	species	6	6	100	22085	23546	46009	132510	TRUE	TRUE	TRUE	TRUE	TRUE
+Staphylococcus aureus	species	6	6	100	15793.1666666667	17214.5	22417	94759	TRUE	TRUE	TRUE	TRUE	TRUE
+Toxoplasma gondii	species	6	6	100	6082	5645.5	8151	36492	TRUE	TRUE	TRUE	TRUE	TRUE
+Klebsiella pneumoniae	species	6	6	100	2859.83333333333	2648	5105	17159	TRUE	TRUE	TRUE	TRUE	TRUE
+Vibrio parahaemolyticus	species	6	6	100	2697.5	2559.5	4527	16185	TRUE	TRUE	TRUE	TRUE	TRUE
+Escherichia coli	species	6	6	100	975.166666666667	1032.5	1368	5851	TRUE	TRUE	TRUE	TRUE	TRUE
+Kwoniella botswanensis	species	6	6	100	944.166666666667	643	2306	5665	TRUE	TRUE	TRUE	TRUE	TRUE
+Plasmodium vivax	species	6	6	100	671	730.5	873	4026	TRUE	TRUE	TRUE	TRUE	TRUE
+Candida dubliniensis	species	6	6	100	281.5	42.5	1491	1689	TRUE	TRUE	TRUE	TRUE	TRUE
+Lodderomyces elongisporus	species	6	6	100	245	205.5	537	1470	TRUE	TRUE	TRUE	TRUE	TRUE
+Leishmania sp. Namibia	species	6	6	100	203.333333333333	219.5	271	1220	TRUE	TRUE	TRUE	TRUE	TRUE
+Cutibacterium acnes	species	6	6	100	187.333333333333	94.5	706	1124	TRUE	TRUE	TRUE	TRUE	TRUE
+Colletotrichum higginsianum	species	6	6	100	181.166666666667	171.5	282	1087	TRUE	TRUE	TRUE	TRUE	TRUE
+Sordaria macrospora	species	6	6	100	174.333333333333	154.5	289	1046	TRUE	TRUE	TRUE	TRUE	TRUE
+Aeromonas veronii	species	6	5	83.3333333333333	5535.16666666667	2947	20722	33211	TRUE	TRUE	TRUE	FALSE	FALSE

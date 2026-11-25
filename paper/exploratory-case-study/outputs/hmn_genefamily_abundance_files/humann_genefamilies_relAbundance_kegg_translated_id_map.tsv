@@ -1,0 +1,581 @@
+"Gene_Family"	"original_id"	"functional_id"	"eligible_for_functional_de"	"dictionary_match"
+"UNGROUPED|g__Cetobacterium.s__Cetobacterium_somerae"	"UNGROUPED|g__Cetobacterium.s__Cetobacterium_somerae"	"UNGROUPED"	FALSE	FALSE
+"UNGROUPED|g__Plesiomonas.s__Plesiomonas_shigelloides"	"UNGROUPED|g__Plesiomonas.s__Plesiomonas_shigelloides"	"UNGROUPED"	FALSE	FALSE
+"UNGROUPED|unclassified"	"UNGROUPED|unclassified"	"UNGROUPED"	FALSE	FALSE
+"LDH, ldh; L-lactate dehydrogenase [EC:1.1.1.27] [K00016|unclassified]"	"K00016|unclassified"	"K00016"	TRUE	TRUE
+"IDH1, IDH2, icd; isocitrate dehydrogenase [EC:1.1.1.42] [K00031|unclassified]"	"K00031|unclassified"	"K00031"	TRUE	TRUE
+"gpsA; glycerol-3-phosphate dehydrogenase (NAD(P)+) [EC:1.1.1.94] [K00057|unclassified]"	"K00057|unclassified"	"K00057"	TRUE	TRUE
+"fabG, OAR1; 3-oxoacyl-[acyl-carrier protein] reductase [EC:1.1.1.100] [K00059|unclassified]"	"K00059|unclassified"	"K00059"	TRUE	TRUE
+"fdoG, fdhF, fdwA; formate dehydrogenase major subunit [EC:1.17.1.9] [K00123|unclassified]"	"K00123|unclassified"	"K00123"	TRUE	TRUE
+"fdoH, fdsB; formate dehydrogenase iron-sulfur subunit [K00124|unclassified]"	"K00124|unclassified"	"K00124"	TRUE	TRUE
+"fdoI, fdsG; formate dehydrogenase subunit gamma [K00127|unclassified]"	"K00127|unclassified"	"K00127"	TRUE	TRUE
+"GAPDH, gapA; glyceraldehyde 3-phosphate dehydrogenase [EC:1.2.1.12] [K00134|unclassified]"	"K00134|unclassified"	"K00134"	TRUE	TRUE
+"frdD; fumarate reductase subunit D [K00247|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K00247|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K00247"	TRUE	TRUE
+"frdD; fumarate reductase subunit D [K00247|unclassified]"	"K00247|unclassified"	"K00247"	TRUE	TRUE
+"pntB; H+-translocating NAD(P) transhydrogenase subunit beta [EC:1.6.1.2 7.1.1.1] [K00325|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K00325|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K00325"	TRUE	TRUE
+"nuoE; NADH-quinone oxidoreductase subunit E [EC:7.1.1.2] [K00334|unclassified]"	"K00334|unclassified"	"K00334"	TRUE	TRUE
+"nqrE; Na+-transporting NADH:ubiquinone oxidoreductase subunit E [EC:7.2.1.1] [K00350|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K00350|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K00350"	TRUE	TRUE
+"nqrE; Na+-transporting NADH:ubiquinone oxidoreductase subunit E [EC:7.2.1.1] [K00350|unclassified]"	"K00350|unclassified"	"K00350"	TRUE	TRUE
+"E1.7.1.7, guaC; GMP reductase [EC:1.7.1.7] [K00364|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K00364|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K00364"	TRUE	TRUE
+"ccoN; cytochrome c oxidase cbb3-type subunit I [EC:7.1.1.9] [K00404|unclassified]"	"K00404|unclassified"	"K00404"	TRUE	TRUE
+"ccoO; cytochrome c oxidase cbb3-type subunit II [K00405|unclassified]"	"K00405|unclassified"	"K00405"	TRUE	TRUE
+"ccoP; cytochrome c oxidase cbb3-type subunit III [K00406|unclassified]"	"K00406|unclassified"	"K00406"	TRUE	TRUE
+"ccoQ; cytochrome c oxidase cbb3-type subunit IV [K00407|unclassified]"	"K00407|unclassified"	"K00407"	TRUE	TRUE
+"CYTB, petB; ubiquinol-cytochrome c reductase cytochrome b subunit [K00412|unclassified]"	"K00412|unclassified"	"K00412"	TRUE	TRUE
+"E1.11.1.5; cytochrome c peroxidase [EC:1.11.1.5] [K00428|unclassified]"	"K00428|unclassified"	"K00428"	TRUE	TRUE
+"FTH1; ferritin heavy chain [EC:1.16.3.2] [K00522|unclassified]"	"K00522|unclassified"	"K00522"	TRUE	TRUE
+"GAMT; guanidinoacetate N-methyltransferase [EC:2.1.1.2] [K00542|unclassified]"	"K00542|unclassified"	"K00542"	TRUE	TRUE
+"trmD; tRNA (guanine37-N1)-methyltransferase [EC:2.1.1.228] [K00554|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K00554|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K00554"	TRUE	TRUE
+"trmD; tRNA (guanine37-N1)-methyltransferase [EC:2.1.1.228] [K00554|unclassified]"	"K00554|unclassified"	"K00554"	TRUE	TRUE
+"fabB; 3-oxoacyl-[acyl-carrier-protein] synthase I [EC:2.3.1.41] [K00647|unclassified]"	"K00647|unclassified"	"K00647"	TRUE	TRUE
+"E2.3.1.54, pflD; formate C-acetyltransferase [EC:2.3.1.54] [K00656|unclassified]"	"K00656|unclassified"	"K00656"	TRUE	TRUE
+"upp, UPRT; uracil phosphoribosyltransferase [EC:2.4.2.9] [K00761|unclassified]"	"K00761|unclassified"	"K00761"	TRUE	TRUE
+"gpt; xanthine phosphoribosyltransferase [EC:2.4.2.22] [K00769|unclassified]"	"K00769|unclassified"	"K00769"	TRUE	TRUE
+"metK; S-adenosylmethionine synthetase [EC:2.5.1.6] [K00789|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K00789|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K00789"	TRUE	TRUE
+"miaA, TRIT1; tRNA dimethylallyltransferase [EC:2.5.1.75] [K00791|unclassified]"	"K00791|unclassified"	"K00791"	TRUE	TRUE
+"ribH, RIB4; 6,7-dimethyl-8-ribityllumazine synthase [EC:2.5.1.78] [K00794|unclassified]"	"K00794|unclassified"	"K00794"	TRUE	TRUE
+"GST, gst; glutathione S-transferase [EC:2.5.1.18] [K00799|unclassified]"	"K00799|unclassified"	"K00799"	TRUE	TRUE
+"PK, pyk; pyruvate kinase [EC:2.7.1.40] [K00873|unclassified]"	"K00873|unclassified"	"K00873"	TRUE	TRUE
+"aroK, aroL; shikimate kinase [EC:2.7.1.71] [K00891|unclassified]"	"K00891|unclassified"	"K00891"	TRUE	TRUE
+"PGK, pgk; phosphoglycerate kinase [EC:2.7.2.3] [K00927|unclassified]"	"K00927|unclassified"	"K00927"	TRUE	TRUE
+"adk, AK; adenylate kinase [EC:2.7.4.3] [K00939|unclassified]"	"K00939|unclassified"	"K00939"	TRUE	TRUE
+"ndk, NME; nucleoside-diphosphate kinase [EC:2.7.4.6] [K00940|unclassified]"	"K00940|unclassified"	"K00940"	TRUE	TRUE
+"thiL; thiamine-monophosphate kinase [EC:2.7.4.16] [K00946|unclassified]"	"K00946|unclassified"	"K00946"	TRUE	TRUE
+"pnp, PNPT1; polyribonucleotide nucleotidyltransferase [EC:2.7.7.8] [K00962|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K00962|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K00962"	TRUE	TRUE
+"pnp, PNPT1; polyribonucleotide nucleotidyltransferase [EC:2.7.7.8] [K00962|unclassified]"	"K00962|unclassified"	"K00962"	TRUE	TRUE
+"pps, ppsA; pyruvate, water dikinase [EC:2.7.9.2] [K01007|unclassified]"	"K01007|unclassified"	"K01007"	TRUE	TRUE
+"AMY, amyA, malS; alpha-amylase [EC:3.2.1.1] [K01176|unclassified]"	"K01176|unclassified"	"K01176"	TRUE	TRUE
+"E3.2.1.14; chitinase [EC:3.2.1.14] [K01183|unclassified]"	"K01183|unclassified"	"K01183"	TRUE	TRUE
+"DPEP; membrane dipeptidase [EC:3.4.13.19] [K01273|unclassified]"	"K01273|unclassified"	"K01273"	TRUE	TRUE
+"PRSS1_2_3; trypsin [EC:3.4.21.4] [K01312|unclassified]"	"K01312|unclassified"	"K01312"	TRUE	TRUE
+"CELA1; pancreatic elastase I [EC:3.4.21.36] [K01326|unclassified]"	"K01326|unclassified"	"K01326"	TRUE	TRUE
+"CTSB; cathepsin B [EC:3.4.22.1] [K01363|unclassified]"	"K01363|unclassified"	"K01363"	TRUE	TRUE
+"CTSL; cathepsin L [EC:3.4.22.15] [K01365|unclassified]"	"K01365|unclassified"	"K01365"	TRUE	TRUE
+"hslV, clpQ; ATP-dependent HslUV protease, peptidase subunit HslV [EC:3.4.25.2] [K01419|unclassified]"	"K01419|unclassified"	"K01419"	TRUE	TRUE
+"fnr; CRP/FNR family transcriptional regulator, anaerobic regulatory protein [K01420|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K01420|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K01420"	TRUE	TRUE
+"fnr; CRP/FNR family transcriptional regulator, anaerobic regulatory protein [K01420|unclassified]"	"K01420|unclassified"	"K01420"	TRUE	TRUE
+"PDF, def; peptide deformylase [EC:3.5.1.88] [K01462|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K01462|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K01462"	TRUE	TRUE
+"PDF, def; peptide deformylase [EC:3.5.1.88] [K01462|unclassified]"	"K01462|unclassified"	"K01462"	TRUE	TRUE
+"DDAH, ddaH; dimethylargininase [EC:3.5.3.18] [K01482|unclassified]"	"K01482|unclassified"	"K01482"	TRUE	TRUE
+"ribA, RIB1; GTP cyclohydrolase II [EC:3.5.4.25] [K01497|unclassified]"	"K01497|unclassified"	"K01497"	TRUE	TRUE
+"ppa; inorganic pyrophosphatase [EC:3.6.1.1] [K01507|unclassified]"	"K01507|unclassified"	"K01507"	TRUE	TRUE
+"deoC, DERA; deoxyribose-phosphate aldolase [EC:4.1.2.4] [K01619|unclassified]"	"K01619|unclassified"	"K01619"	TRUE	TRUE
+"ALDO; fructose-bisphosphate aldolase, class I [EC:4.1.2.13] [K01623|unclassified]"	"K01623|unclassified"	"K01623"	TRUE	TRUE
+"CS, gltA; citrate synthase [EC:2.3.3.1] [K01647|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K01647|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K01647"	TRUE	TRUE
+"ENO, eno; enolase [EC:4.2.1.11] [K01689|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K01689|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K01689"	TRUE	TRUE
+"ENO, eno; enolase [EC:4.2.1.11] [K01689|unclassified]"	"K01689|unclassified"	"K01689"	TRUE	TRUE
+"rfbB, rmlB, rffG; dTDP-glucose 4,6-dehydratase [EC:4.2.1.46] [K01710|unclassified]"	"K01710|unclassified"	"K01710"	TRUE	TRUE
+"fabA; 3-hydroxyacyl-[acyl-carrier protein] dehydratase / trans-2-decenoyl-[acyl-carrier protein] isomerase [EC:4.2.1.59 5.3.3.14] [K01716|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K01716|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K01716"	TRUE	TRUE
+"TPI, tpiA; triosephosphate isomerase (TIM) [EC:5.3.1.1] [K01803|unclassified]"	"K01803|unclassified"	"K01803"	TRUE	TRUE
+"xylA; xylose isomerase [EC:5.3.1.5] [K01805|unclassified]"	"K01805|unclassified"	"K01805"	TRUE	TRUE
+"TARS, thrS; threonyl-tRNA synthetase [EC:6.1.1.3] [K01868|unclassified]"	"K01868|unclassified"	"K01868"	TRUE	TRUE
+"sucC; succinyl-CoA synthetase beta subunit [EC:6.2.1.5] [K01903|unclassified]"	"K01903|unclassified"	"K01903"	TRUE	TRUE
+"glnA, GLUL; glutamine synthetase [EC:6.3.1.2] [K01915|unclassified]"	"K01915|unclassified"	"K01915"	TRUE	TRUE
+"purC; phosphoribosylaminoimidazole-succinocarboxamide synthase [EC:6.3.2.6] [K01923|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K01923|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K01923"	TRUE	TRUE
+"purA, ADSS; adenylosuccinate synthase [EC:6.3.4.4] [K01939|unclassified]"	"K01939|unclassified"	"K01939"	TRUE	TRUE
+"argG, ASS1; argininosuccinate synthase [EC:6.3.4.5] [K01940|unclassified]"	"K01940|unclassified"	"K01940"	TRUE	TRUE
+"accD; acetyl-CoA carboxylase carboxyl transferase subunit beta [EC:6.4.1.2 2.1.3.15] [K01963|unclassified]"	"K01963|unclassified"	"K01963"	TRUE	TRUE
+"TC.FEV.OM; iron complex outermembrane recepter protein [K02014|unclassified]"	"K02014|unclassified"	"K02014"	TRUE	TRUE
+"ABC.PE.S; peptide/nickel transport system substrate-binding protein [K02035|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02035|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02035"	TRUE	TRUE
+"ABC.PE.S; peptide/nickel transport system substrate-binding protein [K02035|unclassified]"	"K02035|unclassified"	"K02035"	TRUE	TRUE
+"pstS; phosphate transport system substrate-binding protein [K02040|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02040|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02040"	TRUE	TRUE
+"pstS; phosphate transport system substrate-binding protein [K02040|unclassified]"	"K02040|unclassified"	"K02040"	TRUE	TRUE
+"metQ; D-methionine transport system substrate-binding protein [K02073|unclassified]"	"K02073|unclassified"	"K02073"	TRUE	TRUE
+"acpP; acyl carrier protein [K02078|g__Cetobacterium.s__Cetobacterium_somerae]"	"K02078|g__Cetobacterium.s__Cetobacterium_somerae"	"K02078"	TRUE	TRUE
+"acpP; acyl carrier protein [K02078|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02078|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02078"	TRUE	TRUE
+"acpP; acyl carrier protein [K02078|unclassified]"	"K02078|unclassified"	"K02078"	TRUE	TRUE
+"ATPF0A, atpB; F-type H+-transporting ATPase subunit a [K02108|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02108|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02108"	TRUE	TRUE
+"ATPF0A, atpB; F-type H+-transporting ATPase subunit a [K02108|unclassified]"	"K02108|unclassified"	"K02108"	TRUE	TRUE
+"ATPF0B, atpF; F-type H+-transporting ATPase subunit b [K02109|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02109|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02109"	TRUE	TRUE
+"ATPF0B, atpF; F-type H+-transporting ATPase subunit b [K02109|unclassified]"	"K02109|unclassified"	"K02109"	TRUE	TRUE
+"ATPF0C, atpE; F-type H+-transporting ATPase subunit c [K02110|unclassified]"	"K02110|unclassified"	"K02110"	TRUE	TRUE
+"ATPF1A, atpA; F-type H+/Na+-transporting ATPase subunit alpha [EC:7.1.2.2 7.2.2.1] [K02111|unclassified]"	"K02111|unclassified"	"K02111"	TRUE	TRUE
+"ATPF1B, atpD; F-type H+/Na+-transporting ATPase subunit beta [EC:7.1.2.2 7.2.2.1] [K02112|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02112|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02112"	TRUE	TRUE
+"ATPF1B, atpD; F-type H+/Na+-transporting ATPase subunit beta [EC:7.1.2.2 7.2.2.1] [K02112|unclassified]"	"K02112|unclassified"	"K02112"	TRUE	TRUE
+"ATPF1D, atpH; F-type H+-transporting ATPase subunit delta [K02113|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02113|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02113"	TRUE	TRUE
+"ATPF1D, atpH; F-type H+-transporting ATPase subunit delta [K02113|unclassified]"	"K02113|unclassified"	"K02113"	TRUE	TRUE
+"ATPF1E, atpC; F-type H+-transporting ATPase subunit epsilon [K02114|unclassified]"	"K02114|unclassified"	"K02114"	TRUE	TRUE
+"ATPF1G, atpG; F-type H+-transporting ATPase subunit gamma [K02115|unclassified]"	"K02115|unclassified"	"K02115"	TRUE	TRUE
+"atpI; ATP synthase protein I [K02116|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02116|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02116"	TRUE	TRUE
+"atpI; ATP synthase protein I [K02116|unclassified]"	"K02116|unclassified"	"K02116"	TRUE	TRUE
+"ATPeF0E, ATP5I; F-type H+-transporting ATPase subunit e [K02129|unclassified]"	"K02129|unclassified"	"K02129"	TRUE	TRUE
+"ATPeF1B, ATP5B, ATP2; F-type H+-transporting ATPase subunit beta [EC:7.1.2.2] [K02133|unclassified]"	"K02133|unclassified"	"K02133"	TRUE	TRUE
+"ATPeV1E, ATP6E; V-type H+-transporting ATPase subunit E [K02150|unclassified]"	"K02150|unclassified"	"K02150"	TRUE	TRUE
+"CALM; calmodulin [K02183|unclassified]"	"K02183|unclassified"	"K02183"	TRUE	TRUE
+"ccmC; heme exporter protein C [K02195|unclassified]"	"K02195|unclassified"	"K02195"	TRUE	TRUE
+"ccmD; heme exporter protein D [K02196|unclassified]"	"K02196|unclassified"	"K02196"	TRUE	TRUE
+"ccmE; cytochrome c-type biogenesis protein CcmE [K02197|unclassified]"	"K02197|unclassified"	"K02197"	TRUE	TRUE
+"ccmH; cytochrome c-type biogenesis protein CcmH [K02200|unclassified]"	"K02200|unclassified"	"K02200"	TRUE	TRUE
+"COX2; cytochrome c oxidase subunit 2 [K02261|unclassified]"	"K02261|unclassified"	"K02261"	TRUE	TRUE
+"COX6B; cytochrome c oxidase subunit 6b [K02267|unclassified]"	"K02267|unclassified"	"K02267"	TRUE	TRUE
+"dnaA; chromosomal replication initiator protein [K02313|unclassified]"	"K02313|unclassified"	"K02313"	TRUE	TRUE
+"fusA, GFM, EFG; elongation factor G [K02355|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02355|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02355"	TRUE	TRUE
+"fusA, GFM, EFG; elongation factor G [K02355|unclassified]"	"K02355|unclassified"	"K02355"	TRUE	TRUE
+"efp; elongation factor P [K02356|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02356|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02356"	TRUE	TRUE
+"efp; elongation factor P [K02356|unclassified]"	"K02356|unclassified"	"K02356"	TRUE	TRUE
+"tsf, TSFM; elongation factor Ts [K02357|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02357|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02357"	TRUE	TRUE
+"tsf, TSFM; elongation factor Ts [K02357|unclassified]"	"K02357|unclassified"	"K02357"	TRUE	TRUE
+"tuf, TUFM; elongation factor Tu [K02358|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02358|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02358"	TRUE	TRUE
+"tuf, TUFM; elongation factor Tu [K02358|unclassified]"	"K02358|unclassified"	"K02358"	TRUE	TRUE
+"fabZ; 3-hydroxyacyl-[acyl-carrier-protein] dehydratase [EC:4.2.1.59] [K02372|unclassified]"	"K02372|unclassified"	"K02372"	TRUE	TRUE
+"flgB; flagellar basal-body rod protein FlgB [K02387|unclassified]"	"K02387|unclassified"	"K02387"	TRUE	TRUE
+"fliL; flagellar protein FliL [K02415|unclassified]"	"K02415|unclassified"	"K02415"	TRUE	TRUE
+"rlmE, rrmJ, ftsJ; 23S rRNA (uridine2552-2'-O)-methyltransferase [EC:2.1.1.166] [K02427|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02427|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02427"	TRUE	TRUE
+"rlmE, rrmJ, ftsJ; 23S rRNA (uridine2552-2'-O)-methyltransferase [EC:2.1.1.166] [K02427|unclassified]"	"K02427|unclassified"	"K02427"	TRUE	TRUE
+"gcvH, GCSH; glycine cleavage system H protein [K02437|unclassified]"	"K02437|unclassified"	"K02437"	TRUE	TRUE
+"infA; translation initiation factor IF-1 [K02518|g__Cetobacterium.s__Cetobacterium_somerae]"	"K02518|g__Cetobacterium.s__Cetobacterium_somerae"	"K02518"	TRUE	TRUE
+"infA; translation initiation factor IF-1 [K02518|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02518|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02518"	TRUE	TRUE
+"infA; translation initiation factor IF-1 [K02518|unclassified]"	"K02518|unclassified"	"K02518"	TRUE	TRUE
+"infC, MTIF3; translation initiation factor IF-3 [K02520|unclassified]"	"K02520|unclassified"	"K02520"	TRUE	TRUE
+"lpxC; UDP-3-O-[3-hydroxymyristoyl] N-acetylglucosamine deacetylase [EC:3.5.1.108] [K02535|unclassified]"	"K02535|unclassified"	"K02535"	TRUE	TRUE
+"rraA, menG; regulator of ribonuclease activity A [K02553|unclassified]"	"K02553|unclassified"	"K02553"	TRUE	TRUE
+"nusA; transcription termination/antitermination protein NusA [K02600|unclassified]"	"K02600|unclassified"	"K02600"	TRUE	TRUE
+"nusG; transcription termination/antitermination protein NusG [K02601|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02601|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02601"	TRUE	TRUE
+"nusG; transcription termination/antitermination protein NusG [K02601|unclassified]"	"K02601|unclassified"	"K02601"	TRUE	TRUE
+"pilX; type IV pilus assembly protein PilX [K02673|unclassified]"	"K02673|unclassified"	"K02673"	TRUE	TRUE
+"priB; primosomal replication protein N [K02686|unclassified]"	"K02686|unclassified"	"K02686"	TRUE	TRUE
+"psbA; photosystem II P680 reaction center D1 protein [EC:1.10.3.9] [K02703|unclassified]"	"K02703|unclassified"	"K02703"	TRUE	TRUE
+"PSMB6; 20S proteasome subunit beta 1 [EC:3.4.25.1] [K02738|unclassified]"	"K02738|unclassified"	"K02738"	TRUE	TRUE
+"PSMB7; 20S proteasome subunit beta 2 [EC:3.4.25.1] [K02739|unclassified]"	"K02739|unclassified"	"K02739"	TRUE	TRUE
+"PSMB8, LMP7; 20S proteasome subunit beta 8 [EC:3.4.25.1] [K02740|unclassified]"	"K02740|unclassified"	"K02740"	TRUE	TRUE
+"PSMB9, LMP2; 20S proteasome subunit beta 9 [EC:3.4.25.1] [K02741|unclassified]"	"K02741|unclassified"	"K02741"	TRUE	TRUE
+"crr; sugar PTS system EIIA component [EC:2.7.1.-] [K02777|unclassified]"	"K02777|unclassified"	"K02777"	TRUE	TRUE
+"ptsH; phosphocarrier protein HPr [K02784|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02784|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02784"	TRUE	TRUE
+"ptsH; phosphocarrier protein HPr [K02784|unclassified]"	"K02784|unclassified"	"K02784"	TRUE	TRUE
+"nagEb; N-acetylglucosamine PTS system EIIB component [EC:2.7.1.193] [K02803|unclassified]"	"K02803|unclassified"	"K02803"	TRUE	TRUE
+"nagE; N-acetylglucosamine PTS system EIICBA or EIICB component [EC:2.7.1.193] [K02804|unclassified]"	"K02804|unclassified"	"K02804"	TRUE	TRUE
+"ulaB, sgaB; ascorbate PTS system EIIB component [EC:2.7.1.194] [K02822|unclassified]"	"K02822|unclassified"	"K02822"	TRUE	TRUE
+"rbfA; ribosome-binding factor A [K02834|unclassified]"	"K02834|unclassified"	"K02834"	TRUE	TRUE
+"frr, MRRF, RRF; ribosome recycling factor [K02838|unclassified]"	"K02838|unclassified"	"K02838"	TRUE	TRUE
+"rimM; 16S rRNA processing protein RimM [K02860|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02860|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02860"	TRUE	TRUE
+"rimM; 16S rRNA processing protein RimM [K02860|unclassified]"	"K02860|unclassified"	"K02860"	TRUE	TRUE
+"RP-L1, MRPL1, rplA; large subunit ribosomal protein L1 [K02863|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02863|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02863"	TRUE	TRUE
+"RP-L1, MRPL1, rplA; large subunit ribosomal protein L1 [K02863|unclassified]"	"K02863|unclassified"	"K02863"	TRUE	TRUE
+"RP-L10, MRPL10, rplJ; large subunit ribosomal protein L10 [K02864|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02864|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02864"	TRUE	TRUE
+"RP-L10, MRPL10, rplJ; large subunit ribosomal protein L10 [K02864|unclassified]"	"K02864|unclassified"	"K02864"	TRUE	TRUE
+"RP-L10Ae, RPL10A; large subunit ribosomal protein L10Ae [K02865|unclassified]"	"K02865|unclassified"	"K02865"	TRUE	TRUE
+"RP-L10e, RPL10; large subunit ribosomal protein L10e [K02866|unclassified]"	"K02866|unclassified"	"K02866"	TRUE	TRUE
+"RP-L11, MRPL11, rplK; large subunit ribosomal protein L11 [K02867|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02867|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02867"	TRUE	TRUE
+"RP-L11, MRPL11, rplK; large subunit ribosomal protein L11 [K02867|unclassified]"	"K02867|unclassified"	"K02867"	TRUE	TRUE
+"RP-L11e, RPL11; large subunit ribosomal protein L11e [K02868|unclassified]"	"K02868|unclassified"	"K02868"	TRUE	TRUE
+"RP-L13, MRPL13, rplM; large subunit ribosomal protein L13 [K02871|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02871|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02871"	TRUE	TRUE
+"RP-L13, MRPL13, rplM; large subunit ribosomal protein L13 [K02871|unclassified]"	"K02871|unclassified"	"K02871"	TRUE	TRUE
+"RP-L13e, RPL13; large subunit ribosomal protein L13e [K02873|unclassified]"	"K02873|unclassified"	"K02873"	TRUE	TRUE
+"RP-L14, MRPL14, rplN; large subunit ribosomal protein L14 [K02874|g__Cetobacterium.s__Cetobacterium_somerae]"	"K02874|g__Cetobacterium.s__Cetobacterium_somerae"	"K02874"	TRUE	TRUE
+"RP-L14, MRPL14, rplN; large subunit ribosomal protein L14 [K02874|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02874|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02874"	TRUE	TRUE
+"RP-L14, MRPL14, rplN; large subunit ribosomal protein L14 [K02874|unclassified]"	"K02874|unclassified"	"K02874"	TRUE	TRUE
+"RP-L15, MRPL15, rplO; large subunit ribosomal protein L15 [K02876|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02876|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02876"	TRUE	TRUE
+"RP-L15, MRPL15, rplO; large subunit ribosomal protein L15 [K02876|unclassified]"	"K02876|unclassified"	"K02876"	TRUE	TRUE
+"RP-L16, MRPL16, rplP; large subunit ribosomal protein L16 [K02878|g__Cetobacterium.s__Cetobacterium_somerae]"	"K02878|g__Cetobacterium.s__Cetobacterium_somerae"	"K02878"	TRUE	TRUE
+"RP-L16, MRPL16, rplP; large subunit ribosomal protein L16 [K02878|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02878|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02878"	TRUE	TRUE
+"RP-L16, MRPL16, rplP; large subunit ribosomal protein L16 [K02878|unclassified]"	"K02878|unclassified"	"K02878"	TRUE	TRUE
+"RP-L17, MRPL17, rplQ; large subunit ribosomal protein L17 [K02879|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02879|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02879"	TRUE	TRUE
+"RP-L17, MRPL17, rplQ; large subunit ribosomal protein L17 [K02879|unclassified]"	"K02879|unclassified"	"K02879"	TRUE	TRUE
+"RP-L18, MRPL18, rplR; large subunit ribosomal protein L18 [K02881|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02881|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02881"	TRUE	TRUE
+"RP-L18, MRPL18, rplR; large subunit ribosomal protein L18 [K02881|unclassified]"	"K02881|unclassified"	"K02881"	TRUE	TRUE
+"RP-L18Ae, RPL18A; large subunit ribosomal protein L18Ae [K02882|unclassified]"	"K02882|unclassified"	"K02882"	TRUE	TRUE
+"RP-L18e, RPL18; large subunit ribosomal protein L18e [K02883|unclassified]"	"K02883|unclassified"	"K02883"	TRUE	TRUE
+"RP-L19, MRPL19, rplS; large subunit ribosomal protein L19 [K02884|g__Cetobacterium.s__Cetobacterium_somerae]"	"K02884|g__Cetobacterium.s__Cetobacterium_somerae"	"K02884"	TRUE	TRUE
+"RP-L19, MRPL19, rplS; large subunit ribosomal protein L19 [K02884|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02884|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02884"	TRUE	TRUE
+"RP-L19, MRPL19, rplS; large subunit ribosomal protein L19 [K02884|unclassified]"	"K02884|unclassified"	"K02884"	TRUE	TRUE
+"RP-L2, MRPL2, rplB; large subunit ribosomal protein L2 [K02886|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02886|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02886"	TRUE	TRUE
+"RP-L2, MRPL2, rplB; large subunit ribosomal protein L2 [K02886|unclassified]"	"K02886|unclassified"	"K02886"	TRUE	TRUE
+"RP-L20, MRPL20, rplT; large subunit ribosomal protein L20 [K02887|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02887|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02887"	TRUE	TRUE
+"RP-L20, MRPL20, rplT; large subunit ribosomal protein L20 [K02887|unclassified]"	"K02887|unclassified"	"K02887"	TRUE	TRUE
+"RP-L21, MRPL21, rplU; large subunit ribosomal protein L21 [K02888|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02888|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02888"	TRUE	TRUE
+"RP-L21, MRPL21, rplU; large subunit ribosomal protein L21 [K02888|unclassified]"	"K02888|unclassified"	"K02888"	TRUE	TRUE
+"RP-L21e, RPL21; large subunit ribosomal protein L21e [K02889|unclassified]"	"K02889|unclassified"	"K02889"	TRUE	TRUE
+"RP-L22, MRPL22, rplV; large subunit ribosomal protein L22 [K02890|g__Cetobacterium.s__Cetobacterium_somerae]"	"K02890|g__Cetobacterium.s__Cetobacterium_somerae"	"K02890"	TRUE	TRUE
+"RP-L22, MRPL22, rplV; large subunit ribosomal protein L22 [K02890|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02890|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02890"	TRUE	TRUE
+"RP-L22, MRPL22, rplV; large subunit ribosomal protein L22 [K02890|unclassified]"	"K02890|unclassified"	"K02890"	TRUE	TRUE
+"RP-L23, MRPL23, rplW; large subunit ribosomal protein L23 [K02892|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02892|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02892"	TRUE	TRUE
+"RP-L23, MRPL23, rplW; large subunit ribosomal protein L23 [K02892|unclassified]"	"K02892|unclassified"	"K02892"	TRUE	TRUE
+"RP-L23Ae, RPL23A; large subunit ribosomal protein L23Ae [K02893|unclassified]"	"K02893|unclassified"	"K02893"	TRUE	TRUE
+"RP-L23e, RPL23; large subunit ribosomal protein L23e [K02894|unclassified]"	"K02894|unclassified"	"K02894"	TRUE	TRUE
+"RP-L24, MRPL24, rplX; large subunit ribosomal protein L24 [K02895|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02895|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02895"	TRUE	TRUE
+"RP-L24, MRPL24, rplX; large subunit ribosomal protein L24 [K02895|unclassified]"	"K02895|unclassified"	"K02895"	TRUE	TRUE
+"RP-L25, rplY; large subunit ribosomal protein L25 [K02897|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02897|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02897"	TRUE	TRUE
+"RP-L25, rplY; large subunit ribosomal protein L25 [K02897|unclassified]"	"K02897|unclassified"	"K02897"	TRUE	TRUE
+"RP-L26e, RPL26; large subunit ribosomal protein L26e [K02898|unclassified]"	"K02898|unclassified"	"K02898"	TRUE	TRUE
+"RP-L27, MRPL27, rpmA; large subunit ribosomal protein L27 [K02899|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02899|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02899"	TRUE	TRUE
+"RP-L27, MRPL27, rpmA; large subunit ribosomal protein L27 [K02899|unclassified]"	"K02899|unclassified"	"K02899"	TRUE	TRUE
+"RP-L27Ae, RPL27A; large subunit ribosomal protein L27Ae [K02900|unclassified]"	"K02900|unclassified"	"K02900"	TRUE	TRUE
+"RP-L27e, RPL27; large subunit ribosomal protein L27e [K02901|unclassified]"	"K02901|unclassified"	"K02901"	TRUE	TRUE
+"RP-L28, MRPL28, rpmB; large subunit ribosomal protein L28 [K02902|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02902|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02902"	TRUE	TRUE
+"RP-L28, MRPL28, rpmB; large subunit ribosomal protein L28 [K02902|unclassified]"	"K02902|unclassified"	"K02902"	TRUE	TRUE
+"RP-L29, rpmC; large subunit ribosomal protein L29 [K02904|g__Cetobacterium.s__Cetobacterium_somerae]"	"K02904|g__Cetobacterium.s__Cetobacterium_somerae"	"K02904"	TRUE	TRUE
+"RP-L29, rpmC; large subunit ribosomal protein L29 [K02904|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02904|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02904"	TRUE	TRUE
+"RP-L29, rpmC; large subunit ribosomal protein L29 [K02904|unclassified]"	"K02904|unclassified"	"K02904"	TRUE	TRUE
+"RP-L3, MRPL3, rplC; large subunit ribosomal protein L3 [K02906|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02906|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02906"	TRUE	TRUE
+"RP-L3, MRPL3, rplC; large subunit ribosomal protein L3 [K02906|unclassified]"	"K02906|unclassified"	"K02906"	TRUE	TRUE
+"RP-L30, MRPL30, rpmD; large subunit ribosomal protein L30 [K02907|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02907|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02907"	TRUE	TRUE
+"RP-L30, MRPL30, rpmD; large subunit ribosomal protein L30 [K02907|unclassified]"	"K02907|unclassified"	"K02907"	TRUE	TRUE
+"RP-L31, rpmE; large subunit ribosomal protein L31 [K02909|unclassified]"	"K02909|unclassified"	"K02909"	TRUE	TRUE
+"RP-L31e, RPL31; large subunit ribosomal protein L31e [K02910|unclassified]"	"K02910|unclassified"	"K02910"	TRUE	TRUE
+"RP-L32, MRPL32, rpmF; large subunit ribosomal protein L32 [K02911|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02911|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02911"	TRUE	TRUE
+"RP-L32, MRPL32, rpmF; large subunit ribosomal protein L32 [K02911|unclassified]"	"K02911|unclassified"	"K02911"	TRUE	TRUE
+"RP-L32e, RPL32; large subunit ribosomal protein L32e [K02912|unclassified]"	"K02912|unclassified"	"K02912"	TRUE	TRUE
+"RP-L33, MRPL33, rpmG; large subunit ribosomal protein L33 [K02913|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02913|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02913"	TRUE	TRUE
+"RP-L33, MRPL33, rpmG; large subunit ribosomal protein L33 [K02913|unclassified]"	"K02913|unclassified"	"K02913"	TRUE	TRUE
+"RP-L34, MRPL34, rpmH; large subunit ribosomal protein L34 [K02914|unclassified]"	"K02914|unclassified"	"K02914"	TRUE	TRUE
+"RP-L34e, RPL34; large subunit ribosomal protein L34e [K02915|unclassified]"	"K02915|unclassified"	"K02915"	TRUE	TRUE
+"RP-L35, MRPL35, rpmI; large subunit ribosomal protein L35 [K02916|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02916|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02916"	TRUE	TRUE
+"RP-L35, MRPL35, rpmI; large subunit ribosomal protein L35 [K02916|unclassified]"	"K02916|unclassified"	"K02916"	TRUE	TRUE
+"RP-L35e, RPL35; large subunit ribosomal protein L35e [K02918|unclassified]"	"K02918|unclassified"	"K02918"	TRUE	TRUE
+"RP-L37Ae, RPL37A; large subunit ribosomal protein L37Ae [K02921|unclassified]"	"K02921|unclassified"	"K02921"	TRUE	TRUE
+"RP-L37e, RPL37; large subunit ribosomal protein L37e [K02922|unclassified]"	"K02922|unclassified"	"K02922"	TRUE	TRUE
+"RP-L38e, RPL38; large subunit ribosomal protein L38e [K02923|unclassified]"	"K02923|unclassified"	"K02923"	TRUE	TRUE
+"RP-L4, MRPL4, rplD; large subunit ribosomal protein L4 [K02926|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02926|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02926"	TRUE	TRUE
+"RP-L4, MRPL4, rplD; large subunit ribosomal protein L4 [K02926|unclassified]"	"K02926|unclassified"	"K02926"	TRUE	TRUE
+"RP-L40e, RPL40, UBA52; ubiquitin-large subunit ribosomal protein L40e [K02927|unclassified]"	"K02927|unclassified"	"K02927"	TRUE	TRUE
+"RP-L44e, RPL44; large subunit ribosomal protein L44e [K02929|unclassified]"	"K02929|unclassified"	"K02929"	TRUE	TRUE
+"RP-L5, MRPL5, rplE; large subunit ribosomal protein L5 [K02931|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02931|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02931"	TRUE	TRUE
+"RP-L5, MRPL5, rplE; large subunit ribosomal protein L5 [K02931|unclassified]"	"K02931|unclassified"	"K02931"	TRUE	TRUE
+"RP-L6, MRPL6, rplF; large subunit ribosomal protein L6 [K02933|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02933|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02933"	TRUE	TRUE
+"RP-L6, MRPL6, rplF; large subunit ribosomal protein L6 [K02933|unclassified]"	"K02933|unclassified"	"K02933"	TRUE	TRUE
+"RP-L6e, RPL6; large subunit ribosomal protein L6e [K02934|unclassified]"	"K02934|unclassified"	"K02934"	TRUE	TRUE
+"RP-L7, MRPL12, rplL; large subunit ribosomal protein L7/L12 [K02935|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02935|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02935"	TRUE	TRUE
+"RP-L7, MRPL12, rplL; large subunit ribosomal protein L7/L12 [K02935|unclassified]"	"K02935|unclassified"	"K02935"	TRUE	TRUE
+"RP-L7e, RPL7; large subunit ribosomal protein L7e [K02937|unclassified]"	"K02937|unclassified"	"K02937"	TRUE	TRUE
+"RP-L9, MRPL9, rplI; large subunit ribosomal protein L9 [K02939|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02939|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02939"	TRUE	TRUE
+"RP-L9, MRPL9, rplI; large subunit ribosomal protein L9 [K02939|unclassified]"	"K02939|unclassified"	"K02939"	TRUE	TRUE
+"RP-S1, rpsA; small subunit ribosomal protein S1 [K02945|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02945|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02945"	TRUE	TRUE
+"RP-S1, rpsA; small subunit ribosomal protein S1 [K02945|unclassified]"	"K02945|unclassified"	"K02945"	TRUE	TRUE
+"RP-S10, MRPS10, rpsJ; small subunit ribosomal protein S10 [K02946|g__Cetobacterium.s__Cetobacterium_somerae]"	"K02946|g__Cetobacterium.s__Cetobacterium_somerae"	"K02946"	TRUE	TRUE
+"RP-S10, MRPS10, rpsJ; small subunit ribosomal protein S10 [K02946|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02946|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02946"	TRUE	TRUE
+"RP-S10, MRPS10, rpsJ; small subunit ribosomal protein S10 [K02946|unclassified]"	"K02946|unclassified"	"K02946"	TRUE	TRUE
+"RP-S10e, RPS10; small subunit ribosomal protein S10e [K02947|unclassified]"	"K02947|unclassified"	"K02947"	TRUE	TRUE
+"RP-S11, MRPS11, rpsK; small subunit ribosomal protein S11 [K02948|g__Cetobacterium.s__Cetobacterium_somerae]"	"K02948|g__Cetobacterium.s__Cetobacterium_somerae"	"K02948"	TRUE	TRUE
+"RP-S11, MRPS11, rpsK; small subunit ribosomal protein S11 [K02948|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02948|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02948"	TRUE	TRUE
+"RP-S11, MRPS11, rpsK; small subunit ribosomal protein S11 [K02948|unclassified]"	"K02948|unclassified"	"K02948"	TRUE	TRUE
+"RP-S12, MRPS12, rpsL; small subunit ribosomal protein S12 [K02950|g__Cetobacterium.s__Cetobacterium_somerae]"	"K02950|g__Cetobacterium.s__Cetobacterium_somerae"	"K02950"	TRUE	TRUE
+"RP-S12, MRPS12, rpsL; small subunit ribosomal protein S12 [K02950|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02950|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02950"	TRUE	TRUE
+"RP-S12, MRPS12, rpsL; small subunit ribosomal protein S12 [K02950|unclassified]"	"K02950|unclassified"	"K02950"	TRUE	TRUE
+"RP-S12e, RPS12; small subunit ribosomal protein S12e [K02951|unclassified]"	"K02951|unclassified"	"K02951"	TRUE	TRUE
+"RP-S13, rpsM; small subunit ribosomal protein S13 [K02952|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02952|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02952"	TRUE	TRUE
+"RP-S13, rpsM; small subunit ribosomal protein S13 [K02952|unclassified]"	"K02952|unclassified"	"K02952"	TRUE	TRUE
+"RP-S13e, RPS13; small subunit ribosomal protein S13e [K02953|unclassified]"	"K02953|unclassified"	"K02953"	TRUE	TRUE
+"RP-S14, MRPS14, rpsN; small subunit ribosomal protein S14 [K02954|unclassified]"	"K02954|unclassified"	"K02954"	TRUE	TRUE
+"RP-S14e, RPS14; small subunit ribosomal protein S14e [K02955|unclassified]"	"K02955|unclassified"	"K02955"	TRUE	TRUE
+"RP-S15, MRPS15, rpsO; small subunit ribosomal protein S15 [K02956|unclassified]"	"K02956|unclassified"	"K02956"	TRUE	TRUE
+"RP-S15Ae, RPS15A; small subunit ribosomal protein S15Ae [K02957|unclassified]"	"K02957|unclassified"	"K02957"	TRUE	TRUE
+"RP-S16, MRPS16, rpsP; small subunit ribosomal protein S16 [K02959|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02959|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02959"	TRUE	TRUE
+"RP-S16, MRPS16, rpsP; small subunit ribosomal protein S16 [K02959|unclassified]"	"K02959|unclassified"	"K02959"	TRUE	TRUE
+"RP-S17, MRPS17, rpsQ; small subunit ribosomal protein S17 [K02961|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02961|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02961"	TRUE	TRUE
+"RP-S17, MRPS17, rpsQ; small subunit ribosomal protein S17 [K02961|unclassified]"	"K02961|unclassified"	"K02961"	TRUE	TRUE
+"RP-S17e, RPS17; small subunit ribosomal protein S17e [K02962|unclassified]"	"K02962|unclassified"	"K02962"	TRUE	TRUE
+"RP-S18, MRPS18, rpsR; small subunit ribosomal protein S18 [K02963|g__Cetobacterium.s__Cetobacterium_somerae]"	"K02963|g__Cetobacterium.s__Cetobacterium_somerae"	"K02963"	TRUE	TRUE
+"RP-S18, MRPS18, rpsR; small subunit ribosomal protein S18 [K02963|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02963|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02963"	TRUE	TRUE
+"RP-S18, MRPS18, rpsR; small subunit ribosomal protein S18 [K02963|unclassified]"	"K02963|unclassified"	"K02963"	TRUE	TRUE
+"RP-S19, rpsS; small subunit ribosomal protein S19 [K02965|g__Cetobacterium.s__Cetobacterium_somerae]"	"K02965|g__Cetobacterium.s__Cetobacterium_somerae"	"K02965"	TRUE	TRUE
+"RP-S19, rpsS; small subunit ribosomal protein S19 [K02965|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02965|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02965"	TRUE	TRUE
+"RP-S19, rpsS; small subunit ribosomal protein S19 [K02965|unclassified]"	"K02965|unclassified"	"K02965"	TRUE	TRUE
+"RP-S2, MRPS2, rpsB; small subunit ribosomal protein S2 [K02967|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02967|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02967"	TRUE	TRUE
+"RP-S2, MRPS2, rpsB; small subunit ribosomal protein S2 [K02967|unclassified]"	"K02967|unclassified"	"K02967"	TRUE	TRUE
+"RP-S20, rpsT; small subunit ribosomal protein S20 [K02968|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02968|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02968"	TRUE	TRUE
+"RP-S20, rpsT; small subunit ribosomal protein S20 [K02968|unclassified]"	"K02968|unclassified"	"K02968"	TRUE	TRUE
+"RP-S20e, RPS20; small subunit ribosomal protein S20e [K02969|unclassified]"	"K02969|unclassified"	"K02969"	TRUE	TRUE
+"RP-S21, MRPS21, rpsU; small subunit ribosomal protein S21 [K02970|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02970|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02970"	TRUE	TRUE
+"RP-S21, MRPS21, rpsU; small subunit ribosomal protein S21 [K02970|unclassified]"	"K02970|unclassified"	"K02970"	TRUE	TRUE
+"RP-S21e, RPS21; small subunit ribosomal protein S21e [K02971|unclassified]"	"K02971|unclassified"	"K02971"	TRUE	TRUE
+"RP-S23e, RPS23; small subunit ribosomal protein S23e [K02973|unclassified]"	"K02973|unclassified"	"K02973"	TRUE	TRUE
+"RP-S26e, RPS26; small subunit ribosomal protein S26e [K02976|unclassified]"	"K02976|unclassified"	"K02976"	TRUE	TRUE
+"RP-S27Ae, RPS27A, UBA80; ubiquitin-small subunit ribosomal protein S27Ae [K02977|unclassified]"	"K02977|unclassified"	"K02977"	TRUE	TRUE
+"RP-S27e, RPS27; small subunit ribosomal protein S27e [K02978|unclassified]"	"K02978|unclassified"	"K02978"	TRUE	TRUE
+"RP-S28e, RPS28; small subunit ribosomal protein S28e [K02979|unclassified]"	"K02979|unclassified"	"K02979"	TRUE	TRUE
+"RP-S29e, RPS29; small subunit ribosomal protein S29e [K02980|unclassified]"	"K02980|unclassified"	"K02980"	TRUE	TRUE
+"RP-S2e, RPS2; small subunit ribosomal protein S2e [K02981|unclassified]"	"K02981|unclassified"	"K02981"	TRUE	TRUE
+"RP-S3, rpsC; small subunit ribosomal protein S3 [K02982|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02982|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02982"	TRUE	TRUE
+"RP-S3, rpsC; small subunit ribosomal protein S3 [K02982|unclassified]"	"K02982|unclassified"	"K02982"	TRUE	TRUE
+"RP-S30e, RPS30; small subunit ribosomal protein S30e [K02983|unclassified]"	"K02983|unclassified"	"K02983"	TRUE	TRUE
+"RP-S3Ae, RPS3A; small subunit ribosomal protein S3Ae [K02984|unclassified]"	"K02984|unclassified"	"K02984"	TRUE	TRUE
+"RP-S3e, RPS3; small subunit ribosomal protein S3e [K02985|unclassified]"	"K02985|unclassified"	"K02985"	TRUE	TRUE
+"RP-S4, rpsD; small subunit ribosomal protein S4 [K02986|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02986|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02986"	TRUE	TRUE
+"RP-S4, rpsD; small subunit ribosomal protein S4 [K02986|unclassified]"	"K02986|unclassified"	"K02986"	TRUE	TRUE
+"RP-S5, MRPS5, rpsE; small subunit ribosomal protein S5 [K02988|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02988|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02988"	TRUE	TRUE
+"RP-S5, MRPS5, rpsE; small subunit ribosomal protein S5 [K02988|unclassified]"	"K02988|unclassified"	"K02988"	TRUE	TRUE
+"RP-S6, MRPS6, rpsF; small subunit ribosomal protein S6 [K02990|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02990|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02990"	TRUE	TRUE
+"RP-S6, MRPS6, rpsF; small subunit ribosomal protein S6 [K02990|unclassified]"	"K02990|unclassified"	"K02990"	TRUE	TRUE
+"RP-S7, MRPS7, rpsG; small subunit ribosomal protein S7 [K02992|g__Cetobacterium.s__Cetobacterium_somerae]"	"K02992|g__Cetobacterium.s__Cetobacterium_somerae"	"K02992"	TRUE	TRUE
+"RP-S7, MRPS7, rpsG; small subunit ribosomal protein S7 [K02992|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02992|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02992"	TRUE	TRUE
+"RP-S7, MRPS7, rpsG; small subunit ribosomal protein S7 [K02992|unclassified]"	"K02992|unclassified"	"K02992"	TRUE	TRUE
+"RP-S7e, RPS7; small subunit ribosomal protein S7e [K02993|unclassified]"	"K02993|unclassified"	"K02993"	TRUE	TRUE
+"RP-S8, rpsH; small subunit ribosomal protein S8 [K02994|unclassified]"	"K02994|unclassified"	"K02994"	TRUE	TRUE
+"RP-S8e, RPS8; small subunit ribosomal protein S8e [K02995|unclassified]"	"K02995|unclassified"	"K02995"	TRUE	TRUE
+"RP-S9, MRPS9, rpsI; small subunit ribosomal protein S9 [K02996|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K02996|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K02996"	TRUE	TRUE
+"RP-S9, MRPS9, rpsI; small subunit ribosomal protein S9 [K02996|unclassified]"	"K02996|unclassified"	"K02996"	TRUE	TRUE
+"RP-SAe, RPSA; small subunit ribosomal protein SAe [K02998|unclassified]"	"K02998|unclassified"	"K02998"	TRUE	TRUE
+"rpoA; DNA-directed RNA polymerase subunit alpha [EC:2.7.7.6] [K03040|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03040|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03040"	TRUE	TRUE
+"rpoA; DNA-directed RNA polymerase subunit alpha [EC:2.7.7.6] [K03040|unclassified]"	"K03040|unclassified"	"K03040"	TRUE	TRUE
+"rpoB; DNA-directed RNA polymerase subunit beta [EC:2.7.7.6] [K03043|unclassified]"	"K03043|unclassified"	"K03043"	TRUE	TRUE
+"rpoC; DNA-directed RNA polymerase subunit beta' [EC:2.7.7.6] [K03046|unclassified]"	"K03046|unclassified"	"K03046"	TRUE	TRUE
+"rpoZ; DNA-directed RNA polymerase subunit omega [EC:2.7.7.6] [K03060|unclassified]"	"K03060|unclassified"	"K03060"	TRUE	TRUE
+"secB; preprotein translocase subunit SecB [K03071|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03071|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03071"	TRUE	TRUE
+"secB; preprotein translocase subunit SecB [K03071|unclassified]"	"K03071|unclassified"	"K03071"	TRUE	TRUE
+"secE; preprotein translocase subunit SecE [K03073|unclassified]"	"K03073|unclassified"	"K03073"	TRUE	TRUE
+"secG; preprotein translocase subunit SecG [K03075|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03075|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03075"	TRUE	TRUE
+"secY; preprotein translocase subunit SecY [K03076|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03076|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03076"	TRUE	TRUE
+"secY; preprotein translocase subunit SecY [K03076|unclassified]"	"K03076|unclassified"	"K03076"	TRUE	TRUE
+"rpoH; RNA polymerase sigma-32 factor [K03089|unclassified]"	"K03089|unclassified"	"K03089"	TRUE	TRUE
+"lspA; signal peptidase II [EC:3.4.23.36] [K03101|unclassified]"	"K03101|unclassified"	"K03101"	TRUE	TRUE
+"ssb; single-strand DNA-binding protein [K03111|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03111|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03111"	TRUE	TRUE
+"tatA; sec-independent protein translocase protein TatA [K03116|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03116|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03116"	TRUE	TRUE
+"tatA; sec-independent protein translocase protein TatA [K03116|unclassified]"	"K03116|unclassified"	"K03116"	TRUE	TRUE
+"tatB; sec-independent protein translocase protein TatB [K03117|unclassified]"	"K03117|unclassified"	"K03117"	TRUE	TRUE
+"yajC; preprotein translocase subunit YajC [K03210|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03210|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03210"	TRUE	TRUE
+"yajC; preprotein translocase subunit YajC [K03210|unclassified]"	"K03210|unclassified"	"K03210"	TRUE	TRUE
+"EEF1A; elongation factor 1-alpha [K03231|unclassified]"	"K03231|unclassified"	"K03231"	TRUE	TRUE
+"HSPA1s; heat shock 70kDa protein 1/2/6/8 [K03283|unclassified]"	"K03283|unclassified"	"K03283"	TRUE	TRUE
+"corA; magnesium transporter [K03284|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03284|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03284"	TRUE	TRUE
+"gltS; glutamate:Na+ symporter, ESS family [K03312|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03312|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03312"	TRUE	TRUE
+"TC.CNT; concentrative nucleoside transporter, CNT family [K03317|unclassified]"	"K03317|unclassified"	"K03317"	TRUE	TRUE
+"nrfA; nitrite reductase (cytochrome c-552) [EC:1.7.2.2] [K03385|unclassified]"	"K03385|unclassified"	"K03385"	TRUE	TRUE
+"PRDX2_4, ahpC; peroxiredoxin 2/4 [EC:1.11.1.24] [K03386|unclassified]"	"K03386|unclassified"	"K03386"	TRUE	TRUE
+"cheW; purine-binding chemotaxis protein CheW [K03408|unclassified]"	"K03408|unclassified"	"K03408"	TRUE	TRUE
+"hupB; DNA-binding protein HU-beta [K03530|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03530|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03530"	TRUE	TRUE
+"hupB; DNA-binding protein HU-beta [K03530|unclassified]"	"K03530|unclassified"	"K03530"	TRUE	TRUE
+"rnpA; ribonuclease P protein component [EC:3.1.26.5] [K03536|unclassified]"	"K03536|unclassified"	"K03536"	TRUE	TRUE
+"clpX, CLPX; ATP-dependent Clp protease ATP-binding subunit ClpX [K03544|unclassified]"	"K03544|unclassified"	"K03544"	TRUE	TRUE
+"tig; trigger factor [K03545|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03545|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03545"	TRUE	TRUE
+"tig; trigger factor [K03545|unclassified]"	"K03545|unclassified"	"K03545"	TRUE	TRUE
+"fis; Fis family transcriptional regulator, factor for inversion stimulation protein [K03557|unclassified]"	"K03557|unclassified"	"K03557"	TRUE	TRUE
+"exbD; biopolymer transport protein ExbD [K03559|unclassified]"	"K03559|unclassified"	"K03559"	TRUE	TRUE
+"exbB; biopolymer transport protein ExbB [K03561|unclassified]"	"K03561|unclassified"	"K03561"	TRUE	TRUE
+"tolQ; biopolymer transport protein TolQ [K03562|unclassified]"	"K03562|unclassified"	"K03562"	TRUE	TRUE
+"csrA; carbon storage regulator [K03563|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03563|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03563"	TRUE	TRUE
+"csrA; carbon storage regulator [K03563|unclassified]"	"K03563|unclassified"	"K03563"	TRUE	TRUE
+"bfr; bacterioferritin [EC:1.16.3.1] [K03594|unclassified]"	"K03594|unclassified"	"K03594"	TRUE	TRUE
+"rseA; sigma-E factor negative regulatory protein RseA [K03597|unclassified]"	"K03597|unclassified"	"K03597"	TRUE	TRUE
+"sspA, mglA; stringent starvation protein A [K03599|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03599|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03599"	TRUE	TRUE
+"sspA, mglA; stringent starvation protein A [K03599|unclassified]"	"K03599|unclassified"	"K03599"	TRUE	TRUE
+"sspB; stringent starvation protein B [K03600|unclassified]"	"K03600|unclassified"	"K03600"	TRUE	TRUE
+"proQ; ProP effector [K03607|unclassified]"	"K03607|unclassified"	"K03607"	TRUE	TRUE
+"minE; cell division topological specificity factor [K03608|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03608|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03608"	TRUE	TRUE
+"greA; transcription elongation factor GreA [K03624|unclassified]"	"K03624|unclassified"	"K03624"	TRUE	TRUE
+"nusB; transcription antitermination protein NusB [K03625|unclassified]"	"K03625|unclassified"	"K03625"	TRUE	TRUE
+"rho; transcription termination factor Rho [K03628|unclassified]"	"K03628|unclassified"	"K03628"	TRUE	TRUE
+"radC; DNA repair protein RadC [K03630|unclassified]"	"K03630|unclassified"	"K03630"	TRUE	TRUE
+"pal; peptidoglycan-associated lipoprotein [K03640|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03640|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03640"	TRUE	TRUE
+"pal; peptidoglycan-associated lipoprotein [K03640|unclassified]"	"K03640|unclassified"	"K03640"	TRUE	TRUE
+"hflX; GTPase [K03665|unclassified]"	"K03665|unclassified"	"K03665"	TRUE	TRUE
+"hfq; host factor-I protein [K03666|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03666|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03666"	TRUE	TRUE
+"hfq; host factor-I protein [K03666|unclassified]"	"K03666|unclassified"	"K03666"	TRUE	TRUE
+"trxA; thioredoxin 1 [K03671|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03671|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03671"	TRUE	TRUE
+"grxA; glutaredoxin 1 [K03674|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03674|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03674"	TRUE	TRUE
+"cspA; cold shock protein [K03704|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03704|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03704"	TRUE	TRUE
+"cspA; cold shock protein [K03704|unclassified]"	"K03704|unclassified"	"K03704"	TRUE	TRUE
+"fur, zur, furB; Fur family transcriptional regulator, ferric uptake regulator [K03711|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03711|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03711"	TRUE	TRUE
+"fur, zur, furB; Fur family transcriptional regulator, ferric uptake regulator [K03711|unclassified]"	"K03711|unclassified"	"K03711"	TRUE	TRUE
+"lrp; Lrp/AsnC family transcriptional regulator, leucine-responsive regulatory protein [K03719|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03719|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03719"	TRUE	TRUE
+"lrp; Lrp/AsnC family transcriptional regulator, leucine-responsive regulatory protein [K03719|unclassified]"	"K03719|unclassified"	"K03719"	TRUE	TRUE
+"hns; DNA-binding protein H-NS [K03746|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03746|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03746"	TRUE	TRUE
+"hns; DNA-binding protein H-NS [K03746|unclassified]"	"K03746|unclassified"	"K03746"	TRUE	TRUE
+"PPIB, ppiB; peptidyl-prolyl cis-trans isomerase B (cyclophilin B) [EC:5.2.1.8] [K03768|unclassified]"	"K03768|unclassified"	"K03768"	TRUE	TRUE
+"fkpA; FKBP-type peptidyl-prolyl cis-trans isomerase FkpA [EC:5.2.1.8] [K03772|unclassified]"	"K03772|unclassified"	"K03772"	TRUE	TRUE
+"fklB; FKBP-type peptidyl-prolyl cis-trans isomerase FklB [EC:5.2.1.8] [K03773|unclassified]"	"K03773|unclassified"	"K03773"	TRUE	TRUE
+"deoD; purine-nucleoside phosphorylase [EC:2.4.2.1] [K03784|unclassified]"	"K03784|unclassified"	"K03784"	TRUE	TRUE
+"htpX; heat shock protein HtpX [EC:3.4.24.-] [K03799|unclassified]"	"K03799|unclassified"	"K03799"	TRUE	TRUE
+"rmf; ribosome modulation factor [K03812|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K03812|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K03812"	TRUE	TRUE
+"rmf; ribosome modulation factor [K03812|unclassified]"	"K03812|unclassified"	"K03812"	TRUE	TRUE
+"fldA, nifF, isiB; flavodoxin I [K03839|unclassified]"	"K03839|unclassified"	"K03839"	TRUE	TRUE
+"FGB; fibrinogen beta chain [K03904|unclassified]"	"K03904|unclassified"	"K03904"	TRUE	TRUE
+"FGG; fibrinogen gamma chain [K03905|unclassified]"	"K03905|unclassified"	"K03905"	TRUE	TRUE
+"cutA; periplasmic divalent cation tolerance protein [K03926|unclassified]"	"K03926|unclassified"	"K03926"	TRUE	TRUE
+"pspB; phage shock protein B [K03970|unclassified]"	"K03970|unclassified"	"K03970"	TRUE	TRUE
+"obgE, cgtA, MTG2; GTPase [EC:3.6.5.-] [K03979|unclassified]"	"K03979|unclassified"	"K03979"	TRUE	TRUE
+"C9; complement component 9 [K04000|unclassified]"	"K04000|unclassified"	"K04000"	TRUE	TRUE
+"nrfD; protein NrfD [K04015|unclassified]"	"K04015|unclassified"	"K04015"	TRUE	TRUE
+"dnaK, HSPA9; molecular chaperone DnaK [K04043|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K04043|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K04043"	TRUE	TRUE
+"dnaK, HSPA9; molecular chaperone DnaK [K04043|unclassified]"	"K04043|unclassified"	"K04043"	TRUE	TRUE
+"dps; starvation-inducible DNA-binding protein [K04047|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K04047|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K04047"	TRUE	TRUE
+"dps; starvation-inducible DNA-binding protein [K04047|unclassified]"	"K04047|unclassified"	"K04047"	TRUE	TRUE
+"adhE; acetaldehyde dehydrogenase / alcohol dehydrogenase [EC:1.2.1.10 1.1.1.1] [K04072|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K04072|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K04072"	TRUE	TRUE
+"groES, HSPE1; chaperonin GroES [K04078|unclassified]"	"K04078|unclassified"	"K04078"	TRUE	TRUE
+"RAP1A; Ras-related protein Rap-1A [K04353|unclassified]"	"K04353|unclassified"	"K04353"	TRUE	TRUE
+"RAC1; Ras-related C3 botulinum toxin substrate 1 [K04392|unclassified]"	"K04392|unclassified"	"K04392"	TRUE	TRUE
+"iscU, nifU; nitrogen fixation protein NifU and related proteins [K04488|unclassified]"	"K04488|unclassified"	"K04488"	TRUE	TRUE
+"RHOA; Ras homolog gene family, member A [K04513|unclassified]"	"K04513|unclassified"	"K04513"	TRUE	TRUE
+"SERPINA; serpin A [K04525|unclassified]"	"K04525|unclassified"	"K04525"	TRUE	TRUE
+"UBB; ubiquitin B [K04551|unclassified]"	"K04551|unclassified"	"K04551"	TRUE	TRUE
+"SOD2; superoxide dismutase, Fe-Mn family [EC:1.15.1.1] [K04564|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K04564|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K04564"	TRUE	TRUE
+"SOD2; superoxide dismutase, Fe-Mn family [EC:1.15.1.1] [K04564|unclassified]"	"K04564|unclassified"	"K04564"	TRUE	TRUE
+"SOD1; superoxide dismutase, Cu-Zn family [EC:1.15.1.1] [K04565|unclassified]"	"K04565|unclassified"	"K04565"	TRUE	TRUE
+"fdx; ferredoxin, 2Fe-2S [K04755|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K04755|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K04755"	TRUE	TRUE
+"fdx; ferredoxin, 2Fe-2S [K04755|unclassified]"	"K04755|unclassified"	"K04755"	TRUE	TRUE
+"ihfA, himA; integration host factor subunit alpha [K04764|unclassified]"	"K04764|unclassified"	"K04764"	TRUE	TRUE
+"GHRL; ghrelin [K05254|unclassified]"	"K05254|unclassified"	"K05254"	TRUE	TRUE
+"GPX4; phospholipid-hydroperoxide glutathione peroxidase [EC:1.11.1.12] [K05361|unclassified]"	"K05361|unclassified"	"K05361"	TRUE	TRUE
+"tsx; nucleoside-specific channel-forming protein [K05517|unclassified]"	"K05517|unclassified"	"K05517"	TRUE	TRUE
+"ACTB_G1; actin beta/gamma 1 [K05692|unclassified]"	"K05692|unclassified"	"K05692"	TRUE	TRUE
+"C3ORF10, HSPC300; chromosome 3 open reading frame 10 [K05752|unclassified]"	"K05752|unclassified"	"K05752"	TRUE	TRUE
+"TMSB4; thymosin, beta 4 [K05764|unclassified]"	"K05764|unclassified"	"K05764"	TRUE	TRUE
+"hupA; DNA-binding protein HU-alpha [K05787|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K05787|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K05787"	TRUE	TRUE
+"hupA; DNA-binding protein HU-alpha [K05787|unclassified]"	"K05787|unclassified"	"K05787"	TRUE	TRUE
+"ihfB, himD; integration host factor subunit beta [K05788|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K05788|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K05788"	TRUE	TRUE
+"ihfB, himD; integration host factor subunit beta [K05788|unclassified]"	"K05788|unclassified"	"K05788"	TRUE	TRUE
+"nlpI; lipoprotein NlpI [K05803|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K05803|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K05803"	TRUE	TRUE
+"nlpI; lipoprotein NlpI [K05803|unclassified]"	"K05803|unclassified"	"K05803"	TRUE	TRUE
+"yhbH; putative sigma-54 modulation protein [K05808|unclassified]"	"K05808|unclassified"	"K05808"	TRUE	TRUE
+"raiA; ribosome-associated inhibitor A [K05809|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K05809|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K05809"	TRUE	TRUE
+"raiA; ribosome-associated inhibitor A [K05809|unclassified]"	"K05809|unclassified"	"K05809"	TRUE	TRUE
+"CCNB1; G2/mitotic-specific cyclin-B1 [K05868|unclassified]"	"K05868|unclassified"	"K05868"	TRUE	TRUE
+"lpp; murein lipoprotein [K06078|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K06078|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K06078"	TRUE	TRUE
+"lpp; murein lipoprotein [K06078|unclassified]"	"K06078|unclassified"	"K06078"	TRUE	TRUE
+"VAPA; vesicle-associated membrane protein-associated protein A [K06096|unclassified]"	"K06096|unclassified"	"K06096"	TRUE	TRUE
+"hlpA, ompH; outer membrane protein [K06142|unclassified]"	"K06142|unclassified"	"K06142"	TRUE	TRUE
+"NCSTN; nicastrin [K06171|unclassified]"	"K06171|unclassified"	"K06171"	TRUE	TRUE
+"bamE, smpA; outer membrane protein assembly factor BamE [K06186|unclassified]"	"K06186|unclassified"	"K06186"	TRUE	TRUE
+"apaG; ApaG protein [K06195|unclassified]"	"K06195|unclassified"	"K06195"	TRUE	TRUE
+"cyaY; CyaY protein [K06202|unclassified]"	"K06202|unclassified"	"K06202"	TRUE	TRUE
+"dksA; DnaK suppressor protein [K06204|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K06204|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K06204"	TRUE	TRUE
+"dksA; DnaK suppressor protein [K06204|unclassified]"	"K06204|unclassified"	"K06204"	TRUE	TRUE
+"focA; formate transporter [K06212|unclassified]"	"K06212|unclassified"	"K06212"	TRUE	TRUE
+"PPP3R, CNB; serine/threonine-protein phosphatase 2B regulatory subunit [K06268|unclassified]"	"K06268|unclassified"	"K06268"	TRUE	TRUE
+"spoVG; stage V sporulation protein G [K06412|unclassified]"	"K06412|unclassified"	"K06412"	TRUE	TRUE
+"CD3Z, CD247; CD3Z antigen, zeta polypeptide [K06453|unclassified]"	"K06453|unclassified"	"K06453"	TRUE	TRUE
+"CD8A; T-cell surface glycoprotein CD8 alpha chain [K06458|unclassified]"	"K06458|unclassified"	"K06458"	TRUE	TRUE
+"CD63, MLA1, TSPAN30; CD63 antigen [K06497|unclassified]"	"K06497|unclassified"	"K06497"	TRUE	TRUE
+"CD74, DHLAG; CD74 antigen [K06505|unclassified]"	"K06505|unclassified"	"K06505"	TRUE	TRUE
+"UBE2D, UBC4, UBC5; ubiquitin-conjugating enzyme E2 D [EC:2.3.2.23] [K06689|unclassified]"	"K06689|unclassified"	"K06689"	TRUE	TRUE
+"MHC1; MHC class I antigen [K06751|unclassified]"	"K06751|unclassified"	"K06751"	TRUE	TRUE
+"MHC2; MHC class II antigen [K06752|unclassified]"	"K06752|unclassified"	"K06752"	TRUE	TRUE
+"PLXND; plexin D [K06822|unclassified]"	"K06822|unclassified"	"K06822"	TRUE	TRUE
+"grcA; autonomous glycyl radical cofactor [K06866|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K06866|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K06866"	TRUE	TRUE
+"grcA; autonomous glycyl radical cofactor [K06866|unclassified]"	"K06866|unclassified"	"K06866"	TRUE	TRUE
+"K06940; uncharacterized protein [K06940|unclassified]"	"K06940|unclassified"	"K06940"	TRUE	TRUE
+"K06960; uncharacterized protein [K06960|unclassified]"	"K06960|unclassified"	"K06960"	TRUE	TRUE
+"K06975; uncharacterized protein [K06975|unclassified]"	"K06975|unclassified"	"K06975"	TRUE	TRUE
+"K07040; uncharacterized protein [K07040|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K07040|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K07040"	TRUE	TRUE
+"K07040; uncharacterized protein [K07040|unclassified]"	"K07040|unclassified"	"K07040"	TRUE	TRUE
+"K07070; uncharacterized protein [K07070|unclassified]"	"K07070|unclassified"	"K07070"	TRUE	TRUE
+"K07080; uncharacterized protein [K07080|unclassified]"	"K07080|unclassified"	"K07080"	TRUE	TRUE
+"ybgC; acyl-CoA thioester hydrolase [EC:3.1.2.-] [K07107|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K07107|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K07107"	TRUE	TRUE
+"PRKAB; 5'-AMP-activated protein kinase, regulatory beta subunit [K07199|unclassified]"	"K07199|unclassified"	"K07199"	TRUE	TRUE
+"pcoB, copB; copper resistance protein B [K07233|unclassified]"	"K07233|unclassified"	"K07233"	TRUE	TRUE
+"ompW; outer membrane protein [K07275|unclassified]"	"K07275|unclassified"	"K07275"	TRUE	TRUE
+"bmpA, bmpB, tmpC; basic membrane protein A and related proteins [K07335|unclassified]"	"K07335|unclassified"	"K07335"	TRUE	TRUE
+"K07337; penicillin-binding protein activator [K07337|unclassified]"	"K07337|unclassified"	"K07337"	TRUE	TRUE
+"SEC61G, SSS1, secE; protein transport protein SEC61 subunit gamma and related proteins [K07342|unclassified]"	"K07342|unclassified"	"K07342"	TRUE	TRUE
+"TUBA; tubulin alpha [K07374|unclassified]"	"K07374|unclassified"	"K07374"	TRUE	TRUE
+"TUBB; tubulin beta [K07375|unclassified]"	"K07375|unclassified"	"K07375"	TRUE	TRUE
+"grxD, GLRX5; monothiol glutaredoxin [K07390|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K07390|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K07390"	TRUE	TRUE
+"grxD, GLRX5; monothiol glutaredoxin [K07390|unclassified]"	"K07390|unclassified"	"K07390"	TRUE	TRUE
+"nfuA; Fe/S biogenesis protein NfuA [K07400|unclassified]"	"K07400|unclassified"	"K07400"	TRUE	TRUE
+"yhbY; RNA-binding protein [K07574|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K07574|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K07574"	TRUE	TRUE
+"yhbY; RNA-binding protein [K07574|unclassified]"	"K07574|unclassified"	"K07574"	TRUE	TRUE
+"uvrY, gacA, varA; two-component system, NarL family, invasion response regulator UvrY [K07689|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K07689|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K07689"	TRUE	TRUE
+"arcA; two-component system, OmpR family, aerobic respiration control protein ArcA [K07773|unclassified]"	"K07773|unclassified"	"K07773"	TRUE	TRUE
+"dcuA; anaerobic C4-dicarboxylate transporter DcuA [K07791|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K07791|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K07791"	TRUE	TRUE
+"KRAS, KRAS2; GTPase KRas [K07827|unclassified]"	"K07827|unclassified"	"K07827"	TRUE	TRUE
+"RALA; Ras-related protein Ral-A [K07834|unclassified]"	"K07834|unclassified"	"K07834"	TRUE	TRUE
+"RHOC; Ras homolog gene family, member C [K07857|unclassified]"	"K07857|unclassified"	"K07857"	TRUE	TRUE
+"RAB2A; Ras-related protein Rab-2A [K07877|unclassified]"	"K07877|unclassified"	"K07877"	TRUE	TRUE
+"ARF1_2; ADP-ribosylation factor 1/2 [K07937|unclassified]"	"K07937|unclassified"	"K07937"	TRUE	TRUE
+"ARF3; ADP-ribosylation factor 3 [K07938|unclassified]"	"K07938|unclassified"	"K07938"	TRUE	TRUE
+"ARF4; ADP-ribosylation factor 4 [K07939|unclassified]"	"K07939|unclassified"	"K07939"	TRUE	TRUE
+"ARF6; ADP-ribosylation factor 6 [K07941|unclassified]"	"K07941|unclassified"	"K07941"	TRUE	TRUE
+"B2M; beta-2-microglobulin [K08055|unclassified]"	"K08055|unclassified"	"K08055"	TRUE	TRUE
+"mltD, dniR; membrane-bound lytic murein transglycosylase D [EC:4.2.2.-] [K08307|unclassified]"	"K08307|unclassified"	"K08307"	TRUE	TRUE
+"nudH; putative (di)nucleoside polyphosphate hydrolase [EC:3.6.1.-] [K08311|unclassified]"	"K08311|unclassified"	"K08311"	TRUE	TRUE
+"ptsO, npr; phosphocarrier protein NPr [K08485|unclassified]"	"K08485|unclassified"	"K08485"	TRUE	TRUE
+"FABP6; fatty acid-binding protein 6, ileal (gastrotropin) [K08755|unclassified]"	"K08755|unclassified"	"K08755"	TRUE	TRUE
+"UBC; ubiquitin C [K08770|unclassified]"	"K08770|unclassified"	"K08770"	TRUE	TRUE
+"CPA1; carboxypeptidase A1 [EC:3.4.17.1] [K08779|unclassified]"	"K08779|unclassified"	"K08779"	TRUE	TRUE
+"K09117; uncharacterized protein [K09117|unclassified]"	"K09117|unclassified"	"K09117"	TRUE	TRUE
+"K09131; uncharacterized protein [K09131|unclassified]"	"K09131|unclassified"	"K09131"	TRUE	TRUE
+"cptB; antitoxin CptB [K09159|unclassified]"	"K09159|unclassified"	"K09159"	TRUE	TRUE
+"K09161; uncharacterized protein [K09161|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K09161|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K09161"	TRUE	TRUE
+"POU2F, OTF; POU domain transcription factor, class 2 [K09364|unclassified]"	"K09364|unclassified"	"K09364"	TRUE	TRUE
+"fabF, OXSM, CEM1; 3-oxoacyl-[acyl-carrier-protein] synthase II [EC:2.3.1.179] [K09458|unclassified]"	"K09458|unclassified"	"K09458"	TRUE	TRUE
+"PPIF; peptidyl-prolyl isomerase F (cyclophilin D) [EC:5.2.1.8] [K09565|unclassified]"	"K09565|unclassified"	"K09565"	TRUE	TRUE
+"FKBP3; FK506-binding protein 3 [EC:5.2.1.8] [K09570|unclassified]"	"K09570|unclassified"	"K09570"	TRUE	TRUE
+"TXNDC10; thioredoxin domain-containing protein 10 [EC:5.3.4.1] [K09585|unclassified]"	"K09585|unclassified"	"K09585"	TRUE	TRUE
+"SPPL2A; signal peptide peptidase-like 2A [EC:3.4.23.-] [K09596|unclassified]"	"K09596|unclassified"	"K09596"	TRUE	TRUE
+"CTRL; chymotrypsin-like protease [EC:3.4.21.-] [K09632|unclassified]"	"K09632|unclassified"	"K09632"	TRUE	TRUE
+"ybeB; ribosome-associated protein [K09710|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K09710|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K09710"	TRUE	TRUE
+"yajQ; cyclic-di-GMP-binding protein [K09767|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K09767|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K09767"	TRUE	TRUE
+"yajQ; cyclic-di-GMP-binding protein [K09767|unclassified]"	"K09767|unclassified"	"K09767"	TRUE	TRUE
+"K09780; uncharacterized protein [K09780|unclassified]"	"K09780|unclassified"	"K09780"	TRUE	TRUE
+"K09791; uncharacterized protein [K09791|unclassified]"	"K09791|unclassified"	"K09791"	TRUE	TRUE
+"K09802; uncharacterized protein [K09802|unclassified]"	"K09802|unclassified"	"K09802"	TRUE	TRUE
+"K09806; uncharacterized protein [K09806|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K09806|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K09806"	TRUE	TRUE
+"K09806; uncharacterized protein [K09806|unclassified]"	"K09806|unclassified"	"K09806"	TRUE	TRUE
+"zapA; cell division protein ZapA [K09888|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K09888|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K09888"	TRUE	TRUE
+"zapA; cell division protein ZapA [K09888|unclassified]"	"K09888|unclassified"	"K09888"	TRUE	TRUE
+"yjgA; ribosome-associated protein [K09889|unclassified]"	"K09889|unclassified"	"K09889"	TRUE	TRUE
+"zapB; cell division protein ZapB [K09892|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K09892|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K09892"	TRUE	TRUE
+"zapB; cell division protein ZapB [K09892|unclassified]"	"K09892|unclassified"	"K09892"	TRUE	TRUE
+"K09894; uncharacterized protein [K09894|unclassified]"	"K09894|unclassified"	"K09894"	TRUE	TRUE
+"K09896; uncharacterized protein [K09896|unclassified]"	"K09896|unclassified"	"K09896"	TRUE	TRUE
+"K09898; uncharacterized protein [K09898|unclassified]"	"K09898|unclassified"	"K09898"	TRUE	TRUE
+"E3.5.1.135; N4-acetylcytidine amidohydrolase [EC:3.5.1.135] [K09900|unclassified]"	"K09900|unclassified"	"K09900"	TRUE	TRUE
+"K09904; uncharacterized protein [K09904|unclassified]"	"K09904|unclassified"	"K09904"	TRUE	TRUE
+"K09920; uncharacterized protein [K09920|unclassified]"	"K09920|unclassified"	"K09920"	TRUE	TRUE
+"K09923; uncharacterized protein [K09923|unclassified]"	"K09923|unclassified"	"K09923"	TRUE	TRUE
+"artI; arginine transport system substrate-binding protein [K09997|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K09997|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K09997"	TRUE	TRUE
+"aotJ; arginine/ornithine transport system substrate-binding protein [K10022|unclassified]"	"K10022|unclassified"	"K10022"	TRUE	TRUE
+"ACTF; actin, other eukaryote [K10355|unclassified]"	"K10355|unclassified"	"K10355"	TRUE	TRUE
+"DYNLL; dynein light chain LC8-type [K10418|unclassified]"	"K10418|unclassified"	"K10418"	TRUE	TRUE
+"DCTN6; dynactin 6 [K10428|unclassified]"	"K10428|unclassified"	"K10428"	TRUE	TRUE
+"ZBTB45; zinc finger and BTB domain-containing protein 45 [K10516|unclassified]"	"K10516|unclassified"	"K10516"	TRUE	TRUE
+"mutM, fpg; formamidopyrimidine-DNA glycosylase [EC:3.2.2.23 4.2.99.18] [K10563|unclassified]"	"K10563|unclassified"	"K10563"	TRUE	TRUE
+"crp; CRP/FNR family transcriptional regulator, cyclic AMP receptor protein [K10914|unclassified]"	"K10914|unclassified"	"K10914"	TRUE	TRUE
+"mshA; MSHA pilin protein MshA [K10924|unclassified]"	"K10924|unclassified"	"K10924"	TRUE	TRUE
+"mshB; MSHA pilin protein MshB [K10925|unclassified]"	"K10925|unclassified"	"K10925"	TRUE	TRUE
+"SEC61A; protein transport protein SEC61 subunit alpha [K10956|unclassified]"	"K10956|unclassified"	"K10956"	TRUE	TRUE
+"potF; putrescine transport system substrate-binding protein [K11073|unclassified]"	"K11073|unclassified"	"K11073"	TRUE	TRUE
+"H2A; histone H2A [K11251|unclassified]"	"K11251|unclassified"	"K11251"	TRUE	TRUE
+"H2B; histone H2B [K11252|unclassified]"	"K11252|unclassified"	"K11252"	TRUE	TRUE
+"H3; histone H3 [K11253|unclassified]"	"K11253|unclassified"	"K11253"	TRUE	TRUE
+"H4; histone H4 [K11254|unclassified]"	"K11254|unclassified"	"K11254"	TRUE	TRUE
+"NPM3; nucleophosmin 3 [K11278|unclassified]"	"K11278|unclassified"	"K11278"	TRUE	TRUE
+"NDUFA13; NADH dehydrogenase (ubiquinone) 1 alpha subcomplex subunit 13 [K11353|unclassified]"	"K11353|unclassified"	"K11353"	TRUE	TRUE
+"AP2M1; AP-2 complex subunit mu-1 [K11826|unclassified]"	"K11826|unclassified"	"K11826"	TRUE	TRUE
+"crl; sigma factor-binding protein Crl [K11926|unclassified]"	"K11926|unclassified"	"K11926"	TRUE	TRUE
+"dinI; DNA-damage-inducible protein I [K12149|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K12149|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K12149"	TRUE	TRUE
+"COPS6, CSN6; COP9 signalosome complex subunit 6 [K12179|unclassified]"	"K12179|unclassified"	"K12179"	TRUE	TRUE
+"FAM125; ESCRT-I complex subunit MVB12 [K12186|unclassified]"	"K12186|unclassified"	"K12186"	TRUE	TRUE
+"MSFD7, SLC49A4; MFS transporter, FLVCR family, MFS-domain-containing protein 7 [K12306|unclassified]"	"K12306|unclassified"	"K12306"	TRUE	TRUE
+"MYL4; myosin light chain 4 [K12750|unclassified]"	"K12750|unclassified"	"K12750"	TRUE	TRUE
+"SF3A2, SAP62; splicing factor 3A subunit 2 [K12826|unclassified]"	"K12826|unclassified"	"K12826"	TRUE	TRUE
+"PHF5A; PHD finger-like domain-containing protein 5A [K12834|unclassified]"	"K12834|unclassified"	"K12834"	TRUE	TRUE
+"ZNF830, CCDC16; zinc finger protein 830 [K13104|unclassified]"	"K13104|unclassified"	"K13104"	TRUE	TRUE
+"UBL5, HUB1; ubiquitin-like protein 5 [K13113|unclassified]"	"K13113|unclassified"	"K13113"	TRUE	TRUE
+"WBP4, FBP21; WW domain-binding protein 4 [K13220|unclassified]"	"K13220|unclassified"	"K13220"	TRUE	TRUE
+"SSR1; translocon-associated protein subunit alpha [K13249|unclassified]"	"K13249|unclassified"	"K13249"	TRUE	TRUE
+"FXYD3, MAT8; FXYD domain-containing ion transport regulator 3 [K13361|unclassified]"	"K13361|unclassified"	"K13361"	TRUE	TRUE
+"iscA; iron-sulfur cluster assembly protein [K13628|unclassified]"	"K13628|unclassified"	"K13628"	TRUE	TRUE
+"HBE; hemoglobin subunit epsilon [K13825|unclassified]"	"K13825|unclassified"	"K13825"	TRUE	TRUE
+"SLC15A1, PEPT1; solute carrier family 15 (oligopeptide transporter), member 1 [K14206|unclassified]"	"K14206|unclassified"	"K14206"	TRUE	TRUE
+"XPOT; exportin-T [K14288|unclassified]"	"K14288|unclassified"	"K14288"	TRUE	TRUE
+"UTP18; U3 small nucleolar RNA-associated protein 18 [K14553|unclassified]"	"K14553|unclassified"	"K14553"	TRUE	TRUE
+"RBP2, CRBP2; retinol binding protein 2 [K14622|unclassified]"	"K14622|unclassified"	"K14622"	TRUE	TRUE
+"NTAN1; protein N-terminal asparagine amidohydrolase [EC:3.5.1.121] [K14662|unclassified]"	"K14662|unclassified"	"K14662"	TRUE	TRUE
+"RACK1; guanine nucleotide-binding protein subunit beta-2-like 1 protein [K14753|unclassified]"	"K14753|unclassified"	"K14753"	TRUE	TRUE
+"ybcJ; ribosome-associated protein [K14761|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K14761|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K14761"	TRUE	TRUE
+"HOMER; homer [K15010|unclassified]"	"K15010|unclassified"	"K15010"	TRUE	TRUE
+"SLC25A45_47; solute carrier family 25, member 45/47 [K15123|unclassified]"	"K15123|unclassified"	"K15123"	TRUE	TRUE
+"TSEN2; tRNA-splicing endonuclease subunit Sen2 [EC:4.6.1.16] [K15322|unclassified]"	"K15322|unclassified"	"K15322"	TRUE	TRUE
+"STRA13, CENPX, MHF2; centromere protein X [K15360|unclassified]"	"K15360|unclassified"	"K15360"	TRUE	TRUE
+"gpmI; 2,3-bisphosphoglycerate-independent phosphoglycerate mutase [EC:5.4.2.12] [K15633|unclassified]"	"K15633|unclassified"	"K15633"	TRUE	TRUE
+"erpA; iron-sulfur cluster insertion protein [K15724|unclassified]"	"K15724|unclassified"	"K15724"	TRUE	TRUE
+"RGS; regulator of G-protein signaling [K16449|unclassified]"	"K16449|unclassified"	"K16449"	TRUE	TRUE
+"LACTB2; endoribonuclease LACTB2 [EC:3.1.27.-] [K16639|unclassified]"	"K16639|unclassified"	"K16639"	TRUE	TRUE
+"ATL; atlastin [EC:3.6.5.-] [K17339|unclassified]"	"K17339|unclassified"	"K17339"	TRUE	TRUE
+"TSPAN16; tetraspanin-16 [K17357|unclassified]"	"K17357|unclassified"	"K17357"	TRUE	TRUE
+"MTFP1, MTP18; mitochondrial fission process protein 1 [K17981|unclassified]"	"K17981|unclassified"	"K17981"	TRUE	TRUE
+"PET100; protein PET100, animal type [K18186|unclassified]"	"K18186|unclassified"	"K18186"	TRUE	TRUE
+"MP68, MLQ; 6.8 kDa mitochondrial proteolipid [K18193|unclassified]"	"K18193|unclassified"	"K18193"	TRUE	TRUE
+"RBP4; retinol-binding protein 4 [K18271|unclassified]"	"K18271|unclassified"	"K18271"	TRUE	TRUE
+"IF; intermediate filament protein if [K18585|unclassified]"	"K18585|unclassified"	"K18585"	TRUE	TRUE
+"zapC; cell division protein ZapC [K18657|unclassified]"	"K18657|unclassified"	"K18657"	TRUE	TRUE
+"blaTEM; beta-lactamase class A TEM [EC:3.5.2.6] [K18698|unclassified]"	"K18698|unclassified"	"K18698"	TRUE	TRUE
+"yccA; modulator of FtsH protease [K19416|g__Plesiomonas.s__Plesiomonas_shigelloides]"	"K19416|g__Plesiomonas.s__Plesiomonas_shigelloides"	"K19416"	TRUE	TRUE
+"MGP; matrix Gla protein [K19481|unclassified]"	"K19481|unclassified"	"K19481"	TRUE	TRUE
+"IFT122; intraflagellar transport protein 122 [K19656|unclassified]"	"K19656|unclassified"	"K19656"	TRUE	TRUE
+"GGACT; gamma-glutamylaminecyclotransferase [EC:2.3.2.-] [K19761|unclassified]"	"K19761|unclassified"	"K19761"	TRUE	TRUE
+"ANKS6; ankyrin repeat and SAM domain-containing protein 6 [K21415|unclassified]"	"K21415|unclassified"	"K21415"	TRUE	TRUE
+"BANF; barrier-to-autointegration factor [K21870|unclassified]"	"K21870|unclassified"	"K21870"	TRUE	TRUE
+"APOC1; apolipoprotein C-I [K22286|unclassified]"	"K22286|unclassified"	"K22286"	TRUE	TRUE
+"COMMD10; COMM domain containing 10 [K22566|unclassified]"	"K22566|unclassified"	"K22566"	TRUE	TRUE
+"SAMD8; sphingomyelin synthase-related protein 1 [K22697|unclassified]"	"K22697|unclassified"	"K22697"	TRUE	TRUE

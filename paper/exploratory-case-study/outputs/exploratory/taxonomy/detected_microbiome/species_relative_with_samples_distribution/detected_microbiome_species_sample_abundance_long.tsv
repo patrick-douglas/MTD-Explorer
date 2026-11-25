@@ -1,0 +1,625 @@
+taxon	sample	group	abundance	present
+Staphylococcus aureus	SRR25649158	Zebrafish	18.8028984350048	TRUE
+Cetobacterium somerae	SRR25649158	Zebrafish	45.9208320025551	TRUE
+Toxoplasma gondii	SRR25649158	Zebrafish	6.68017406579368	TRUE
+Klebsiella pneumoniae	SRR25649158	Zebrafish	4.45644362823379	TRUE
+Vibrio parahaemolyticus	SRR25649158	Zebrafish	4.5183248163526	TRUE
+Aeromonas veronii	SRR25649158	Zebrafish	6.19710156499521	TRUE
+Plesiomonas shigelloides	SRR25649158	Zebrafish	0	FALSE
+Kwoniella botswanensis	SRR25649158	Zebrafish	0.638773554774832	TRUE
+Escherichia coli	SRR25649158	Zebrafish	1.3653784733312	TRUE
+Plasmodium vivax	SRR25649158	Zebrafish	0.750558926860428	TRUE
+Shewanella xiamenensis	SRR25649158	Zebrafish	3.64200734589588	TRUE
+Candida dubliniensis	SRR25649158	Zebrafish	0.0469099329287767	TRUE
+Lodderomyces elongisporus	SRR25649158	Zebrafish	0.535970935803258	TRUE
+Leishmania sp. Namibia	SRR25649158	Zebrafish	0.150710635579687	TRUE
+Sordaria macrospora	SRR25649158	Zebrafish	0.11777387416161	TRUE
+Colletotrichum higginsianum	SRR25649158	Zebrafish	0.141727882465666	TRUE
+Cutibacterium acnes	SRR25649158	Zebrafish	0.0968141168955605	TRUE
+Shewanella oneidensis	SRR25649158	Zebrafish	0.76153784733312	TRUE
+Shewanella putrefaciens	SRR25649158	Zebrafish	0.587871287128713	TRUE
+Fusobacterium mortiferum	SRR25649158	Zebrafish	0.227563078888534	TRUE
+Kwoniella dejecticola	SRR25649158	Zebrafish	0	FALSE
+Salmonella enterica	SRR25649158	Zebrafish	0	FALSE
+Cetobacterium ceti	SRR25649158	Zebrafish	0.0568907697221335	TRUE
+Cetobacterium sp. SF1	SRR25649158	Zebrafish	0.0558926860427978	TRUE
+Aeromonas hydrophila	SRR25649158	Zebrafish	0.493053337591824	TRUE
+Shewanella baltica	SRR25649158	Zebrafish	0	FALSE
+Borreliella burgdorferi	SRR25649158	Zebrafish	0.0109789204726924	TRUE
+Vibrio cholerae	SRR25649158	Zebrafish	0.153704886617694	TRUE
+Cyprivirus A	SRR25649158	Zebrafish	0	FALSE
+Piscibacter tructae	SRR25649158	Zebrafish	0.0469099329287767	TRUE
+Serratia grimesii	SRR25649158	Zebrafish	0.0229559246247205	TRUE
+Aeromonas caviae	SRR25649158	Zebrafish	0	FALSE
+Xanthomonas phage vB_XooS_NR08	SRR25649158	Zebrafish	0	FALSE
+Shewanella decolorationis	SRR25649158	Zebrafish	0.175662727563079	TRUE
+Pseudomonas yamanorum	SRR25649158	Zebrafish	0	FALSE
+Aeromonas allosaccharophila	SRR25649158	Zebrafish	0	FALSE
+Fusobacterium varium	SRR25649158	Zebrafish	0.130748961992974	TRUE
+Vibrio mimicus	SRR25649158	Zebrafish	0.0499041839667838	TRUE
+Vibrio metoecus	SRR25649158	Zebrafish	0	FALSE
+Pseudobdellovibrio sp. HCB154	SRR25649158	Zebrafish	0	FALSE
+Botrytis cinerea	SRR25649158	Zebrafish	0	FALSE
+Aeromonas phage ACP1	SRR25649158	Zebrafish	0	FALSE
+Aeromonas sp. FDAARGOS 1414	SRR25649158	Zebrafish	0	FALSE
+Rheinheimera sp. MM224	SRR25649158	Zebrafish	0.853361545832003	TRUE
+Roseateles sp. DAIF2	SRR25649158	Zebrafish	0.810443947620569	TRUE
+Shewanella sp. LC6	SRR25649158	Zebrafish	0	FALSE
+Devosia sp. YIM 151766	SRR25649158	Zebrafish	0	FALSE
+Shewanella algae	SRR25649158	Zebrafish	0	FALSE
+Rheinheimera sp. MMS21-TC3	SRR25649158	Zebrafish	0.451133823059725	TRUE
+Niveibacterium microcysteis	SRR25649158	Zebrafish	0	FALSE
+Aeromonas salmonicida	SRR25649158	Zebrafish	0	FALSE
+Rheinheimera sp. F8	SRR25649158	Zebrafish	0.373283296071543	TRUE
+Rheinheimera mangrovi	SRR25649158	Zebrafish	0.315394442670073	TRUE
+Dechloromonas sp. ARDL1	SRR25649158	Zebrafish	0	FALSE
+Shewanella bicestrii	SRR25649158	Zebrafish	0	FALSE
+Rhabdochlamydiaceae symbiont of Dictyostelium giganteum	SRR25649158	Zebrafish	0	FALSE
+Desertifilum tharense	SRR25649158	Zebrafish	0	FALSE
+Chromobacterium haemolyticum	SRR25649158	Zebrafish	0	FALSE
+Stenotrophomonas maltophilia	SRR25649158	Zebrafish	0	FALSE
+Shewanella oncorhynchi	SRR25649158	Zebrafish	0	FALSE
+Aeromonas dhakensis	SRR25649158	Zebrafish	0	FALSE
+Faucicola osloensis	SRR25649158	Zebrafish	0	FALSE
+Vibrio misgurnus	SRR25649158	Zebrafish	0	FALSE
+Trichoderma asperellum	SRR25649158	Zebrafish	0.135739380389652	TRUE
+Candidatus Megaera polyxenophila	SRR25649158	Zebrafish	0	FALSE
+Altericista sp. CCNU0014	SRR25649158	Zebrafish	0	FALSE
+Corynebacterium canis	SRR25649158	Zebrafish	0	FALSE
+Malassezia restricta	SRR25649158	Zebrafish	0	FALSE
+Chamaesiphon minutus	SRR25649158	Zebrafish	0	FALSE
+Fluviicola sp.	SRR25649158	Zebrafish	0	FALSE
+Hyphomicrobium denitrificans	SRR25649158	Zebrafish	0	FALSE
+Finegoldia magna	SRR25649158	Zebrafish	0	FALSE
+Leishmania mexicana	SRR25649158	Zebrafish	0	FALSE
+Shewanella khirikhana	SRR25649158	Zebrafish	0	FALSE
+Rippkaea orientalis	SRR25649158	Zebrafish	0	FALSE
+Aquipseudomonas alcaligenes	SRR25649158	Zebrafish	0	FALSE
+Aeromonas media	SRR25649158	Zebrafish	0	FALSE
+Aeromonas sp. CU5	SRR25649158	Zebrafish	0.0868332801022038	TRUE
+Pseudomonas stagnisoli	SRR25649158	Zebrafish	0	FALSE
+Aeromonas jandaei	SRR25649158	Zebrafish	0	FALSE
+Ectopseudomonas guguanensis	SRR25649158	Zebrafish	0	FALSE
+Vogesella sp. LIG4	SRR25649158	Zebrafish	0	FALSE
+Chitinibacter sp. SCUT-21	SRR25649158	Zebrafish	0	FALSE
+Leishmania enriettii	SRR25649158	Zebrafish	0.0638773554774832	TRUE
+Fusarium musae	SRR25649158	Zebrafish	0	FALSE
+Calothrix sp. PCC 6303	SRR25649158	Zebrafish	0	FALSE
+Shewanella sp. HL-SH5	SRR25649158	Zebrafish	0	FALSE
+Shewanella sp. MR-4	SRR25649158	Zebrafish	0	FALSE
+Alishewanella sp. d11	SRR25649158	Zebrafish	0.03692909613542	TRUE
+Fusobacterium hominis	SRR25649158	Zebrafish	0.03692909613542	TRUE
+Thalassiosira pseudonana	SRR25649158	Zebrafish	0	FALSE
+Leptolyngbya sp. 7M	SRR25649158	Zebrafish	0	FALSE
+Fusobacterium gonidiaformans	SRR25649158	Zebrafish	0	FALSE
+Aeromonas phage AVP1	SRR25649158	Zebrafish	0	FALSE
+Cryptomonas paramaecium	SRR25649158	Zebrafish	0	FALSE
+Vibrio mangrovi	SRR25649158	Zebrafish	0	FALSE
+Escherichia phage HMD-P3	SRR25649158	Zebrafish	0	FALSE
+Synechococcus sp. JA-2-3B'a(2-13)	SRR25649158	Zebrafish	0	FALSE
+Shewanella sp. OMA3-2	SRR25649158	Zebrafish	0	FALSE
+Reyranella sp.	SRR25649158	Zebrafish	0	FALSE
+Bacterioplanes sanyensis	SRR25649158	Zebrafish	0	FALSE
+Vibrio navarrensis	SRR25649158	Zebrafish	0	FALSE
+Phaeodactylum tricornutum	SRR25649158	Zebrafish	0	FALSE
+Podospora bellae-mahoneyi	SRR25649158	Zebrafish	0	FALSE
+Staphylococcus aureus	SRR25649159	Zebrafish	22.1206810215323	TRUE
+Cetobacterium somerae	SRR25649159	Zebrafish	44.4462147767105	TRUE
+Toxoplasma gondii	SRR25649159	Zebrafish	5.8189557062867	TRUE
+Klebsiella pneumoniae	SRR25649159	Zebrafish	4.03559885282469	TRUE
+Vibrio parahaemolyticus	SRR25649159	Zebrafish	4.16306277598216	TRUE
+Aeromonas veronii	SRR25649159	Zebrafish	6.10461146264852	TRUE
+Plesiomonas shigelloides	SRR25649159	Zebrafish	0.451814084763509	TRUE
+Kwoniella botswanensis	SRR25649159	Zebrafish	0.563345017526289	TRUE
+Escherichia coli	SRR25649159	Zebrafish	0.935494150316384	TRUE
+Plasmodium vivax	SRR25649159	Zebrafish	0.543997814904174	TRUE
+Shewanella xiamenensis	SRR25649159	Zebrafish	2.52082669458734	TRUE
+Candida dubliniensis	SRR25649159	Zebrafish	0.0660081030636864	TRUE
+Lodderomyces elongisporus	SRR25649159	Zebrafish	0.170710611371603	TRUE
+Leishmania sp. Namibia	SRR25649159	Zebrafish	0.242409068147676	TRUE
+Sordaria macrospora	SRR25649159	Zebrafish	0.328902444575955	TRUE
+Colletotrichum higginsianum	SRR25649159	Zebrafish	0.144534984294624	TRUE
+Cutibacterium acnes	SRR25649159	Zebrafish	0.0716984567760732	TRUE
+Shewanella oneidensis	SRR25649159	Zebrafish	0.551964310101516	TRUE
+Shewanella putrefaciens	SRR25649159	Zebrafish	0.508717621887377	TRUE
+Fusobacterium mortiferum	SRR25649159	Zebrafish	0.38239176947239	TRUE
+Kwoniella dejecticola	SRR25649159	Zebrafish	0.0341421222743206	TRUE
+Salmonella enterica	SRR25649159	Zebrafish	0	FALSE
+Cetobacterium ceti	SRR25649159	Zebrafish	0.0534893248964356	TRUE
+Cetobacterium sp. SF1	SRR25649159	Zebrafish	0.0762507397459826	TRUE
+Aeromonas hydrophila	SRR25649159	Zebrafish	0.718122638503209	TRUE
+Shewanella baltica	SRR25649159	Zebrafish	0	FALSE
+Borreliella burgdorferi	SRR25649159	Zebrafish	0	FALSE
+Vibrio cholerae	SRR25649159	Zebrafish	2.32394045613875	TRUE
+Cyprivirus A	SRR25649159	Zebrafish	0	FALSE
+Piscibacter tructae	SRR25649159	Zebrafish	0.0443847589566167	TRUE
+Serratia grimesii	SRR25649159	Zebrafish	0	FALSE
+Aeromonas caviae	SRR25649159	Zebrafish	0.574725724951063	TRUE
+Xanthomonas phage vB_XooS_NR08	SRR25649159	Zebrafish	0	FALSE
+Shewanella decolorationis	SRR25649159	Zebrafish	0	FALSE
+Pseudomonas yamanorum	SRR25649159	Zebrafish	0.308417171211363	TRUE
+Aeromonas allosaccharophila	SRR25649159	Zebrafish	0.165020257659216	TRUE
+Fusobacterium varium	SRR25649159	Zebrafish	0.158191833204352	TRUE
+Vibrio mimicus	SRR25649159	Zebrafish	0.0933218008831429	TRUE
+Vibrio metoecus	SRR25649159	Zebrafish	0.0682842445486411	TRUE
+Pseudobdellovibrio sp. HCB154	SRR25649159	Zebrafish	0	FALSE
+Botrytis cinerea	SRR25649159	Zebrafish	0.0489370419265262	TRUE
+Aeromonas phage ACP1	SRR25649159	Zebrafish	0.019347202622115	TRUE
+Aeromonas sp. FDAARGOS 1414	SRR25649159	Zebrafish	0	FALSE
+Rheinheimera sp. MM224	SRR25649159	Zebrafish	0	FALSE
+Roseateles sp. DAIF2	SRR25649159	Zebrafish	0	FALSE
+Shewanella sp. LC6	SRR25649159	Zebrafish	0	FALSE
+Devosia sp. YIM 151766	SRR25649159	Zebrafish	0	FALSE
+Shewanella algae	SRR25649159	Zebrafish	0	FALSE
+Rheinheimera sp. MMS21-TC3	SRR25649159	Zebrafish	0	FALSE
+Niveibacterium microcysteis	SRR25649159	Zebrafish	0.443847589566167	TRUE
+Aeromonas salmonicida	SRR25649159	Zebrafish	0	FALSE
+Rheinheimera sp. F8	SRR25649159	Zebrafish	0	FALSE
+Rheinheimera mangrovi	SRR25649159	Zebrafish	0	FALSE
+Dechloromonas sp. ARDL1	SRR25649159	Zebrafish	0	FALSE
+Shewanella bicestrii	SRR25649159	Zebrafish	0	FALSE
+Rhabdochlamydiaceae symbiont of Dictyostelium giganteum	SRR25649159	Zebrafish	0	FALSE
+Desertifilum tharense	SRR25649159	Zebrafish	0.182091318796376	TRUE
+Chromobacterium haemolyticum	SRR25649159	Zebrafish	0	FALSE
+Stenotrophomonas maltophilia	SRR25649159	Zebrafish	0	FALSE
+Shewanella oncorhynchi	SRR25649159	Zebrafish	0	FALSE
+Aeromonas dhakensis	SRR25649159	Zebrafish	0	FALSE
+Faucicola osloensis	SRR25649159	Zebrafish	0	FALSE
+Vibrio misgurnus	SRR25649159	Zebrafish	0.144534984294624	TRUE
+Trichoderma asperellum	SRR25649159	Zebrafish	0	FALSE
+Candidatus Megaera polyxenophila	SRR25649159	Zebrafish	0.13315427686985	TRUE
+Altericista sp. CCNU0014	SRR25649159	Zebrafish	0	FALSE
+Corynebacterium canis	SRR25649159	Zebrafish	0	FALSE
+Malassezia restricta	SRR25649159	Zebrafish	0	FALSE
+Chamaesiphon minutus	SRR25649159	Zebrafish	0	FALSE
+Fluviicola sp.	SRR25649159	Zebrafish	0.117221286475167	TRUE
+Hyphomicrobium denitrificans	SRR25649159	Zebrafish	0	FALSE
+Finegoldia magna	SRR25649159	Zebrafish	0	FALSE
+Leishmania mexicana	SRR25649159	Zebrafish	0	FALSE
+Shewanella khirikhana	SRR25649159	Zebrafish	0	FALSE
+Rippkaea orientalis	SRR25649159	Zebrafish	0	FALSE
+Aquipseudomonas alcaligenes	SRR25649159	Zebrafish	0	FALSE
+Aeromonas media	SRR25649159	Zebrafish	0	FALSE
+Aeromonas sp. CU5	SRR25649159	Zebrafish	0	FALSE
+Pseudomonas stagnisoli	SRR25649159	Zebrafish	0	FALSE
+Aeromonas jandaei	SRR25649159	Zebrafish	0	FALSE
+Ectopseudomonas guguanensis	SRR25649159	Zebrafish	0	FALSE
+Vogesella sp. LIG4	SRR25649159	Zebrafish	0	FALSE
+Chitinibacter sp. SCUT-21	SRR25649159	Zebrafish	0	FALSE
+Leishmania enriettii	SRR25649159	Zebrafish	0	FALSE
+Fusarium musae	SRR25649159	Zebrafish	0	FALSE
+Calothrix sp. PCC 6303	SRR25649159	Zebrafish	0	FALSE
+Shewanella sp. HL-SH5	SRR25649159	Zebrafish	0	FALSE
+Shewanella sp. MR-4	SRR25649159	Zebrafish	0	FALSE
+Alishewanella sp. d11	SRR25649159	Zebrafish	0	FALSE
+Fusobacterium hominis	SRR25649159	Zebrafish	0	FALSE
+Thalassiosira pseudonana	SRR25649159	Zebrafish	0	FALSE
+Leptolyngbya sp. 7M	SRR25649159	Zebrafish	0	FALSE
+Fusobacterium gonidiaformans	SRR25649159	Zebrafish	0.0307279100468885	TRUE
+Aeromonas phage AVP1	SRR25649159	Zebrafish	0.0295898393044112	TRUE
+Cryptomonas paramaecium	SRR25649159	Zebrafish	0	FALSE
+Vibrio mangrovi	SRR25649159	Zebrafish	0.0273136978194565	TRUE
+Escherichia phage HMD-P3	SRR25649159	Zebrafish	0.019347202622115	TRUE
+Synechococcus sp. JA-2-3B'a(2-13)	SRR25649159	Zebrafish	0	FALSE
+Shewanella sp. OMA3-2	SRR25649159	Zebrafish	0	FALSE
+Reyranella sp.	SRR25649159	Zebrafish	0	FALSE
+Bacterioplanes sanyensis	SRR25649159	Zebrafish	0.0136568489097282	TRUE
+Vibrio navarrensis	SRR25649159	Zebrafish	0	FALSE
+Phaeodactylum tricornutum	SRR25649159	Zebrafish	0	FALSE
+Podospora bellae-mahoneyi	SRR25649159	Zebrafish	0	FALSE
+Staphylococcus aureus	SRR25649161	Zebrafish	7.28743725223253	TRUE
+Cetobacterium somerae	SRR25649161	Zebrafish	22.3043199251525	TRUE
+Toxoplasma gondii	SRR25649161	Zebrafish	3.14503505478622	TRUE
+Klebsiella pneumoniae	SRR25649161	Zebrafish	1.049544497688	TRUE
+Vibrio parahaemolyticus	SRR25649161	Zebrafish	1.68406911400452	TRUE
+Aeromonas veronii	SRR25649161	Zebrafish	12.4278063320519	TRUE
+Plesiomonas shigelloides	SRR25649161	Zebrafish	19.3548000167927	TRUE
+Kwoniella botswanensis	SRR25649161	Zebrafish	0.563155590473734	TRUE
+Escherichia coli	SRR25649161	Zebrafish	0.813846790492926	TRUE
+Plasmodium vivax	SRR25649161	Zebrafish	0.277079747389633	TRUE
+Shewanella xiamenensis	SRR25649161	Zebrafish	10.5416249347783	TRUE
+Candida dubliniensis	SRR25649161	Zebrafish	0.0203911502407955	TRUE
+Lodderomyces elongisporus	SRR25649161	Zebrafish	0.123546380870702	TRUE
+Leishmania sp. Namibia	SRR25649161	Zebrafish	0.162529462213399	TRUE
+Sordaria macrospora	SRR25649161	Zebrafish	0.0611734507223865	TRUE
+Colletotrichum higginsianum	SRR25649161	Zebrafish	0.120547682305879	TRUE
+Cutibacterium acnes	SRR25649161	Zebrafish	0.423416237352989	TRUE
+Shewanella oneidensis	SRR25649161	Zebrafish	2.41815052267316	TRUE
+Shewanella putrefaciens	SRR25649161	Zebrafish	1.68706781256934	TRUE
+Fusobacterium mortiferum	SRR25649161	Zebrafish	0.304667774186003	TRUE
+Kwoniella dejecticola	SRR25649161	Zebrafish	0.340652156963878	TRUE
+Salmonella enterica	SRR25649161	Zebrafish	4.62579240609575	TRUE
+Cetobacterium ceti	SRR25649161	Zebrafish	0.0515776153149533	TRUE
+Cetobacterium sp. SF1	SRR25649161	Zebrafish	0.0521773550279179	TRUE
+Aeromonas hydrophila	SRR25649161	Zebrafish	0.635724095742448	TRUE
+Shewanella baltica	SRR25649161	Zebrafish	2.84396571887801	TRUE
+Borreliella burgdorferi	SRR25649161	Zebrafish	0	FALSE
+Vibrio cholerae	SRR25649161	Zebrafish	0	FALSE
+Cyprivirus A	SRR25649161	Zebrafish	0	FALSE
+Piscibacter tructae	SRR25649161	Zebrafish	0.0179921913889372	TRUE
+Serratia grimesii	SRR25649161	Zebrafish	0	FALSE
+Aeromonas caviae	SRR25649161	Zebrafish	0.577549343584884	TRUE
+Xanthomonas phage vB_XooS_NR08	SRR25649161	Zebrafish	0	FALSE
+Shewanella decolorationis	SRR25649161	Zebrafish	0.420417538788166	TRUE
+Pseudomonas yamanorum	SRR25649161	Zebrafish	0	FALSE
+Aeromonas allosaccharophila	SRR25649161	Zebrafish	0.118148723454021	TRUE
+Fusobacterium varium	SRR25649161	Zebrafish	0	FALSE
+Vibrio mimicus	SRR25649161	Zebrafish	0	FALSE
+Vibrio metoecus	SRR25649161	Zebrafish	0.0215906296667246	TRUE
+Pseudobdellovibrio sp. HCB154	SRR25649161	Zebrafish	0.00599739712964573	TRUE
+Botrytis cinerea	SRR25649161	Zebrafish	0.0227901090926538	TRUE
+Aeromonas phage ACP1	SRR25649161	Zebrafish	0.0293872459352641	TRUE
+Aeromonas sp. FDAARGOS 1414	SRR25649161	Zebrafish	0.990770005817475	TRUE
+Rheinheimera sp. MM224	SRR25649161	Zebrafish	0	FALSE
+Roseateles sp. DAIF2	SRR25649161	Zebrafish	0	FALSE
+Shewanella sp. LC6	SRR25649161	Zebrafish	0.615932685214617	TRUE
+Devosia sp. YIM 151766	SRR25649161	Zebrafish	0.575150384733026	TRUE
+Shewanella algae	SRR25649161	Zebrafish	0	FALSE
+Rheinheimera sp. MMS21-TC3	SRR25649161	Zebrafish	0	FALSE
+Niveibacterium microcysteis	SRR25649161	Zebrafish	0	FALSE
+Aeromonas salmonicida	SRR25649161	Zebrafish	0.416819100510379	TRUE
+Rheinheimera sp. F8	SRR25649161	Zebrafish	0	FALSE
+Rheinheimera mangrovi	SRR25649161	Zebrafish	0	FALSE
+Dechloromonas sp. ARDL1	SRR25649161	Zebrafish	0.223702912935786	TRUE
+Shewanella bicestrii	SRR25649161	Zebrafish	0.218904995232069	TRUE
+Rhabdochlamydiaceae symbiont of Dictyostelium giganteum	SRR25649161	Zebrafish	0	FALSE
+Desertifilum tharense	SRR25649161	Zebrafish	0	FALSE
+Chromobacterium haemolyticum	SRR25649161	Zebrafish	0.181721133028266	TRUE
+Stenotrophomonas maltophilia	SRR25649161	Zebrafish	0	FALSE
+Shewanella oncorhynchi	SRR25649161	Zebrafish	0.169726338768974	TRUE
+Aeromonas dhakensis	SRR25649161	Zebrafish	0.156532065083754	TRUE
+Faucicola osloensis	SRR25649161	Zebrafish	0.149934928241143	TRUE
+Vibrio misgurnus	SRR25649161	Zebrafish	0	FALSE
+Trichoderma asperellum	SRR25649161	Zebrafish	0	FALSE
+Candidatus Megaera polyxenophila	SRR25649161	Zebrafish	0	FALSE
+Altericista sp. CCNU0014	SRR25649161	Zebrafish	0.130743257426277	TRUE
+Corynebacterium canis	SRR25649161	Zebrafish	0.126545079435525	TRUE
+Malassezia restricta	SRR25649161	Zebrafish	0.123546380870702	TRUE
+Chamaesiphon minutus	SRR25649161	Zebrafish	0.118748463166986	TRUE
+Fluviicola sp.	SRR25649161	Zebrafish	0	FALSE
+Hyphomicrobium denitrificans	SRR25649161	Zebrafish	0.113350805750304	TRUE
+Finegoldia magna	SRR25649161	Zebrafish	0.110352107185481	TRUE
+Leishmania mexicana	SRR25649161	Zebrafish	0	FALSE
+Shewanella khirikhana	SRR25649161	Zebrafish	0	FALSE
+Rippkaea orientalis	SRR25649161	Zebrafish	0.0977575732132255	TRUE
+Aquipseudomonas alcaligenes	SRR25649161	Zebrafish	0.0905606966576506	TRUE
+Aeromonas media	SRR25649161	Zebrafish	0.0881617378057923	TRUE
+Aeromonas sp. CU5	SRR25649161	Zebrafish	0	FALSE
+Pseudomonas stagnisoli	SRR25649161	Zebrafish	0.0839635598150403	TRUE
+Aeromonas jandaei	SRR25649161	Zebrafish	0.0809648612502174	TRUE
+Ectopseudomonas guguanensis	SRR25649161	Zebrafish	0.0737679846946425	TRUE
+Vogesella sp. LIG4	SRR25649161	Zebrafish	0.0719687655557488	TRUE
+Chitinibacter sp. SCUT-21	SRR25649161	Zebrafish	0.0665711081390677	TRUE
+Leishmania enriettii	SRR25649161	Zebrafish	0	FALSE
+Fusarium musae	SRR25649161	Zebrafish	0.0623729301483156	TRUE
+Calothrix sp. PCC 6303	SRR25649161	Zebrafish	0.057575012444599	TRUE
+Shewanella sp. HL-SH5	SRR25649161	Zebrafish	0.0461799578982722	TRUE
+Shewanella sp. MR-4	SRR25649161	Zebrafish	0.0401825607686264	TRUE
+Alishewanella sp. d11	SRR25649161	Zebrafish	0	FALSE
+Fusobacterium hominis	SRR25649161	Zebrafish	0	FALSE
+Thalassiosira pseudonana	SRR25649161	Zebrafish	0.036584122490839	TRUE
+Leptolyngbya sp. 7M	SRR25649161	Zebrafish	0.0359843827778744	TRUE
+Fusobacterium gonidiaformans	SRR25649161	Zebrafish	0	FALSE
+Aeromonas phage AVP1	SRR25649161	Zebrafish	0	FALSE
+Cryptomonas paramaecium	SRR25649161	Zebrafish	0.0293872459352641	TRUE
+Vibrio mangrovi	SRR25649161	Zebrafish	0	FALSE
+Escherichia phage HMD-P3	SRR25649161	Zebrafish	0	FALSE
+Synechococcus sp. JA-2-3B'a(2-13)	SRR25649161	Zebrafish	0.0191916708148663	TRUE
+Shewanella sp. OMA3-2	SRR25649161	Zebrafish	0.0179921913889372	TRUE
+Reyranella sp.	SRR25649161	Zebrafish	0.0173924516759726	TRUE
+Bacterioplanes sanyensis	SRR25649161	Zebrafish	0	FALSE
+Vibrio navarrensis	SRR25649161	Zebrafish	0.0107953148333623	TRUE
+Phaeodactylum tricornutum	SRR25649161	Zebrafish	0.0089960956944686	TRUE
+Podospora bellae-mahoneyi	SRR25649161	Zebrafish	0.00719687655557488	TRUE
+Staphylococcus aureus	SRR25649162	Zebrafish	32.4231017199426	TRUE
+Cetobacterium somerae	SRR25649162	Zebrafish	20.5935569743984	TRUE
+Toxoplasma gondii	SRR25649162	Zebrafish	16.9519372751284	TRUE
+Klebsiella pneumoniae	SRR25649162	Zebrafish	2.21492003410769	TRUE
+Vibrio parahaemolyticus	SRR25649162	Zebrafish	3.0364161969927	TRUE
+Aeromonas veronii	SRR25649162	Zebrafish	1.10226067425077	TRUE
+Plesiomonas shigelloides	SRR25649162	Zebrafish	0	FALSE
+Kwoniella botswanensis	SRR25649162	Zebrafish	4.79587380155148	TRUE
+Escherichia coli	SRR25649162	Zebrafish	1.51404862425389	TRUE
+Plasmodium vivax	SRR25649162	Zebrafish	1.50364993864775	TRUE
+Shewanella xiamenensis	SRR25649162	Zebrafish	2.655824303808	TRUE
+Candida dubliniensis	SRR25649162	Zebrafish	3.10088804775076	TRUE
+Lodderomyces elongisporus	SRR25649162	Zebrafish	0.48041927500364	TRUE
+Leishmania sp. Namibia	SRR25649162	Zebrafish	0.214212923486471	TRUE
+Sordaria macrospora	SRR25649162	Zebrafish	0.366033733336106	TRUE
+Colletotrichum higginsianum	SRR25649162	Zebrafish	0.586485868186261	TRUE
+Cutibacterium acnes	SRR25649162	Zebrafish	0.0977476446977102	TRUE
+Shewanella oneidensis	SRR25649162	Zebrafish	0.603123765156084	TRUE
+Shewanella putrefaciens	SRR25649162	Zebrafish	1.37470623713163	TRUE
+Fusobacterium mortiferum	SRR25649162	Zebrafish	0.262046877274712	TRUE
+Kwoniella dejecticola	SRR25649162	Zebrafish	2.50816296820082	TRUE
+Salmonella enterica	SRR25649162	Zebrafish	2.35634215835118	TRUE
+Cetobacterium ceti	SRR25649162	Zebrafish	0.0686313250005199	TRUE
+Cetobacterium sp. SF1	SRR25649162	Zebrafish	0.0374352681821018	TRUE
+Aeromonas hydrophila	SRR25649162	Zebrafish	0	FALSE
+Shewanella baltica	SRR25649162	Zebrafish	0.270365825759624	TRUE
+Borreliella burgdorferi	SRR25649162	Zebrafish	0	FALSE
+Vibrio cholerae	SRR25649162	Zebrafish	0	FALSE
+Cyprivirus A	SRR25649162	Zebrafish	0.0415947424245575	TRUE
+Piscibacter tructae	SRR25649162	Zebrafish	0	FALSE
+Serratia grimesii	SRR25649162	Zebrafish	0	FALSE
+Aeromonas caviae	SRR25649162	Zebrafish	0	FALSE
+Xanthomonas phage vB_XooS_NR08	SRR25649162	Zebrafish	0	FALSE
+Shewanella decolorationis	SRR25649162	Zebrafish	0	FALSE
+Pseudomonas yamanorum	SRR25649162	Zebrafish	0	FALSE
+Aeromonas allosaccharophila	SRR25649162	Zebrafish	0	FALSE
+Fusobacterium varium	SRR25649162	Zebrafish	0	FALSE
+Vibrio mimicus	SRR25649162	Zebrafish	0	FALSE
+Vibrio metoecus	SRR25649162	Zebrafish	0	FALSE
+Pseudobdellovibrio sp. HCB154	SRR25649162	Zebrafish	0.0727907992429757	TRUE
+Botrytis cinerea	SRR25649162	Zebrafish	0	FALSE
+Aeromonas phage ACP1	SRR25649162	Zebrafish	0	FALSE
+Aeromonas sp. FDAARGOS 1414	SRR25649162	Zebrafish	0	FALSE
+Rheinheimera sp. MM224	SRR25649162	Zebrafish	0	FALSE
+Roseateles sp. DAIF2	SRR25649162	Zebrafish	0	FALSE
+Shewanella sp. LC6	SRR25649162	Zebrafish	0	FALSE
+Devosia sp. YIM 151766	SRR25649162	Zebrafish	0	FALSE
+Shewanella algae	SRR25649162	Zebrafish	0.555289811367843	TRUE
+Rheinheimera sp. MMS21-TC3	SRR25649162	Zebrafish	0	FALSE
+Niveibacterium microcysteis	SRR25649162	Zebrafish	0	FALSE
+Aeromonas salmonicida	SRR25649162	Zebrafish	0	FALSE
+Rheinheimera sp. F8	SRR25649162	Zebrafish	0	FALSE
+Rheinheimera mangrovi	SRR25649162	Zebrafish	0	FALSE
+Dechloromonas sp. ARDL1	SRR25649162	Zebrafish	0	FALSE
+Shewanella bicestrii	SRR25649162	Zebrafish	0	FALSE
+Rhabdochlamydiaceae symbiont of Dictyostelium giganteum	SRR25649162	Zebrafish	0	FALSE
+Desertifilum tharense	SRR25649162	Zebrafish	0	FALSE
+Chromobacterium haemolyticum	SRR25649162	Zebrafish	0	FALSE
+Stenotrophomonas maltophilia	SRR25649162	Zebrafish	0	FALSE
+Shewanella oncorhynchi	SRR25649162	Zebrafish	0	FALSE
+Aeromonas dhakensis	SRR25649162	Zebrafish	0	FALSE
+Faucicola osloensis	SRR25649162	Zebrafish	0	FALSE
+Vibrio misgurnus	SRR25649162	Zebrafish	0	FALSE
+Trichoderma asperellum	SRR25649162	Zebrafish	0	FALSE
+Candidatus Megaera polyxenophila	SRR25649162	Zebrafish	0	FALSE
+Altericista sp. CCNU0014	SRR25649162	Zebrafish	0	FALSE
+Corynebacterium canis	SRR25649162	Zebrafish	0	FALSE
+Malassezia restricta	SRR25649162	Zebrafish	0	FALSE
+Chamaesiphon minutus	SRR25649162	Zebrafish	0	FALSE
+Fluviicola sp.	SRR25649162	Zebrafish	0	FALSE
+Hyphomicrobium denitrificans	SRR25649162	Zebrafish	0	FALSE
+Finegoldia magna	SRR25649162	Zebrafish	0	FALSE
+Leishmania mexicana	SRR25649162	Zebrafish	0.106066593182622	TRUE
+Shewanella khirikhana	SRR25649162	Zebrafish	0.106066593182622	TRUE
+Rippkaea orientalis	SRR25649162	Zebrafish	0	FALSE
+Aquipseudomonas alcaligenes	SRR25649162	Zebrafish	0	FALSE
+Aeromonas media	SRR25649162	Zebrafish	0	FALSE
+Aeromonas sp. CU5	SRR25649162	Zebrafish	0	FALSE
+Pseudomonas stagnisoli	SRR25649162	Zebrafish	0	FALSE
+Aeromonas jandaei	SRR25649162	Zebrafish	0	FALSE
+Ectopseudomonas guguanensis	SRR25649162	Zebrafish	0	FALSE
+Vogesella sp. LIG4	SRR25649162	Zebrafish	0	FALSE
+Chitinibacter sp. SCUT-21	SRR25649162	Zebrafish	0	FALSE
+Leishmania enriettii	SRR25649162	Zebrafish	0	FALSE
+Fusarium musae	SRR25649162	Zebrafish	0	FALSE
+Calothrix sp. PCC 6303	SRR25649162	Zebrafish	0	FALSE
+Shewanella sp. HL-SH5	SRR25649162	Zebrafish	0	FALSE
+Shewanella sp. MR-4	SRR25649162	Zebrafish	0	FALSE
+Alishewanella sp. d11	SRR25649162	Zebrafish	0	FALSE
+Fusobacterium hominis	SRR25649162	Zebrafish	0	FALSE
+Thalassiosira pseudonana	SRR25649162	Zebrafish	0	FALSE
+Leptolyngbya sp. 7M	SRR25649162	Zebrafish	0	FALSE
+Fusobacterium gonidiaformans	SRR25649162	Zebrafish	0	FALSE
+Aeromonas phage AVP1	SRR25649162	Zebrafish	0	FALSE
+Cryptomonas paramaecium	SRR25649162	Zebrafish	0	FALSE
+Vibrio mangrovi	SRR25649162	Zebrafish	0	FALSE
+Escherichia phage HMD-P3	SRR25649162	Zebrafish	0	FALSE
+Synechococcus sp. JA-2-3B'a(2-13)	SRR25649162	Zebrafish	0	FALSE
+Shewanella sp. OMA3-2	SRR25649162	Zebrafish	0	FALSE
+Reyranella sp.	SRR25649162	Zebrafish	0	FALSE
+Bacterioplanes sanyensis	SRR25649162	Zebrafish	0	FALSE
+Vibrio navarrensis	SRR25649162	Zebrafish	0	FALSE
+Phaeodactylum tricornutum	SRR25649162	Zebrafish	0	FALSE
+Podospora bellae-mahoneyi	SRR25649162	Zebrafish	0	FALSE
+Staphylococcus aureus	SRR25649181	Zebrafish	15.3210764721556	TRUE
+Cetobacterium somerae	SRR25649181	Zebrafish	0.76060363830148	TRUE
+Toxoplasma gondii	SRR25649181	Zebrafish	12.9375287648669	TRUE
+Klebsiella pneumoniae	SRR25649181	Zebrafish	12.3658648838505	TRUE
+Vibrio parahaemolyticus	SRR25649181	Zebrafish	5.59794588571567	TRUE
+Aeromonas veronii	SRR25649181	Zebrafish	0.935009568103093	TRUE
+Plesiomonas shigelloides	SRR25649181	Zebrafish	42.0657413463169	TRUE
+Kwoniella botswanensis	SRR25649181	Zebrafish	1.56480875905336	TRUE
+Escherichia coli	SRR25649181	Zebrafish	3.01092459365841	TRUE
+Plasmodium vivax	SRR25649181	Zebrafish	2.11467189884456	TRUE
+Shewanella xiamenensis	SRR25649181	Zebrafish	0	FALSE
+Candida dubliniensis	SRR25649181	Zebrafish	0.0920475740619626	TRUE
+Lodderomyces elongisporus	SRR25649181	Zebrafish	0.496572439018482	TRUE
+Leishmania sp. Namibia	SRR25649181	Zebrafish	0.620109972627958	TRUE
+Sordaria macrospora	SRR25649181	Zebrafish	0.322166509216869	TRUE
+Colletotrichum higginsianum	SRR25649181	Zebrafish	0.530484703146574	TRUE
+Cutibacterium acnes	SRR25649181	Zebrafish	0.288254245088777	TRUE
+Shewanella oneidensis	SRR25649181	Zebrafish	0	FALSE
+Shewanella putrefaciens	SRR25649181	Zebrafish	0	FALSE
+Fusobacterium mortiferum	SRR25649181	Zebrafish	0	FALSE
+Kwoniella dejecticola	SRR25649181	Zebrafish	0	FALSE
+Salmonella enterica	SRR25649181	Zebrafish	0	FALSE
+Cetobacterium ceti	SRR25649181	Zebrafish	0	FALSE
+Cetobacterium sp. SF1	SRR25649181	Zebrafish	0	FALSE
+Aeromonas hydrophila	SRR25649181	Zebrafish	0	FALSE
+Shewanella baltica	SRR25649181	Zebrafish	0	FALSE
+Borreliella burgdorferi	SRR25649181	Zebrafish	0.297943463411089	TRUE
+Vibrio cholerae	SRR25649181	Zebrafish	0	FALSE
+Cyprivirus A	SRR25649181	Zebrafish	0.0557130053532931	TRUE
+Piscibacter tructae	SRR25649181	Zebrafish	0	FALSE
+Serratia grimesii	SRR25649181	Zebrafish	0.0363345687086694	TRUE
+Aeromonas caviae	SRR25649181	Zebrafish	0	FALSE
+Xanthomonas phage vB_XooS_NR08	SRR25649181	Zebrafish	0.22527432599375	TRUE
+Shewanella decolorationis	SRR25649181	Zebrafish	0	FALSE
+Pseudomonas yamanorum	SRR25649181	Zebrafish	0	FALSE
+Aeromonas allosaccharophila	SRR25649181	Zebrafish	0	FALSE
+Fusobacterium varium	SRR25649181	Zebrafish	0	FALSE
+Vibrio mimicus	SRR25649181	Zebrafish	0	FALSE
+Vibrio metoecus	SRR25649181	Zebrafish	0	FALSE
+Pseudobdellovibrio sp. HCB154	SRR25649181	Zebrafish	0	FALSE
+Botrytis cinerea	SRR25649181	Zebrafish	0	FALSE
+Aeromonas phage ACP1	SRR25649181	Zebrafish	0	FALSE
+Aeromonas sp. FDAARGOS 1414	SRR25649181	Zebrafish	0	FALSE
+Rheinheimera sp. MM224	SRR25649181	Zebrafish	0	FALSE
+Roseateles sp. DAIF2	SRR25649181	Zebrafish	0	FALSE
+Shewanella sp. LC6	SRR25649181	Zebrafish	0	FALSE
+Devosia sp. YIM 151766	SRR25649181	Zebrafish	0	FALSE
+Shewanella algae	SRR25649181	Zebrafish	0	FALSE
+Rheinheimera sp. MMS21-TC3	SRR25649181	Zebrafish	0	FALSE
+Niveibacterium microcysteis	SRR25649181	Zebrafish	0	FALSE
+Aeromonas salmonicida	SRR25649181	Zebrafish	0	FALSE
+Rheinheimera sp. F8	SRR25649181	Zebrafish	0	FALSE
+Rheinheimera mangrovi	SRR25649181	Zebrafish	0	FALSE
+Dechloromonas sp. ARDL1	SRR25649181	Zebrafish	0	FALSE
+Shewanella bicestrii	SRR25649181	Zebrafish	0	FALSE
+Rhabdochlamydiaceae symbiont of Dictyostelium giganteum	SRR25649181	Zebrafish	0.186517452704503	TRUE
+Desertifilum tharense	SRR25649181	Zebrafish	0	FALSE
+Chromobacterium haemolyticum	SRR25649181	Zebrafish	0	FALSE
+Stenotrophomonas maltophilia	SRR25649181	Zebrafish	0.174405929801613	TRUE
+Shewanella oncorhynchi	SRR25649181	Zebrafish	0	FALSE
+Aeromonas dhakensis	SRR25649181	Zebrafish	0	FALSE
+Faucicola osloensis	SRR25649181	Zebrafish	0	FALSE
+Vibrio misgurnus	SRR25649181	Zebrafish	0	FALSE
+Trichoderma asperellum	SRR25649181	Zebrafish	0	FALSE
+Candidatus Megaera polyxenophila	SRR25649181	Zebrafish	0	FALSE
+Altericista sp. CCNU0014	SRR25649181	Zebrafish	0	FALSE
+Corynebacterium canis	SRR25649181	Zebrafish	0	FALSE
+Malassezia restricta	SRR25649181	Zebrafish	0	FALSE
+Chamaesiphon minutus	SRR25649181	Zebrafish	0	FALSE
+Fluviicola sp.	SRR25649181	Zebrafish	0	FALSE
+Hyphomicrobium denitrificans	SRR25649181	Zebrafish	0	FALSE
+Finegoldia magna	SRR25649181	Zebrafish	0	FALSE
+Leishmania mexicana	SRR25649181	Zebrafish	0	FALSE
+Shewanella khirikhana	SRR25649181	Zebrafish	0	FALSE
+Rippkaea orientalis	SRR25649181	Zebrafish	0	FALSE
+Aquipseudomonas alcaligenes	SRR25649181	Zebrafish	0	FALSE
+Aeromonas media	SRR25649181	Zebrafish	0	FALSE
+Aeromonas sp. CU5	SRR25649181	Zebrafish	0	FALSE
+Pseudomonas stagnisoli	SRR25649181	Zebrafish	0	FALSE
+Aeromonas jandaei	SRR25649181	Zebrafish	0	FALSE
+Ectopseudomonas guguanensis	SRR25649181	Zebrafish	0	FALSE
+Vogesella sp. LIG4	SRR25649181	Zebrafish	0	FALSE
+Chitinibacter sp. SCUT-21	SRR25649181	Zebrafish	0	FALSE
+Leishmania enriettii	SRR25649181	Zebrafish	0	FALSE
+Fusarium musae	SRR25649181	Zebrafish	0	FALSE
+Calothrix sp. PCC 6303	SRR25649181	Zebrafish	0	FALSE
+Shewanella sp. HL-SH5	SRR25649181	Zebrafish	0	FALSE
+Shewanella sp. MR-4	SRR25649181	Zebrafish	0	FALSE
+Alishewanella sp. d11	SRR25649181	Zebrafish	0	FALSE
+Fusobacterium hominis	SRR25649181	Zebrafish	0	FALSE
+Thalassiosira pseudonana	SRR25649181	Zebrafish	0	FALSE
+Leptolyngbya sp. 7M	SRR25649181	Zebrafish	0	FALSE
+Fusobacterium gonidiaformans	SRR25649181	Zebrafish	0	FALSE
+Aeromonas phage AVP1	SRR25649181	Zebrafish	0	FALSE
+Cryptomonas paramaecium	SRR25649181	Zebrafish	0	FALSE
+Vibrio mangrovi	SRR25649181	Zebrafish	0	FALSE
+Escherichia phage HMD-P3	SRR25649181	Zebrafish	0	FALSE
+Synechococcus sp. JA-2-3B'a(2-13)	SRR25649181	Zebrafish	0	FALSE
+Shewanella sp. OMA3-2	SRR25649181	Zebrafish	0	FALSE
+Reyranella sp.	SRR25649181	Zebrafish	0	FALSE
+Bacterioplanes sanyensis	SRR25649181	Zebrafish	0	FALSE
+Vibrio navarrensis	SRR25649181	Zebrafish	0	FALSE
+Phaeodactylum tricornutum	SRR25649181	Zebrafish	0	FALSE
+Podospora bellae-mahoneyi	SRR25649181	Zebrafish	0	FALSE
+Staphylococcus aureus	SRR25649182	Zebrafish	65.980868285504	TRUE
+Cetobacterium somerae	SRR25649182	Zebrafish	0.120676968359088	TRUE
+Toxoplasma gondii	SRR25649182	Zebrafish	17.5128771155261	TRUE
+Klebsiella pneumoniae	SRR25649182	Zebrafish	3.61442236938926	TRUE
+Vibrio parahaemolyticus	SRR25649182	Zebrafish	4.18248712288447	TRUE
+Aeromonas veronii	SRR25649182	Zebrafish	0	FALSE
+Plesiomonas shigelloides	SRR25649182	Zebrafish	0	FALSE
+Kwoniella botswanensis	SRR25649182	Zebrafish	1.88079470198676	TRUE
+Escherichia coli	SRR25649182	Zebrafish	0.980132450331126	TRUE
+Plasmodium vivax	SRR25649182	Zebrafish	2.17218543046358	TRUE
+Shewanella xiamenensis	SRR25649182	Zebrafish	0	FALSE
+Candida dubliniensis	SRR25649182	Zebrafish	0.0618101545253863	TRUE
+Lodderomyces elongisporus	SRR25649182	Zebrafish	0.415011037527594	TRUE
+Leishmania sp. Namibia	SRR25649182	Zebrafish	0.665194996320824	TRUE
+Sordaria macrospora	SRR25649182	Zebrafish	0.671081677704194	TRUE
+Colletotrichum higginsianum	SRR25649182	Zebrafish	0.341427520235467	TRUE
+Cutibacterium acnes	SRR25649182	Zebrafish	0.270787343635026	TRUE
+Shewanella oneidensis	SRR25649182	Zebrafish	0	FALSE
+Shewanella putrefaciens	SRR25649182	Zebrafish	0	FALSE
+Fusobacterium mortiferum	SRR25649182	Zebrafish	0	FALSE
+Kwoniella dejecticola	SRR25649182	Zebrafish	0	FALSE
+Salmonella enterica	SRR25649182	Zebrafish	0	FALSE
+Cetobacterium ceti	SRR25649182	Zebrafish	0	FALSE
+Cetobacterium sp. SF1	SRR25649182	Zebrafish	0	FALSE
+Aeromonas hydrophila	SRR25649182	Zebrafish	0	FALSE
+Shewanella baltica	SRR25649182	Zebrafish	0	FALSE
+Borreliella burgdorferi	SRR25649182	Zebrafish	0.347314201618837	TRUE
+Vibrio cholerae	SRR25649182	Zebrafish	0	FALSE
+Cyprivirus A	SRR25649182	Zebrafish	0.108903605592347	TRUE
+Piscibacter tructae	SRR25649182	Zebrafish	0	FALSE
+Serratia grimesii	SRR25649182	Zebrafish	0.0412067696835909	TRUE
+Aeromonas caviae	SRR25649182	Zebrafish	0	FALSE
+Xanthomonas phage vB_XooS_NR08	SRR25649182	Zebrafish	0.423841059602649	TRUE
+Shewanella decolorationis	SRR25649182	Zebrafish	0	FALSE
+Pseudomonas yamanorum	SRR25649182	Zebrafish	0.208977189109639	TRUE
+Aeromonas allosaccharophila	SRR25649182	Zebrafish	0	FALSE
+Fusobacterium varium	SRR25649182	Zebrafish	0	FALSE
+Vibrio mimicus	SRR25649182	Zebrafish	0	FALSE
+Vibrio metoecus	SRR25649182	Zebrafish	0	FALSE
+Pseudobdellovibrio sp. HCB154	SRR25649182	Zebrafish	0	FALSE
+Botrytis cinerea	SRR25649182	Zebrafish	0	FALSE
+Aeromonas phage ACP1	SRR25649182	Zebrafish	0	FALSE
+Aeromonas sp. FDAARGOS 1414	SRR25649182	Zebrafish	0	FALSE
+Rheinheimera sp. MM224	SRR25649182	Zebrafish	0	FALSE
+Roseateles sp. DAIF2	SRR25649182	Zebrafish	0	FALSE
+Shewanella sp. LC6	SRR25649182	Zebrafish	0	FALSE
+Devosia sp. YIM 151766	SRR25649182	Zebrafish	0	FALSE
+Shewanella algae	SRR25649182	Zebrafish	0	FALSE
+Rheinheimera sp. MMS21-TC3	SRR25649182	Zebrafish	0	FALSE
+Niveibacterium microcysteis	SRR25649182	Zebrafish	0	FALSE
+Aeromonas salmonicida	SRR25649182	Zebrafish	0	FALSE
+Rheinheimera sp. F8	SRR25649182	Zebrafish	0	FALSE
+Rheinheimera mangrovi	SRR25649182	Zebrafish	0	FALSE
+Dechloromonas sp. ARDL1	SRR25649182	Zebrafish	0	FALSE
+Shewanella bicestrii	SRR25649182	Zebrafish	0	FALSE
+Rhabdochlamydiaceae symbiont of Dictyostelium giganteum	SRR25649182	Zebrafish	0	FALSE
+Desertifilum tharense	SRR25649182	Zebrafish	0	FALSE
+Chromobacterium haemolyticum	SRR25649182	Zebrafish	0	FALSE
+Stenotrophomonas maltophilia	SRR25649182	Zebrafish	0	FALSE
+Shewanella oncorhynchi	SRR25649182	Zebrafish	0	FALSE
+Aeromonas dhakensis	SRR25649182	Zebrafish	0	FALSE
+Faucicola osloensis	SRR25649182	Zebrafish	0	FALSE
+Vibrio misgurnus	SRR25649182	Zebrafish	0	FALSE
+Trichoderma asperellum	SRR25649182	Zebrafish	0	FALSE
+Candidatus Megaera polyxenophila	SRR25649182	Zebrafish	0	FALSE
+Altericista sp. CCNU0014	SRR25649182	Zebrafish	0	FALSE
+Corynebacterium canis	SRR25649182	Zebrafish	0	FALSE
+Malassezia restricta	SRR25649182	Zebrafish	0	FALSE
+Chamaesiphon minutus	SRR25649182	Zebrafish	0	FALSE
+Fluviicola sp.	SRR25649182	Zebrafish	0	FALSE
+Hyphomicrobium denitrificans	SRR25649182	Zebrafish	0	FALSE
+Finegoldia magna	SRR25649182	Zebrafish	0	FALSE
+Leishmania mexicana	SRR25649182	Zebrafish	0	FALSE
+Shewanella khirikhana	SRR25649182	Zebrafish	0	FALSE
+Rippkaea orientalis	SRR25649182	Zebrafish	0	FALSE
+Aquipseudomonas alcaligenes	SRR25649182	Zebrafish	0	FALSE
+Aeromonas media	SRR25649182	Zebrafish	0	FALSE
+Aeromonas sp. CU5	SRR25649182	Zebrafish	0	FALSE
+Pseudomonas stagnisoli	SRR25649182	Zebrafish	0	FALSE
+Aeromonas jandaei	SRR25649182	Zebrafish	0	FALSE
+Ectopseudomonas guguanensis	SRR25649182	Zebrafish	0	FALSE
+Vogesella sp. LIG4	SRR25649182	Zebrafish	0	FALSE
+Chitinibacter sp. SCUT-21	SRR25649182	Zebrafish	0	FALSE
+Leishmania enriettii	SRR25649182	Zebrafish	0	FALSE
+Fusarium musae	SRR25649182	Zebrafish	0	FALSE
+Calothrix sp. PCC 6303	SRR25649182	Zebrafish	0	FALSE
+Shewanella sp. HL-SH5	SRR25649182	Zebrafish	0	FALSE
+Shewanella sp. MR-4	SRR25649182	Zebrafish	0	FALSE
+Alishewanella sp. d11	SRR25649182	Zebrafish	0	FALSE
+Fusobacterium hominis	SRR25649182	Zebrafish	0	FALSE
+Thalassiosira pseudonana	SRR25649182	Zebrafish	0	FALSE
+Leptolyngbya sp. 7M	SRR25649182	Zebrafish	0	FALSE
+Fusobacterium gonidiaformans	SRR25649182	Zebrafish	0	FALSE
+Aeromonas phage AVP1	SRR25649182	Zebrafish	0	FALSE
+Cryptomonas paramaecium	SRR25649182	Zebrafish	0	FALSE
+Vibrio mangrovi	SRR25649182	Zebrafish	0	FALSE
+Escherichia phage HMD-P3	SRR25649182	Zebrafish	0	FALSE
+Synechococcus sp. JA-2-3B'a(2-13)	SRR25649182	Zebrafish	0	FALSE
+Shewanella sp. OMA3-2	SRR25649182	Zebrafish	0	FALSE
+Reyranella sp.	SRR25649182	Zebrafish	0	FALSE
+Bacterioplanes sanyensis	SRR25649182	Zebrafish	0	FALSE
+Vibrio navarrensis	SRR25649182	Zebrafish	0	FALSE
+Phaeodactylum tricornutum	SRR25649182	Zebrafish	0	FALSE
+Podospora bellae-mahoneyi	SRR25649182	Zebrafish	0	FALSE

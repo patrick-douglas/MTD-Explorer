@@ -1,0 +1,581 @@
+"Gene_Family"	"SRR25649158"	"SRR25649159"	"SRR25649161"	"SRR25649162"	"SRR25649181"	"SRR25649182"
+"UNGROUPED|g__Cetobacterium.s__Cetobacterium_somerae"	44720.2365867683	46425.1498977767	0	0	0	0
+"UNGROUPED|g__Plesiomonas.s__Plesiomonas_shigelloides"	0	0	12852.3373649572	0	0	0
+"UNGROUPED|unclassified"	323460.971503685	304508.834611256	514470.085443497	124444.335532554	292952.288958312	195421.076283406
+"LDH, ldh; L-lactate dehydrogenase [EC:1.1.1.27] [K00016|unclassified]"	7.2551250192	0	0	0	0	0
+"IDH1, IDH2, icd; isocitrate dehydrogenase [EC:1.1.1.42] [K00031|unclassified]"	0	0	13.2395554314	0	0	0
+"gpsA; glycerol-3-phosphate dehydrogenase (NAD(P)+) [EC:1.1.1.94] [K00057|unclassified]"	0	0	20.7093018982	0	0	0
+"fabG, OAR1; 3-oxoacyl-[acyl-carrier protein] reductase [EC:1.1.1.100] [K00059|unclassified]"	0	11.6980532217	0	0	0	0
+"fdoG, fdhF, fdwA; formate dehydrogenase major subunit [EC:1.17.1.9] [K00123|unclassified]"	0	0	14.6260567414	0	0	0
+"fdoH, fdsB; formate dehydrogenase iron-sulfur subunit [K00124|unclassified]"	0	0	7.7108487513	0	0	0
+"fdoI, fdsG; formate dehydrogenase subunit gamma [K00127|unclassified]"	0	0	9.5703425448	0	0	0
+"GAPDH, gapA; glyceraldehyde 3-phosphate dehydrogenase [EC:1.2.1.12] [K00134|unclassified]"	0	15.5323263766	0	12.4151302002	57.7990883958	24.028149233
+"frdD; fumarate reductase subunit D [K00247|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	27.380952381	0	0	0
+"frdD; fumarate reductase subunit D [K00247|unclassified]"	0	0	9.375	0	0	0
+"pntB; H+-translocating NAD(P) transhydrogenase subunit beta [EC:1.6.1.2 7.1.1.1] [K00325|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	12.9972445376	0	0	0
+"nuoE; NADH-quinone oxidoreductase subunit E [EC:7.1.1.2] [K00334|unclassified]"	0	0	8.1883402058	0	0	0
+"nqrE; Na+-transporting NADH:ubiquinone oxidoreductase subunit E [EC:7.2.1.1] [K00350|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	17.847597553	0	0	0
+"nqrE; Na+-transporting NADH:ubiquinone oxidoreductase subunit E [EC:7.2.1.1] [K00350|unclassified]"	5.5012266021	0	0	0	0	0
+"E1.7.1.7, guaC; GMP reductase [EC:1.7.1.7] [K00364|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	14.4985315419	0	0	0
+"ccoN; cytochrome c oxidase cbb3-type subunit I [EC:7.1.1.9] [K00404|unclassified]"	0	0	12.9823694755	0	0	0
+"ccoO; cytochrome c oxidase cbb3-type subunit II [K00405|unclassified]"	6.9474742337	0	31.1790297749	0	0	0
+"ccoP; cytochrome c oxidase cbb3-type subunit III [K00406|unclassified]"	12.8697864197	0	8.7146021204	0	0	0
+"ccoQ; cytochrome c oxidase cbb3-type subunit IV [K00407|unclassified]"	0	0	31.0198690466	7.9365079365	0	0
+"CYTB, petB; ubiquinol-cytochrome c reductase cytochrome b subunit [K00412|unclassified]"	0	0	21.4294351247	0	0	0
+"E1.11.1.5; cytochrome c peroxidase [EC:1.11.1.5] [K00428|unclassified]"	0	0	5.2598372904	0	0	0
+"FTH1; ferritin heavy chain [EC:1.16.3.2] [K00522|unclassified]"	18.0240702843	0	0	0	10.1022484576	0
+"GAMT; guanidinoacetate N-methyltransferase [EC:2.1.1.2] [K00542|unclassified]"	0	14.8277648997	0	0	0	0
+"trmD; tRNA (guanine37-N1)-methyltransferase [EC:2.1.1.228] [K00554|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	54.4321564967	0	0	0
+"trmD; tRNA (guanine37-N1)-methyltransferase [EC:2.1.1.228] [K00554|unclassified]"	25.7242366245	42.912119277	225.5160655752	28.629311866	0	0
+"fabB; 3-oxoacyl-[acyl-carrier-protein] synthase I [EC:2.3.1.41] [K00647|unclassified]"	0	0	37.5612135516	0	0	0
+"E2.3.1.54, pflD; formate C-acetyltransferase [EC:2.3.1.54] [K00656|unclassified]"	0	0	13.1978919662	0	0	0
+"upp, UPRT; uracil phosphoribosyltransferase [EC:2.4.2.9] [K00761|unclassified]"	0	0	24.3176747126	0	0	0
+"gpt; xanthine phosphoribosyltransferase [EC:2.4.2.22] [K00769|unclassified]"	0	7.2463768116	9.5131717835	0	0	0
+"metK; S-adenosylmethionine synthetase [EC:2.5.1.6] [K00789|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	8.8880118048	0	0	0
+"miaA, TRIT1; tRNA dimethylallyltransferase [EC:2.5.1.75] [K00791|unclassified]"	0	0	11.4194390085	0	0	0
+"ribH, RIB4; 6,7-dimethyl-8-ribityllumazine synthase [EC:2.5.1.78] [K00794|unclassified]"	0	11.2116871969	14.0900303783	0	0	0
+"GST, gst; glutathione S-transferase [EC:2.5.1.18] [K00799|unclassified]"	0	6.9474742337	9.9379035344	0	13.7392008167	8.0144131778
+"PK, pyk; pyruvate kinase [EC:2.7.1.40] [K00873|unclassified]"	0	0	14.3074404946	0	0	0
+"aroK, aroL; shikimate kinase [EC:2.7.1.71] [K00891|unclassified]"	0	0	38.6094430295	0	0	0
+"PGK, pgk; phosphoglycerate kinase [EC:2.7.2.3] [K00927|unclassified]"	0	0	13.4586110105	0	0	0
+"adk, AK; adenylate kinase [EC:2.7.4.3] [K00939|unclassified]"	15.1544111733	0	28.6450792353	0	0	0
+"ndk, NME; nucleoside-diphosphate kinase [EC:2.7.4.6] [K00940|unclassified]"	18.5255727972	7.9365079365	67.6088654559	0	0	0
+"thiL; thiamine-monophosphate kinase [EC:2.7.4.16] [K00946|unclassified]"	0	0	10.8613038757	0	0	0
+"pnp, PNPT1; polyribonucleotide nucleotidyltransferase [EC:2.7.7.8] [K00962|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	8.1368119989	0	0	0
+"pnp, PNPT1; polyribonucleotide nucleotidyltransferase [EC:2.7.7.8] [K00962|unclassified]"	215.5484444065	240.5492500832	159.411900397	105.1039050833	211.5802302914	123.1595242006
+"pps, ppsA; pyruvate, water dikinase [EC:2.7.9.2] [K01007|unclassified]"	0	0	12.6255609269	0	0	0
+"AMY, amyA, malS; alpha-amylase [EC:3.2.1.1] [K01176|unclassified]"	24.6740399486	22.6240155621	0	0	0	23.9781757915
+"E3.2.1.14; chitinase [EC:3.2.1.14] [K01183|unclassified]"	81.2406880766	32.2110757677	70.9492334406	72.1102707221	47.9249158848	152.6727313031
+"DPEP; membrane dipeptidase [EC:3.4.13.19] [K01273|unclassified]"	0	0	43.9734815394	0	0	0
+"PRSS1_2_3; trypsin [EC:3.4.21.4] [K01312|unclassified]"	32.6771224214	19.8407973872	11.537827663	11.4085276396	11.4118267804	17.9719840226
+"CELA1; pancreatic elastase I [EC:3.4.21.36] [K01326|unclassified]"	294.1958560105	370.4839498007	0	0	300.2030163479	157.3356174256
+"CTSB; cathepsin B [EC:3.4.22.1] [K01363|unclassified]"	1050.2525875523	2322.5551828584	1120.1307230846	1057.1524238832	1524.0643125517	0
+"CTSL; cathepsin L [EC:3.4.22.15] [K01365|unclassified]"	22.6337844745	0	0	0	0	0
+"hslV, clpQ; ATP-dependent HslUV protease, peptidase subunit HslV [EC:3.4.25.2] [K01419|unclassified]"	0	0	8.4477390924	0	0	0
+"fnr; CRP/FNR family transcriptional regulator, anaerobic regulatory protein [K01420|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	13.2782369146	0	0	0
+"fnr; CRP/FNR family transcriptional regulator, anaerobic regulatory protein [K01420|unclassified]"	0	0	8.5166827853	0	0	0
+"PDF, def; peptide deformylase [EC:3.5.1.88] [K01462|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	10.5987003975	0	0	0
+"PDF, def; peptide deformylase [EC:3.5.1.88] [K01462|unclassified]"	0	0	4.5300171351	0	0	0
+"DDAH, ddaH; dimethylargininase [EC:3.5.3.18] [K01482|unclassified]"	0	0	314.9537713351	0	0	0
+"ribA, RIB1; GTP cyclohydrolase II [EC:3.5.4.25] [K01497|unclassified]"	0	0	7.0984971593	0	0	0
+"ppa; inorganic pyrophosphatase [EC:3.6.1.1] [K01507|unclassified]"	12.4957589434	0	0	0	0	0
+"deoC, DERA; deoxyribose-phosphate aldolase [EC:4.1.2.4] [K01619|unclassified]"	0	5.5613506413	0	0	0	0
+"ALDO; fructose-bisphosphate aldolase, class I [EC:4.1.2.13] [K01623|unclassified]"	14.9768741619	7.5471990315	6.5694902429	0	8.9695835646	24.2164455448
+"CS, gltA; citrate synthase [EC:2.3.3.1] [K01647|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	15.7058950863	0	0	0
+"ENO, eno; enolase [EC:4.2.1.11] [K01689|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	59.7246090749	0	0	0
+"ENO, eno; enolase [EC:4.2.1.11] [K01689|unclassified]"	7.1987210232	6.3705736739	47.4373727009	0	12.7752301644	0
+"rfbB, rmlB, rffG; dTDP-glucose 4,6-dehydratase [EC:4.2.1.46] [K01710|unclassified]"	261.6458720011	172.0521456668	139.9996006398	89.5467199084	85.7146453503	252.0580085547
+"fabA; 3-hydroxyacyl-[acyl-carrier protein] dehydratase / trans-2-decenoyl-[acyl-carrier protein] isomerase [EC:4.2.1.59 5.3.3.14] [K01716|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	42.6229458894	0	0	0
+"TPI, tpiA; triosephosphate isomerase (TIM) [EC:5.3.1.1] [K01803|unclassified]"	45.5279503662	14.4111795983	152.9590577122	20.4398869491	0	0
+"xylA; xylose isomerase [EC:5.3.1.5] [K01805|unclassified]"	46.7905601696	0	0	0	0	0
+"TARS, thrS; threonyl-tRNA synthetase [EC:6.1.1.3] [K01868|unclassified]"	0	0	10.8889630658	0	0	0
+"sucC; succinyl-CoA synthetase beta subunit [EC:6.2.1.5] [K01903|unclassified]"	0	0	17.8680560607	0	0	0
+"glnA, GLUL; glutamine synthetase [EC:6.3.1.2] [K01915|unclassified]"	0	11.7615748781	16.9102648079	0	0	0
+"purC; phosphoribosylaminoimidazole-succinocarboxamide synthase [EC:6.3.2.6] [K01923|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	13.9953225579	0	0	0
+"purA, ADSS; adenylosuccinate synthase [EC:6.3.4.4] [K01939|unclassified]"	0	0	23.5886223479	0	0	0
+"argG, ASS1; argininosuccinate synthase [EC:6.3.4.5] [K01940|unclassified]"	0	0	13.4148620812	0	0	0
+"accD; acetyl-CoA carboxylase carboxyl transferase subunit beta [EC:6.4.1.2 2.1.3.15] [K01963|unclassified]"	0	0	16.515549379	0	0	0
+"TC.FEV.OM; iron complex outermembrane recepter protein [K02014|unclassified]"	0	0	29.9241971664	0	0	0
+"ABC.PE.S; peptide/nickel transport system substrate-binding protein [K02035|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	35.3093142698	0	0	0
+"ABC.PE.S; peptide/nickel transport system substrate-binding protein [K02035|unclassified]"	0	0	15.4593172878	0	24.5145549501	0
+"pstS; phosphate transport system substrate-binding protein [K02040|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	7.2053613352	0	0	0
+"pstS; phosphate transport system substrate-binding protein [K02040|unclassified]"	0	30.3165165058	0	10.8613089959	0	0
+"metQ; D-methionine transport system substrate-binding protein [K02073|unclassified]"	0	4.6482838558	43.2238810219	0	0	0
+"acpP; acyl carrier protein [K02078|g__Cetobacterium.s__Cetobacterium_somerae]"	95.2671755725	195.3164556962	0	0	0	0
+"acpP; acyl carrier protein [K02078|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	508.9752840212	0	0	0
+"acpP; acyl carrier protein [K02078|unclassified]"	70.2644324854	118.0230087483	288.6023173197	79.4201581556	11.0193673729	0
+"ATPF0A, atpB; F-type H+-transporting ATPase subunit a [K02108|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	15.0920632182	0	0	0
+"ATPF0A, atpB; F-type H+-transporting ATPase subunit a [K02108|unclassified]"	8.1819227556	0	85.4030390173	5.1914363198	0	0
+"ATPF0B, atpF; F-type H+-transporting ATPase subunit b [K02109|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	17.9555646845	0	0	0
+"ATPF0B, atpF; F-type H+-transporting ATPase subunit b [K02109|unclassified]"	0	18.8377012775	106.7386224014	0	0	0
+"ATPF0C, atpE; F-type H+-transporting ATPase subunit c [K02110|unclassified]"	23.2931227235	11.8558146513	80.7555430092	2.6315789474	0	0
+"ATPF1A, atpA; F-type H+/Na+-transporting ATPase subunit alpha [EC:7.1.2.2 7.2.2.1] [K02111|unclassified]"	8.3720615702	14.4166424633	88.8311333308	0	0	0
+"ATPF1B, atpD; F-type H+/Na+-transporting ATPase subunit beta [EC:7.1.2.2 7.2.2.1] [K02112|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	22.7285527864	0	0	0
+"ATPF1B, atpD; F-type H+/Na+-transporting ATPase subunit beta [EC:7.1.2.2 7.2.2.1] [K02112|unclassified]"	0	12.4356820586	87.2955711504	13.7680240204	0	0
+"ATPF1D, atpH; F-type H+-transporting ATPase subunit delta [K02113|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	22.8007844336	0	0	0
+"ATPF1D, atpH; F-type H+-transporting ATPase subunit delta [K02113|unclassified]"	10.3648531395	0	80.6367749898	0	0	0
+"ATPF1E, atpC; F-type H+-transporting ATPase subunit epsilon [K02114|unclassified]"	0	0	66.0987264836	0	0	0
+"ATPF1G, atpG; F-type H+-transporting ATPase subunit gamma [K02115|unclassified]"	0	14.072521662	100.9452418354	0	0	0
+"atpI; ATP synthase protein I [K02116|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	8.658008658	0	0	0
+"atpI; ATP synthase protein I [K02116|unclassified]"	14.6727062794	13.2874273446	43.9614357294	0	0	0
+"ATPeF0E, ATP5I; F-type H+-transporting ATPase subunit e [K02129|unclassified]"	622.3221083992	537.1346297923	181.2051290588	267.664405046	340.5310936044	480.3997568021
+"ATPeF1B, ATP5B, ATP2; F-type H+-transporting ATPase subunit beta [EC:7.1.2.2] [K02133|unclassified]"	0	0	0	0	3.4593328268	0
+"ATPeV1E, ATP6E; V-type H+-transporting ATPase subunit E [K02150|unclassified]"	0	0	0	0	23.9234449761	0
+"CALM; calmodulin [K02183|unclassified]"	0	0	0	0	6.3348586365	0
+"ccmC; heme exporter protein C [K02195|unclassified]"	0	0	15.8128669478	0	0	0
+"ccmD; heme exporter protein D [K02196|unclassified]"	0	0	6.5359477124	0	0	0
+"ccmE; cytochrome c-type biogenesis protein CcmE [K02197|unclassified]"	0	0	18.2131167509	0	0	0
+"ccmH; cytochrome c-type biogenesis protein CcmH [K02200|unclassified]"	13.7692795787	0	0	0	0	0
+"COX2; cytochrome c oxidase subunit 2 [K02261|unclassified]"	0	6.1342860531	0	15.2757052536	0	0
+"COX6B; cytochrome c oxidase subunit 6b [K02267|unclassified]"	0	0	0	0	0	4.7846889952
+"dnaA; chromosomal replication initiator protein [K02313|unclassified]"	0	0	10.6077836745	0	0	0
+"fusA, GFM, EFG; elongation factor G [K02355|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	36.4366122213	0	0	0
+"fusA, GFM, EFG; elongation factor G [K02355|unclassified]"	12.2283434176	35.7885822344	121.8824280032	0	8.6372519792	0
+"efp; elongation factor P [K02356|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	66.8225456569	0	0	0
+"efp; elongation factor P [K02356|unclassified]"	15.4417887739	17.593979133	39.2049641143	0	15.4365761302	0
+"tsf, TSFM; elongation factor Ts [K02357|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	25.4225147244	0	0	0
+"tsf, TSFM; elongation factor Ts [K02357|unclassified]"	9.9937578027	14.1305827059	81.4945811487	0	9.9471969848	0
+"tuf, TUFM; elongation factor Tu [K02358|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	243.6996185755	0	0	0
+"tuf, TUFM; elongation factor Tu [K02358|unclassified]"	43.5338184437	38.5444046726	210.7917638529	22.0211915968	2.1595793985	0
+"fabZ; 3-hydroxyacyl-[acyl-carrier-protein] dehydratase [EC:4.2.1.59] [K02372|unclassified]"	0	4.8367664433	0	0	0	0
+"flgB; flagellar basal-body rod protein FlgB [K02387|unclassified]"	0	0	11.1969208132	0	0	0
+"fliL; flagellar protein FliL [K02415|unclassified]"	0	0	8.3862049585	0	0	0
+"rlmE, rrmJ, ftsJ; 23S rRNA (uridine2552-2'-O)-methyltransferase [EC:2.1.1.166] [K02427|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	12.5	0	0	0
+"rlmE, rrmJ, ftsJ; 23S rRNA (uridine2552-2'-O)-methyltransferase [EC:2.1.1.166] [K02427|unclassified]"	0	6.9174271354	20.6254619326	0	0	0
+"gcvH, GCSH; glycine cleavage system H protein [K02437|unclassified]"	0	0	23.4381613363	0	0	0
+"infA; translation initiation factor IF-1 [K02518|g__Cetobacterium.s__Cetobacterium_somerae]"	321.4111438231	350.1855579804	0	0	0	0
+"infA; translation initiation factor IF-1 [K02518|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	151.3667263363	0	0	0
+"infA; translation initiation factor IF-1 [K02518|unclassified]"	53.0824757679	11.5606936416	386.6578828777	121.7406918653	23.8808098089	0
+"infC, MTIF3; translation initiation factor IF-3 [K02520|unclassified]"	33.7680214256	59.5027296596	255.5181770688	0	0	0
+"lpxC; UDP-3-O-[3-hydroxymyristoyl] N-acetylglucosamine deacetylase [EC:3.5.1.108] [K02535|unclassified]"	0	0	59.4229459436	0	0	0
+"rraA, menG; regulator of ribonuclease activity A [K02553|unclassified]"	0	11.504846655	27.3530511017	0	0	0
+"nusA; transcription termination/antitermination protein NusA [K02600|unclassified]"	0	0	17.8720038306	0	0	0
+"nusG; transcription termination/antitermination protein NusG [K02601|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	16.9481706337	0	0	0
+"nusG; transcription termination/antitermination protein NusG [K02601|unclassified]"	0	0	35.8494710876	3.996007984	0	0
+"pilX; type IV pilus assembly protein PilX [K02673|unclassified]"	0	0	4.8661800487	0	0	0
+"priB; primosomal replication protein N [K02686|unclassified]"	21.730190407	31.1235766935	41.4582611674	13.7877382974	0	0
+"psbA; photosystem II P680 reaction center D1 protein [EC:1.10.3.9] [K02703|unclassified]"	0	1.4223302997	46.9435669051	5.7636426639	0	0
+"PSMB6; 20S proteasome subunit beta 1 [EC:3.4.25.1] [K02738|unclassified]"	0	90.727094994	55.4983489181	0	0	39.9464650892
+"PSMB7; 20S proteasome subunit beta 2 [EC:3.4.25.1] [K02739|unclassified]"	0	0	117.0716200247	0	0	0
+"PSMB8, LMP7; 20S proteasome subunit beta 8 [EC:3.4.25.1] [K02740|unclassified]"	0	2890.8495447212	1848.0199288594	0	0	2145.13766221
+"PSMB9, LMP2; 20S proteasome subunit beta 9 [EC:3.4.25.1] [K02741|unclassified]"	0	1598.0924241482	1166.3830506336	0	0	961.7159884082
+"crr; sugar PTS system EIIA component [EC:2.7.1.-] [K02777|unclassified]"	0	0	0	0	5.4411215734	0
+"ptsH; phosphocarrier protein HPr [K02784|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	9.2592592593	0	0	0
+"ptsH; phosphocarrier protein HPr [K02784|unclassified]"	29.0324093617	0	19.0545322566	0	0	0
+"nagEb; N-acetylglucosamine PTS system EIIB component [EC:2.7.1.193] [K02803|unclassified]"	9.0905548262	19.5903891542	39.1957964478	0	0	0
+"nagE; N-acetylglucosamine PTS system EIICBA or EIICB component [EC:2.7.1.193] [K02804|unclassified]"	9.0905548262	19.5903891542	39.1957964478	0	0	0
+"ulaB, sgaB; ascorbate PTS system EIIB component [EC:2.7.1.194] [K02822|unclassified]"	0	0	0	0	0	8.4389688079
+"rbfA; ribosome-binding factor A [K02834|unclassified]"	0	0	12.7291374565	0	0	0
+"frr, MRRF, RRF; ribosome recycling factor [K02838|unclassified]"	0	0	7.8973423455	0	31.3695865596	0
+"rimM; 16S rRNA processing protein RimM [K02860|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	89.6994737782	0	0	0
+"rimM; 16S rRNA processing protein RimM [K02860|unclassified]"	18.9801618984	56.4719563867	177.0800813627	0	20.8247069938	0
+"RP-L1, MRPL1, rplA; large subunit ribosomal protein L1 [K02863|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	69.6318883744	0	0	0
+"RP-L1, MRPL1, rplA; large subunit ribosomal protein L1 [K02863|unclassified]"	0	0	65.8845065768	0	0	0
+"RP-L10, MRPL10, rplJ; large subunit ribosomal protein L10 [K02864|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	221.2268229148	0	0	0
+"RP-L10, MRPL10, rplJ; large subunit ribosomal protein L10 [K02864|unclassified]"	50.8623171122	48.7821074255	285.5782994912	51.1409381275	31.2852000852	4.4395171224
+"RP-L10Ae, RPL10A; large subunit ribosomal protein L10Ae [K02865|unclassified]"	0	0	0	9.8342888089	0	0
+"RP-L10e, RPL10; large subunit ribosomal protein L10e [K02866|unclassified]"	0	0	0	0	21.4705819944	0
+"RP-L11, MRPL11, rplK; large subunit ribosomal protein L11 [K02867|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	65.6316859147	0	0	0
+"RP-L11, MRPL11, rplK; large subunit ribosomal protein L11 [K02867|unclassified]"	37.8656407081	42.1329044172	186.524572125	18.6209437771	0	0
+"RP-L11e, RPL11; large subunit ribosomal protein L11e [K02868|unclassified]"	0	1.1769910968	0	0	7.5600096318	0
+"RP-L13, MRPL13, rplM; large subunit ribosomal protein L13 [K02871|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	63.1447717002	0	0	0
+"RP-L13, MRPL13, rplM; large subunit ribosomal protein L13 [K02871|unclassified]"	50.2247091712	38.8602770963	333.7990567737	26.4972040061	0	0
+"RP-L13e, RPL13; large subunit ribosomal protein L13e [K02873|unclassified]"	0	0	0	21.302698237	0	0
+"RP-L14, MRPL14, rplN; large subunit ribosomal protein L14 [K02874|g__Cetobacterium.s__Cetobacterium_somerae]"	454.5632676579	636.5369065384	0	0	0	0
+"RP-L14, MRPL14, rplN; large subunit ribosomal protein L14 [K02874|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	124.8175478119	0	0	0
+"RP-L14, MRPL14, rplN; large subunit ribosomal protein L14 [K02874|unclassified]"	83.906424262	40.020483346	759.8964562547	158.9327354225	9.3267467026	0
+"RP-L15, MRPL15, rplO; large subunit ribosomal protein L15 [K02876|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	67.6484181569	0	0	0
+"RP-L15, MRPL15, rplO; large subunit ribosomal protein L15 [K02876|unclassified]"	26.0080221044	84.0014937251	214.4697762922	25.9347625661	10.4302654482	0
+"RP-L16, MRPL16, rplP; large subunit ribosomal protein L16 [K02878|g__Cetobacterium.s__Cetobacterium_somerae]"	479.7104948517	877.8504942433	0	0	0	0
+"RP-L16, MRPL16, rplP; large subunit ribosomal protein L16 [K02878|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	48.0279468109	0	0	0
+"RP-L16, MRPL16, rplP; large subunit ribosomal protein L16 [K02878|unclassified]"	55.3800168304	19.095327262	279.6064170348	56.0508154811	0	0
+"RP-L17, MRPL17, rplQ; large subunit ribosomal protein L17 [K02879|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	269.5208711115	0	0	0
+"RP-L17, MRPL17, rplQ; large subunit ribosomal protein L17 [K02879|unclassified]"	17.2579416344	43.0308031093	123.6065984386	25.7047957058	0	0
+"RP-L18, MRPL18, rplR; large subunit ribosomal protein L18 [K02881|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	81.7346658041	0	0	0
+"RP-L18, MRPL18, rplR; large subunit ribosomal protein L18 [K02881|unclassified]"	47.6579994856	97.2818426092	128.9720643086	6.6115883111	0	0
+"RP-L18Ae, RPL18A; large subunit ribosomal protein L18Ae [K02882|unclassified]"	27.9732787283	18.4112430087	25.1571457693	0	0	8.3333333333
+"RP-L18e, RPL18; large subunit ribosomal protein L18e [K02883|unclassified]"	4.6296296296	0	0	0	0	0
+"RP-L19, MRPL19, rplS; large subunit ribosomal protein L19 [K02884|g__Cetobacterium.s__Cetobacterium_somerae]"	221.2015962354	258.0419048733	0	0	0	0
+"RP-L19, MRPL19, rplS; large subunit ribosomal protein L19 [K02884|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	52.3393624659	0	0	0
+"RP-L19, MRPL19, rplS; large subunit ribosomal protein L19 [K02884|unclassified]"	118.9036348747	87.809666531	494.4109843332	165.6980019837	25.9761509762	0
+"RP-L2, MRPL2, rplB; large subunit ribosomal protein L2 [K02886|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	47.028749123	0	0	0
+"RP-L2, MRPL2, rplB; large subunit ribosomal protein L2 [K02886|unclassified]"	15.4489994915	16.8629167079	109.4799864625	0	0	0
+"RP-L20, MRPL20, rplT; large subunit ribosomal protein L20 [K02887|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	330.636703005	0	0	0
+"RP-L20, MRPL20, rplT; large subunit ribosomal protein L20 [K02887|unclassified]"	32.4255751732	6.8143298275	159.904566533	19.4700121885	35.9584270867	0
+"RP-L21, MRPL21, rplU; large subunit ribosomal protein L21 [K02888|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	171.4634058898	0	0	0
+"RP-L21, MRPL21, rplU; large subunit ribosomal protein L21 [K02888|unclassified]"	19.1584628581	44.4739256626	217.644912384	44.2555529405	26.8641320365	0
+"RP-L21e, RPL21; large subunit ribosomal protein L21e [K02889|unclassified]"	0	0	9.5443017773	0	5.7977786371	0
+"RP-L22, MRPL22, rplV; large subunit ribosomal protein L22 [K02890|g__Cetobacterium.s__Cetobacterium_somerae]"	356.4400906362	661.9170985675	0	0	0	0
+"RP-L22, MRPL22, rplV; large subunit ribosomal protein L22 [K02890|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	10.9289617486	0	0	0
+"RP-L22, MRPL22, rplV; large subunit ribosomal protein L22 [K02890|unclassified]"	28.3061423953	23.7926806683	339.8486549175	105.6264185744	7.1174377224	0
+"RP-L23, MRPL23, rplW; large subunit ribosomal protein L23 [K02892|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	13.0718954248	0	0	0
+"RP-L23, MRPL23, rplW; large subunit ribosomal protein L23 [K02892|unclassified]"	15.8112647449	55.6189196411	145.7734898936	23.8098987449	22.886696946	0
+"RP-L23Ae, RPL23A; large subunit ribosomal protein L23Ae [K02893|unclassified]"	0	0	0.7272293398	0	0	0
+"RP-L23e, RPL23; large subunit ribosomal protein L23e [K02894|unclassified]"	2.6735690765	0	0	0	0	0
+"RP-L24, MRPL24, rplX; large subunit ribosomal protein L24 [K02895|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	141.3895320872	0	0	0
+"RP-L24, MRPL24, rplX; large subunit ribosomal protein L24 [K02895|unclassified]"	18.8968359371	67.6566976715	264.2430506258	0	18.784920885	0
+"RP-L25, rplY; large subunit ribosomal protein L25 [K02897|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	42.0697632287	0	0	0
+"RP-L25, rplY; large subunit ribosomal protein L25 [K02897|unclassified]"	8.4745762712	25.0351568604	67.1813156959	0	16.4965986395	0
+"RP-L26e, RPL26; large subunit ribosomal protein L26e [K02898|unclassified]"	0	0	0	0	0	0.9211340076
+"RP-L27, MRPL27, rpmA; large subunit ribosomal protein L27 [K02899|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	50.1121754843	0	0	0
+"RP-L27, MRPL27, rpmA; large subunit ribosomal protein L27 [K02899|unclassified]"	14.4471915683	23.8385480157	120.9668236821	0	0	0
+"RP-L27Ae, RPL27A; large subunit ribosomal protein L27Ae [K02900|unclassified]"	410.2928568549	0	0	0	0	0
+"RP-L27e, RPL27; large subunit ribosomal protein L27e [K02901|unclassified]"	0	0	5.4166768645	8.2582582583	6.2866638381	0
+"RP-L28, MRPL28, rpmB; large subunit ribosomal protein L28 [K02902|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	1326.9306608138	0	0	0
+"RP-L28, MRPL28, rpmB; large subunit ribosomal protein L28 [K02902|unclassified]"	120.8559375189	123.2939891542	537.4567756206	42.4462585753	134.1832011661	21.0526315789
+"RP-L29, rpmC; large subunit ribosomal protein L29 [K02904|g__Cetobacterium.s__Cetobacterium_somerae]"	1548.1207069374	1384.7184588306	0	0	0	0
+"RP-L29, rpmC; large subunit ribosomal protein L29 [K02904|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	142.8571428571	0	0	0
+"RP-L29, rpmC; large subunit ribosomal protein L29 [K02904|unclassified]"	7.1428571429	35.1203577543	454.7750711943	77.289446601	21.327254306	0
+"RP-L3, MRPL3, rplC; large subunit ribosomal protein L3 [K02906|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	12.5	0	0	0
+"RP-L3, MRPL3, rplC; large subunit ribosomal protein L3 [K02906|unclassified]"	8.5852112805	28.3654402728	158.4595420263	10.2156705953	0	0
+"RP-L30, MRPL30, rpmD; large subunit ribosomal protein L30 [K02907|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	66.6666666667	0	0	0
+"RP-L30, MRPL30, rpmD; large subunit ribosomal protein L30 [K02907|unclassified]"	0	51.8747422624	146.6268921816	14.2857142857	0	0
+"RP-L31, rpmE; large subunit ribosomal protein L31 [K02909|unclassified]"	47.9158014278	134.9403060416	613.040993851	41.2252545831	29.549471384	0
+"RP-L31e, RPL31; large subunit ribosomal protein L31e [K02910|unclassified]"	0	17.5681262093	9.2421813161	3.9523122589	0	0
+"RP-L32, MRPL32, rpmF; large subunit ribosomal protein L32 [K02911|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	166.6666666667	0	0	0
+"RP-L32, MRPL32, rpmF; large subunit ribosomal protein L32 [K02911|unclassified]"	15.873015873	0	33.4150274412	0	15.037593985	0
+"RP-L32e, RPL32; large subunit ribosomal protein L32e [K02912|unclassified]"	0	0	0	0	0	4.9504950495
+"RP-L33, MRPL33, rpmG; large subunit ribosomal protein L33 [K02913|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	555.5555555556	0	0	0
+"RP-L33, MRPL33, rpmG; large subunit ribosomal protein L33 [K02913|unclassified]"	59.9764220454	84.151740263	348.623738585	25.0240509997	17.1676982022	0
+"RP-L34, MRPL34, rpmH; large subunit ribosomal protein L34 [K02914|unclassified]"	0	0	41.6666666667	0	21.978021978	0
+"RP-L34e, RPL34; large subunit ribosomal protein L34e [K02915|unclassified]"	0	0	7.2520553728	0	0	3.2949018586
+"RP-L35, MRPL35, rpmI; large subunit ribosomal protein L35 [K02916|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	455.3571428571	0	0	0
+"RP-L35, MRPL35, rpmI; large subunit ribosomal protein L35 [K02916|unclassified]"	38.5278072838	56.0202741069	283.6383976261	13.7458667926	12.8571952606	0
+"RP-L35e, RPL35; large subunit ribosomal protein L35e [K02918|unclassified]"	4.6728971963	2.6702269692	0	0	0	0
+"RP-L37Ae, RPL37A; large subunit ribosomal protein L37Ae [K02921|unclassified]"	0	4.4052863436	1.6518137214	0	0	0
+"RP-L37e, RPL37; large subunit ribosomal protein L37e [K02922|unclassified]"	4.132231405	0	0	0	0	4.6296296296
+"RP-L38e, RPL38; large subunit ribosomal protein L38e [K02923|unclassified]"	0	0	0.8418933744	0	1.2422360248	0.8230452674
+"RP-L4, MRPL4, rplD; large subunit ribosomal protein L4 [K02926|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	52.1634692239	0	0	0
+"RP-L4, MRPL4, rplD; large subunit ribosomal protein L4 [K02926|unclassified]"	32.4849728638	31.4452457789	156.620021377	42.4699980542	0	0
+"RP-L40e, RPL40, UBA52; ubiquitin-large subunit ribosomal protein L40e [K02927|unclassified]"	0	0	0.4422072491	0	25.211468779	2.3309243814
+"RP-L44e, RPL44; large subunit ribosomal protein L44e [K02929|unclassified]"	0	1.9477294687	1.669640487	0	0	4.7119824101
+"RP-L5, MRPL5, rplE; large subunit ribosomal protein L5 [K02931|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	97.2035399006	0	0	0
+"RP-L5, MRPL5, rplE; large subunit ribosomal protein L5 [K02931|unclassified]"	40.8065708755	40.311818275	215.9757580962	0	7.6128666423	0
+"RP-L6, MRPL6, rplF; large subunit ribosomal protein L6 [K02933|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	53.953994596	0	0	0
+"RP-L6, MRPL6, rplF; large subunit ribosomal protein L6 [K02933|unclassified]"	37.1456565008	55.5693165908	154.9843792896	0	16.5045825866	0
+"RP-L6e, RPL6; large subunit ribosomal protein L6e [K02934|unclassified]"	0	43.243541295	0	0	0	0
+"RP-L7, MRPL12, rplL; large subunit ribosomal protein L7/L12 [K02935|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	287.7111009902	0	0	0
+"RP-L7, MRPL12, rplL; large subunit ribosomal protein L7/L12 [K02935|unclassified]"	28.4314142299	44.0150170936	340.6238256036	18.927444795	56.7091344283	0
+"RP-L7e, RPL7; large subunit ribosomal protein L7e [K02937|unclassified]"	12.9604886498	0	0	0	0	8.5810178174
+"RP-L9, MRPL9, rplI; large subunit ribosomal protein L9 [K02939|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	39.603960396	0	0	0
+"RP-L9, MRPL9, rplI; large subunit ribosomal protein L9 [K02939|unclassified]"	19.8527916566	9.8850085269	130.0257807708	9.9564521532	4.9813277751	0
+"RP-S1, rpsA; small subunit ribosomal protein S1 [K02945|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	117.3334948815	0	0	0
+"RP-S1, rpsA; small subunit ribosomal protein S1 [K02945|unclassified]"	19.8166626688	51.5553010121	157.4339906061	18.9919592556	0	0
+"RP-S10, MRPS10, rpsJ; small subunit ribosomal protein S10 [K02946|g__Cetobacterium.s__Cetobacterium_somerae]"	354.5490665364	624.0279507261	0	0	0	0
+"RP-S10, MRPS10, rpsJ; small subunit ribosomal protein S10 [K02946|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	30.8641975309	0	0	0
+"RP-S10, MRPS10, rpsJ; small subunit ribosomal protein S10 [K02946|unclassified]"	54.4548027508	104.6265800155	219.0134180168	13.3664790943	8.9571667158	0
+"RP-S10e, RPS10; small subunit ribosomal protein S10e [K02947|unclassified]"	1.6654457737	0	0	0	0	0
+"RP-S11, MRPS11, rpsK; small subunit ribosomal protein S11 [K02948|g__Cetobacterium.s__Cetobacterium_somerae]"	359.384710106	481.4179141197	0	0	0	0
+"RP-S11, MRPS11, rpsK; small subunit ribosomal protein S11 [K02948|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	73.8327937003	0	0	0
+"RP-S11, MRPS11, rpsK; small subunit ribosomal protein S11 [K02948|unclassified]"	14.4943853957	7.625619835	320.5717022096	74.0026227392	17.7166211303	0
+"RP-S12, MRPS12, rpsL; small subunit ribosomal protein S12 [K02950|g__Cetobacterium.s__Cetobacterium_somerae]"	432.19647543	514.2461125737	0	0	0	0
+"RP-S12, MRPS12, rpsL; small subunit ribosomal protein S12 [K02950|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	141.0256410256	0	0	0
+"RP-S12, MRPS12, rpsL; small subunit ribosomal protein S12 [K02950|unclassified]"	42.074821673	5.721642635	302.5004491076	102.6832965884	0	0
+"RP-S12e, RPS12; small subunit ribosomal protein S12e [K02951|unclassified]"	0	0	2.2019489977	0	0	0
+"RP-S13, rpsM; small subunit ribosomal protein S13 [K02952|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	153.7533824779	0	0	0
+"RP-S13, rpsM; small subunit ribosomal protein S13 [K02952|unclassified]"	23.9908438121	32.267023794	261.7864242901	6.5466623808	0	0
+"RP-S13e, RPS13; small subunit ribosomal protein S13e [K02953|unclassified]"	0	4.4755069331	11.4406495965	10.3899150736	0	0
+"RP-S14, MRPS14, rpsN; small subunit ribosomal protein S14 [K02954|unclassified]"	31.2666314013	54.6912983161	246.3984850354	11.811023622	7.8431372549	0
+"RP-S14e, RPS14; small subunit ribosomal protein S14e [K02955|unclassified]"	0	0	0	0	0	2.693652461
+"RP-S15, MRPS15, rpsO; small subunit ribosomal protein S15 [K02956|unclassified]"	18.2240856823	40.6155755267	134.341609398	0	0	0
+"RP-S15Ae, RPS15A; small subunit ribosomal protein S15Ae [K02957|unclassified]"	33.0413219485	14.4971656341	0	0	13.1750441598	3.1118696168
+"RP-S16, MRPS16, rpsP; small subunit ribosomal protein S16 [K02959|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	50.5050505051	0	0	0
+"RP-S16, MRPS16, rpsP; small subunit ribosomal protein S16 [K02959|unclassified]"	20.312968999	40.3025227146	87.3109390509	4.9504950495	0	0
+"RP-S17, MRPS17, rpsQ; small subunit ribosomal protein S17 [K02961|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	31.9122987324	0	0	0
+"RP-S17, MRPS17, rpsQ; small subunit ribosomal protein S17 [K02961|unclassified]"	30.4055786289	65.2680821509	127.8053396957	14.9810161145	3.2974469508	0
+"RP-S17e, RPS17; small subunit ribosomal protein S17e [K02962|unclassified]"	6.7704356648	0	0	0	0	0
+"RP-S18, MRPS18, rpsR; small subunit ribosomal protein S18 [K02963|g__Cetobacterium.s__Cetobacterium_somerae]"	711.6913646186	887.7010428352	0	0	0	0
+"RP-S18, MRPS18, rpsR; small subunit ribosomal protein S18 [K02963|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	89.4190197988	0	0	0
+"RP-S18, MRPS18, rpsR; small subunit ribosomal protein S18 [K02963|unclassified]"	15.9722222222	37.1117733356	251.8673990249	36.6594960485	7.4384440307	0
+"RP-S19, rpsS; small subunit ribosomal protein S19 [K02965|g__Cetobacterium.s__Cetobacterium_somerae]"	313.5020651177	718.9325251111	0	0	0	0
+"RP-S19, rpsS; small subunit ribosomal protein S19 [K02965|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	69.7674418605	0	0	0
+"RP-S19, rpsS; small subunit ribosomal protein S19 [K02965|unclassified]"	43.7075934949	35.2570575539	369.3312159035	107.7159519848	0	0
+"RP-S2, MRPS2, rpsB; small subunit ribosomal protein S2 [K02967|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	108.9445536788	0	0	0
+"RP-S2, MRPS2, rpsB; small subunit ribosomal protein S2 [K02967|unclassified]"	49.4167474455	24.9889844339	119.3587039415	0	0	0
+"RP-S20, rpsT; small subunit ribosomal protein S20 [K02968|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	606.3872311043	0	0	0
+"RP-S20, rpsT; small subunit ribosomal protein S20 [K02968|unclassified]"	81.8257019029	153.883117811	413.318660019	4.6506067399	61.4006607428	0
+"RP-S20e, RPS20; small subunit ribosomal protein S20e [K02969|unclassified]"	0	23.3938324967	0	0	0	0
+"RP-S21, MRPS21, rpsU; small subunit ribosomal protein S21 [K02970|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	184.3657817109	0	0	0
+"RP-S21, MRPS21, rpsU; small subunit ribosomal protein S21 [K02970|unclassified]"	35.474334432	45.746264962	384.3157431913	22.8310502283	17.0104251713	0
+"RP-S21e, RPS21; small subunit ribosomal protein S21e [K02971|unclassified]"	0	0	0	4.9751243781	0	0
+"RP-S23e, RPS23; small subunit ribosomal protein S23e [K02973|unclassified]"	4.903131689	0	0	0	4.7587015291	0
+"RP-S26e, RPS26; small subunit ribosomal protein S26e [K02976|unclassified]"	0	0	0	0	6.543233936	0
+"RP-S27Ae, RPS27A, UBA80; ubiquitin-small subunit ribosomal protein S27Ae [K02977|unclassified]"	0	33.689466921	16.6523813818	18.358724263	9.5254402841	10.281618693
+"RP-S27e, RPS27; small subunit ribosomal protein S27e [K02978|unclassified]"	0	0	0	0	0	0.700280112
+"RP-S28e, RPS28; small subunit ribosomal protein S28e [K02979|unclassified]"	0	0	0	0	2.5157232704	2.6492402786
+"RP-S29e, RPS29; small subunit ribosomal protein S29e [K02980|unclassified]"	0	0	0	6.7460133686	0	0
+"RP-S2e, RPS2; small subunit ribosomal protein S2e [K02981|unclassified]"	0	0	0	0	8.4382751898	0
+"RP-S3, rpsC; small subunit ribosomal protein S3 [K02982|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	55.8110124543	0	0	0
+"RP-S3, rpsC; small subunit ribosomal protein S3 [K02982|unclassified]"	18.077252544	61.1208286264	131.4840714265	0	0	0
+"RP-S30e, RPS30; small subunit ribosomal protein S30e [K02983|unclassified]"	0	15.1794853449	46.8513358908	0	32.4519246913	0
+"RP-S3Ae, RPS3A; small subunit ribosomal protein S3Ae [K02984|unclassified]"	16.8461032738	0	0	0	0	0
+"RP-S3e, RPS3; small subunit ribosomal protein S3e [K02985|unclassified]"	0	2.6173959885	0	0	0	0
+"RP-S4, rpsD; small subunit ribosomal protein S4 [K02986|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	50.0444399968	0	0	0
+"RP-S4, rpsD; small subunit ribosomal protein S4 [K02986|unclassified]"	23.8062408899	61.690061265	295.3543874939	15.7292091049	6.980994152	0
+"RP-S5, MRPS5, rpsE; small subunit ribosomal protein S5 [K02988|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	48.4007651146	0	0	0
+"RP-S5, MRPS5, rpsE; small subunit ribosomal protein S5 [K02988|unclassified]"	11.0571935673	47.2523490973	137.8526523252	0	0	0
+"RP-S6, MRPS6, rpsF; small subunit ribosomal protein S6 [K02990|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	100.0077031375	0	0	0
+"RP-S6, MRPS6, rpsF; small subunit ribosomal protein S6 [K02990|unclassified]"	12.2704133681	35.0696573568	161.9303905157	0	0	0
+"RP-S7, MRPS7, rpsG; small subunit ribosomal protein S7 [K02992|g__Cetobacterium.s__Cetobacterium_somerae]"	252.9831550577	362.9410503974	0	0	0	0
+"RP-S7, MRPS7, rpsG; small subunit ribosomal protein S7 [K02992|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	86.9122533653	0	0	0
+"RP-S7, MRPS7, rpsG; small subunit ribosomal protein S7 [K02992|unclassified]"	35.6869938805	35.4987183761	507.9759827841	109.5751942709	26.0555980954	0
+"RP-S7e, RPS7; small subunit ribosomal protein S7e [K02993|unclassified]"	11.0200110642	0	3.4104612621	0	17.9595546524	0
+"RP-S8, rpsH; small subunit ribosomal protein S8 [K02994|unclassified]"	17.561009072	40.9018227816	245.8334666338	11.6959064327	0	0
+"RP-S8e, RPS8; small subunit ribosomal protein S8e [K02995|unclassified]"	13.5475716202	0	0	0	11.9652827275	10.4272003842
+"RP-S9, MRPS9, rpsI; small subunit ribosomal protein S9 [K02996|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	191.9378974935	0	0	0
+"RP-S9, MRPS9, rpsI; small subunit ribosomal protein S9 [K02996|unclassified]"	43.4588466098	66.8106027021	160.4668209304	0	14.6370824622	0
+"RP-SAe, RPSA; small subunit ribosomal protein SAe [K02998|unclassified]"	0	11.3451441359	8.9772076795	16.7539316629	7.6077387031	0
+"rpoA; DNA-directed RNA polymerase subunit alpha [EC:2.7.7.6] [K03040|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	86.4604241241	0	0	0
+"rpoA; DNA-directed RNA polymerase subunit alpha [EC:2.7.7.6] [K03040|unclassified]"	48.8751634169	72.5477484281	301.8728414988	27.1181334665	0	0
+"rpoB; DNA-directed RNA polymerase subunit beta [EC:2.7.7.6] [K03043|unclassified]"	0	0	15.4011402333	0	0	0
+"rpoC; DNA-directed RNA polymerase subunit beta' [EC:2.7.7.6] [K03046|unclassified]"	0	0	13.6298703998	0	0	0
+"rpoZ; DNA-directed RNA polymerase subunit omega [EC:2.7.7.6] [K03060|unclassified]"	8.8888888889	0	0	0	0	0
+"secB; preprotein translocase subunit SecB [K03071|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	25.3968253968	0	0	0
+"secB; preprotein translocase subunit SecB [K03071|unclassified]"	0	9.4008218815	37.3674520002	0	0	0
+"secE; preprotein translocase subunit SecE [K03073|unclassified]"	24.3917434292	0	52.9576051706	0	0	0
+"secG; preprotein translocase subunit SecG [K03075|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	72.0943048466	0	0	0
+"secY; preprotein translocase subunit SecY [K03076|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	98.17865844	0	0	0
+"secY; preprotein translocase subunit SecY [K03076|unclassified]"	10.0793235547	25.2971725724	164.2236431133	17.8021062657	14.9032074647	0
+"rpoH; RNA polymerase sigma-32 factor [K03089|unclassified]"	0	0	19.2127985943	0	0	0
+"lspA; signal peptidase II [EC:3.4.23.36] [K03101|unclassified]"	0	0	10.9612886088	0	0	0
+"ssb; single-strand DNA-binding protein [K03111|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	9.7323600973	0	0	0
+"tatA; sec-independent protein translocase protein TatA [K03116|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	41.592039801	0	0	0
+"tatA; sec-independent protein translocase protein TatA [K03116|unclassified]"	0	10.1266471825	9.8714528256	0	0	0
+"tatB; sec-independent protein translocase protein TatB [K03117|unclassified]"	0	5.0188284782	7.4750933611	0	0	0
+"yajC; preprotein translocase subunit YajC [K03210|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	21.5053763441	0	0	0
+"yajC; preprotein translocase subunit YajC [K03210|unclassified]"	0	7.0298986904	28.2715184708	0	0	0
+"EEF1A; elongation factor 1-alpha [K03231|unclassified]"	0	0	0	0	21.7516195619	0
+"HSPA1s; heat shock 70kDa protein 1/2/6/8 [K03283|unclassified]"	0	0	0	0	2.8631679871	0
+"corA; magnesium transporter [K03284|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	4.9937578027	0	0	0
+"gltS; glutamate:Na+ symporter, ESS family [K03312|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	11.4390091776	0	0	0
+"TC.CNT; concentrative nucleoside transporter, CNT family [K03317|unclassified]"	0	5.7927156391	42.7929864117	0	0	0
+"nrfA; nitrite reductase (cytochrome c-552) [EC:1.7.2.2] [K03385|unclassified]"	18.463316533	13.2729057333	42.0261346212	0	0	0
+"PRDX2_4, ahpC; peroxiredoxin 2/4 [EC:1.11.1.24] [K03386|unclassified]"	5.7133327075	22.9629183009	28.5823786964	0	0	0
+"cheW; purine-binding chemotaxis protein CheW [K03408|unclassified]"	0	0	9.1221135844	0	0	0
+"hupB; DNA-binding protein HU-beta [K03530|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	124.1223496698	0	0	0
+"hupB; DNA-binding protein HU-beta [K03530|unclassified]"	22.5836696425	31.27652935	94.2806194129	0	5.1659423282	2.2522522523
+"rnpA; ribonuclease P protein component [EC:3.1.26.5] [K03536|unclassified]"	6.4102564103	0	12.8205128205	0	0	0
+"clpX, CLPX; ATP-dependent Clp protease ATP-binding subunit ClpX [K03544|unclassified]"	3.0014039467	0	12.2115619276	0	0	0
+"tig; trigger factor [K03545|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	40.5268832887	0	0	0
+"tig; trigger factor [K03545|unclassified]"	0	0	57.9627445995	0	0	0
+"fis; Fis family transcriptional regulator, factor for inversion stimulation protein [K03557|unclassified]"	0	0	8.1466733035	0	8.1466733035	0
+"exbD; biopolymer transport protein ExbD [K03559|unclassified]"	0	0	9.8572573062	0	0	0
+"exbB; biopolymer transport protein ExbB [K03561|unclassified]"	0	0	60.4422004536	0	0	0
+"tolQ; biopolymer transport protein TolQ [K03562|unclassified]"	0	0	9.3994829303	0	0	0
+"csrA; carbon storage regulator [K03563|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	55.5555555556	0	0	0
+"csrA; carbon storage regulator [K03563|unclassified]"	19.6078431372	13.6054421768	74.0816382807	6.6133753355	0	0
+"bfr; bacterioferritin [EC:1.16.3.1] [K03594|unclassified]"	0	0	18.8515381895	0	0	0
+"rseA; sigma-E factor negative regulatory protein RseA [K03597|unclassified]"	8.634238883	0	6.9899559428	0	14.241713684	0
+"sspA, mglA; stringent starvation protein A [K03599|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	11.9910851618	0	0	0
+"sspA, mglA; stringent starvation protein A [K03599|unclassified]"	0	0	8.6445428522	0	0	0
+"sspB; stringent starvation protein B [K03600|unclassified]"	0	0	15.5173677161	0	0	0
+"proQ; ProP effector [K03607|unclassified]"	0	0	13.6151770128	0	0	0
+"minE; cell division topological specificity factor [K03608|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	36.036036036	0	0	0
+"greA; transcription elongation factor GreA [K03624|unclassified]"	0	0	13.8547229882	0	0	0
+"nusB; transcription antitermination protein NusB [K03625|unclassified]"	0	5.6577199469	33.2189311126	0	0	0
+"rho; transcription termination factor Rho [K03628|unclassified]"	0	0	7.8225227002	0	0	0
+"radC; DNA repair protein RadC [K03630|unclassified]"	0	0	57.1995159487	0	0	0
+"pal; peptidoglycan-associated lipoprotein [K03640|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	50.4039265044	0	0	0
+"pal; peptidoglycan-associated lipoprotein [K03640|unclassified]"	0	0	37.7644724061	0	8.9535618623	0
+"hflX; GTPase [K03665|unclassified]"	0	0	15.3663313186	0	0	0
+"hfq; host factor-I protein [K03666|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	20.8333333333	0	0	0
+"hfq; host factor-I protein [K03666|unclassified]"	0	0	4.4843049327	0	8.2474577424	0
+"trxA; thioredoxin 1 [K03671|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	29.904086191	0	0	0
+"grxA; glutaredoxin 1 [K03674|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	213.6752136752	0	0	0
+"cspA; cold shock protein [K03704|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	71.0840314801	0	0	0
+"cspA; cold shock protein [K03704|unclassified]"	205.2464719549	279.1682228431	760.5912258141	24.6913580247	34.1756263286	0
+"fur, zur, furB; Fur family transcriptional regulator, ferric uptake regulator [K03711|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	16.6666666667	0	0	0
+"fur, zur, furB; Fur family transcriptional regulator, ferric uptake regulator [K03711|unclassified]"	4.9751243781	0	9.2505840259	0	0	0
+"lrp; Lrp/AsnC family transcriptional regulator, leucine-responsive regulatory protein [K03719|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	74.107301087	0	0	0
+"lrp; Lrp/AsnC family transcriptional regulator, leucine-responsive regulatory protein [K03719|unclassified]"	0	0	21.3763872579	0	0	0
+"hns; DNA-binding protein H-NS [K03746|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	103.1641272614	0	0	0
+"hns; DNA-binding protein H-NS [K03746|unclassified]"	13.6032373837	10.9031491384	47.3438126456	0	16.4158993937	0
+"PPIB, ppiB; peptidyl-prolyl cis-trans isomerase B (cyclophilin B) [EC:5.2.1.8] [K03768|unclassified]"	0	0	4.5095885954	0	0	0
+"fkpA; FKBP-type peptidyl-prolyl cis-trans isomerase FkpA [EC:5.2.1.8] [K03772|unclassified]"	0	0	31.8199693431	0	0	0
+"fklB; FKBP-type peptidyl-prolyl cis-trans isomerase FklB [EC:5.2.1.8] [K03773|unclassified]"	0	0	65.9634743646	0	0	0
+"deoD; purine-nucleoside phosphorylase [EC:2.4.2.1] [K03784|unclassified]"	0	0	11.9064686775	0	0	0
+"htpX; heat shock protein HtpX [EC:3.4.24.-] [K03799|unclassified]"	0	7.3800738007	17.1710016217	0	0	0
+"rmf; ribosome modulation factor [K03812|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	217.9487179487	0	0	0
+"rmf; ribosome modulation factor [K03812|unclassified]"	68.8291328447	0	219.19675147	0	64.8544985488	0
+"fldA, nifF, isiB; flavodoxin I [K03839|unclassified]"	0	0	20.9279518461	0	0	0
+"FGB; fibrinogen beta chain [K03904|unclassified]"	0	10.5903621993	0	0	16.1820333792	0
+"FGG; fibrinogen gamma chain [K03905|unclassified]"	0	35.6562970952	0	0	57.426205009	0
+"cutA; periplasmic divalent cation tolerance protein [K03926|unclassified]"	0	0	7.326007326	0	0	0
+"pspB; phage shock protein B [K03970|unclassified]"	0	5.2631578947	0	0	0	0
+"obgE, cgtA, MTG2; GTPase [EC:3.6.5.-] [K03979|unclassified]"	0	0	20.8177056552	0	0	0
+"C9; complement component 9 [K04000|unclassified]"	0	0	0	0	10.3788373289	0
+"nrfD; protein NrfD [K04015|unclassified]"	0	0	22.2781505279	0	0	0
+"dnaK, HSPA9; molecular chaperone DnaK [K04043|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	15.2028947967	0	0	0
+"dnaK, HSPA9; molecular chaperone DnaK [K04043|unclassified]"	0	0	27.2705166901	0	0	0
+"dps; starvation-inducible DNA-binding protein [K04047|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	11.7438701468	0	0	0
+"dps; starvation-inducible DNA-binding protein [K04047|unclassified]"	0	0	16.6221683134	0	0	0
+"adhE; acetaldehyde dehydrogenase / alcohol dehydrogenase [EC:1.2.1.10 1.1.1.1] [K04072|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	13.5220513886	0	0	0
+"groES, HSPE1; chaperonin GroES [K04078|unclassified]"	0	0	28.9446077381	0	0	0
+"RAP1A; Ras-related protein Rap-1A [K04353|unclassified]"	0	0	5.9406407405	0	0	0
+"RAC1; Ras-related C3 botulinum toxin substrate 1 [K04392|unclassified]"	0	2.1485128732	0	0	0	0
+"iscU, nifU; nitrogen fixation protein NifU and related proteins [K04488|unclassified]"	0	0	0	0	3.7269012082	0
+"RHOA; Ras homolog gene family, member A [K04513|unclassified]"	0	0	5.6197711588	0	11.164041486	25.68859672
+"SERPINA; serpin A [K04525|unclassified]"	0	0	0	0	15.9324942201	0
+"UBB; ubiquitin B [K04551|unclassified]"	0	0	0	0	1.6913494385	0.3527127292
+"SOD2; superoxide dismutase, Fe-Mn family [EC:1.15.1.1] [K04564|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	32.2919726703	0	0	0
+"SOD2; superoxide dismutase, Fe-Mn family [EC:1.15.1.1] [K04564|unclassified]"	0	0	12.1384975232	0	0	0
+"SOD1; superoxide dismutase, Cu-Zn family [EC:1.15.1.1] [K04565|unclassified]"	18.8003230123	0	0	0	0	0
+"fdx; ferredoxin, 2Fe-2S [K04755|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	14.1843971631	0	0	0
+"fdx; ferredoxin, 2Fe-2S [K04755|unclassified]"	0	0	6.968641115	0	0	0
+"ihfA, himA; integration host factor subunit alpha [K04764|unclassified]"	0	8.1466733035	36.4545009823	0	0	0
+"GHRL; ghrelin [K05254|unclassified]"	0	0	7.6045627376	0	0	0
+"GPX4; phospholipid-hydroperoxide glutathione peroxidase [EC:1.11.1.12] [K05361|unclassified]"	0	0	0	0	0	29.5552741163
+"tsx; nucleoside-specific channel-forming protein [K05517|unclassified]"	0	0	34.0475540573	0	0	0
+"ACTB_G1; actin beta/gamma 1 [K05692|unclassified]"	50.0891122308	50.1343983037	9.2883326604	0	28.4709849577	0.9468293338
+"C3ORF10, HSPC300; chromosome 3 open reading frame 10 [K05752|unclassified]"	0	0	0	0	0	4.1666666667
+"TMSB4; thymosin, beta 4 [K05764|unclassified]"	0	0	0	0	0	4.3430058807
+"hupA; DNA-binding protein HU-alpha [K05787|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	250.0743567056	0	0	0
+"hupA; DNA-binding protein HU-alpha [K05787|unclassified]"	0	36.1175655293	0	0	9.009009009	0
+"ihfB, himD; integration host factor subunit beta [K05788|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	42.230540359	0	0	0
+"ihfB, himD; integration host factor subunit beta [K05788|unclassified]"	12.7118644068	8.4566974183	109.6283291732	0	4.2372881356	0
+"nlpI; lipoprotein NlpI [K05803|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	21.7195978285	0	0	0
+"nlpI; lipoprotein NlpI [K05803|unclassified]"	0	0	0	0	12.0386961122	0
+"yhbH; putative sigma-54 modulation protein [K05808|unclassified]"	14.8036901952	23.1987055711	54.4357168858	0	0	4.2372881356
+"raiA; ribosome-associated inhibitor A [K05809|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	85.5231908429	0	0	0
+"raiA; ribosome-associated inhibitor A [K05809|unclassified]"	12.0301023915	0	0	0	6.0240963855	0
+"CCNB1; G2/mitotic-specific cyclin-B1 [K05868|unclassified]"	13.3891058406	192.0663340159	218.0218481876	0	0	0
+"lpp; murein lipoprotein [K06078|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	1661.6674550738	0	0	0
+"lpp; murein lipoprotein [K06078|unclassified]"	55.4708012728	56.6100125683	370.7649355508	37.4641267866	92.2197860607	0
+"VAPA; vesicle-associated membrane protein-associated protein A [K06096|unclassified]"	747.0663602722	763.1354847579	475.0543594079	398.8199703196	540.7179916425	695.6117729956
+"hlpA, ompH; outer membrane protein [K06142|unclassified]"	0	0	24.1421491249	0	0	0
+"NCSTN; nicastrin [K06171|unclassified]"	0	82.4162851704	0	0	0	0
+"bamE, smpA; outer membrane protein assembly factor BamE [K06186|unclassified]"	4.5403009689	0	9.0703645847	0	0	0
+"apaG; ApaG protein [K06195|unclassified]"	6.0698167081	0	0	0	0	0
+"cyaY; CyaY protein [K06202|unclassified]"	0	0	7.1303286815	0	0	0
+"dksA; DnaK suppressor protein [K06204|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	16.0548362529	0	0	0
+"dksA; DnaK suppressor protein [K06204|unclassified]"	17.5376254707	10.0376569565	30.2227156436	0	0	0
+"focA; formate transporter [K06212|unclassified]"	0	0	14.4337706703	0	0	0
+"PPP3R, CNB; serine/threonine-protein phosphatase 2B regulatory subunit [K06268|unclassified]"	0	0	0	0	5.7755955095	0
+"spoVG; stage V sporulation protein G [K06412|unclassified]"	0	0	9.5356507255	0	0	0
+"CD3Z, CD247; CD3Z antigen, zeta polypeptide [K06453|unclassified]"	67.2107085234	21.4525524173	101.9229203136	0	64.7570110724	70.3195550984
+"CD8A; T-cell surface glycoprotein CD8 alpha chain [K06458|unclassified]"	0	0	0	0	0	19.958751076
+"CD63, MLA1, TSPAN30; CD63 antigen [K06497|unclassified]"	0	0	0	0	13.312014034	0
+"CD74, DHLAG; CD74 antigen [K06505|unclassified]"	0	0	0	0	0	6.0377805577
+"UBE2D, UBC4, UBC5; ubiquitin-conjugating enzyme E2 D [EC:2.3.2.23] [K06689|unclassified]"	0	0	0	0	0.664837601	0
+"MHC1; MHC class I antigen [K06751|unclassified]"	15404.5131240108	40827.0921346433	42917.7413693563	0	0	3577.5803265542
+"MHC2; MHC class II antigen [K06752|unclassified]"	10076.1210428148	4633.8022494592	8637.5729441424	0	0	279.2850169966
+"PLXND; plexin D [K06822|unclassified]"	108.3410631031	117.9906907146	96.5301649752	62.0269210202	146.7561668814	100.2962701058
+"grcA; autonomous glycyl radical cofactor [K06866|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	241.3966682948	0	0	0
+"grcA; autonomous glycyl radical cofactor [K06866|unclassified]"	0	0	75.3229904296	0	20.8433826984	0
+"K06940; uncharacterized protein [K06940|unclassified]"	14.7312219391	0	0	0	0	0
+"K06960; uncharacterized protein [K06960|unclassified]"	0	0	0	0	10.101010101	0
+"K06975; uncharacterized protein [K06975|unclassified]"	0	0	4.6511627907	0	0	0
+"K07040; uncharacterized protein [K07040|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	163.5314639976	0	0	0
+"K07040; uncharacterized protein [K07040|unclassified]"	0	16.695327004	0	0	46.4147579242	0
+"K07070; uncharacterized protein [K07070|unclassified]"	0	12.5786163522	0	0	0	0
+"K07080; uncharacterized protein [K07080|unclassified]"	0	0	9.5427166651	0	0	0
+"ybgC; acyl-CoA thioester hydrolase [EC:3.1.2.-] [K07107|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	10.5203808352	0	0	0
+"PRKAB; 5'-AMP-activated protein kinase, regulatory beta subunit [K07199|unclassified]"	0	73.7799888711	0	0	0	0
+"pcoB, copB; copper resistance protein B [K07233|unclassified]"	0	0	7.4318921823	0	0	0
+"ompW; outer membrane protein [K07275|unclassified]"	0	0	17.9766150365	0	0	0
+"bmpA, bmpB, tmpC; basic membrane protein A and related proteins [K07335|unclassified]"	0	0	14.8987734072	0	0	0
+"K07337; penicillin-binding protein activator [K07337|unclassified]"	0	0	10.8173155105	0	0	0
+"SEC61G, SSS1, secE; protein transport protein SEC61 subunit gamma and related proteins [K07342|unclassified]"	0	0	0	3.8665038666	2.1831739789	0
+"TUBA; tubulin alpha [K07374|unclassified]"	0	0	0	0	32.068005007	0
+"TUBB; tubulin beta [K07375|unclassified]"	0	0	0	0	40.2916291745	0
+"grxD, GLRX5; monothiol glutaredoxin [K07390|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	50.8386806259	0	0	0
+"grxD, GLRX5; monothiol glutaredoxin [K07390|unclassified]"	6.8259385666	0	0	0	0	0
+"nfuA; Fe/S biogenesis protein NfuA [K07400|unclassified]"	0	0	11.2233715953	0	0	0
+"yhbY; RNA-binding protein [K07574|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	6.9444444444	0	0	0
+"yhbY; RNA-binding protein [K07574|unclassified]"	0	8.213864058	0	0	0	0
+"uvrY, gacA, varA; two-component system, NarL family, invasion response regulator UvrY [K07689|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	14.117074358	0	0	0
+"arcA; two-component system, OmpR family, aerobic respiration control protein ArcA [K07773|unclassified]"	0	0	59.5651168426	0	0	0
+"dcuA; anaerobic C4-dicarboxylate transporter DcuA [K07791|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	13.9251523064	0	0	0
+"KRAS, KRAS2; GTPase KRas [K07827|unclassified]"	0	17.266124347	0	0	0	0
+"RALA; Ras-related protein Ral-A [K07834|unclassified]"	65.6528877542	59.0257860009	30.9678938327	41.5436420686	82.1471965411	40.6203280158
+"RHOC; Ras homolog gene family, member C [K07857|unclassified]"	0	0	0	0	5.5786712643	12.84429836
+"RAB2A; Ras-related protein Rab-2A [K07877|unclassified]"	0	0	0	0	4.4353581531	0
+"ARF1_2; ADP-ribosylation factor 1/2 [K07937|unclassified]"	0	0	0	0	3.3729029012	0
+"ARF3; ADP-ribosylation factor 3 [K07938|unclassified]"	0	0	0	0	0.3968505305	0
+"ARF4; ADP-ribosylation factor 4 [K07939|unclassified]"	0	0	0	0	6.6294575453	0
+"ARF6; ADP-ribosylation factor 6 [K07941|unclassified]"	0	0	0	0	1.8227201514	0
+"B2M; beta-2-microglobulin [K08055|unclassified]"	12.7384209993	6.6778149387	0	0	0	0
+"mltD, dniR; membrane-bound lytic murein transglycosylase D [EC:4.2.2.-] [K08307|unclassified]"	0	0	11.9663753748	0	0	0
+"nudH; putative (di)nucleoside polyphosphate hydrolase [EC:3.6.1.-] [K08311|unclassified]"	0	0	4.2016806723	0	0	0
+"ptsO, npr; phosphocarrier protein NPr [K08485|unclassified]"	0	0	4.5248868778	0	0	0
+"FABP6; fatty acid-binding protein 6, ileal (gastrotropin) [K08755|unclassified]"	11.5776414119	16.8824880579	0	63.3991474378	0	0
+"UBC; ubiquitin C [K08770|unclassified]"	3.5861376514	8.9823766566	2.1121176583	0	14.8962457046	1.3633819732
+"CPA1; carboxypeptidase A1 [EC:3.4.17.1] [K08779|unclassified]"	28.4853921109	19.6042151617	0	0	0	0
+"K09117; uncharacterized protein [K09117|unclassified]"	33.079012207	43.110914273	179.8989166269	0	0	0
+"K09131; uncharacterized protein [K09131|unclassified]"	0	8.3682008368	0	0	0	0
+"cptB; antitoxin CptB [K09159|unclassified]"	18.9590493519	0	0	0	0	0
+"K09161; uncharacterized protein [K09161|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	32.6895934456	0	0	0
+"POU2F, OTF; POU domain transcription factor, class 2 [K09364|unclassified]"	0	73.4669824821	0	0	0	0
+"fabF, OXSM, CEM1; 3-oxoacyl-[acyl-carrier-protein] synthase II [EC:2.3.1.179] [K09458|unclassified]"	0	4.4507263716	0	0	0	0
+"PPIF; peptidyl-prolyl isomerase F (cyclophilin D) [EC:5.2.1.8] [K09565|unclassified]"	33.6202499598	0	8.8349234125	0	18.7491624505	13.1749866234
+"FKBP3; FK506-binding protein 3 [EC:5.2.1.8] [K09570|unclassified]"	0	390.3516454356	0	0	0	0
+"TXNDC10; thioredoxin domain-containing protein 10 [EC:5.3.4.1] [K09585|unclassified]"	59.4034948837	39.8324976435	24.1689122604	22.40863442	60.0991661644	43.0019856177
+"SPPL2A; signal peptide peptidase-like 2A [EC:3.4.23.-] [K09596|unclassified]"	1302.6421357836	1666.0474368569	1284.9465401207	632.154618443	1178.5604167287	1501.9243431431
+"CTRL; chymotrypsin-like protease [EC:3.4.21.-] [K09632|unclassified]"	26.4345519228	0	0	0	0	0
+"ybeB; ribosome-associated protein [K09710|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	11.9047619048	0	0	0
+"yajQ; cyclic-di-GMP-binding protein [K09767|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	36.6923607638	0	0	0
+"yajQ; cyclic-di-GMP-binding protein [K09767|unclassified]"	0	4.629654437	6.9444444444	0	0	0
+"K09780; uncharacterized protein [K09780|unclassified]"	0	16.2601626016	0	0	0	0
+"K09791; uncharacterized protein [K09791|unclassified]"	7.0921985816	0	0	0	0	0
+"K09802; uncharacterized protein [K09802|unclassified]"	28.8342468678	66.5028511591	106.2093151129	0	0	0
+"K09806; uncharacterized protein [K09806|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	8.1300813008	0	0	0
+"K09806; uncharacterized protein [K09806|unclassified]"	23.5684677745	0	0	0	0	0
+"zapA; cell division protein ZapA [K09888|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	51.5861238937	0	0	0
+"zapA; cell division protein ZapA [K09888|unclassified]"	0	0	4.5954953117	0	0	0
+"yjgA; ribosome-associated protein [K09889|unclassified]"	0	0	16.1373751181	0	0	0
+"zapB; cell division protein ZapB [K09892|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	109.5074455899	0	0	0
+"zapB; cell division protein ZapB [K09892|unclassified]"	0	10	5.8823529412	0	0	0
+"K09894; uncharacterized protein [K09894|unclassified]"	0	0	14.9010533923	0	0	0
+"K09896; uncharacterized protein [K09896|unclassified]"	32.9524315706	4.6948356808	9.4118168128	0	0	0
+"K09898; uncharacterized protein [K09898|unclassified]"	0	0	11.3636363636	0	0	0
+"E3.5.1.135; N4-acetylcytidine amidohydrolase [EC:3.5.1.135] [K09900|unclassified]"	0	0	15.0945545682	0	0	0
+"K09904; uncharacterized protein [K09904|unclassified]"	5.6497175141	12.1951219512	22.2842954687	0	0	0
+"K09920; uncharacterized protein [K09920|unclassified]"	5.0441442129	0	0	0	0	0
+"K09923; uncharacterized protein [K09923|unclassified]"	0	0	7.0922877658	0	0	0
+"artI; arginine transport system substrate-binding protein [K09997|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	13.4623546388	0	0	0
+"aotJ; arginine/ornithine transport system substrate-binding protein [K10022|unclassified]"	0	0	11.0045308954	0	0	0
+"ACTF; actin, other eukaryote [K10355|unclassified]"	0	0	0	0	1.0178352535	0
+"DYNLL; dynein light chain LC8-type [K10418|unclassified]"	0	0	0	0	0	9.0703414233
+"DCTN6; dynactin 6 [K10428|unclassified]"	768.0537792638	901.4811887254	435.0134644284	304.0994691736	642.1338006569	618.668642216
+"ZBTB45; zinc finger and BTB domain-containing protein 45 [K10516|unclassified]"	76.2705524634	60.5195541395	52.9200843044	34.3205234417	61.6854099525	65.7470516854
+"mutM, fpg; formamidopyrimidine-DNA glycosylase [EC:3.2.2.23 4.2.99.18] [K10563|unclassified]"	7.8777352074	0	10.7355333602	0	0	0
+"crp; CRP/FNR family transcriptional regulator, cyclic AMP receptor protein [K10914|unclassified]"	0	41.7636656958	17.5489669955	0	0	0
+"mshA; MSHA pilin protein MshA [K10924|unclassified]"	0	0	25.8633176353	0	0	0
+"mshB; MSHA pilin protein MshB [K10925|unclassified]"	0	6.4001557705	0	0	0	0
+"SEC61A; protein transport protein SEC61 subunit alpha [K10956|unclassified]"	0	0	0	0	8.7690649592	0
+"potF; putrescine transport system substrate-binding protein [K11073|unclassified]"	0	0	17.1329460452	0	0	0
+"H2A; histone H2A [K11251|unclassified]"	0	0	10.8214516874	0	495.7409366712	0
+"H2B; histone H2B [K11252|unclassified]"	1.7657951889	4.4948346931	3.7521030117	4.0695531645	0	0
+"H3; histone H3 [K11253|unclassified]"	0	0	1.9872163873	0	99.9732755598	0.2411256934
+"H4; histone H4 [K11254|unclassified]"	10.1439359	6.9781476951	10.7235337562	0	108.7516711655	1.8836161482
+"NPM3; nucleophosmin 3 [K11278|unclassified]"	0	22.3285993169	0	0	0	0
+"NDUFA13; NADH dehydrogenase (ubiquinone) 1 alpha subcomplex subunit 13 [K11353|unclassified]"	505.8828837332	619.5037427908	311.3229303015	251.2537549682	333.4039179773	604.2625683034
+"AP2M1; AP-2 complex subunit mu-1 [K11826|unclassified]"	0	0	0	0	9.6956357365	0
+"crl; sigma factor-binding protein Crl [K11926|unclassified]"	11.7130558557	0	0	0	0	0
+"dinI; DNA-damage-inducible protein I [K12149|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	11.9047619048	0	0	0
+"COPS6, CSN6; COP9 signalosome complex subunit 6 [K12179|unclassified]"	0	1.5116221248	0	0	0	0
+"FAM125; ESCRT-I complex subunit MVB12 [K12186|unclassified]"	64.044493575	93.7116708758	89.8450258079	42.4517258429	139.8530359701	123.3200037863
+"MSFD7, SLC49A4; MFS transporter, FLVCR family, MFS-domain-containing protein 7 [K12306|unclassified]"	55.1885510125	0	25.4131462229	0	21.094730609	37.0879623707
+"MYL4; myosin light chain 4 [K12750|unclassified]"	12.7884882545	13.4684360843	0	0	61.1151206804	0
+"SF3A2, SAP62; splicing factor 3A subunit 2 [K12826|unclassified]"	0	0	0	0	9.4118168128	0
+"PHF5A; PHD finger-like domain-containing protein 5A [K12834|unclassified]"	0	0	0	0	0.6613575643	0
+"ZNF830, CCDC16; zinc finger protein 830 [K13104|unclassified]"	113.8475751972	70.7832310446	111.5737809702	34.3308979842	68.6984484386	96.6977374665
+"UBL5, HUB1; ubiquitin-like protein 5 [K13113|unclassified]"	0	0	10.989010989	5.4794931844	0	0
+"WBP4, FBP21; WW domain-binding protein 4 [K13220|unclassified]"	93.1967984008	71.4688259748	79.9089657238	32.764370572	76.4614231917	106.7682103263
+"SSR1; translocon-associated protein subunit alpha [K13249|unclassified]"	0	0	0	28.7149415182	0	0
+"FXYD3, MAT8; FXYD domain-containing ion transport regulator 3 [K13361|unclassified]"	0	34.4472011441	0	0	17.3423423423	0
+"iscA; iron-sulfur cluster assembly protein [K13628|unclassified]"	0	0	0	0	7.326007326	0
+"HBE; hemoglobin subunit epsilon [K13825|unclassified]"	0	17.053566885	0	0	0	0
+"SLC15A1, PEPT1; solute carrier family 15 (oligopeptide transporter), member 1 [K14206|unclassified]"	8.0177436136	0	0	0	0	0
+"XPOT; exportin-T [K14288|unclassified]"	0	0	0	0	4.6511627907	0
+"UTP18; U3 small nucleolar RNA-associated protein 18 [K14553|unclassified]"	122.1616582129	62.0052033496	97.0746241388	34.4110107699	60.6999749568	61.4137501534
+"RBP2, CRBP2; retinol binding protein 2 [K14622|unclassified]"	21.0343416905	14.3655713169	121.9256867732	0	137.5859952275	42.6361649415
+"NTAN1; protein N-terminal asparagine amidohydrolase [EC:3.5.1.121] [K14662|unclassified]"	89.4086837048	46.9845653269	0	30.8785734492	67.6617546787	82.6470697529
+"RACK1; guanine nucleotide-binding protein subunit beta-2-like 1 protein [K14753|unclassified]"	0	0	7.9875047939	0	0	0
+"ybcJ; ribosome-associated protein [K14761|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	31.746031746	0	0	0
+"HOMER; homer [K15010|unclassified]"	139.1947372058	87.0140016355	96.9832132704	48.0073733356	94.7680583079	233.2085977744
+"SLC25A45_47; solute carrier family 25, member 45/47 [K15123|unclassified]"	0	17.0723023783	0	0	0	0
+"TSEN2; tRNA-splicing endonuclease subunit Sen2 [EC:4.6.1.16] [K15322|unclassified]"	131.7835785167	136.4796893179	172.7475022233	59.2202086314	80.4845005441	65.537991493
+"STRA13, CENPX, MHF2; centromere protein X [K15360|unclassified]"	5	0	0	0	0	0
+"gpmI; 2,3-bisphosphoglycerate-independent phosphoglycerate mutase [EC:5.4.2.12] [K15633|unclassified]"	0	0	24.2921118794	0	0	0
+"erpA; iron-sulfur cluster insertion protein [K15724|unclassified]"	6.6889632107	6.6778149387	0	0	0	0
+"RGS; regulator of G-protein signaling [K16449|unclassified]"	13.1841711429	0	0	0	0	0
+"LACTB2; endoribonuclease LACTB2 [EC:3.1.27.-] [K16639|unclassified]"	254.6450192496	397.0352067111	236.305211817	219.3913493526	265.8076940266	371.4492830688
+"ATL; atlastin [EC:3.6.5.-] [K17339|unclassified]"	0	24.726605666	0	0	0	0
+"TSPAN16; tetraspanin-16 [K17357|unclassified]"	0	11.9344064019	0	0	0	0
+"MTFP1, MTP18; mitochondrial fission process protein 1 [K17981|unclassified]"	0	0	0	0	0	193.7371918575
+"PET100; protein PET100, animal type [K18186|unclassified]"	0	0	0	0	5.376344086	0
+"MP68, MLQ; 6.8 kDa mitochondrial proteolipid [K18193|unclassified]"	176.8866248778	79.9633986492	16.2601626016	48.2929641905	0	0
+"RBP4; retinol-binding protein 4 [K18271|unclassified]"	12.9997550441	0	0	7.3506247785	7.5757575758	0
+"IF; intermediate filament protein if [K18585|unclassified]"	0	0	0	0	17.7622903982	0
+"zapC; cell division protein ZapC [K18657|unclassified]"	0	0	0	8.2944597648	0	0
+"blaTEM; beta-lactamase class A TEM [EC:3.5.2.6] [K18698|unclassified]"	18.5080978501	19.7423668316	26.7389573465	17.9934576866	20.5806129311	27.1227825581
+"yccA; modulator of FtsH protease [K19416|g__Plesiomonas.s__Plesiomonas_shigelloides]"	0	0	11.8343195266	0	0	0
+"MGP; matrix Gla protein [K19481|unclassified]"	0	0	0	0	0	29.5506566603
+"IFT122; intraflagellar transport protein 122 [K19656|unclassified]"	86.1221287924	60.8256863187	71.165899893	46.7900115914	68.2869248505	81.6852757074
+"GGACT; gamma-glutamylaminecyclotransferase [EC:2.3.2.-] [K19761|unclassified]"	31.4465150413	53.4927088104	36.2644958355	100.5498404926	0	70.1488234793
+"ANKS6; ankyrin repeat and SAM domain-containing protein 6 [K21415|unclassified]"	67.2618527004	108.6644107161	64.4960288499	44.6804509475	100.8600893582	117.0452909655
+"BANF; barrier-to-autointegration factor [K21870|unclassified]"	4.5045045045	0	0	0	0	0
+"APOC1; apolipoprotein C-I [K22286|unclassified]"	13.2577302766	21.6222621238	0	29.9953040287	26.35224283	4.854368932
+"COMMD10; COMM domain containing 10 [K22566|unclassified]"	105.7984944406	72.6433240302	43.8286852252	0	82.2541939172	89.3065708875
+"SAMD8; sphingomyelin synthase-related protein 1 [K22697|unclassified]"	44.965163397	62.2945595625	36.5502636756	31.1955970097	44.1556789292	46.6602948734

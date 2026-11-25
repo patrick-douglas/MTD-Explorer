@@ -1,0 +1,14 @@
+parameter	value
+requested_taxid	7955
+reference_taxid	7955
+gtf_unique_genes	32520
+ncbi_reference_pairs	21109
+gene2ensembl_mapped_genes	21023
+gene_info_reference_rows	54568
+gene_info_fallback_mapped_genes	385
+ambiguous_gtf_genes_excluded	39
+unmapped_gtf_genes	11073
+mapped_gtf_genes	21408
+gtf_mapping_coverage_pct	65.8303
+gene2ensembl_source	/media/me/18TB_BACKUP_LBN/drive.ifpa/LBN_RNA-Seq/Metatranscriptomics/MTD/MTD_Offline_Install_files/installer/NCBI_gene/gene2ensembl.gz
+gene_info_source	/media/me/18TB_BACKUP_LBN/drive.ifpa/LBN_RNA-Seq/Metatranscriptomics/MTD/MTD_Offline_Install_files/installer/NCBI_gene/gene_info.gz

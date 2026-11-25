@@ -1,0 +1,12 @@
+timestamp_utc	epoch_ns	percent	message
+2026-11-25T09:54:55.712953523Z	1795600495713700240	10	Preparing raw reads
+2026-11-25T10:51:23.071267948Z	1795603883072100415	20	Classifying host reads with Kraken2
+2026-11-25T11:06:13.874225566Z	1795604773875034864	25	Classifying non-host reads with Kraken2
+2026-11-25T11:17:47.358371063Z	1795605467359277913	30	Creating the global Kraken2 read-composition summary
+2026-11-25T11:17:47.364326741Z	1795605467365121810	30	Preparing optional contaminant removal
+2026-11-25T11:18:14.732135934Z	1795605494733007290	40	Running Bracken taxonomic abundance estimation
+2026-11-25T11:18:19.021138653Z	1795605499021968000	45	Combining Bracken outputs for downstream analyses
+2026-11-25T11:18:19.880751971Z	1795605499881580942	50	Preparing Kraken2 and Bracken visualization outputs
+2026-11-25T11:19:08.209325992Z	1795605548210255937	55	Running HUMAnN functional profiling
+2026-11-25T12:52:48.469759129Z	1795611168470612205	65	Processing host reads and host expression
+2026-11-25T14:07:04.301095283Z	1795615624301945999	100	MTD Explorer exploratory analysis completed successfully

@@ -1,0 +1,10 @@
+metric	value
+taxid	7955
+eggnog_data_rows	24949
+eggnog_rows_with_go	18517
+gtf_gene_count	32520
+gtf_genes_with_eggnog_go	18517
+gtf_genes_with_eggnog_go_pct	56.9403
+unique_go_terms	23680
+master_gmt_sets	23680
+master_set_size_filter	none; filtering is performed against host.gct during MTD Explorer

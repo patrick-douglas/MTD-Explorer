@@ -1,0 +1,23 @@
+	Command being timed: "bash MTD_explorer.sh --input $HOME/MTD-Explorer_Exploratory_D.rerio/raw_fastq/samplesheet.csv --output $HOME/MTD-Explorer_Exploratory_D.rerio/results/Danio_rerio_exploratory --hostid 7955 --analysis-mode exploratory --read-layout pe --threads 20 --trim-length 40 --bracken-read-len 150 --bracken-threshold 10 --kraken-host-confidence 0.05 --kraken-host-min-hit-groups 3 --kraken-micro-confidence 0.10 --kraken-micro-min-hit-groups 3 --ssgsea-gmt auto --resume-heavy"
+	User time (seconds): 154680.98
+	System time (seconds): 10577.01
+	Percent of CPU this job got: 1089%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:12:53
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 113107988
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 1058551
+	Minor (reclaiming a frame) page faults: 460191815
+	Voluntary context switches: 81390151
+	Involuntary context switches: 196892323
+	Swaps: 0
+	File system inputs: 2473169472
+	File system outputs: 1128603632
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

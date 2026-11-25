@@ -1,0 +1,105 @@
+rank_position	taxon	rank	n_samples	prevalence_n	prevalence_percent	mean_abundance	median_abundance	max_abundance	total_abundance	prevalence_class	importance_interpretation	importance_score	prevalence_score	mean_abundance_score	max_abundance_score	total_abundance_score
+1	Cetobacterium somerae	species	6	6	100	22085	23546	46009	132510	core_high_prevalence	consistent_and_abundant	1	1	1	1	1
+2	Staphylococcus aureus	species	6	6	100	15793.1666666667	17214.5	22417	94759	core_high_prevalence	consistent_and_abundant	0.971872	1	0.962343	0.912014	0.963669
+3	Toxoplasma gondii	species	6	6	100	6082	5645.5	8151	36492	core_high_prevalence	consistent_and_abundant	0.910816	1	0.855185	0.78822	0.86028
+4	Klebsiella pneumoniae	species	6	6	100	2859.83333333333	2648	5105	17159	core_high_prevalence	consistent_and_abundant	0.868636	1	0.770461	0.730968	0.778526
+5	Vibrio parahaemolyticus	species	6	6	100	2697.5	2559.5	4527	16185	core_high_prevalence	consistent_and_abundant	0.86383	1	0.763901	0.716266	0.772195
+6	Escherichia coli	species	6	6	100	975.166666666667	1032.5	1368	5851	core_high_prevalence	consistent_and_abundant	0.79659	1	0.649704	0.569882	0.661965
+7	Kwoniella botswanensis	species	6	6	100	944.166666666667	643	2306	5665	core_high_prevalence	consistent_and_abundant	0.804732	1	0.64608	0.633745	0.658466
+8	Plasmodium vivax	species	6	6	100	671	730.5	873	4026	core_high_prevalence	consistent_and_abundant	0.771723	1	0.607771	0.514966	0.621469
+9	Candida dubliniensis	species	6	6	100	281.5	42.5	1491	1689	core_high_prevalence	consistent_and_abundant	0.742935	1	0.510447	0.580411	0.52739
+10	Lodderomyces elongisporus	species	6	6	100	245	205.5	537	1470	core_high_prevalence	consistent_low_abundance	0.718046	1	0.49491	0.455588	0.512353
+11	Leishmania sp. Namibia	species	6	6	100	203.333333333333	219.5	271	1220	core_high_prevalence	consistent_low_abundance	0.697256	1	0.474068	0.372122	0.492171
+12	Cutibacterium acnes	species	6	6	100	187.333333333333	94.5	706	1124	core_high_prevalence	consistent_low_abundance	0.711155	1	0.46491	0.489017	0.483298
+13	Colletotrichum higginsianum	species	6	6	100	181.166666666667	171.5	282	1087	core_high_prevalence	consistent_low_abundance	0.692865	1	0.461171	0.376973	0.479675
+14	Sordaria macrospora	species	6	6	100	174.333333333333	154.5	289	1046	core_high_prevalence	consistent_low_abundance	0.691609	1	0.456877	0.379963	0.475513
+15	Aeromonas veronii	species	6	5	83.3333333333333	5535.16666666667	2947	20722	33211	core_high_prevalence	consistent_and_abundant	0.848748	0.833333	0.844606	0.902393	0.850072
+16	Shewanella xiamenensis	species	6	4	66.6666666666667	4119.66666666667	1746	17577	24718	common	intermediate_priority	0.757578	0.666667	0.811443	0.88225	0.818073
+17	Shewanella oneidensis	species	6	4	66.6666666666667	928.333333333333	387.5	4032	5570	common	intermediate_priority	0.664233	0.666667	0.644182	0.702099	0.656634
+18	Shewanella putrefaciens	species	6	4	66.6666666666667	751.666666666667	518	2813	4510	common	intermediate_priority	0.648236	0.666667	0.620503	0.658056	0.633766
+19	Fusobacterium mortiferum	species	6	4	66.6666666666667	199.666666666667	177	508	1198	common	intermediate_priority	0.557951	0.666667	0.472034	0.448807	0.490201
+20	Cetobacterium sp. SF1	species	6	4	66.6666666666667	38	37	87	228	common	intermediate_priority	0.452606	0.666667	0.288064	0.234027	0.310827
+21	Cetobacterium ceti	species	6	4	66.6666666666667	37.1666666666667	40	86	223	common	intermediate_priority	0.451429	0.666667	0.285639	0.232628	0.308436
+22	Plesiomonas shigelloides	species	6	3	50	8339.16666666667	198.5	32272	50035	common	intermediate_priority	0.725126	0.5	0.890628	0.956603	0.894477
+23	Aeromonas hydrophila	species	6	3	50	364.166666666667	247	1060	2185	common	intermediate_priority	0.523113	0.5	0.539274	0.538693	0.555273
+24	Kwoniella dejecticola	species	6	3	50	300.666666666667	15	1206	1804	common	intermediate_priority	0.516969	0.5	0.51782	0.55447	0.534523
+25	Borreliella burgdorferi	species	6	3	50	42	5.5	123	252	common	intermediate_priority	0.388271	0.5	0.29903	0.275994	0.321626
+26	Piscibacter tructae	species	6	3	50	19.3333333333333	15	47	116	common	intermediate_priority	0.33726	0.5	0.214918	0.159851	0.238066
+27	Cyprivirus A	species	6	3	50	13.3333333333333	10	37	80	common	intermediate_priority	0.317206	0.5	0.175647	0.131263	0.198224
+28	Serratia grimesii	species	6	3	50	8.66666666666667	7	23	52	common	intermediate_priority	0.290903	0.5	0.131408	0.075028	0.152267
+29	Salmonella enterica	species	6	2	33.3333333333333	1474.33333333333	0	7713	8846	intermediate	sample_specific_high_abundance	0.54672	0.333333	0.696088	0.781462	0.706745
+30	Shewanella baltica	species	6	2	33.3333333333333	812	0	4742	4872	intermediate	intermediate_priority	0.511253	0.333333	0.629163	0.721943	0.642129
+31	Vibrio cholerae	species	6	2	33.3333333333333	366	0	2042	2196	intermediate	intermediate_priority	0.460364	0.333333	0.539836	0.618873	0.555817
+32	Aeromonas caviae	species	6	2	33.3333333333333	244.666666666667	0	963	1468	intermediate	intermediate_priority	0.428692	0.333333	0.494757	0.52696	0.512206
+33	Shewanella decolorationis	species	6	2	33.3333333333333	146.166666666667	0	701	877	intermediate	intermediate_priority	0.400029	0.333333	0.43721	0.488148	0.45644
+34	Pseudomonas yamanorum	species	6	2	33.3333333333333	57	0	271	342	intermediate	intermediate_priority	0.34107	0.333333	0.332637	0.372122	0.354601
+35	Aeromonas allosaccharophila	species	6	2	33.3333333333333	57	0	197	342	intermediate	intermediate_priority	0.335241	0.333333	0.332637	0.333264	0.354601
+36	Fusobacterium varium	species	6	2	33.3333333333333	45	0	139	270	intermediate	intermediate_priority	0.318515	0.333333	0.306604	0.290846	0.329073
+37	Xanthomonas phage vB_XooS_NR08	species	6	2	33.3333333333333	39.5	0	144	237	intermediate	intermediate_priority	0.313462	0.333333	0.292303	0.29514	0.315004
+38	Vibrio mimicus	species	6	2	33.3333333333333	22	0	82	132	intermediate	intermediate_priority	0.277853	0.333333	0.228758	0.226868	0.251954
+39	Vibrio metoecus	species	6	2	33.3333333333333	16	0	60	96	intermediate	intermediate_priority	0.258596	0.333333	0.19481	0.189181	0.217755
+40	Botrytis cinerea	species	6	2	33.3333333333333	13.5	0	43	81	intermediate	intermediate_priority	0.245419	0.333333	0.176945	0.149203	0.199553
+41	Aeromonas phage ACP1	species	6	2	33.3333333333333	11	0	49	66	intermediate	intermediate_priority	0.239201	0.333333	0.155692	0.164847	0.177664
+42	Pseudobdellovibrio sp. HCB154	species	6	2	33.3333333333333	7.5	0	35	45	intermediate	intermediate_priority	0.217478	0.333333	0.116964	0.124647	0.136919
+43	Aeromonas sp. FDAARGOS 1414	species	6	1	16.6666666666667	275.333333333333	0	1652	1652	rare_low_prevalence	intermediate_priority	0.368832	0.166667	0.507968	0.592951	0.524992
+44	Shewanella sp. LC6	species	6	1	16.6666666666667	171.166666666667	0	1027	1027	rare_low_prevalence	intermediate_priority	0.339026	0.166667	0.454831	0.534826	0.473529
+45	Devosia sp. YIM 151766	species	6	1	16.6666666666667	159.833333333333	0	959	959	rare_low_prevalence	intermediate_priority	0.334734	0.166667	0.447183	0.526451	0.466114
+46	Rheinheimera sp. MM224	species	6	1	16.6666666666667	142.5	0	855	855	rare_low_prevalence	intermediate_priority	0.327545	0.166667	0.434376	0.51242	0.45369
+47	Roseateles sp. DAIF2	species	6	1	16.6666666666667	135.333333333333	0	812	812	rare_low_prevalence	intermediate_priority	0.324314	0.166667	0.428622	0.506113	0.448106
+48	Aeromonas salmonicida	species	6	1	16.6666666666667	115.833333333333	0	695	695	rare_low_prevalence	intermediate_priority	0.314578	0.166667	0.411287	0.487098	0.431271
+49	Rheinheimera sp. MMS21-TC3	species	6	1	16.6666666666667	75.3333333333333	0	452	452	rare_low_prevalence	intermediate_priority	0.287701	0.166667	0.363484	0.434543	0.38474
+50	Niveibacterium microcysteis	species	6	1	16.6666666666667	65	0	390	390	rare_low_prevalence	intermediate_priority	0.278504	0.166667	0.347149	0.416532	0.368792
+51	Rheinheimera sp. F8	species	6	1	16.6666666666667	62.3333333333333	0	374	374	rare_low_prevalence	intermediate_priority	0.275894	0.166667	0.342517	0.411419	0.364265
+52	Dechloromonas sp. ARDL1	species	6	1	16.6666666666667	62.1666666666667	0	373	373	rare_low_prevalence	intermediate_priority	0.275728	0.166667	0.342221	0.411092	0.363976
+53	Shewanella bicestrii	species	6	1	16.6666666666667	60.8333333333333	0	365	365	rare_low_prevalence	intermediate_priority	0.274378	0.166667	0.339825	0.408446	0.361633
+54	Rheinheimera mangrovi	species	6	1	16.6666666666667	52.6666666666667	0	316	316	rare_low_prevalence	intermediate_priority	0.265409	0.166667	0.323916	0.390857	0.34606
+55	Chromobacterium haemolyticum	species	6	1	16.6666666666667	50.5	0	303	303	rare_low_prevalence	intermediate_priority	0.262799	0.166667	0.319288	0.385733	0.341523
+56	Shewanella oncorhynchi	species	6	1	16.6666666666667	47.1666666666667	0	283	283	rare_low_prevalence	intermediate_priority	0.258558	0.166667	0.311773	0.377405	0.33415
+57	Shewanella algae	species	6	1	16.6666666666667	44.5	0	267	267	rare_low_prevalence	intermediate_priority	0.254946	0.166667	0.305377	0.370309	0.327867
+58	Aeromonas dhakensis	species	6	1	16.6666666666667	43.5	0	261	261	rare_low_prevalence	intermediate_priority	0.253536	0.166667	0.302881	0.367538	0.325414
+59	Faucicola osloensis	species	6	1	16.6666666666667	41.6666666666667	0	250	250	rare_low_prevalence	intermediate_priority	0.250867	0.166667	0.298156	0.362289	0.320766
+60	Altericista sp. CCNU0014	species	6	1	16.6666666666667	36.3333333333333	0	218	218	rare_low_prevalence	intermediate_priority	0.242387	0.166667	0.283159	0.345599	0.30599
+61	Corynebacterium canis	species	6	1	16.6666666666667	35.1666666666667	0	211	211	rare_low_prevalence	intermediate_priority	0.240369	0.166667	0.279594	0.341624	0.30247
+62	Malassezia restricta	species	6	1	16.6666666666667	34.3333333333333	0	206	206	rare_low_prevalence	intermediate_priority	0.238887	0.166667	0.276976	0.338703	0.299884
+63	Chamaesiphon minutus	species	6	1	16.6666666666667	33	0	198	198	rare_low_prevalence	intermediate_priority	0.23644	0.166667	0.272655	0.33388	0.295613
+64	Hyphomicrobium denitrificans	species	6	1	16.6666666666667	31.5	0	189	189	rare_low_prevalence	intermediate_priority	0.233569	0.166667	0.267588	0.328216	0.290599
+65	Finegoldia magna	species	6	1	16.6666666666667	30.6666666666667	0	184	184	rare_low_prevalence	intermediate_priority	0.231915	0.166667	0.264671	0.324953	0.287709
+66	Rippkaea orientalis	species	6	1	16.6666666666667	27.1666666666667	0	163	163	rare_low_prevalence	intermediate_priority	0.224452	0.166667	0.251517	0.310208	0.274655
+67	Desertifilum tharense	species	6	1	16.6666666666667	26.6666666666667	0	160	160	rare_low_prevalence	rare_low_abundance	0.223309	0.166667	0.249505	0.307949	0.272654
+68	Aquipseudomonas alcaligenes	species	6	1	16.6666666666667	25.1666666666667	0	151	151	rare_low_prevalence	rare_low_abundance	0.219752	0.166667	0.243245	0.300909	0.266422
+69	Aeromonas media	species	6	1	16.6666666666667	24.5	0	147	147	rare_low_prevalence	rare_low_abundance	0.218104	0.166667	0.240347	0.297646	0.263532
+70	Pseudomonas stagnisoli	species	6	1	16.6666666666667	23.3333333333333	0	140	140	rare_low_prevalence	rare_low_abundance	0.215112	0.166667	0.235087	0.291717	0.258282
+71	Trichoderma asperellum	species	6	1	16.6666666666667	22.6666666666667	0	136	136	rare_low_prevalence	rare_low_abundance	0.213336	0.166667	0.231967	0.288195	0.255164
+72	Aeromonas jandaei	species	6	1	16.6666666666667	22.5	0	135	135	rare_low_prevalence	rare_low_abundance	0.212884	0.166667	0.231173	0.287298	0.254371
+73	Vibrio misgurnus	species	6	1	16.6666666666667	21.1666666666667	0	127	127	rare_low_prevalence	rare_low_abundance	0.209146	0.166667	0.224613	0.279879	0.247802
+74	Ectopseudomonas guguanensis	species	6	1	16.6666666666667	20.5	0	123	123	rare_low_prevalence	rare_low_abundance	0.207191	0.166667	0.221184	0.275994	0.244362
+75	Vogesella sp. LIG4	species	6	1	16.6666666666667	20	0	120	120	rare_low_prevalence	rare_low_abundance	0.205683	0.166667	0.218541	0.272997	0.241708
+76	Candidatus Megaera polyxenophila	species	6	1	16.6666666666667	19.5	0	117	117	rare_low_prevalence	rare_low_abundance	0.204138	0.166667	0.215835	0.269925	0.238988
+77	Chitinibacter sp. SCUT-21	species	6	1	16.6666666666667	18.5	0	111	111	rare_low_prevalence	rare_low_abundance	0.20093	0.166667	0.210218	0.263539	0.233334
+78	Fusarium musae	species	6	1	16.6666666666667	17.3333333333333	0	104	104	rare_low_prevalence	rare_low_abundance	0.196967	0.166667	0.20329	0.255641	0.226341
+79	Fluviicola sp.	species	6	1	16.6666666666667	17.1666666666667	0	103	103	rare_low_prevalence	rare_low_abundance	0.19638	0.166667	0.202264	0.25447	0.225305
+80	Calothrix sp. PCC 6303	species	6	1	16.6666666666667	16	0	96	96	rare_low_prevalence	rare_low_abundance	0.19211	0.166667	0.19481	0.245943	0.217755
+81	Aeromonas sp. CU5	species	6	1	16.6666666666667	14.5	0	87	87	rare_low_prevalence	rare_low_abundance	0.186155	0.166667	0.184435	0.234027	0.207204
+82	Rhabdochlamydiaceae symbiont of Dictyostelium giganteum	species	6	1	16.6666666666667	12.8333333333333	0	77	77	rare_low_prevalence	rare_low_abundance	0.178801	0.166667	0.171659	0.219265	0.194135
+83	Shewanella sp. HL-SH5	species	6	1	16.6666666666667	12.8333333333333	0	77	77	rare_low_prevalence	rare_low_abundance	0.178801	0.166667	0.171659	0.219265	0.194135
+84	Stenotrophomonas maltophilia	species	6	1	16.6666666666667	12	0	72	72	rare_low_prevalence	rare_low_abundance	0.174774	0.166667	0.164681	0.211158	0.186957
+85	Shewanella sp. MR-4	species	6	1	16.6666666666667	11.1666666666667	0	67	67	rare_low_prevalence	rare_low_abundance	0.17047	0.166667	0.157241	0.202475	0.179269
+86	Leishmania enriettii	species	6	1	16.6666666666667	10.6666666666667	0	64	64	rare_low_prevalence	rare_low_abundance	0.167739	0.166667	0.152528	0.196953	0.17438
+87	Thalassiosira pseudonana	species	6	1	16.6666666666667	10.1666666666667	0	61	61	rare_low_prevalence	rare_low_abundance	0.164884	0.166667	0.147609	0.191171	0.169261
+88	Leptolyngbya sp. 7M	species	6	1	16.6666666666667	10	0	60	60	rare_low_prevalence	rare_low_abundance	0.163903	0.166667	0.14592	0.189181	0.167499
+89	Leishmania mexicana	species	6	1	16.6666666666667	8.5	0	51	51	rare_low_prevalence	rare_low_abundance	0.154304	0.166667	0.129455	0.169647	0.150203
+90	Shewanella khirikhana	species	6	1	16.6666666666667	8.5	0	51	51	rare_low_prevalence	rare_low_abundance	0.154304	0.166667	0.129455	0.169647	0.150203
+91	Cryptomonas paramaecium	species	6	1	16.6666666666667	8.16666666666667	0	49	49	rare_low_prevalence	rare_low_abundance	0.151955	0.166667	0.125444	0.164847	0.145953
+92	Alishewanella sp. d11	species	6	1	16.6666666666667	6.16666666666667	0	37	37	rare_low_prevalence	rare_low_abundance	0.135652	0.166667	0.097801	0.131263	0.116219
+93	Fusobacterium hominis	species	6	1	16.6666666666667	6.16666666666667	0	37	37	rare_low_prevalence	rare_low_abundance	0.135652	0.166667	0.097801	0.131263	0.116219
+94	Synechococcus sp. JA-2-3B'a(2-13)	species	6	1	16.6666666666667	5.33333333333333	0	32	32	rare_low_prevalence	rare_low_abundance	0.127369	0.166667	0.083918	0.113999	0.100933
+95	Shewanella sp. OMA3-2	species	6	1	16.6666666666667	5	0	30	30	rare_low_prevalence	rare_low_abundance	0.123722	0.166667	0.077846	0.106348	0.094159
+96	Reyranella sp.	species	6	1	16.6666666666667	4.83333333333333	0	29	29	rare_low_prevalence	rare_low_abundance	0.121816	0.166667	0.074682	0.102335	0.090606
+97	Fusobacterium gonidiaformans	species	6	1	16.6666666666667	4.5	0	27	27	rare_low_prevalence	rare_low_abundance	0.117819	0.166667	0.068074	0.093892	0.083131
+98	Aeromonas phage AVP1	species	6	1	16.6666666666667	4.33333333333333	0	26	26	rare_low_prevalence	rare_low_abundance	0.115721	0.166667	0.064618	0.089442	0.079191
+99	Vibrio mangrovi	species	6	1	16.6666666666667	4	0	24	24	rare_low_prevalence	rare_low_abundance	0.1113	0.166667	0.05737	0.080024	0.070852
+100	Vibrio navarrensis	species	6	1	16.6666666666667	3	0	18	18	rare_low_prevalence	rare_low_abundance	0.09577	0.166667	0.032309	0.04644	0.041117
+101	Escherichia phage HMD-P3	species	6	1	16.6666666666667	2.83333333333333	0	17	17	rare_low_prevalence	rare_low_abundance	0.092758	0.166667	0.027529	0.039823	0.035259
+102	Phaeodactylum tricornutum	species	6	1	16.6666666666667	2.5	0	15	15	rare_low_prevalence	rare_low_abundance	0.086255	0.166667	0.017312	0.02541	0.022497
+103	Bacterioplanes sanyensis	species	6	1	16.6666666666667	2	0	12	12	rare_low_prevalence	rare_low_abundance	0.075	0.166667	0	0	0
+104	Podospora bellae-mahoneyi	species	6	1	16.6666666666667	2	0	12	12	rare_low_prevalence	rare_low_abundance	0.075	0.166667	0	0	0

@@ -1,0 +1,7 @@
+sample	host_classified_reads	host_classified_pct	host_unclassified_reads	host_unclassified_pct	count_unit
+SRR25649158	35184226	97.53	890127	2.47	read_pairs
+SRR25649159	32139094	97.20	924965	2.80	read_pairs
+SRR25649161	35276403	97.49	908739	2.51	read_pairs
+SRR25649162	30959782	98.10	598652	1.90	read_pairs
+SRR25649181	34405003	96.90	1101535	3.10	read_pairs
+SRR25649182	37873208	97.68	901118	2.32	read_pairs

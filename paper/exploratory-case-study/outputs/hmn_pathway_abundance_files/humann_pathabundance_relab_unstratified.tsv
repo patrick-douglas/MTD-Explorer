@@ -1,0 +1,19 @@
+# Pathway	SRR25649158_Abundance-RELAB	SRR25649159_Abundance-RELAB	SRR25649161_Abundance-RELAB	SRR25649162_Abundance-RELAB	SRR25649181_Abundance-RELAB	SRR25649182_Abundance-RELAB
+UNMAPPED	0.789042	0.789255	0.708281	0	0	0
+UNINTEGRATED	0.210198	0.210089	0.291119	0	0	0
+GLYCOGENSYNTH-PWY: glycogen biosynthesis I (from ADP-D-Glucose)	3.17793e-05	0	0	0	0	0
+HISDEG-PWY: L-histidine degradation I	4.08053e-05	5.0634e-05	0	0	0	0
+P41-PWY: pyruvate fermentation to acetate and (S)-lactate I	1.95169e-05	0	0	0	0	0
+PWY-1042: glycolysis IV	0.000135844	0.000122138	0.000117378	0	0	0
+PWY-5100: pyruvate fermentation to acetate and lactate II	1.95169e-05	0	0	0	0	0
+PWY-6125: superpathway of guanosine nucleotides de novo biosynthesis II	5.31505e-05	0	0	0	0	0
+PWY-6126: superpathway of adenosine nucleotides de novo biosynthesis II	4.65326e-05	0	0	0	0	0
+PWY-6609: adenine and adenosine salvage III	0.000135328	0.000158747	9.77439e-05	0	0	0
+PWY-7208: superpathway of pyrimidine nucleobases salvage	0	6.11095e-05	0	0	0	0
+PWY-7220: adenosine deoxyribonucleotides de novo biosynthesis II	3.80227e-05	0	0	0	0	0
+PWY-7221: guanosine ribonucleotides de novo biosynthesis	8.00015e-05	0.000162787	9.34681e-05	0	0	0
+PWY-7222: guanosine deoxyribonucleotides de novo biosynthesis II	3.80227e-05	0	0	0	0	0
+PWY-7228: superpathway of guanosine nucleotides de novo biosynthesis I	7.08905e-05	8.18691e-05	6.05757e-05	0	0	0
+PWY-7229: superpathway of adenosine nucleotides de novo biosynthesis I	5.07439e-05	0	0	0	0	0
+PWY-7663: gondoate biosynthesis (anaerobic)	0	1.85813e-05	0.000112835	0	0	0
+PWY0-862: (5Z)-dodecenoate biosynthesis I	0	0	0.000117818	0	0	0

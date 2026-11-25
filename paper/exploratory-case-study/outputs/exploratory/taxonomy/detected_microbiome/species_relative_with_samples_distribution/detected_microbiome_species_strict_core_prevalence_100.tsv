@@ -1,0 +1,15 @@
+rank_position	taxon	rank	n_samples	prevalence_n	prevalence_percent	mean_abundance	median_abundance	max_abundance	total_abundance	prevalence_class	importance_interpretation	importance_score	prevalence_score	mean_abundance_score	max_abundance_score	total_abundance_score
+1	Staphylococcus aureus	species	6	6	100	26.9893438643953	20.4617897282685	65.980868285504	161.936063186372	core_high_prevalence	consistent_and_abundant	1	1	1	1	1
+2	Cetobacterium somerae	species	6	6	100	22.3577007142462	21.4489384497755	45.9208320025551	134.146204285477	core_high_prevalence	consistent_and_abundant	0.967309	1	0.945687	0.915195	0.963234
+3	Toxoplasma gondii	species	6	6	100	10.507751330398	9.80885141533028	17.5128771155261	63.046507982388	core_high_prevalence	consistent_and_abundant	0.855627	1	0.733142	0.693622	0.816415
+4	Klebsiella pneumoniae	species	6	6	100	4.62279904434899	3.82501061110697	12.3658648838505	27.7367942660939	core_high_prevalence	consistent_and_abundant	0.763719	1	0.51811	0.616008	0.658845
+5	Vibrio parahaemolyticus	species	6	6	100	3.86371765198869	4.17277494943331	5.59794588571567	23.1823059119321	core_high_prevalence	consistent_low_abundance	0.722034	1	0.474567	0.447815	0.624918
+8	Kwoniella botswanensis	species	6	6	100	1.66779190422774	1.1017911569141	4.79587380155148	10.0067514253665	core_high_prevalence	consistent_low_abundance	0.647833	1	0.294255	0.416935	0.470163
+9	Escherichia coli	species	6	6	100	1.43663751373066	1.17275546183117	3.01092459365841	8.61982508238394	core_high_prevalence	consistent_low_abundance	0.623866	1	0.267043	0.329229	0.443683
+10	Plasmodium vivax	species	6	6	100	1.22702395951835	1.12710443275409	2.17218543046358	7.36214375711013	core_high_prevalence	consistent_low_abundance	0.604624	1	0.240035	0.273335	0.416136
+12	Candida dubliniensis	species	6	6	100	0.564675827095229	0.0639091287945364	3.10088804775076	3.38805496257137	core_high_prevalence	consistent_low_abundance	0.569328	1	0.134053	0.334514	0.289355
+13	Lodderomyces elongisporus	species	6	6	100	0.370371779932546	0.447715156265617	0.535970935803258	2.22223067959528	core_high_prevalence	consistent_low_abundance	0.516217	1	0.094242	0.10054	0.228639
+14	Leishmania sp. Namibia	species	6	6	100	0.342527843062669	0.228310995817074	0.665194996320824	2.05516705837602	core_high_prevalence	consistent_low_abundance	0.516209	1	0.088078	0.119786	0.218172
+15	Sordaria macrospora	species	6	6	100	0.311188614952853	0.325534476896412	0.671081677704194	1.86713168971712	core_high_prevalence	consistent_low_abundance	0.512958	1	0.080986	0.120627	0.205683
+16	Colletotrichum higginsianum	species	6	6	100	0.310868106772412	0.242981252265046	0.586485868186261	1.86520864063447	core_high_prevalence	consistent_low_abundance	0.511066	1	0.080913	0.10825	0.205551
+17	Cutibacterium acnes	species	6	6	100	0.208119674074356	0.184267494166368	0.423416237352989	1.24871804444614	core_high_prevalence	consistent_low_abundance	0.495075	1	0.056406	0.082409	0.157916

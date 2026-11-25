@@ -1,0 +1,7 @@
+sample	micro_classified_reads	micro_classified_pct	micro_unclassified_reads	micro_unclassified_pct	count_unit
+SRR25649158	115579	12.98	774548	87.02	read_pairs
+SRR25649159	126830	13.71	798135	86.29	read_pairs
+SRR25649161	170275	18.74	738464	81.26	read_pairs
+SRR25649162	49534	8.27	549118	91.73	read_pairs
+SRR25649181	43655	3.96	1057880	96.04	read_pairs
+SRR25649182	35060	3.89	866058	96.11	read_pairs

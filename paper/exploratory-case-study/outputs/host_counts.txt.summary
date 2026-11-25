@@ -1,0 +1,15 @@
+Status	SRR25649158.sam	SRR25649159.sam	SRR25649161.sam	SRR25649162.sam	SRR25649181.sam	SRR25649182.sam
+Assigned	21660415	20039817	20087107	16216929	19687823	23131868
+Unassigned_Unmapped	2959144	2738058	2761018	1928262	3392993	2988417
+Unassigned_Read_Type	0	0	0	0	0	0
+Unassigned_Singleton	0	0	0	0	0	0
+Unassigned_MappingQuality	0	0	0	0	0	0
+Unassigned_Chimera	0	0	0	0	0	0
+Unassigned_FragmentLength	0	0	0	0	0	0
+Unassigned_Duplicate	0	0	0	0	0	0
+Unassigned_MultiMapping	11775788	10804408	17544148	23903597	11998488	12212400
+Unassigned_Secondary	0	0	0	0	0	0
+Unassigned_NonSplit	0	0	0	0	0	0
+Unassigned_NoFeatures	6734067	5867965	6843436	5136982	7775827	7662406
+Unassigned_Overlapping_Length	0	0	0	0	0	0
+Unassigned_Ambiguity	726073	678136	675671	698853	631308	764433

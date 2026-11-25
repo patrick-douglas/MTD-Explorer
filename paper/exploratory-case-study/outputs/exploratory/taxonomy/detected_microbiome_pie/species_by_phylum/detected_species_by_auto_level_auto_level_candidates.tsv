@@ -1,0 +1,9 @@
+level	n_categories	n_unknown	specificity	distance_to_target
+species	104	0	8	92
+genus	63	0	7	51
+family	55	0	6	43
+order	44	0	5	32
+class	25	0	4	13
+phylum	17	0	3	5
+kingdom	4	0	2	8
+superkingdom	3	0	1	9

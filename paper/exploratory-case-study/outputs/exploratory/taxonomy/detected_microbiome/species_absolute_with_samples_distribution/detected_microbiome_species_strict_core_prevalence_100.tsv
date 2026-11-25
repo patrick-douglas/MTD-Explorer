@@ -1,0 +1,15 @@
+rank_position	taxon	rank	n_samples	prevalence_n	prevalence_percent	mean_abundance	median_abundance	max_abundance	total_abundance	prevalence_class	importance_interpretation	importance_score	prevalence_score	mean_abundance_score	max_abundance_score	total_abundance_score
+1	Cetobacterium somerae	species	6	6	100	22085	23546	46009	132510	core_high_prevalence	consistent_and_abundant	1	1	1	1	1
+2	Staphylococcus aureus	species	6	6	100	15793.1666666667	17214.5	22417	94759	core_high_prevalence	consistent_and_abundant	0.971872	1	0.962343	0.912014	0.963669
+3	Toxoplasma gondii	species	6	6	100	6082	5645.5	8151	36492	core_high_prevalence	consistent_and_abundant	0.910816	1	0.855185	0.78822	0.86028
+4	Klebsiella pneumoniae	species	6	6	100	2859.83333333333	2648	5105	17159	core_high_prevalence	consistent_and_abundant	0.868636	1	0.770461	0.730968	0.778526
+5	Vibrio parahaemolyticus	species	6	6	100	2697.5	2559.5	4527	16185	core_high_prevalence	consistent_and_abundant	0.86383	1	0.763901	0.716266	0.772195
+7	Kwoniella botswanensis	species	6	6	100	944.166666666667	643	2306	5665	core_high_prevalence	consistent_and_abundant	0.804732	1	0.64608	0.633745	0.658466
+8	Escherichia coli	species	6	6	100	975.166666666667	1032.5	1368	5851	core_high_prevalence	consistent_and_abundant	0.79659	1	0.649704	0.569882	0.661965
+9	Plasmodium vivax	species	6	6	100	671	730.5	873	4026	core_high_prevalence	consistent_and_abundant	0.771723	1	0.607771	0.514966	0.621469
+11	Candida dubliniensis	species	6	6	100	281.5	42.5	1491	1689	core_high_prevalence	consistent_and_abundant	0.742935	1	0.510447	0.580411	0.52739
+13	Lodderomyces elongisporus	species	6	6	100	245	205.5	537	1470	core_high_prevalence	consistent_low_abundance	0.718046	1	0.49491	0.455588	0.512353
+14	Cutibacterium acnes	species	6	6	100	187.333333333333	94.5	706	1124	core_high_prevalence	consistent_low_abundance	0.711155	1	0.46491	0.489017	0.483298
+15	Leishmania sp. Namibia	species	6	6	100	203.333333333333	219.5	271	1220	core_high_prevalence	consistent_low_abundance	0.697256	1	0.474068	0.372122	0.492171
+16	Colletotrichum higginsianum	species	6	6	100	181.166666666667	171.5	282	1087	core_high_prevalence	consistent_low_abundance	0.692865	1	0.461171	0.376973	0.479675
+17	Sordaria macrospora	species	6	6	100	174.333333333333	154.5	289	1046	core_high_prevalence	consistent_low_abundance	0.691609	1	0.456877	0.379963	0.475513

@@ -1,0 +1,307 @@
+"Sample","Taxon","Abundance"
+"SRR25649182","Cetobacterium somerae",0.120676968359088
+"SRR25649182","Staphylococcus aureus",65.980868285504
+"SRR25649182","Plesiomonas shigelloides",0
+"SRR25649182","Toxoplasma gondii",17.5128771155261
+"SRR25649182","Aeromonas veronii",0
+"SRR25649182","Shewanella xiamenensis",0
+"SRR25649182","Klebsiella pneumoniae",3.61442236938926
+"SRR25649182","Vibrio parahaemolyticus",4.18248712288447
+"SRR25649182","Salmonella enterica",0
+"SRR25649182","Escherichia coli",0.980132450331126
+"SRR25649182","Kwoniella botswanensis",1.88079470198676
+"SRR25649182","Shewanella oneidensis",0
+"SRR25649182","Shewanella baltica",0
+"SRR25649182","Shewanella putrefaciens",0
+"SRR25649182","Plasmodium vivax",2.17218543046358
+"SRR25649182","Vibrio cholerae",0
+"SRR25649182","Aeromonas hydrophila",0
+"SRR25649182","Kwoniella dejecticola",0
+"SRR25649182","Candida dubliniensis",0.0618101545253863
+"SRR25649182","Aeromonas sp. FDAARGOS 1414",0
+"SRR25649182","Lodderomyces elongisporus",0.415011037527594
+"SRR25649182","Aeromonas caviae",0
+"SRR25649182","Leishmania sp. Namibia",0.665194996320824
+"SRR25649182","Fusobacterium mortiferum",0
+"SRR25649182","Cutibacterium acnes",0.270787343635026
+"SRR25649182","Colletotrichum higginsianum",0.341427520235467
+"SRR25649182","Sordaria macrospora",0.671081677704194
+"SRR25649182","Shewanella sp. LC6",0
+"SRR25649182","Devosia sp. YIM 151766",0
+"SRR25649182","Shewanella decolorationis",0
+"SRR25649182","Rheinheimera sp. MM224",0
+"SRR25649182","Roseateles sp. DAIF2",0
+"SRR25649182","Aeromonas salmonicida",0
+"SRR25649182","Rheinheimera sp. MMS21-TC3",0
+"SRR25649182","Niveibacterium microcysteis",0
+"SRR25649182","Rheinheimera sp. F8",0
+"SRR25649182","Dechloromonas sp. ARDL1",0
+"SRR25649182","Shewanella bicestrii",0
+"SRR25649182","Aeromonas allosaccharophila",0
+"SRR25649182","Pseudomonas yamanorum",0.208977189109639
+"SRR25649182","Rheinheimera mangrovi",0
+"SRR25649182","Chromobacterium haemolyticum",0
+"SRR25649182","Shewanella oncorhynchi",0
+"SRR25649182","Fusobacterium varium",0
+"SRR25649182","Shewanella algae",0
+"SRR25649182","Aeromonas dhakensis",0
+"SRR25649182","Borreliella burgdorferi",0.347314201618837
+"SRR25649182","Faucicola osloensis",0
+"SRR25649182","Xanthomonas phage vB XooS NR08",0.423841059602649
+"SRR25649182","Cetobacterium sp. SF1",0
+"SRR25649182","Other",0.150110375275938
+"SRR25649181","Cetobacterium somerae",0.76060363830148
+"SRR25649181","Staphylococcus aureus",15.3210764721556
+"SRR25649181","Plesiomonas shigelloides",42.0657413463169
+"SRR25649181","Toxoplasma gondii",12.9375287648669
+"SRR25649181","Aeromonas veronii",0.935009568103093
+"SRR25649181","Shewanella xiamenensis",0
+"SRR25649181","Klebsiella pneumoniae",12.3658648838505
+"SRR25649181","Vibrio parahaemolyticus",5.59794588571567
+"SRR25649181","Salmonella enterica",0
+"SRR25649181","Escherichia coli",3.01092459365841
+"SRR25649181","Kwoniella botswanensis",1.56480875905336
+"SRR25649181","Shewanella oneidensis",0
+"SRR25649181","Shewanella baltica",0
+"SRR25649181","Shewanella putrefaciens",0
+"SRR25649181","Plasmodium vivax",2.11467189884456
+"SRR25649181","Vibrio cholerae",0
+"SRR25649181","Aeromonas hydrophila",0
+"SRR25649181","Kwoniella dejecticola",0
+"SRR25649181","Candida dubliniensis",0.0920475740619626
+"SRR25649181","Aeromonas sp. FDAARGOS 1414",0
+"SRR25649181","Lodderomyces elongisporus",0.496572439018482
+"SRR25649181","Aeromonas caviae",0
+"SRR25649181","Leishmania sp. Namibia",0.620109972627958
+"SRR25649181","Fusobacterium mortiferum",0
+"SRR25649181","Cutibacterium acnes",0.288254245088777
+"SRR25649181","Colletotrichum higginsianum",0.530484703146574
+"SRR25649181","Sordaria macrospora",0.322166509216869
+"SRR25649181","Shewanella sp. LC6",0
+"SRR25649181","Devosia sp. YIM 151766",0
+"SRR25649181","Shewanella decolorationis",0
+"SRR25649181","Rheinheimera sp. MM224",0
+"SRR25649181","Roseateles sp. DAIF2",0
+"SRR25649181","Aeromonas salmonicida",0
+"SRR25649181","Rheinheimera sp. MMS21-TC3",0
+"SRR25649181","Niveibacterium microcysteis",0
+"SRR25649181","Rheinheimera sp. F8",0
+"SRR25649181","Dechloromonas sp. ARDL1",0
+"SRR25649181","Shewanella bicestrii",0
+"SRR25649181","Aeromonas allosaccharophila",0
+"SRR25649181","Pseudomonas yamanorum",0
+"SRR25649181","Rheinheimera mangrovi",0
+"SRR25649181","Chromobacterium haemolyticum",0
+"SRR25649181","Shewanella oncorhynchi",0
+"SRR25649181","Fusobacterium varium",0
+"SRR25649181","Shewanella algae",0
+"SRR25649181","Aeromonas dhakensis",0
+"SRR25649181","Borreliella burgdorferi",0.297943463411089
+"SRR25649181","Faucicola osloensis",0
+"SRR25649181","Xanthomonas phage vB XooS NR08",0.22527432599375
+"SRR25649181","Cetobacterium sp. SF1",0
+"SRR25649181","Other",0.452970956568079
+"SRR25649162","Cetobacterium somerae",20.5935569743984
+"SRR25649162","Staphylococcus aureus",32.4231017199426
+"SRR25649162","Plesiomonas shigelloides",0
+"SRR25649162","Toxoplasma gondii",16.9519372751284
+"SRR25649162","Aeromonas veronii",1.10226067425077
+"SRR25649162","Shewanella xiamenensis",2.655824303808
+"SRR25649162","Klebsiella pneumoniae",2.21492003410769
+"SRR25649162","Vibrio parahaemolyticus",3.0364161969927
+"SRR25649162","Salmonella enterica",2.35634215835118
+"SRR25649162","Escherichia coli",1.51404862425389
+"SRR25649162","Kwoniella botswanensis",4.79587380155148
+"SRR25649162","Shewanella oneidensis",0.603123765156084
+"SRR25649162","Shewanella baltica",0.270365825759624
+"SRR25649162","Shewanella putrefaciens",1.37470623713163
+"SRR25649162","Plasmodium vivax",1.50364993864775
+"SRR25649162","Vibrio cholerae",0
+"SRR25649162","Aeromonas hydrophila",0
+"SRR25649162","Kwoniella dejecticola",2.50816296820082
+"SRR25649162","Candida dubliniensis",3.10088804775076
+"SRR25649162","Aeromonas sp. FDAARGOS 1414",0
+"SRR25649162","Lodderomyces elongisporus",0.48041927500364
+"SRR25649162","Aeromonas caviae",0
+"SRR25649162","Leishmania sp. Namibia",0.214212923486471
+"SRR25649162","Fusobacterium mortiferum",0.262046877274712
+"SRR25649162","Cutibacterium acnes",0.0977476446977102
+"SRR25649162","Colletotrichum higginsianum",0.586485868186261
+"SRR25649162","Sordaria macrospora",0.366033733336106
+"SRR25649162","Shewanella sp. LC6",0
+"SRR25649162","Devosia sp. YIM 151766",0
+"SRR25649162","Shewanella decolorationis",0
+"SRR25649162","Rheinheimera sp. MM224",0
+"SRR25649162","Roseateles sp. DAIF2",0
+"SRR25649162","Aeromonas salmonicida",0
+"SRR25649162","Rheinheimera sp. MMS21-TC3",0
+"SRR25649162","Niveibacterium microcysteis",0
+"SRR25649162","Rheinheimera sp. F8",0
+"SRR25649162","Dechloromonas sp. ARDL1",0
+"SRR25649162","Shewanella bicestrii",0
+"SRR25649162","Aeromonas allosaccharophila",0
+"SRR25649162","Pseudomonas yamanorum",0
+"SRR25649162","Rheinheimera mangrovi",0
+"SRR25649162","Chromobacterium haemolyticum",0
+"SRR25649162","Shewanella oncorhynchi",0
+"SRR25649162","Fusobacterium varium",0
+"SRR25649162","Shewanella algae",0.555289811367843
+"SRR25649162","Aeromonas dhakensis",0
+"SRR25649162","Borreliella burgdorferi",0
+"SRR25649162","Faucicola osloensis",0
+"SRR25649162","Xanthomonas phage vB XooS NR08",0
+"SRR25649162","Cetobacterium sp. SF1",0.0374352681821018
+"SRR25649162","Other",0.395150053033297
+"SRR25649161","Cetobacterium somerae",22.3043199251525
+"SRR25649161","Staphylococcus aureus",7.28743725223253
+"SRR25649161","Plesiomonas shigelloides",19.3548000167927
+"SRR25649161","Toxoplasma gondii",3.14503505478622
+"SRR25649161","Aeromonas veronii",12.4278063320519
+"SRR25649161","Shewanella xiamenensis",10.5416249347783
+"SRR25649161","Klebsiella pneumoniae",1.049544497688
+"SRR25649161","Vibrio parahaemolyticus",1.68406911400452
+"SRR25649161","Salmonella enterica",4.62579240609575
+"SRR25649161","Escherichia coli",0.813846790492926
+"SRR25649161","Kwoniella botswanensis",0.563155590473734
+"SRR25649161","Shewanella oneidensis",2.41815052267316
+"SRR25649161","Shewanella baltica",2.84396571887801
+"SRR25649161","Shewanella putrefaciens",1.68706781256934
+"SRR25649161","Plasmodium vivax",0.277079747389633
+"SRR25649161","Vibrio cholerae",0
+"SRR25649161","Aeromonas hydrophila",0.635724095742448
+"SRR25649161","Kwoniella dejecticola",0.340652156963878
+"SRR25649161","Candida dubliniensis",0.0203911502407955
+"SRR25649161","Aeromonas sp. FDAARGOS 1414",0.990770005817475
+"SRR25649161","Lodderomyces elongisporus",0.123546380870702
+"SRR25649161","Aeromonas caviae",0.577549343584884
+"SRR25649161","Leishmania sp. Namibia",0.162529462213399
+"SRR25649161","Fusobacterium mortiferum",0.304667774186003
+"SRR25649161","Cutibacterium acnes",0.423416237352989
+"SRR25649161","Colletotrichum higginsianum",0.120547682305879
+"SRR25649161","Sordaria macrospora",0.0611734507223865
+"SRR25649161","Shewanella sp. LC6",0.615932685214617
+"SRR25649161","Devosia sp. YIM 151766",0.575150384733026
+"SRR25649161","Shewanella decolorationis",0.420417538788166
+"SRR25649161","Rheinheimera sp. MM224",0
+"SRR25649161","Roseateles sp. DAIF2",0
+"SRR25649161","Aeromonas salmonicida",0.416819100510379
+"SRR25649161","Rheinheimera sp. MMS21-TC3",0
+"SRR25649161","Niveibacterium microcysteis",0
+"SRR25649161","Rheinheimera sp. F8",0
+"SRR25649161","Dechloromonas sp. ARDL1",0.223702912935786
+"SRR25649161","Shewanella bicestrii",0.218904995232069
+"SRR25649161","Aeromonas allosaccharophila",0.118148723454021
+"SRR25649161","Pseudomonas yamanorum",0
+"SRR25649161","Rheinheimera mangrovi",0
+"SRR25649161","Chromobacterium haemolyticum",0.181721133028266
+"SRR25649161","Shewanella oncorhynchi",0.169726338768974
+"SRR25649161","Fusobacterium varium",0
+"SRR25649161","Shewanella algae",0
+"SRR25649161","Aeromonas dhakensis",0.156532065083754
+"SRR25649161","Borreliella burgdorferi",0
+"SRR25649161","Faucicola osloensis",0.149934928241143
+"SRR25649161","Xanthomonas phage vB XooS NR08",0
+"SRR25649161","Cetobacterium sp. SF1",0.0521773550279179
+"SRR25649161","Other",1.91616838292181
+"SRR25649159","Cetobacterium somerae",44.4462147767105
+"SRR25649159","Staphylococcus aureus",22.1206810215323
+"SRR25649159","Plesiomonas shigelloides",0.451814084763509
+"SRR25649159","Toxoplasma gondii",5.8189557062867
+"SRR25649159","Aeromonas veronii",6.10461146264852
+"SRR25649159","Shewanella xiamenensis",2.52082669458734
+"SRR25649159","Klebsiella pneumoniae",4.03559885282469
+"SRR25649159","Vibrio parahaemolyticus",4.16306277598216
+"SRR25649159","Salmonella enterica",0
+"SRR25649159","Escherichia coli",0.935494150316384
+"SRR25649159","Kwoniella botswanensis",0.563345017526289
+"SRR25649159","Shewanella oneidensis",0.551964310101516
+"SRR25649159","Shewanella baltica",0
+"SRR25649159","Shewanella putrefaciens",0.508717621887377
+"SRR25649159","Plasmodium vivax",0.543997814904174
+"SRR25649159","Vibrio cholerae",2.32394045613875
+"SRR25649159","Aeromonas hydrophila",0.718122638503209
+"SRR25649159","Kwoniella dejecticola",0.0341421222743206
+"SRR25649159","Candida dubliniensis",0.0660081030636864
+"SRR25649159","Aeromonas sp. FDAARGOS 1414",0
+"SRR25649159","Lodderomyces elongisporus",0.170710611371603
+"SRR25649159","Aeromonas caviae",0.574725724951063
+"SRR25649159","Leishmania sp. Namibia",0.242409068147676
+"SRR25649159","Fusobacterium mortiferum",0.38239176947239
+"SRR25649159","Cutibacterium acnes",0.0716984567760732
+"SRR25649159","Colletotrichum higginsianum",0.144534984294624
+"SRR25649159","Sordaria macrospora",0.328902444575955
+"SRR25649159","Shewanella sp. LC6",0
+"SRR25649159","Devosia sp. YIM 151766",0
+"SRR25649159","Shewanella decolorationis",0
+"SRR25649159","Rheinheimera sp. MM224",0
+"SRR25649159","Roseateles sp. DAIF2",0
+"SRR25649159","Aeromonas salmonicida",0
+"SRR25649159","Rheinheimera sp. MMS21-TC3",0
+"SRR25649159","Niveibacterium microcysteis",0.443847589566167
+"SRR25649159","Rheinheimera sp. F8",0
+"SRR25649159","Dechloromonas sp. ARDL1",0
+"SRR25649159","Shewanella bicestrii",0
+"SRR25649159","Aeromonas allosaccharophila",0.165020257659216
+"SRR25649159","Pseudomonas yamanorum",0.308417171211363
+"SRR25649159","Rheinheimera mangrovi",0
+"SRR25649159","Chromobacterium haemolyticum",0
+"SRR25649159","Shewanella oncorhynchi",0
+"SRR25649159","Fusobacterium varium",0.158191833204352
+"SRR25649159","Shewanella algae",0
+"SRR25649159","Aeromonas dhakensis",0
+"SRR25649159","Borreliella burgdorferi",0
+"SRR25649159","Faucicola osloensis",0
+"SRR25649159","Xanthomonas phage vB XooS NR08",0
+"SRR25649159","Cetobacterium sp. SF1",0.0762507397459826
+"SRR25649159","Other",1.02540173897209
+"SRR25649158","Cetobacterium somerae",45.9208320025551
+"SRR25649158","Staphylococcus aureus",18.8028984350048
+"SRR25649158","Plesiomonas shigelloides",0
+"SRR25649158","Toxoplasma gondii",6.68017406579368
+"SRR25649158","Aeromonas veronii",6.19710156499521
+"SRR25649158","Shewanella xiamenensis",3.64200734589588
+"SRR25649158","Klebsiella pneumoniae",4.45644362823379
+"SRR25649158","Vibrio parahaemolyticus",4.5183248163526
+"SRR25649158","Salmonella enterica",0
+"SRR25649158","Escherichia coli",1.3653784733312
+"SRR25649158","Kwoniella botswanensis",0.638773554774832
+"SRR25649158","Shewanella oneidensis",0.76153784733312
+"SRR25649158","Shewanella baltica",0
+"SRR25649158","Shewanella putrefaciens",0.587871287128713
+"SRR25649158","Plasmodium vivax",0.750558926860428
+"SRR25649158","Vibrio cholerae",0.153704886617694
+"SRR25649158","Aeromonas hydrophila",0.493053337591824
+"SRR25649158","Kwoniella dejecticola",0
+"SRR25649158","Candida dubliniensis",0.0469099329287767
+"SRR25649158","Aeromonas sp. FDAARGOS 1414",0
+"SRR25649158","Lodderomyces elongisporus",0.535970935803258
+"SRR25649158","Aeromonas caviae",0
+"SRR25649158","Leishmania sp. Namibia",0.150710635579687
+"SRR25649158","Fusobacterium mortiferum",0.227563078888534
+"SRR25649158","Cutibacterium acnes",0.0968141168955605
+"SRR25649158","Colletotrichum higginsianum",0.141727882465666
+"SRR25649158","Sordaria macrospora",0.11777387416161
+"SRR25649158","Shewanella sp. LC6",0
+"SRR25649158","Devosia sp. YIM 151766",0
+"SRR25649158","Shewanella decolorationis",0.175662727563079
+"SRR25649158","Rheinheimera sp. MM224",0.853361545832003
+"SRR25649158","Roseateles sp. DAIF2",0.810443947620569
+"SRR25649158","Aeromonas salmonicida",0
+"SRR25649158","Rheinheimera sp. MMS21-TC3",0.451133823059725
+"SRR25649158","Niveibacterium microcysteis",0
+"SRR25649158","Rheinheimera sp. F8",0.373283296071543
+"SRR25649158","Dechloromonas sp. ARDL1",0
+"SRR25649158","Shewanella bicestrii",0
+"SRR25649158","Aeromonas allosaccharophila",0
+"SRR25649158","Pseudomonas yamanorum",0
+"SRR25649158","Rheinheimera mangrovi",0.315394442670073
+"SRR25649158","Chromobacterium haemolyticum",0
+"SRR25649158","Shewanella oncorhynchi",0
+"SRR25649158","Fusobacterium varium",0.130748961992974
+"SRR25649158","Shewanella algae",0
+"SRR25649158","Aeromonas dhakensis",0
+"SRR25649158","Borreliella burgdorferi",0.0109789204726924
+"SRR25649158","Faucicola osloensis",0
+"SRR25649158","Xanthomonas phage vB XooS NR08",0
+"SRR25649158","Cetobacterium sp. SF1",0.0558926860427978
+"SRR25649158","Other",0.536969019482593

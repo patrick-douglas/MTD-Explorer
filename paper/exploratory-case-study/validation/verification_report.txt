@@ -1,0 +1,8 @@
+absolute TPI: 104 taxa; max error 4.97220203e-07
+relative TPI: 104 taxa; max error 4.89215855e-07
+Abundance go: 2700 rows, 2697 eligible
+Abundance kegg: 580 rows, 577 eligible
+relAbundance go: 2700 rows, 2697 eligible
+relAbundance kegg: 580 rows, 577 eligible
+QC sample IDs and group: PASS
+All selected output checks passed.

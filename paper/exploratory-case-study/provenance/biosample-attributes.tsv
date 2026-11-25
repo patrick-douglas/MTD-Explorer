@@ -1,0 +1,85 @@
+BioSample	Attribute	Value
+SAMN36996027	strain	missing
+SAMN36996027	collection_date	2022-03-15
+SAMN36996027	replicate	P1
+SAMN36996027	INSDC secondary accession	SRS18618371
+SAMN36996027	NCBI submission package	Model.organism.animal.1.0
+SAMN36996027	organism	Danio rerio
+SAMN36996027	sex	male
+SAMN36996027	geo_loc_name	USA: Salt Lake City UT
+SAMN36996027	tissue	intestine
+SAMN36996027	dev_stage	adult
+SAMN36996027	isolation_source	pet trade 1
+SAMN36996027	BioSampleModel	Model organism or animal
+SAMN36996027	ENA-FIRST-PUBLIC	2023-08-15
+SAMN36996027	ENA-LAST-UPDATE	2026-09-02
+SAMN36996028	strain	missing
+SAMN36996028	collection_date	2022-03-15
+SAMN36996028	replicate	P2
+SAMN36996028	INSDC secondary accession	SRS18618372
+SAMN36996028	NCBI submission package	Model.organism.animal.1.0
+SAMN36996028	organism	Danio rerio
+SAMN36996028	sex	male
+SAMN36996028	geo_loc_name	USA: Salt Lake City UT
+SAMN36996028	tissue	intestine
+SAMN36996028	dev_stage	adult
+SAMN36996028	isolation_source	pet trade 1
+SAMN36996028	BioSampleModel	Model organism or animal
+SAMN36996028	ENA-FIRST-PUBLIC	2023-08-15
+SAMN36996028	ENA-LAST-UPDATE	2026-09-02
+SAMN36996030	strain	missing
+SAMN36996030	collection_date	2022-03-15
+SAMN36996030	replicate	E1
+SAMN36996030	INSDC secondary accession	SRS18618390
+SAMN36996030	NCBI submission package	Model.organism.animal.1.0
+SAMN36996030	organism	Danio rerio
+SAMN36996030	sex	female
+SAMN36996030	geo_loc_name	USA: Salt Lake City UT
+SAMN36996030	tissue	intestine
+SAMN36996030	dev_stage	adult
+SAMN36996030	isolation_source	pet trade 2
+SAMN36996030	BioSampleModel	Model organism or animal
+SAMN36996030	ENA-FIRST-PUBLIC	2023-08-15
+SAMN36996030	ENA-LAST-UPDATE	2026-09-02
+SAMN36996031	strain	missing
+SAMN36996031	collection_date	2022-03-15
+SAMN36996031	replicate	E2
+SAMN36996031	INSDC secondary accession	SRS18618392
+SAMN36996031	NCBI submission package	Model.organism.animal.1.0
+SAMN36996031	organism	Danio rerio
+SAMN36996031	sex	female
+SAMN36996031	geo_loc_name	USA: Salt Lake City UT
+SAMN36996031	tissue	intestine
+SAMN36996031	dev_stage	adult
+SAMN36996031	isolation_source	pet trade 2
+SAMN36996031	BioSampleModel	Model organism or animal
+SAMN36996031	ENA-FIRST-PUBLIC	2023-08-15
+SAMN36996031	ENA-LAST-UPDATE	2026-09-02
+SAMN36996033	strain	missing
+SAMN36996033	collection_date	2022-03-15
+SAMN36996033	replicate	T1
+SAMN36996033	INSDC secondary accession	SRS18618394
+SAMN36996033	NCBI submission package	Model.organism.animal.1.0
+SAMN36996033	organism	Danio rerio
+SAMN36996033	sex	female
+SAMN36996033	geo_loc_name	USA: Salt Lake City UT
+SAMN36996033	tissue	intestine
+SAMN36996033	dev_stage	adult
+SAMN36996033	isolation_source	pet trade 3
+SAMN36996033	BioSampleModel	Model organism or animal
+SAMN36996033	ENA-FIRST-PUBLIC	2023-08-15
+SAMN36996033	ENA-LAST-UPDATE	2026-09-02
+SAMN36996034	strain	missing
+SAMN36996034	collection_date	2022-03-15
+SAMN36996034	replicate	T2
+SAMN36996034	INSDC secondary accession	SRS18618395
+SAMN36996034	NCBI submission package	Model.organism.animal.1.0
+SAMN36996034	organism	Danio rerio
+SAMN36996034	sex	male
+SAMN36996034	geo_loc_name	USA: Salt Lake City UT
+SAMN36996034	tissue	intestine
+SAMN36996034	dev_stage	adult
+SAMN36996034	isolation_source	pet trade 3
+SAMN36996034	BioSampleModel	Model organism or animal
+SAMN36996034	ENA-FIRST-PUBLIC	2023-08-15
+SAMN36996034	ENA-LAST-UPDATE	2026-09-02

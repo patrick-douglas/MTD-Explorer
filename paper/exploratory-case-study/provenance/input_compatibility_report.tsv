@@ -1,0 +1,11 @@
+metric	value
+taxid	7955
+scientific_name	Danio rerio
+gtf_gene_ids	32520
+gtf_seqnames	300
+genome_gtf_seqname_overlap	300
+genome_gtf_seqname_overlap_pct	100.0000
+representative_protein_genes	25592
+representative_protein_gtf_pct	78.6962
+eggnog_genes_with_go_matching_gtf	18517
+eggnog_gtf_pct	56.9403
