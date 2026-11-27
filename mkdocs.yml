@@ -76,6 +76,7 @@ nav:
   - Getting started:
       - System requirements: getting-started/requirements.md
       - Installation: getting-started/installation.md
+      - Local functional resources: getting-started/functional-resources.md
       - Verify installation: getting-started/verify-installation.md
       - Quick start: getting-started/quick-start.md
       - Full user guide: user-guide/index.md

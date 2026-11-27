@@ -38,3 +38,10 @@ offlineCachePath
 update_fix/MTD_R_install_logs/
 update_fix/R412_post_recreate_logs/
 update_fix/bioc_tarball_cache/
+
+# Local functional data: obtain under source-specific terms, never commit.
+/Tools/ssGSEA2.0/db/msigdb/c2.all.v7.5.1.symbols.gmt
+/aux_scripts/analysis/humann/koterms.txt
+/aux_scripts/analysis/humann/goterms.txt
+/aux_scripts/analysis/humann/dictionary_sources.tsv
+/local_resources/

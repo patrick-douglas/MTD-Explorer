@@ -53,6 +53,10 @@ The manifest stores resolved absolute FASTQ paths and file sizes in bytes. For s
 
 The [Danio rerio example](danio-rerio.md#reproducibility-and-regression-checks) illustrates this output with all six reports recording version 1.3.6.
 
+### Local functional resource identities
+
+`methods/functional_resources.tsv` records the absolute paths, SHA-256 fingerprints and identities of the GO/KO dictionaries and, when executed, the effective ssGSEA GMT and its master GMT in auto mode. The optional `methods/functional_resources_dictionary_sources.tsv` records user-supplied source versions and hashes. See [Local functional resources](../getting-started/functional-resources.md). Older executions may not contain these files.
+
 ## Main reproducibility table
 
 The most important reproducibility file is:

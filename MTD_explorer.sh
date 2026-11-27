@@ -1018,7 +1018,8 @@ Optional:
                                            ssGSEA GMT selection.
 
                                            default:
-                                             Use the legacy MSigDB C2 symbols GMT.
+                                             Use the locally supplied legacy MSigDB C2 v7.5.1 GMT.
+                                             MTD_SSGSEA_DEFAULT_GMT can override its location.
 
                                            auto:
                                              Use the persistent master eggNOG/GO GMT
@@ -1547,7 +1548,10 @@ echo "  $R_LIBS_USER"
 # Actual GMT selection happens later, after host.gct is generated.
 # ------------------------------------------------------------
 
-SSGSEA_DEFAULT_GMT="$MTDIR/Tools/ssGSEA2.0/db/msigdb/c2.all.v7.5.1.symbols.gmt"
+# Resolve user-owned local resources before the pipeline changes directory.
+source "$MTDIR/aux_scripts/resources/functional_resources.sh" || die "Cannot load functional resource helper."
+mtd_resolve_functional_resources "$MTDIR" || die "Invalid functional resource paths."
+mtd_validate_dictionaries || die "HUMAnN functional dictionaries are not ready."
 
 if [[ "$SSGSEA_GMT" == "default" ]]; then
     SSGSEA_GMT_MODE="default_MSigDB_c2_symbols"
@@ -4461,6 +4465,13 @@ if [[ "$NO_COMPARISON" == "1" ]]; then
 fi
 
 echo "${g}============================================${w}"
+
+# Validate the legacy GMT only when it will actually be used. Save resource
+# identities before expensive processing; record the effective GMT at ssGSEA.
+FUNCTIONAL_RESOURCE_MANIFEST="$outputdr/methods/functional_resources.tsv"
+mtd_start_resource_manifest "$FUNCTIONAL_RESOURCE_MANIFEST" "$analysis_mode_resolved" "$SSGSEA_GMT" || \
+    die "Functional resource preflight or provenance recording failed."
+
 # ------------------------------------------------------------
 # Optional metadata summary
 # ------------------------------------------------------------
@@ -7884,9 +7895,9 @@ run_cmd run_humann_tool "$HUMANN_REGROUP_TABLE_BIN" --input humann_genefamilies_
 echo "${g}Translate KEGG and GO ID to human readable terms${w}"
 conda deactivate
 conda activate R412
-run_cmd Rscript "$HUMANN_ANALYSIS_DIR/humann_ID_translation_adjusted.R" "$outputdr/temp/HUMAnN_output/humann_genefamilies_relAbundance_kegg.tsv" "$outputdr/temp/HUMAnN_output/humann_genefamilies_relAbundance_go.tsv" "$HUMANN_ANALYSIS_DIR"
+run_cmd Rscript "$HUMANN_ANALYSIS_DIR/humann_ID_translation_adjusted.R" "$outputdr/temp/HUMAnN_output/humann_genefamilies_relAbundance_kegg.tsv" "$outputdr/temp/HUMAnN_output/humann_genefamilies_relAbundance_go.tsv" "$HUMANN_DICTIONARY_DIR"
     # Tranlate unnormalized table (for Deseq2)
-run_cmd Rscript "$HUMANN_ANALYSIS_DIR/humann_ID_translation_adjusted.R" "$outputdr/temp/HUMAnN_output/humann_genefamilies_Abundance_kegg.tsv" "$outputdr/temp/HUMAnN_output/humann_genefamilies_Abundance_go.tsv" "$HUMANN_ANALYSIS_DIR"
+run_cmd Rscript "$HUMANN_ANALYSIS_DIR/humann_ID_translation_adjusted.R" "$outputdr/temp/HUMAnN_output/humann_genefamilies_Abundance_kegg.tsv" "$outputdr/temp/HUMAnN_output/humann_genefamilies_Abundance_go.tsv" "$HUMANN_DICTIONARY_DIR"
 conda deactivate
 conda activate MTD
 
@@ -8911,16 +8922,8 @@ echo "  $SSGSEA_GMT_MODE"
 write_methods_log
 
 # ------------------------------------------------------------
-# Select or build ssGSEA GMT
+# Select or prepare ssGSEA GMT (local paths resolved at startup)
 # ------------------------------------------------------------
-
-SSGSEA_DEFAULT_GMT="$MTDIR/Tools/ssGSEA2.0/db/msigdb/c2.all.v7.5.1.symbols.gmt"
-
-# ------------------------------------------------------------
-# Select or prepare ssGSEA GMT
-# ------------------------------------------------------------
-
-SSGSEA_DEFAULT_GMT="$MTDIR/Tools/ssGSEA2.0/db/msigdb/c2.all.v7.5.1.symbols.gmt"
 
 if [[ "$SSGSEA_GMT" == "auto" ]]; then
     echo "${g}[INFO] Preparing analysis-specific GMT from the custom host reference.${w}"
@@ -8998,6 +9001,13 @@ echo "${g}[INFO] ssGSEA GMT file:${w}"
 echo "  $SSGSEA_GMT"
 echo "${g}[INFO] ssGSEA GMT mode:${w}"
 echo "  $SSGSEA_GMT_MODE"
+
+if [[ "$SSGSEA_GMT_MODE" == "custom_eggNOG_GO_from_Create_custom_host" ]]; then
+    mtd_resource_record "$FUNCTIONAL_RESOURCE_MANIFEST" ssGSEA_master_GMT "$SSGSEA_MASTER_GMT" "reference-matched master GMT; TaxID $hostid" || die "Cannot record master GMT."
+elif [[ "$SSGSEA_GMT_MODE" == "default_MSigDB_c2_symbols" ]]; then
+    mtd_validate_legacy_gmt || die "Legacy GMT changed or is missing."
+fi
+mtd_resource_record "$FUNCTIONAL_RESOURCE_MANIFEST" ssGSEA_analysis_GMT "$SSGSEA_GMT" "$SSGSEA_GMT_MODE" || die "Cannot record analysis GMT."
 
 write_methods_log
 

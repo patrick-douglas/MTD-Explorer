@@ -8,6 +8,10 @@ Before starting, review the [system requirements](requirements.md).
 
     MTD Explorer is under active development. Installation commands, database requirements, and output structures may change before the first stable release.
 
+## Functional data resources
+
+Before updating an existing installation, back up the historical functional dictionaries and optional legacy GMT. New installations must supply local GO and KO dictionaries before running the pipeline. See [Local functional resources](functional-resources.md) for acquisition, migration and offline configuration.
+
 ## Install Git
 
 Git is required to download the MTD Explorer source code and to keep the installation updated.

@@ -33,7 +33,7 @@ Available modes are:
 | Value | Behavior |
 |---|---|
 | `auto` | **Current default.** Use the persistent eggNOG/GO master GMT created by `Create_custom_host.sh` for the selected host TaxID, intersect it with the current `host.gct`, and filter the resulting sets for this analysis |
-| `default` | Explicitly use the bundled legacy MSigDB C2 symbols GMT |
+| `default` | Explicitly use the locally supplied legacy MSigDB C2 v7.5.1 symbols GMT |
 | `FILE` | Use an existing user-provided GMT directly |
 
 `custom_eggnog` is retained only as a deprecated backward-compatible alias and
@@ -325,3 +325,6 @@ for a contrast.
 
 [mtd-explorer]: https://github.com/patrick-douglas/MTD-Explorer
 [ssgsea]: https://gsea-msigdb.github.io/ssGSEA-gpmodule/v10/
+
+
+For locally supplied dictionaries, legacy GMT acquisition and migration from earlier installations, see [Local functional resources](../getting-started/functional-resources.md).

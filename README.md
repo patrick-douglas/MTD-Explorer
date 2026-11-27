@@ -165,3 +165,8 @@ impose a noncommercial restriction on separately licensed MIT, BSD or GPL
 components. See [NOTICE.md](NOTICE.md) and
 [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for attribution, scope and
 resource-specific conditions. See [CITATION.cff](CITATION.cff) for software citation metadata.
+
+
+### Local functional data
+
+GO and KO dictionaries and the optional legacy MSigDB GMT are not bundled in new source snapshots. **Existing users: back up these data before pulling updates.** See [Local functional resources](https://patrick-douglas.github.io/MTD-Explorer/getting-started/functional-resources/) for lawful acquisition, offline configuration and historical SHA-256 fingerprints.

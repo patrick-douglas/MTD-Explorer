@@ -615,3 +615,6 @@ Also cite the original [MTD][mtd-paper] paper and the genome/annotation source.
 [ensembl]: https://www.ensembl.org/
 [ensembl-genomes]: https://ensemblgenomes.org/
 [ncbi]: https://www.ncbi.nlm.nih.gov/
+
+
+For locally supplied dictionaries, legacy GMT acquisition and migration from earlier installations, see [Local functional resources](../getting-started/functional-resources.md).
