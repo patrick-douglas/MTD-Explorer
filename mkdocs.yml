@@ -65,7 +65,7 @@ extra_css:
   - stylesheets/extra.css
   - stylesheets/brand.css
 
-copyright: MTD Explorer · Open-source RNA-seq and metatranscriptomics workflow
+copyright: MTD Explorer · RNA-seq and metatranscriptomics workflow
 
 extra:
   generator: false

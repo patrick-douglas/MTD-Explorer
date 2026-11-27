@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use MTD Explorer, please cite this software and the original MTD publication listed in references."
+title: "MTD Explorer"
+type: software
+authors:
+  - family-names: "Corrêa Pereira"
+    given-names: "Patrick Douglas"
+repository-code: "https://github.com/patrick-douglas/MTD-Explorer"
+url: "https://patrick-douglas.github.io/MTD-Explorer/"
+license: CC-BY-NC-4.0
+references:
+  - type: article
+    title: "MTD: a unique pipeline for host and meta-transcriptome joint and integrative analyses of RNA-seq data"
+    authors:
+      - family-names: Wu
+        given-names: Fei
+      - family-names: Liu
+        given-names: Yao-Zhong
+      - family-names: Ling
+        given-names: Binhua
+    journal: "Briefings in Bioinformatics"
+    year: 2022
+    volume: 23
+    issue: 3
+    doi: "10.1093/bib/bbac111"

@@ -35,7 +35,7 @@
 
 ## What is MTD Explorer?
 
-**MTD Explorer** is an open-source workflow for joint analysis of host
+**MTD Explorer** is a publicly available workflow for joint analysis of host
 transcriptome and microbiome/metatranscriptome signals from **bulk RNA-seq**
 data.
 
@@ -157,4 +157,11 @@ https://github.com/FEI38750/MTD
 
 ## License
 
-Please see the repository license file for usage terms.
+The MTD-derived workflow and project-controlled material to which the main
+license applies are available under the [Creative Commons Attribution-NonCommercial
+4.0 International license](LICENCE.md) (CC BY-NC 4.0). Independently licensed
+third-party code and data retain their own terms; the project license does not
+impose a noncommercial restriction on separately licensed MIT, BSD or GPL
+components. See [NOTICE.md](NOTICE.md) and
+[THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for attribution, scope and
+resource-specific conditions. See [CITATION.cff](CITATION.cff) for software citation metadata.
