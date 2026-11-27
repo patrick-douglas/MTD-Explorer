@@ -30,3 +30,10 @@ MSigDB also requires acknowledgment of BioCarta (2000–2017) and Kanehisa Labor
 Externally acquired databases and packages (including Kraken2 reference databases, Ensembl resources, eggNOG, UniRef, HUMAnN/MetaPhlAn resources, KEGG and GO) remain subject to source-specific conditions. This notice does not authorize redistribution of these resources or of third-party materials in derived documentation and supplementary archives. Check the release contents and all bundled archives separately before deposition.
 
 The three historical functional data files above are no longer tracked in new snapshots. Existing local copies are not altered by the pipeline. This does not clear past Git history or other archives. See [local resource documentation](docs/getting-started/functional-resources.md) for acquisition, fingerprints and migration.
+
+## Bundled R package archives
+
+See [R package notices](licenses/R_package_notices.md)
+and the [archive-level license inventory](licenses/R_package_licenses.tsv)
+for package-specific terms, versions, SHA-256 fingerprints,
+attribution requirements and unresolved redistribution questions.

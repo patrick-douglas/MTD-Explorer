@@ -1,0 +1,13 @@
+# Bundled R package archive notices
+
+Audit snapshot: `7bf0c664d05079b2f47a8ca114905c829d8eec3b` (2026-11-27). Scope: 80 tracked archives under `update_fix/pvr_pkg/`, representing 74 package names. See [archive-level inventory](R_package_licenses.tsv) for declared license strings, versions, repository metadata, notice paths and SHA-256 fingerprints reported by the local audit. `OK` in that inventory means a DESCRIPTION license field was present; it does not establish redistribution clearance. Six entries lack Repository metadata. The original archives and all internal copyright/license notices must be retained unmodified wherever redistribution is permitted. MTD Explorer's CC BY-NC license does not override the separately licensed packages or components.
+
+## Specific notices and release review
+
+- RColorBrewer 1.1-3 declares Apache License 2.0; its `inst/COPYING` contains additional ColorBrewer-specific conditions. Required acknowledgment: This product includes color specifications and designs developed by Cynthia Brewer (http://colorbrewer.org/).
+- RProtoBufLib 2.14.1 declares BSD_3_clause, but its LICENSE contains a Fred Hutchinson agreement whose Exhibit A names Cytolib. Both are also present in the [Bioconductor 3.18 listing](https://bioconductor.uib.no/packages/3.18/bioc/html/RProtoBufLib.html) and its [linked LICENSE](https://bioconductor.uib.no/packages/3.18/bioc/licenses/RProtoBufLib/LICENSE). The applicability of the agreement is unresolved. Do not include this archive in a new permanent release until redistribution rights are clarified or the dependency is externalized through an authorized source; verify installer compatibility first.
+- cmapR 1.16.0: the `file LICENSE` declaration resolves to BSD 3-Clause in the extracted LICENSE.
+- Matrix 1.6-5, httpuv 1.6.0, cli 3.6.2, rlang 1.1.2, fastmap 1.2.0, vctrs 0.6.4 and mnormt 2.1.0 contain additional component-specific notices; retain them. For example, vctrs identifies specific source files covered by MPL-2.0; rlang includes BSD-2-Clause xxHash code; Matrix contains GPL and BSD components.
+- R annotation/data packages retain their own notices; the package's declared software license does not independently establish rights to every incorporated third-party dataset.
+
+Standard license texts: <https://www.r-project.org/Licenses/>. For the final release, verify full original archives, upstream provenance, license texts and source availability as applicable. This audit was based on extracted metadata and 31 selected notice files from 26 archives; full nested source and bundled data were not independently inspected. No package installation, source-code change, version upgrade or analytic rerun was performed.
