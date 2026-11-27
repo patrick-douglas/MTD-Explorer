@@ -31,8 +31,8 @@ S2-SSGSEA,Evaluated vendored ssGSEA source revision,https://github.com/patrick-d
 S2-RSOURCE,Evaluated host/microbial R analysis source,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/analysis/differential/DEG_Anno_Plot.R,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
 S2-HARDWARE,Recorded operating system and hardware,Record or verification: hardware.txt,
 S7-RANK-CODE,Evaluated taxon ranking implementation,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/exploratory/MTD_exploratory_detected_microbiome_rank.R,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
-S7-RECORDED-RANKINGS,Reference-run full species relative-abundance and estimated-count ranking exports,Recorded exploratory ranking tables. All 425 rows in each representation were independently checked for Figure 4.,
-S8-HALLA-OUTPUTS,Reference-run halla/host_gene outputs,"sig_clusters.txt, all_associations.txt, X.tsv, Y.tsv, performance.txt and dendrogram linkage files; Figure 6 data verification.",
+S7-RECORDED-RANKINGS,Reference-run full species relative-abundance and estimated-count ranking exports,Recorded exploratory ranking tables. All 425 rows in each representation were independently checked for Figure 5.,
+S8-HALLA-OUTPUTS,Reference-run halla/host_gene outputs,"sig_clusters.txt, all_associations.txt, X.tsv, Y.tsv, performance.txt and dendrogram linkage files; Figure 7 data verification.",
 S8-HALLA-PATCH,Evaluated vectorized Spearman implementation,https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/update_fix/patch_halla_performance.py,Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
 S8-DESEQ2,Reference-run infected-versus-uninfected host DESeq2 results,host_counts_infected_vs_uninfected_gene_symbols_table.csv,
 S8-REFERENCE-CACHE,"Gene IDs, biotypes and coordinates of the installed reference",gene_ID_cache.csv,
@@ -56,7 +56,7 @@ config_ssgsea,config_ssgsea,https://github.com/patrick-douglas/MTD-Explorer/blob
 halla_audit,halla_audit,Record or verification: halla_independent_audit.json,
 monitor_audit,monitor_audit,Record or verification: resource_independent_audit.json,
 timing_audit,timing_audit,Record or verification: stage_timing_hardware_audit.json,
-figure5,figure5,Record or verification: figure_5_provenance.json,
+volcano_audit,volcano_audit,Archived volcano-plot audit for Figure 6,
 REF-2DD7181A3F,Reference-run pipeline_steps.tsv,Reference-run record: pipeline_steps.tsv,Reference execution or recorded source
 REF-7B26C92FBC,Reference-run pipeline_steps_raw.tsv,Reference-run record: pipeline_steps_raw.tsv,Reference execution or recorded source
 REF-D38C49FEBE,Reference-run summary.tsv,Reference-run record: summary.tsv,Reference execution or recorded source

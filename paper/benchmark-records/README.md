@@ -10,4 +10,4 @@ The files in this folder are copies from the timed comparison-mode execution of 
 | `pipeline_steps.tsv` | Read the 16 recorded intervals between progress events. Each duration includes all work in that interval. |
 | `resource_samples.csv` | Inspect the 39,020 observations of CPU, memory, swap and other system measurements. The configured sampling interval was five seconds. |
 
-Figure 7 uses system-wide CPU activity and the sampled sum of resident memory across monitored descendant processes. Multiple processes can count the same shared memory pages. The benchmark clock excludes software installation, reference preparation and the subsequent TPI robustness analysis.
+Supplementary Figure S3 uses system-wide CPU activity and the sampled sum of resident memory across monitored descendant processes. Multiple processes can count the same shared memory pages. The benchmark clock excludes software installation, reference preparation and the subsequent TPI robustness analysis.

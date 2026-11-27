@@ -55,8 +55,8 @@ Functional profiling,HUMAnN threads,20,Threads,methods,
 Functional profiling,Renormalization,relab,Relative abundance,methods,
 Functional profiling,Prescreen species selected,0,All 15 MetaPhlAn prescreens,console,Translated UniRef90 assignment continued; this does not mean absence of taxa in Kraken2/Bracken.
 Functional profiling,Pathway abundance zero-sum columns,6,Libraries,console,Do not generalize to gene-family profiles or claim complete pathways for all samples.
-Host differential expression,Significance criterion,BH-adjusted p < 0.05,DESeq2,figure5; halla_audit,Figure 5 volcano combined criterion additionally uses |log2FC| > 0.5; overlap counts based on adjusted p alone are distinct.
-Host / microbiome volcano,Display fold-change cutoff,0.5,Absolute log2 fold change,figure5,EnhancedVolcano labels ten features in the manuscript; all valid feature points remain shown.
+Host differential expression,Significance criterion,BH-adjusted p < 0.05,DESeq2,volcano_audit; halla_audit,Figure 6 volcano combined criterion additionally uses |log2FC| > 0.5; overlap counts based on adjusted p alone are distinct.
+Host / microbiome volcano,Display fold-change cutoff,0.5,Absolute log2 fold change,volcano_audit,EnhancedVolcano labels ten features in the manuscript; all valid feature points remain shown.
 ssGSEA,GMT mode,Reference-matched custom eggNOG GO,Master intersected with host.gct,methods; figure2,
 ssGSEA,Preparation set-size range,5–500,Input-matched genes per GO set,figure2,
 ssGSEA,Scoring overlap minimum,10,Matched genes,config_ssgsea,

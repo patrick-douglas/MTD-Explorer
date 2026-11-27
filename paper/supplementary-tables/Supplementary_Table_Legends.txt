@@ -48,7 +48,7 @@ S4A. Reference-run configuration
 Selected execution and scientific-analysis settings for the evaluated local B. glabrata run. The complete structured export is retained in S4b, deposited run aliases in S4c, FASTQ identities in S4d, and resource signatures in S4e.
 Note: Portable tokens: <MTD_ROOT>, pipeline installation; <INPUT_DIR>, FASTQ/samplesheet directory; <OUTPUT_DIR>, analysis output; <CONDA_ROOT>, Conda installation; <CACHE_ROOT>, resource cache.
 Note: The benchmark used existing references/databases. No cold-cache, recovery, scaling or cross-software speedup experiment is inferred.
-Sources: methods, inputs, samplesheet, fastqs, ena_aliases, ena_runs, bioproject, code, config_ssgsea, halla_audit, monitor_audit, timing_audit, figure2, figure5, console.
+Sources: methods, inputs, samplesheet, fastqs, ena_aliases, ena_runs, bioproject, code, config_ssgsea, halla_audit, monitor_audit, timing_audit, figure2, volcano_audit, console.
 
 S4B. Complete structured methods records
 All 117 structured records exported by the reference execution, retaining categories, programs, parameter names, values and descriptions. Machine-specific input, output, installation and cache prefixes are replaced by explicit portable tokens; the source file identity is preserved in the provenance manifest.
@@ -288,10 +288,10 @@ https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc
 Pinned commit 04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d
 
 S7-RECORDED-RANKINGS: Reference-run full species relative-abundance and estimated-count ranking exports
-Recorded exploratory ranking tables. All 425 rows in each representation were independently checked for Figure 4.
+Recorded exploratory ranking tables. All 425 rows in each representation were independently checked for Figure 5.
 
 S8-HALLA-OUTPUTS: Reference-run halla/host_gene outputs
-sig_clusters.txt, all_associations.txt, X.tsv, Y.tsv, performance.txt and dendrogram linkage files; Figure 6 data verification.
+sig_clusters.txt, all_associations.txt, X.tsv, Y.tsv, performance.txt and dendrogram linkage files; Figure 7 data verification.
 
 S8-HALLA-PATCH: Evaluated vectorized Spearman implementation
 https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/update_fix/patch_halla_performance.py
@@ -367,8 +367,8 @@ Record or verification: resource_independent_audit.json
 timing_audit: timing_audit
 Record or verification: stage_timing_hardware_audit.json
 
-figure5: figure5
-Record or verification: figure_5_provenance.json
+volcano_audit: volcano_audit
+Archived volcano-plot audit for Figure 6
 
 REF-2DD7181A3F: Reference-run pipeline_steps.tsv
 Reference-run record: pipeline_steps.tsv

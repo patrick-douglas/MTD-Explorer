@@ -118,10 +118,14 @@
       "url": "https://github.com/patrick-douglas/MTD-Explorer/blob/04d61d412955ac7b9142ca8ebcc4d2edeb6bac5d/aux_scripts/orgdb/build_gold_orgdb_from_gtf_eggnog.R"
     },
     {
-      "id": "figure5",
+      "id": "volcano_audit",
       "label": "figure_5_provenance.json",
       "sha256": "eafcaaaff1bdd9069260d25954de990e2eb035042f584f13891388cc802510c5",
-      "note": ""
+      "note": "Archived source for comparative Figure 6. The filename and SHA-256 identify the original record used to prepare S4A before the manuscript figures were renumbered.",
+      "renumbered_figure_record": {
+        "label": "figure_6_provenance.json",
+        "sha256": "515acd49d815da1d3c271bbf4e6abb80e44f02a40d5adaa542d281c177d42937"
+      }
     },
     {
       "id": "halla_audit",
@@ -432,9 +436,11 @@
   ],
   "original_workbook_verification_scope": "These checks describe the original 20 November 2026 export before removal of workbook styling. Historical table-style checks refer exclusively to that export.",
   "packaged_csv_verification": {
-    "parts_with_identical_bytes_to_original_export": 21,
+    "parts_with_identical_bytes_to_original_export": 19,
     "data_rows": 12465,
     "companion_csv_files_with_identical_bytes_to_original_export": 2,
-    "index_and_source_catalog_identical_to_original_export": true
+    "index_identical_to_original_export": true,
+    "source_catalog_identical_to_original_export": false,
+    "figure_renumbering": "Figure references and the volcano audit identifier were updated in Tables S2 and S4A and the source catalog. Values in the scientific data columns were preserved."
   }
 }
